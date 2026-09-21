@@ -2,6 +2,7 @@ import { Bookshelf } from './Bookshelf'
 import { Pedestal } from '../../pedestal/components/Pedestal'
 import { LevitatingBook } from '../../pedestal/components/LevitatingBook'
 import { Wormhole } from '../../wormhole/components/Wormhole'
+import { ScatteredBooks } from './ScatteredBooks'
 
 interface Props {
   wormholeActive: boolean
@@ -109,8 +110,11 @@ export function LibraryScene({ wormholeActive, wormholeProgress }: Props) {
       <Pedestal />
       <LevitatingBook />
 
-      {/* Wormhole behind book (when active) */}
+      {/* Vortex now centered at book and camera-facing (see Wormhole.tsx) */}
       <Wormhole active={wormholeActive} progress={wormholeProgress} />
+
+      {/* Abandoned scatter — books on the floor (no physics, pure storytelling) */}
+      <ScatteredBooks />
 
       {/* Ambient */}
       <ambientLight intensity={0.42} color="#ffecd0" />
