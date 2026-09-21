@@ -1,6 +1,6 @@
 # AlegrIA-3D — Time Travel Library
 
-Immersive 3D web experience built with **Vite + React + TypeScript + Three.js**. You spawn inside a library, walk with **WASD + mouse look** toward a levitating book on a pedestal, then get pulled through a **No Man's Sky-style vortex** and wake up inside a **Museum of Time**.
+Immersive 3D web experience built with **Vite + React + TypeScript + Three.js**. You spawn inside a library, walk with **WASD + mouse look** toward a levitating book on a pedestal, then get pulled through a **vortex** and wake up inside a **Museum of Time**.
 
 ## Stack
 
@@ -55,7 +55,3 @@ NMS-inspired hyperjump: 46 hued torus rings (gold→cyan→purple), 520 star str
 - Replace procedural shelves/pedestals with GLTF (`useGLTF`)
 - Add spatial audio (Howler / `THREE.Audio`) & background ambience
 - Add physics colliders (`@react-three/rapier`)
-
-## License
-
-MIT — do what you want with the vortex.
