@@ -1,5 +1,5 @@
 import { useRef, useMemo } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 interface Props {
@@ -11,13 +11,13 @@ export function Wormhole({ active, progress }: Props) {
   const groupRef = useRef<THREE.Group>(null)
   const starsRef = useRef<THREE.Points>(null)
   const count = 46
+  const { camera } = useThree()
 
   const rings = useMemo(
     () =>
       Array.from({ length: count }).map((_, i) => ({
         z: -i * 1.18,
         radius: 1.35 + i * 0.052,
-        // NMS palette: gold -> cyan -> purple -> white warp
         hue: i < 10 ? 38 : i < 22 ? 195 : i < 34 ? 265 : 0,
         sat: i < 10 ? 95 : 85,
         light: i < 10 ? 56 : 62,
@@ -26,7 +26,6 @@ export function Wormhole({ active, progress }: Props) {
     []
   )
 
-  // Star streaks for NMS hyperjump effect
   const starCount = 520
   const starPositions = useMemo(() => {
     const arr = new Float32Array(starCount * 3)
@@ -50,6 +49,13 @@ export function Wormhole({ active, progress }: Props) {
   useFrame(({ clock }) => {
     if (!groupRef.current) return
     const t = clock.elapsedTime
+
+    const camQuat = (camera as THREE.PerspectiveCamera).quaternion
+    const targetQuat = new THREE.Quaternion().copy(camQuat)
+    const flip = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI)
+    targetQuat.multiply(flip)
+    groupRef.current.quaternion.slerp(targetQuat, active ? 0.18 : 0.08)
+
     groupRef.current.children.forEach((child) => {
       const mesh = child as THREE.Mesh
       if (mesh.userData.isRing) {
@@ -61,8 +67,9 @@ export function Wormhole({ active, progress }: Props) {
         mesh.scale.set(s, s, 1)
       }
     })
-    if (active && groupRef.current) {
-      groupRef.current.rotation.z = t * (0.06 + progress * 0.18)
+    if (active) {
+      // subtle roll on top of camera alignment
+      groupRef.current.rotateZ(0.015 + progress * 0.03)
     }
 
     if (starsRef.current) {
@@ -80,7 +87,6 @@ export function Wormhole({ active, progress }: Props) {
         pos.setZ(i, z)
       }
       pos.needsUpdate = true
-      // stretch illusion via size
       const mat = starsRef.current.material as THREE.PointsMaterial
       mat.size = 0.04 + progress * 0.12
       mat.opacity = 0.55 + progress * 0.45
@@ -89,9 +95,9 @@ export function Wormhole({ active, progress }: Props) {
 
   if (!active && progress === 0) return null
 
+  // Centered at the levitating book — not behind it — so distance trigger feels coherent
   return (
-    <group ref={groupRef} position={[0, 1.65, -2]}>
-      {/* Bright core — white flash expanding with progress */}
+    <group ref={groupRef} position={[0, 1.65, 0]}>
       <mesh position={[0, 0, -count * 0.58]}>
         <sphereGeometry args={[0.85 + progress * 3.1, 32, 32]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0.92} depthWrite={false} />
@@ -116,7 +122,6 @@ export function Wormhole({ active, progress }: Props) {
         </mesh>
       ))}
 
-      {/* Star streaks — NMS hyperjump */}
       <points ref={starsRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[starPositions, 3]} />
@@ -124,13 +129,11 @@ export function Wormhole({ active, progress }: Props) {
         <pointsMaterial size={0.06} color="#d8e8ff" transparent opacity={0.82} blending={THREE.AdditiveBlending} depthWrite={false} sizeAttenuation />
       </points>
 
-      {/* Secondary purplish streaks */}
       <points position={[0, 0, -10]}>
         <sphereGeometry args={[3.0, 12, 12]} />
         <pointsMaterial size={0.025} color="#9a7bff" transparent opacity={0.42} blending={THREE.AdditiveBlending} depthWrite={false} sizeAttenuation />
       </points>
 
-      {/* Tunnel wall — subtle chromatic cylinder */}
       <mesh>
         <cylinderGeometry args={[0.02, 4.2, 56, 32, 1, true]} />
         <meshStandardMaterial
@@ -145,7 +148,6 @@ export function Wormhole({ active, progress }: Props) {
         />
       </mesh>
 
-      {/* Chromatic edge ring */}
       <mesh position={[0, 0, 3.8]}>
         <ringGeometry args={[3.9, 4.25, 64]} />
         <meshBasicMaterial color="#ff3b9a" transparent opacity={0.07 + progress * 0.12} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
