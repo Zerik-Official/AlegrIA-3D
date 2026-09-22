@@ -21,7 +21,7 @@ const CAR_TRAIL_LENGTH = 16
  * @param props - Body color
  * @returns Car body group
  */
-function ProceduralFlyingCar({ color }: { color: string }) {
+export function ProceduralFlyingCar({ color = '#ff6a3a' }: { color?: string }) {
   return (
     <group>
       <mesh rotation-x={Math.PI / 2} scale={[1, 1, 0.46]} castShadow>
