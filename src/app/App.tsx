@@ -1,12 +1,12 @@
 import { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { LibraryScene } from '../features/library/components/LibraryScene'
-import { Phase1Scene } from '../features/phase1/components/Phase1Scene'
-import { PlayerControls } from '../features/player/components/PlayerControls'
-import { HUD, StartOverlay, PastOverlay } from '../features/ui/components/HUD'
-import { appConfig } from '../shared/config/appConfig'
-import { easeCubicInOut } from '../shared/utils/perf'
-import type { GamePhase } from '../shared/types'
+import { LibraryScene } from '@/features/library/components/LibraryScene'
+import { Phase1Scene } from '@/features/phase1/components/Phase1Scene'
+import { PlayerControls } from '@/features/player/components/PlayerControls'
+import { HUD, StartOverlay, PastOverlay } from '@/features/ui/components/HUD'
+import { appConfig } from '@/shared/config/appConfig'
+import { easeCubicInOut } from '@/shared/utils/perf'
+import type { GamePhase } from '@/shared/types'
 import * as THREE from 'three'
 
 /**
@@ -200,7 +200,7 @@ export default function App() {
       {isPhase1 && !showPhase1Overlay && (
         <>
           <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} isPhase1 />
-          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-[#f5e6c8]/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
+          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
             Explora • Aduana • Estación Montoya • Pasaje de los Chinos
           </div>
         </>
@@ -209,7 +209,7 @@ export default function App() {
       {isPhase1 && !showPhase1Overlay && (
         <button
           onClick={handleReturnToLibrary}
-          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#3d2b1f]/15 bg-[#f5e6c8]/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#3d2b1f] shadow backdrop-blur hover:bg-[#fff8e0]"
+          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#3d2b1f] shadow backdrop-blur hover:bg-[#fff8e0]"
         >
           Volver a la biblioteca
         </button>

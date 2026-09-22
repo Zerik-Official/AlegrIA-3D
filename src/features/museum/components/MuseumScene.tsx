@@ -1,7 +1,7 @@
 import { useMemo, memo } from 'react'
 import * as THREE from 'three'
-import { ModelLoader } from '../../../models/shared/ModelLoader'
-import { modelRegistry } from '../../../shared/config/models'
+import { ModelLoader } from '@/models/shared/ModelLoader'
+import { modelRegistry } from '@/shared/config/models'
 
 /**
  * Props for {@link PedestalDisplay}.

@@ -1,7 +1,7 @@
 import { useRef, useMemo, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { wormholeConfig } from '../../../shared/config/appConfig'
+import { wormholeConfig } from '@/shared/config/appConfig'
 
 /**
  * Props for {@link Wormhole}.

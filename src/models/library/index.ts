@@ -10,5 +10,5 @@
  * @link https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html
  */
 
-export { Bookshelf as ProceduralBookshelf } from '../../features/library/components/Bookshelf'
-export { ScatteredBooks as ProceduralScatteredBooks } from '../../features/library/components/ScatteredBooks'
+export { Bookshelf as ProceduralBookshelf } from '@/features/library/components/Bookshelf'
+export { ScatteredBooks as ProceduralScatteredBooks } from '@/features/library/components/ScatteredBooks'

@@ -1,14 +1,14 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { Bookshelf } from './Bookshelf'
-import { Pedestal } from '../../pedestal/components/Pedestal'
-import { LevitatingBook } from '../../pedestal/components/LevitatingBook'
-import { Wormhole } from '../../wormhole/components/Wormhole'
-import { TimeVortexParticles } from '../../wormhole/components/TimeVortexParticles'
-import { CyberWall } from './CyberWall'
-import { ScatteredBooks } from './ScatteredBooks'
-import { TimeVortexSequence } from '../../cinematics/components/TimeVortexSequence'
+import { Bookshelf } from '@/features/library/components/Bookshelf'
+import { Pedestal } from '@/features/pedestal/components/Pedestal'
+import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
+import { Wormhole } from '@/features/wormhole/components/Wormhole'
+import { TimeVortexParticles } from '@/features/wormhole/components/TimeVortexParticles'
+import { CyberWall } from '@/features/library/components/CyberWall'
+import { ScatteredBooks } from '@/features/library/components/ScatteredBooks'
+import { TimeVortexSequence } from '@/features/cinematics/components/TimeVortexSequence'
 
 /**
  * Props for {@link LibraryScene}.

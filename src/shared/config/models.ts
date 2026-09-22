@@ -6,7 +6,7 @@
  * @link https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html
  */
 
-import type { ModelRegistry } from '../types'
+import type { ModelRegistry } from '@/shared/types'
 
 /**
  * Default model registry.

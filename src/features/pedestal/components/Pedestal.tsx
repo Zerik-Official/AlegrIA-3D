@@ -1,8 +1,8 @@
 import { useRef, memo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { ModelLoader } from '../../../models/shared/ModelLoader'
-import { modelRegistry } from '../../../shared/config/models'
+import { ModelLoader } from '@/models/shared/ModelLoader'
+import { modelRegistry } from '@/shared/config/models'
 
 /**
  * Procedural pedestal geometry.

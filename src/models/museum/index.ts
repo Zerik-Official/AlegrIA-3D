@@ -3,4 +3,4 @@
  * @module models/museum
  */
 
-export { MuseumScene as ProceduralMuseumScene } from '../../features/museum/components/MuseumScene'
+export { MuseumScene as ProceduralMuseumScene } from '@/features/museum/components/MuseumScene'

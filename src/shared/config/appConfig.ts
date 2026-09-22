@@ -3,7 +3,7 @@
  * @module shared/config/appConfig
  */
 
-import type { Bounds } from '../types'
+import type { Bounds } from '@/shared/types'
 
 /**
  * Player movement configuration.
