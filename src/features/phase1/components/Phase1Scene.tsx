@@ -1,9 +1,17 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { useState } from 'react'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { ProceduralTree, ProceduralTrinitaria, ProceduralPortal } from '@/shared/components/ReusableModels'
+import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
+import { PhotoModal } from '@/shared/components/PhotoModal'
+
+/**
+ * Variant for bahareque houses.
+ */
+type BaharequeVariant = 'short' | 'medium' | 'long'
 
 /**
  * Procedural bahareque house with mud walls and exposed log frame.
@@ -14,17 +22,21 @@ function ProceduralBaharequeHouse({
   scale = 1,
   wallColor = '#8b5e3c',
   roofColor = '#5a3a18',
+  variant = 'medium',
 }: {
   position: [number, number, number]
   rotationY?: number
   scale?: number
   wallColor?: string
   roofColor?: string
+  variant?: BaharequeVariant
 }) {
+  const dims = variant === 'short' ? ([2.1, 1.7, 1.9] as const) : variant === 'long' ? ([3.9, 1.7, 2.2] as const) : ([2.8, 1.7, 2.2] as const)
+  const roofDims: [number, number, number] = variant === 'short' ? [2.4, 0.18, 2.2] : variant === 'long' ? [4.2, 0.18, 2.5] : [3.1, 0.18, 2.5]
   return (
     <group position={position} rotation-y={rotationY} scale={scale}>
       <mesh position={[0, 0.85, 0]} castShadow receiveShadow>
-        <boxGeometry args={[2.8, 1.7, 2.2]} />
+        <boxGeometry args={dims} />
         <meshStandardMaterial color={wallColor} roughness={0.96} metalness={0.02} />
       </mesh>
       <mesh position={[0, 0.85, 0.02]}>
@@ -49,11 +61,11 @@ function ProceduralBaharequeHouse({
       </mesh>
       {/* Roof thatch */}
       <mesh position={[0, 1.82, 0]} rotation-x={0.22} castShadow>
-        <boxGeometry args={[3.1, 0.18, 2.5]} />
-        <meshStandardMaterial color="#5a3a18" roughness={0.98} />
+        <boxGeometry args={roofDims} />
+        <meshStandardMaterial color={roofColor} roughness={0.98} />
       </mesh>
       <mesh position={[0, 1.95, -0.02]} rotation-x={-0.22} castShadow>
-        <boxGeometry args={[3.1, 0.18, 2.5]} />
+        <boxGeometry args={roofDims} />
         <meshStandardMaterial color="#6b4a1f" roughness={0.98} />
       </mesh>
       <mesh position={[0, 0.42, 1.13]}>
@@ -178,10 +190,12 @@ function ProceduralSepiaPhoto({
   position,
   rotationY = 0,
   imageIndex = 0,
+  onSelect,
 }: {
   position: [number, number, number]
   rotationY?: number
   imageIndex?: number
+  onSelect?: () => void
 }) {
   const ref = useRef<THREE.Group>(null)
   useFrame(({ clock }) => {
@@ -192,7 +206,7 @@ function ProceduralSepiaPhoto({
     ref.current.rotation.z = Math.sin(t * 0.22) * 0.04
   })
   return (
-    <group ref={ref} position={position} rotation-y={rotationY}>
+    <group ref={ref} position={position} rotation-y={rotationY} onClick={onSelect} onPointerOver={() => (document.body.style.cursor = 'pointer')} onPointerOut={() => (document.body.style.cursor = 'auto')}>
       <mesh castShadow>
         <boxGeometry args={[1.45, 1.02, 0.04]} />
         <meshStandardMaterial color="#1a1208" roughness={0.72} />
@@ -218,13 +232,22 @@ function ProceduralSepiaPhoto({
 }
 
 /**
+ * Props for {@link Phase1Scene}.
+ */
+interface Phase1SceneProps {
+  /** Callback when a sepia photo is selected. */
+  onPhotoSelect?: (id: string) => void
+}
+
+/**
  * Phase 1 scene — Barrio Abajo origins (1857–1900).
  * Tierra, bahareque, andenes altos, arroyo and sepia memory photos.
  * All meshes support Blender replacement via registry (`phase1/*`).
  *
+ * @param props - Scene callbacks
  * @returns Phase 1 group
  */
-export const Phase1Scene = memo(function Phase1Scene() {
+export const Phase1Scene = memo(function Phase1Scene({ onPhotoSelect }: Phase1SceneProps) {
   const aduanaEntry = modelRegistry['phase1/aduana']
   const estacionEntry = modelRegistry['phase1/estacion-montoya']
 
@@ -280,29 +303,36 @@ export const Phase1Scene = memo(function Phase1Scene() {
         }
       />
 
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[-4.2, 0, -4.2]} rotationY={0.18} wallColor="#8b5e3c" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[3.8, 0, -3.8]} rotationY={-0.22} scale={0.92} wallColor="#7a4e2e" roofColor="#4a2f14" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[-1.2, 0, -6.2]} rotationY={0.08} scale={0.88} wallColor="#9a6b44" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[5.2, 0, 0.8]} rotationY={-0.42} scale={0.96} wallColor="#8b5e3c" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[-5.8, 0, 1.2]} rotationY={0.32} scale={0.9} wallColor="#7a5a3a" roofColor="#5a3a18" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[-8.4, 0, -1.2]} rotationY={0.52} scale={0.94} wallColor="#8b6a4a" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[8.2, 0, -0.4]} rotationY={-0.62} scale={1.02} wallColor="#9a7a5a" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[-2.8, 0, 6.8]} rotationY={0.12} scale={0.86} wallColor="#7a5a3a" />} />
-      <ModelLoader src={modelRegistry['phase1/bahareque-house'].path} fallback={<ProceduralBaharequeHouse position={[2.2, 0, 8.2]} rotationY={-0.18} scale={0.88} wallColor="#8b6b4e" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-short'].path} fallback={<ProceduralBaharequeHouse position={[-4.2, 0, -4.8]} rotationY={0.18} variant="short" wallColor="#8b5e3c" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-medium'].path} fallback={<ProceduralBaharequeHouse position={[3.8, 0, -4.4]} rotationY={-0.22} variant="medium" wallColor="#7a4e2e" roofColor="#4a2f14" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-long'].path} fallback={<ProceduralBaharequeHouse position={[-1.2, 0, -7.2]} rotationY={0.08} variant="long" wallColor="#9a6b44" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-medium'].path} fallback={<ProceduralBaharequeHouse position={[5.2, 0, 3.2]} rotationY={-0.42} variant="medium" wallColor="#8b5e3c" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-short'].path} fallback={<ProceduralBaharequeHouse position={[-5.8, 0, 3.8]} rotationY={0.32} variant="short" wallColor="#7a5a3a" roofColor="#5a3a18" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-long'].path} fallback={<ProceduralBaharequeHouse position={[-8.4, 0, -5.2]} rotationY={0.52} variant="long" wallColor="#8b6a4a" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-medium'].path} fallback={<ProceduralBaharequeHouse position={[8.2, 0, 2.8]} rotationY={-0.62} variant="medium" wallColor="#9a7a5a" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-short'].path} fallback={<ProceduralBaharequeHouse position={[-2.8, 0, 6.8]} rotationY={0.12} variant="short" wallColor="#7a5a3a" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-long'].path} fallback={<ProceduralBaharequeHouse position={[2.2, 0, 9.2]} rotationY={-0.18} variant="long" wallColor="#8b6b4e" />} />
+      <ModelLoader src={modelRegistry['phase1/bahareque-house-medium'].path} fallback={<ProceduralBaharequeHouse position={[-6.8, 0, 6.2]} rotationY={0.42} variant="medium" wallColor="#8b5e3c" />} />
 
       <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[-4.2, 0, -3.6]} length={3.4} />} />
       <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[3.8, 0, -3.2]} length={3.1} />} />
-      <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[-1.2, 0, -5.6]} length={2.8} />} />
-      <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[0, 0, 7.2]} length={9.2} />} />
-      <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[-8.2, 0, 1.8]} length={2.6} />} />
-      <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[8.0, 0, 2.2]} length={2.8} />} />
+      <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[-1.2, 0, -6.2]} length={2.8} />} />
+      <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<ProceduralAndenAlto position={[0, 0, 8.2]} length={9.2} />} />
 
-      <ModelLoader src={modelRegistry['phase1/sepia-photo'].path} fallback={<ProceduralSepiaPhoto position={[-1.2, 1.85, 1.85]} rotationY={0.22} imageIndex={0} />} />
-      <ModelLoader src={modelRegistry['phase1/sepia-photo'].path} fallback={<ProceduralSepiaPhoto position={[1.6, 1.92, 2.4]} rotationY={-0.18} imageIndex={1} />} />
-      <ModelLoader src={modelRegistry['phase1/sepia-photo'].path} fallback={<ProceduralSepiaPhoto position={[0.2, 2.05, 3.2]} rotationY={0.08} imageIndex={2} />} />
-      <ModelLoader src={modelRegistry['phase1/sepia-photo'].path} fallback={<ProceduralSepiaPhoto position={[-3.2, 1.78, 5.2]} rotationY={0.42} imageIndex={3} />} />
-      <ModelLoader src={modelRegistry['phase1/sepia-photo'].path} fallback={<ProceduralSepiaPhoto position={[3.4, 1.78, 5.8]} rotationY={-0.32} imageIndex={4} />} />
-      <ModelLoader src={modelRegistry['phase1/sepia-photo'].path} fallback={<ProceduralSepiaPhoto position={[0, 2.18, -3.2]} rotationY={0.02} imageIndex={5} />} />
+      {sepiaPhotos.map((photo, idx) => (
+        <ModelLoader
+          key={photo.id}
+          src={modelRegistry['phase1/sepia-photo'].path}
+          fallback={
+            <ProceduralSepiaPhoto
+              position={photo.position}
+              rotationY={photo.rotationY}
+              imageIndex={idx}
+              onSelect={() => onPhotoSelect?.(photo.id)}
+            />
+          }
+        />
+      ))}
 
       <ProceduralTree position={[-6.8, 0, -2.2]} scale={1.15} foliageColor="#2a5a1e" />
       <ProceduralTree position={[6.2, 0, -1.4]} scale={1.28} foliageColor="#1e4a14" trunkColor="#2e1f14" />
@@ -310,13 +340,17 @@ export const Phase1Scene = memo(function Phase1Scene() {
       <ProceduralTree position={[4.8, 0, 3.2]} scale={1.05} foliageColor="#2a5a1e" />
       <ProceduralTree position={[-8.8, 0, 3.4]} scale={0.98} foliageColor="#1e3a0f" />
       <ProceduralTree position={[8.4, 0, 5.8]} scale={1.12} foliageColor="#2a4a14" />
+      <ProceduralTree position={[-7.2, 0, 6.8]} scale={1.08} foliageColor="#2a4a1e" />
+      <ProceduralTree position={[7.6, 0, 7.4]} scale={1.02} foliageColor="#3a5a1e" />
       <ProceduralTrinitaria position={[-4.8, 0, -2.2]} bloomColor="#d82a7a" scale={1} />
       <ProceduralTrinitaria position={[4.2, 0, -2.0]} bloomColor="#7a2ad8" scale={1.1} />
       <ProceduralTrinitaria position={[-1.8, 0, -4.2]} bloomColor="#ff6a1a" scale={0.92} />
       <ProceduralTrinitaria position={[2.8, 0, 1.8]} bloomColor="#d82a7a" scale={1.05} />
       <ProceduralTrinitaria position={[-6.2, 0, 2.4]} bloomColor="#a52ad8" scale={0.98} />
+      <ProceduralTrinitaria position={[1.2, 0, 5.2]} bloomColor="#ff6a1a" scale={1} />
+      <ProceduralTrinitaria position={[-2.4, 0, 7.2]} bloomColor="#d82a3a" scale={0.94} />
 
-      <ProceduralPortal position={[0, 1.05, 14.8]} radius={1.55} />
+      <ProceduralPortal position={[0, 1.05, 15.8]} radius={1.55} />
 
       <ambientLight intensity={0.62} color="#ffe9c4" />
       <hemisphereLight args={['#ffecd0', '#6b4a2a', 0.52]} />
