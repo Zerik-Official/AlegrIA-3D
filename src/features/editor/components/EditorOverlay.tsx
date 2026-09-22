@@ -1,6 +1,7 @@
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX } from 'react-icons/fi'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import type { EntityCatalogItem } from '@/engine/config/entityCatalog'
 
 /**
  * Props for {@link EditorOverlay}.
@@ -8,6 +9,8 @@ import type { EditableEntity } from '@/features/editor/config/editableEntities'
 interface EditorOverlayProps {
   /** Whether editor is enabled. */
   enabled: boolean
+  /** Addable element types for the current scene — drives the "Add element" picker. */
+  catalog: EntityCatalogItem[]
   /** All entities. */
   entities: EditableEntity[]
   /** Selected id. */
@@ -39,6 +42,7 @@ interface EditorOverlayProps {
  */
 export const EditorOverlay = memo(function EditorOverlay({
   enabled,
+  catalog,
   entities,
   selectedId,
   mode,
@@ -51,6 +55,19 @@ export const EditorOverlay = memo(function EditorOverlay({
   onClose,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
+  const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
+
+  useEffect(() => {
+    if (catalog.length && !catalog.some((c) => c.type === addType)) {
+      setAddType(catalog[0].type)
+    }
+  }, [catalog, addType])
+
+  const handleAdd = useCallback(() => {
+    const item = catalog.find((c) => c.type === addType)
+    const base = item?.defaultEntity ?? { position: [0, 0, 0], rotationY: 0, scale: 1 }
+    onAdd({ id: `${addType}-${Date.now()}`, type: addType, ...base })
+  }, [addType, catalog, onAdd])
 
   const handleExport = useCallback(() => {
     const json = onExport()
@@ -85,15 +102,29 @@ export const EditorOverlay = memo(function EditorOverlay({
           <FiMaximize2 className="h-3.5 w-3.5" /> Escala
         </button>
       </div>
+      <div className="mt-3 flex gap-1.5">
+        <select
+          value={addType}
+          onChange={(ev) => setAddType(ev.target.value)}
+          className="flex-1 rounded-md bg-white/10 px-2 py-1.5 text-[11px] text-parchment outline-none focus:bg-white/15"
+        >
+          {catalog.map((item) => (
+            <option key={item.type} value={item.type} className="text-black">
+              {item.label}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={handleAdd}
+          disabled={!catalog.length}
+          className="flex items-center gap-1 rounded-md bg-white/10 px-2.5 py-1.5 text-[11px] hover:bg-white/15 disabled:opacity-40"
+        >
+          <FiPlus className="h-3 w-3" /> Añadir
+        </button>
+      </div>
       <div className="mt-3 flex-1 overflow-y-auto rounded-lg border border-white/5 bg-black/20 p-2">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-[11px] tracking-[0.12em] uppercase text-parchment/50">Elementos ({entities.length})</span>
-          <button
-            onClick={() => onAdd({ id: `entity-${Date.now()}`, type: 'generic', position: [0, 0, 0], rotationY: 0, scale: 1 })}
-            className="flex items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[11px] hover:bg-white/15"
-          >
-            <FiPlus className="h-3 w-3" /> Añadir
-          </button>
         </div>
         <div className="flex flex-col gap-1">
           {entities.map((e) => (
@@ -157,6 +188,48 @@ export const EditorOverlay = memo(function EditorOverlay({
               />
             </label>
           </div>
+          <label className="mt-2 flex flex-col gap-1">
+            <span className="text-[10px] uppercase tracking-widest text-parchment/50">Variante</span>
+            <input
+              type="text"
+              placeholder="ej. medium, #e85a3a, 5.2"
+              value={selected.variant ?? ''}
+              onChange={(ev) => onUpdate(selected.id, { variant: ev.target.value || undefined })}
+              className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+            />
+          </label>
+          {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
+            <>
+              <label className="mt-2 flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Imagen (URL)</span>
+                <input
+                  type="text"
+                  placeholder="/images/placeholders/mi-foto.jpg"
+                  value={selected.imageSrc ?? ''}
+                  onChange={(ev) => onUpdate(selected.id, { imageSrc: ev.target.value || undefined })}
+                  className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+                />
+              </label>
+              <label className="mt-2 flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Título</span>
+                <input
+                  type="text"
+                  value={selected.title ?? ''}
+                  onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
+                  className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+                />
+              </label>
+              <label className="mt-2 flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Descripción</span>
+                <textarea
+                  value={selected.description ?? ''}
+                  onChange={(ev) => onUpdate(selected.id, { description: ev.target.value || undefined })}
+                  rows={2}
+                  className="w-full resize-none rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+                />
+              </label>
+            </>
+          )}
           <div className="mt-2 flex items-center gap-1.5 text-[10px] text-parchment/40">
             <FiCopy className="h-3 w-3" />
             {selected.position.map((n) => n.toFixed(2)).join(', ')} • rY {selected.rotationY.toFixed(2)} • s {selected.scale.toFixed(2)}
