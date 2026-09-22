@@ -284,7 +284,7 @@ export default function App() {
       {isPhase1 && !showPhase1Overlay && highlightedPhotoId && !selectedPhoto && (
         <button
           onClick={() => setSelectedPhotoId(highlightedPhotoId)}
-          className="pointer-events-auto fixed bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#c9a86a]/40 bg-[#0a0f1e]/85 px-6 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment shadow-[0_0_30px_rgba(255,138,26,0.35)] backdrop-blur-xl"
+          className="pointer-events-auto fixed bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border border-gold/40 bg-[#0a0f1e]/85 px-6 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment shadow-[0_0_30px_rgba(255,138,26,0.35)] backdrop-blur-xl"
         >
           E — Ampliar: {sepiaPhotos.find((p) => p.id === highlightedPhotoId)?.title}
         </button>
