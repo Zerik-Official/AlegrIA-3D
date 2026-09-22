@@ -40,7 +40,7 @@ export const PhotoModal = memo(function PhotoModal({ open, src, title, descripti
       }
     >
       <div className="relative flex flex-1 items-center justify-center bg-[#1a1208] p-4">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-gold/15 bg-[#704214]">
+        <div className="relative aspect-4/3 w-full overflow-hidden rounded-xl border border-gold/15 bg-[#704214]">
           <img src={src} alt={title} className="h-full w-full object-cover opacity-90 sepia-[0.85] contrast-[1.05]" onError={(e) => (e.currentTarget.style.display = 'none')} />
           <div className="pointer-events-none absolute inset-0 bg-[#ff8a1a]/[0.14] mix-blend-overlay" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(0,0,0,0.42)_100%)]" />
