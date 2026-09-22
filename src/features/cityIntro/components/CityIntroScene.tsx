@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { SceneStars } from '@/shared/components/SceneAtmosphere'
+import { CityFillerSkyline } from '@/features/cityIntro/components/CityFillerSkyline'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
@@ -36,10 +37,11 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
 
   return (
     <group>
-      <SceneStars count={1100} radius={140} color="#eaf2ff" />
+      <SceneStars count={1400} radius={260} color="#eaf2ff" />
+      <CityFillerSkyline />
 
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, -12]} receiveShadow>
-        <planeGeometry args={[60, 90]} />
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0, -115]} receiveShadow>
+        <planeGeometry args={[320, 300]} />
         <meshStandardMaterial color="#0d0e14" roughness={0.85} metalness={0.15} />
       </mesh>
 
