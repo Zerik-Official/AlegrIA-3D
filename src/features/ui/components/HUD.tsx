@@ -37,9 +37,9 @@ export const HUD = memo(function HUD({ distance, nearBook, wormholeActive, onInt
       <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">AlegrIA — Experiencia Inmersiva</div>
+            <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">Biblioteca del Futuro — Año 2050</div>
             <div className="font-cinzel mt-1.5 text-[22px] tracking-[0.08em] text-parchment drop-shadow-[0_2px_20px_rgba(255,220,120,0.4)]">
-              La Biblioteca del Tiempo
+              Penumbra del Futuro Abandonado
             </div>
           </div>
 
@@ -68,14 +68,14 @@ export const HUD = memo(function HUD({ distance, nearBook, wormholeActive, onInt
               <span className="flex h-7 items-center justify-center rounded-md bg-parchment px-2.5 text-[13px] font-bold text-[#1a1205] shadow-[0_2px_0_#b89a4a]">E</span>
               <span className="flex items-center gap-2 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment">
                 <FiBookOpen className="h-4 w-4 text-gold-bright" />
-                Atravesar el vórtice
+                Despertar el Libro de Rosa
               </span>
             </button>
           )}
           {wormholeActive && (
             <div className="flex items-center gap-3 rounded-full border border-[#78b4ff]/50 bg-[#0a0f1e]/90 px-7 py-3.5 shadow-[0_0_45px_rgba(80,140,255,0.65)] backdrop-blur-xl">
               <LuOrbit className="h-5 w-5 animate-spin text-[#78b4ff]" />
-              <span className="text-[13px] font-semibold tracking-[0.22em] uppercase text-[#a8c8ff]">Viajando — Salto tipo No Man&apos;s Sky</span>
+              <span className="text-[13px] font-semibold tracking-[0.22em] uppercase text-[#a8c8ff]">Atravesando el Vórtice del Tiempo</span>
             </div>
           )}
         </div>
@@ -114,15 +114,17 @@ export const StartOverlay = memo(function StartOverlay({ onStart }: StartOverlay
       className="fixed inset-0 z-20 flex cursor-pointer flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(20,14,30,0.92)_0%,rgba(5,4,10,0.97)_70%)] p-8 text-center backdrop-blur-xs"
     >
       <div className="max-w-2xl">
-        <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">AlegrIA — Experiencia 3D</div>
+        <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena 0 — Año 2050</div>
         <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(255,180,40,0.5)]">
-          Prepárate para
-          <span className="block bg-linear-to-r from-gold-bright to-[#ff8a00] bg-clip-text text-transparent">iniciar tu viaje en el tiempo</span>
+          Biblioteca del Futuro
+          <span className="block bg-linear-to-r from-gold-bright to-[#ff8a00] bg-clip-text text-transparent">Abandonada</span>
         </h1>
         <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-parchment/70">
-          Frente a ti levita un libro ancestral sobre un pedestal dorado.
+          Año 2050. Muros cibernéticos resquebrajados — falta la pieza clave para volver a funcionar.
           <br />
-          Acércate, atraviesa el <span className="text-gold-bright font-semibold">vórtice</span> y despierta dentro de un museo olvidado.
+          En el centro, sobre pedestal rústico, <span className="text-gold-bright font-semibold">El Libro de Rosa</span> pulsa con resplandor dorado.
+          <br />
+          Acércate al libro, despierta el Vórtice del Tiempo y deja que el portal te absorba.
         </p>
         <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
           <FiMove className="h-3.5 w-3.5" /> WASD moverte <span className="opacity-30">•</span> <FiEye className="h-3.5 w-3.5" /> mouse mirar{' '}
@@ -134,7 +136,7 @@ export const StartOverlay = memo(function StartOverlay({ onStart }: StartOverlay
           className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)]"
         >
           <FiArrowRight className="h-4 w-4" />
-          Entrar al vórtice
+          Despertar el Portal
         </button>
         <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles — ESC para salir</p>
       </div>
@@ -159,14 +161,14 @@ interface PastOverlayProps {
 export const PastOverlay = memo(function PastOverlay({ onReturn }: PastOverlayProps) {
   return (
     <div className="fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(18,30,35,0.96)_0%,rgba(4,10,14,0.98)_75%)] p-8 text-center">
-      <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-[#a8c8ff]/70">Vórtice completado</div>
+      <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-[#a8c8ff]/70">Portal del Tiempo — Memoria Despertada</div>
       <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.18em] uppercase text-[#e8f0ff] drop-shadow-[0_0_30px_rgba(100,160,255,0.45)]">
         Museo del Tiempo
       </h1>
       <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-white/70">
-        Has atravesado el libro como un salto galáctico — estilo No Man&apos;s Sky.
+        El Libro de Rosa se ha abierto. El Vórtice del Tiempo te ha absorbido y la línea de tiempo ha comenzado.
         <br />
-        Ahora exploras un museo olvidado donde cada vitrina guarda un fragmento del pasado.
+        Ahora el museo cobra vida — cada vitrina guarda un fragmento de memoria por descubrir.
       </p>
       <button
         onClick={onReturn}
