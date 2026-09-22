@@ -51,6 +51,11 @@
   { "id": "planet-01", "type": "planet", "position": [48, 50, -110], "rotationY": 0, "scale": 4.5, "variant": "#c9855a" },
   { "id": "planet-02", "type": "planet", "position": [-55, 40, -150], "rotationY": 0, "scale": 3, "variant": "#7aa8c9" },
   { "id": "planet-03", "type": "planet", "position": [20, 60, -190], "rotationY": 0, "scale": 6, "variant": "#c9a877" },
+  { "id": "planet-04", "type": "planet", "position": [-85, 38, -35], "rotationY": 0, "scale": 2.6, "variant": "#b07ac9" },
+  { "id": "planet-05", "type": "planet", "position": [75, 62, -55], "rotationY": 0, "scale": 3.4, "variant": "#7ac9b8" },
+  { "id": "planet-06", "type": "planet", "position": [15, 48, 65], "rotationY": 0, "scale": 2.8, "variant": "#d8c8a0" },
+  { "id": "planet-07", "type": "planet", "position": [-40, 72, 95], "rotationY": 0, "scale": 5, "variant": "#c97a7a" },
+  { "id": "planet-08", "type": "planet", "position": [90, 30, 30], "rotationY": 0, "scale": 2.2, "variant": "#8aa8ff" },
 
   { "id": "library-facade", "type": "library-facade", "position": [0, 0, -46], "rotationY": 0, "scale": 1 }
 ]
