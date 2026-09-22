@@ -1,0 +1,79 @@
+[
+  {
+    "id": "house-01",
+    "type": "bahareque-house",
+    "position": [-4.2, 0, -4.8],
+    "rotationY": 0.18,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-02",
+    "type": "bahareque-house",
+    "position": [4.4, 0, -5.8],
+    "rotationY": -0.22,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "house-03",
+    "type": "bahareque-house",
+    "position": [-0.7, 0, -8.9],
+    "rotationY": 0.28,
+    "scale": 0.62,
+    "variant": "long"
+  },
+  {
+    "id": "house-04",
+    "type": "bahareque-house",
+    "position": [5.2, 0, 3.6],
+    "rotationY": -0.42,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "house-05",
+    "type": "bahareque-house",
+    "position": [-11.49, 0, 7.9],
+    "rotationY": 1.348598922778248,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-06",
+    "type": "bahareque-house",
+    "position": [-9.7, 0, -6.9],
+    "rotationY": 0.52,
+    "scale": 0.62,
+    "variant": "long"
+  },
+  {
+    "id": "house-07",
+    "type": "bahareque-house",
+    "position": [9.4, 0, -6.1],
+    "rotationY": -0.37,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "photo-01",
+    "type": "sepia-photo",
+    "position": [-1.2, 1.85, 3.8],
+    "rotationY": 0.22,
+    "scale": 1
+  },
+  {
+    "id": "photo-02",
+    "type": "sepia-photo",
+    "position": [1.6, 1.92, 4.4],
+    "rotationY": -0.18,
+    "scale": 1
+  },
+  {
+    "id": "portal-phase1",
+    "type": "portal",
+    "position": [0, 1.05, 15.8],
+    "rotationY": 0,
+    "scale": 1.55
+  }
+]
