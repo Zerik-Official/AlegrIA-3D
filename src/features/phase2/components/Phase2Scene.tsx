@@ -4,6 +4,8 @@ import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { ProceduralTrinitaria, ProceduralTree } from '@/shared/components/ReusableModels'
+import { PhaseEngine } from '@/engine/PhaseEngine'
+import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
 /**
  * Colorful facade with trinitaria balcony.
@@ -81,13 +83,22 @@ function GothicTemple({ position }: { position: [number, number, number] }) {
 }
 
 /**
+ * Props for {@link Phase2Scene}.
+ */
+interface Phase2SceneProps {
+  /** Optional engine-driven entities for editor. */
+  editableEntities?: EditableEntity[]
+}
+
+/**
  * Phase 2 scene — Época Dorada, Tradición y Carnaval (1919–1950s).
  * Fachadas coloridas, trinitarias, templo gótico y ambiente festivo.
  * All meshes swappable via registry (`phase2/*`).
  *
+ * @param props - Scene props
  * @returns Phase 2 group
  */
-export const Phase2Scene = memo(function Phase2Scene() {
+export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase2SceneProps) {
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
@@ -99,32 +110,38 @@ export const Phase2Scene = memo(function Phase2Scene() {
         <meshStandardMaterial color="#c9b896" roughness={0.96} />
       </mesh>
 
-      <ModelLoader
-        src={modelRegistry['phase2/facade'].path}
-        fallback={
-          <group>
-            <ColorfulFacade position={[-6.2, 0, -4.8]} color="#e85a3a" rotationY={0.18} />
-            <ColorfulFacade position={[-2.2, 0, -5.2]} color="#f2c94c" rotationY={-0.08} />
-            <ColorfulFacade position={[2.4, 0, -4.6]} color="#6b8e4e" rotationY={0.12} />
-            <ColorfulFacade position={[6.4, 0, -3.8]} color="#4a6fa5" rotationY={-0.22} />
-            <ColorfulFacade position={[-5.8, 0, 2.2]} color="#d86a7a" rotationY={0.32} />
-            <ColorfulFacade position={[5.8, 0, 2.8]} color="#f2a94c" rotationY={-0.28} />
-          </group>
-        }
-      />
+      {editableEntities ? (
+        <PhaseEngine entities={editableEntities} />
+      ) : (
+        <>
+          <ModelLoader
+            src={modelRegistry['phase2/facade'].path}
+            fallback={
+              <group>
+                <ColorfulFacade position={[-6.2, 0, -4.8]} color="#e85a3a" rotationY={0.18} />
+                <ColorfulFacade position={[-2.2, 0, -5.2]} color="#f2c94c" rotationY={-0.08} />
+                <ColorfulFacade position={[2.4, 0, -4.6]} color="#6b8e4e" rotationY={0.12} />
+                <ColorfulFacade position={[6.4, 0, -3.8]} color="#4a6fa5" rotationY={-0.22} />
+                <ColorfulFacade position={[-5.8, 0, 2.2]} color="#d86a7a" rotationY={0.32} />
+                <ColorfulFacade position={[5.8, 0, 2.8]} color="#f2a94c" rotationY={-0.28} />
+              </group>
+            }
+          />
 
-      <ModelLoader src={modelRegistry['phase2/temple'].path} fallback={<GothicTemple position={[0, 0, -9.2]} />} />
+          <ModelLoader src={modelRegistry['phase2/temple'].path} fallback={<GothicTemple position={[0, 0, -9.2]} />} />
 
-      <ProceduralTrinitaria position={[-5.8, 0.42, -3.8]} bloomColor="#d82a7a" scale={1.15} />
-      <ProceduralTrinitaria position={[-1.9, 0.42, -4.2]} bloomColor="#a52ad8" scale={1.05} />
-      <ProceduralTrinitaria position={[2.8, 0.42, -3.6]} bloomColor="#ff6a1a" scale={1.12} />
-      <ProceduralTrinitaria position={[6.6, 0.42, -2.8]} bloomColor="#d82a7a" scale={0.98} />
-      <ProceduralTrinitaria position={[-4.8, 0.42, 2.2]} bloomColor="#7a2ad8" scale={1.08} />
-      <ProceduralTrinitaria position={[5.2, 0.42, 3.0]} bloomColor="#d82a3a" scale={1.02} />
+          <ProceduralTrinitaria position={[-5.8, 0.42, -3.8]} bloomColor="#d82a7a" scale={1.15} />
+          <ProceduralTrinitaria position={[-1.9, 0.42, -4.2]} bloomColor="#a52ad8" scale={1.05} />
+          <ProceduralTrinitaria position={[2.8, 0.42, -3.6]} bloomColor="#ff6a1a" scale={1.12} />
+          <ProceduralTrinitaria position={[6.6, 0.42, -2.8]} bloomColor="#d82a7a" scale={0.98} />
+          <ProceduralTrinitaria position={[-4.8, 0.42, 2.2]} bloomColor="#7a2ad8" scale={1.08} />
+          <ProceduralTrinitaria position={[5.2, 0.42, 3.0]} bloomColor="#d82a3a" scale={1.02} />
 
-      <ProceduralTree position={[-7.8, 0, -1.2]} scale={1.2} foliageColor="#2a5a1e" />
-      <ProceduralTree position={[7.2, 0, -0.8]} scale={1.15} foliageColor="#1e4a14" />
-      <ProceduralTree position={[-3.2, 0, 5.2]} scale={0.92} foliageColor="#3a6a1e" />
+          <ProceduralTree position={[-7.8, 0, -1.2]} scale={1.2} foliageColor="#2a5a1e" />
+          <ProceduralTree position={[7.2, 0, -0.8]} scale={1.15} foliageColor="#1e4a14" />
+          <ProceduralTree position={[-3.2, 0, 5.2]} scale={0.92} foliageColor="#3a6a1e" />
+        </>
+      )}
 
       <ambientLight intensity={0.72} color="#ffe9c4" />
       <hemisphereLight args={['#ffecd0', '#bfa86a', 0.52]} />
