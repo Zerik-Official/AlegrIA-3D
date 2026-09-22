@@ -10,6 +10,9 @@ import { CyberWall } from '@/features/library/components/CyberWall'
 import { ScatteredBooks } from '@/features/library/components/ScatteredBooks'
 import { TimeVortexSequence } from '@/features/cinematics/components/TimeVortexSequence'
 
+import { PhaseEngine } from '@/engine/PhaseEngine'
+import type { EditableEntity } from '@/features/editor/config/editableEntities'
+
 /**
  * Props for {@link LibraryScene}.
  */
@@ -18,6 +21,8 @@ interface LibrarySceneProps {
   wormholeActive: boolean
   /** Wormhole progress in [0,1]. */
   wormholeProgress: number
+  /** Optional engine-driven entities for editor. */
+  editableEntities?: EditableEntity[]
 }
 
 /**
@@ -28,7 +33,7 @@ interface LibrarySceneProps {
  * @param props - Scene state
  * @returns Library group
  */
-export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormholeProgress }: LibrarySceneProps) {
+export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormholeProgress, editableEntities }: LibrarySceneProps) {
   const libraryRef = useRef<THREE.Group>(null)
 
   useFrame(() => {
@@ -100,51 +105,53 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
         </mesh>
       ))}
 
-      <CyberWall position={[0, 2.6, -11]} size={[22, 5.2, 0.45]} missingIndex={5} />
-      <mesh position={[-6.5, 2.6, 11]} receiveShadow>
-        <boxGeometry args={[9, 5.2, 0.45]} />
-        <meshStandardMaterial color="#0e1320" roughness={0.88} metalness={0.12} />
-      </mesh>
-      <mesh position={[6.5, 2.6, 11]} receiveShadow>
-        <boxGeometry args={[9, 5.2, 0.45]} />
-        <meshStandardMaterial color="#0e1320" roughness={0.88} metalness={0.12} />
-      </mesh>
-      <mesh position={[0, 4.2, 11]}>
-        <boxGeometry args={[5, 1.8, 0.45]} />
-        <meshStandardMaterial color="#0a0f18" roughness={0.86} metalness={0.18} />
-      </mesh>
+      {editableEntities ? (
+        <PhaseEngine entities={editableEntities} />
+      ) : (
+        <>
+          <CyberWall position={[0, 2.6, -11]} size={[22, 5.2, 0.45]} missingIndex={5} />
+          <mesh position={[-6.5, 2.6, 11]} receiveShadow>
+            <boxGeometry args={[9, 5.2, 0.45]} />
+            <meshStandardMaterial color="#0e1320" roughness={0.88} metalness={0.12} />
+          </mesh>
+          <mesh position={[6.5, 2.6, 11]} receiveShadow>
+            <boxGeometry args={[9, 5.2, 0.45]} />
+            <meshStandardMaterial color="#0e1320" roughness={0.88} metalness={0.12} />
+          </mesh>
+          <mesh position={[0, 4.2, 11]}>
+            <boxGeometry args={[5, 1.8, 0.45]} />
+            <meshStandardMaterial color="#0a0f18" roughness={0.86} metalness={0.18} />
+          </mesh>
 
-      <CyberWall position={[-11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={Math.PI / 2} missingIndex={2} />
-      <CyberWall position={[11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={-Math.PI / 2} missingIndex={7} />
+          <CyberWall position={[-11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={Math.PI / 2} missingIndex={2} />
+          <CyberWall position={[11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={-Math.PI / 2} missingIndex={7} />
 
-      {torchLights.map(([x, y, z], i) => (
-        <pointLight key={i} position={[x, y, z]} intensity={0.75} distance={5.2} color="#0ab8ff" decay={2} />
-      ))}
-      {torchMeshes.map(([x, y, z], i) => (
-        <mesh key={`t-${i}`} position={[x, y, z]}>
-          <cylinderGeometry args={[0.04, 0.04, 0.45, 8]} />
-          <meshStandardMaterial color="#0a1a26" emissive="#0ab8ff" emissiveIntensity={0.18} />
-        </mesh>
-      ))}
+          <Bookshelf position={[-7.2, 1.6, -10.05]} width={5.2} />
+          <Bookshelf position={[0, 1.6, -10.05]} width={5.2} />
+          <Bookshelf position={[7.2, 1.6, -10.05]} width={5.2} />
 
-      <Bookshelf position={[-7.2, 1.6, -10.05]} width={5.2} />
-      <Bookshelf position={[0, 1.6, -10.05]} width={5.2} />
-      <Bookshelf position={[7.2, 1.6, -10.05]} width={5.2} />
+          <Bookshelf position={[-10.05, 1.6, -6]} rotationY={Math.PI / 2} width={5} />
+          <Bookshelf position={[-10.05, 1.6, 0]} rotationY={Math.PI / 2} width={5} />
+          <Bookshelf position={[-10.05, 1.6, 6]} rotationY={Math.PI / 2} width={5} />
 
-      <Bookshelf position={[-10.05, 1.6, -6]} rotationY={Math.PI / 2} width={5} />
-      <Bookshelf position={[-10.05, 1.6, 0]} rotationY={Math.PI / 2} width={5} />
-      <Bookshelf position={[-10.05, 1.6, 6]} rotationY={Math.PI / 2} width={5} />
+          <Bookshelf position={[10.05, 1.6, -6]} rotationY={-Math.PI / 2} width={5} />
+          <Bookshelf position={[10.05, 1.6, 0]} rotationY={-Math.PI / 2} width={5} />
+          <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
 
-      <Bookshelf position={[10.05, 1.6, -6]} rotationY={-Math.PI / 2} width={5} />
-      <Bookshelf position={[10.05, 1.6, 0]} rotationY={-Math.PI / 2} width={5} />
-      <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
-
-      <ScatteredBooks />
+          <ScatteredBooks />
+        </>
+      )}
       </group>
 
-      <Pedestal />
+      {editableEntities ? (
+        <PhaseEngine entities={editableEntities.filter((e) => e.type === 'pedestal' || e.type === 'book')} context={{ ritualProgress: wormholeProgress }} />
+      ) : (
+        <>
+          <Pedestal />
+          <LevitatingBook ritualProgress={wormholeProgress} />
+        </>
+      )}
       <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
-      <LevitatingBook ritualProgress={wormholeProgress} />
 
       <Wormhole active={wormholeActive} progress={wormholeProgress} />
       <TimeVortexParticles active={wormholeActive} progress={wormholeProgress} />
