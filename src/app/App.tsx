@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -12,6 +12,7 @@ import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import { PhotoModal } from '@/shared/components/PhotoModal'
 import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
+import { EditorFlyControls } from '@/features/editor/components/EditorFlyControls'
 import { catalogForScene } from '@/engine/config/entityCatalog'
 import { WormholeCamera } from '@/app/components/WormholeCamera'
 import { EditorTargetFinder } from '@/app/components/EditorTargetFinder'
@@ -46,6 +47,7 @@ export default function App() {
   const toggleEditor = useCallback(() => setIsEditorEnabled((v) => !v), [])
   const closeEditor = useCallback(() => setIsEditorEnabled(false), [])
   const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
+  const orbitControlsRef = useRef<any>(null)
 
   usePointerLockGuard(
     isEditorEnabled ||
@@ -115,7 +117,8 @@ export default function App() {
         {phaseFlow.isPhase2 && !isEditorEnabled && (
           <PlayerControls enabled={!phaseFlow.showPhase2Overlay} onPositionChange={proximity.handlePosition} bounds={appConfig.player.phase2Bounds} />
         )}
-        {isEditorEnabled && <OrbitControls enableDamping={false} />}
+        {isEditorEnabled && <OrbitControls ref={orbitControlsRef} enableDamping={false} />}
+        {isEditorEnabled && <EditorFlyControls controlsRef={orbitControlsRef} enabled={isEditorEnabled} />}
         {isEditorEnabled && <EditorTargetFinder selectedId={editors.currentEditor.selectedId} onFound={setEditorTarget} />}
         {isEditorEnabled && (
           <EditorGizmo
