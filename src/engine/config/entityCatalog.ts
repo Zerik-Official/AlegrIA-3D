@@ -9,7 +9,7 @@
 import type { EditableEntity } from '@/engine/types'
 
 /** Scenes that own an editor instance (see `App.tsx`'s `useEditor` calls). */
-export type SceneId = 'library' | 'phase1' | 'phase2'
+export type SceneId = 'cityIntro' | 'library' | 'phase1' | 'phase2'
 
 /**
  * One addable element: its renderer `type`, a human label for the editor UI,
@@ -31,6 +31,48 @@ export interface EntityCatalogItem {
  * Add a row here to make a new element type available in the editor's Add menu.
  */
 export const entityCatalog: EntityCatalogItem[] = [
+  {
+    type: 'path-point',
+    label: 'Punto de Camino',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '0' },
+  },
+  {
+    type: 'skyscraper',
+    label: 'Rascacielos',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#3a4a6a' },
+  },
+  {
+    type: 'streetlight',
+    label: 'Farola',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'flying-car',
+    label: 'Auto Volador',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 6, 0], rotationY: 0, scale: 1, variant: '#ff6a3a' },
+  },
+  {
+    type: 'flying-train',
+    label: 'Tren Volador',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 9, 0], rotationY: 0, scale: 1, variant: '#7ad8ff' },
+  },
+  {
+    type: 'moon',
+    label: 'Luna',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [-20, 26, -60], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'library-facade',
+    label: 'Fachada de Biblioteca',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
   {
     type: 'cyber-wall',
     label: 'Muro Cyber',
@@ -94,7 +136,7 @@ export const entityCatalog: EntityCatalogItem[] = [
   {
     type: 'generic',
     label: 'Genérico (placeholder)',
-    scenes: ['library', 'phase1', 'phase2'],
+    scenes: ['cityIntro', 'library', 'phase1', 'phase2'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
 ]
