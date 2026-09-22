@@ -1,18 +1,24 @@
 import { useEffect, useRef } from 'react'
 
 /**
- * Footstep synthesis using Web Audio API (no external files).
- * Uses filtered noise + low thud. Falls back to no-op if AudioContext unavailable.
- * Optionally you can replace with CDN samples:
- *  - Pixabay: https://pixabay.com/sound-effects/search/footsteps/
- *  - Freesound: https://freesound.org/search/?q=footsteps
- *  - Mixkit: https://mixkit.co/free-sound-effects/footsteps/
+ * Synthesizes footsteps using Web Audio API without external assets.
+ * Alternates left/right timbre and adapts interval to sprint state.
+ * Replace with sample playback (e.g. Howler) by swapping {@link playStep}.
  *
- * API example (Howler alternative):
- *   new Audio("https://cdn.pixabay.com/audio/2022/03/24/audio_...mp3").play()
+ * @param enabled - Whether footstep synthesis is active
+ * @param isMoving - Callback returning true when the player is moving
+ * @param isSprinting - Callback returning true when sprinting
+ * @link https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+ * @example
+ * ```tsx
+ * useFootsteps(true, () => moving, () => sprinting)
+ * ```
  */
-
-export function useFootsteps(enabled: boolean, isMoving: () => boolean, isSprinting: () => boolean) {
+export function useFootsteps(
+  enabled: boolean,
+  isMoving: () => boolean,
+  isSprinting: () => boolean,
+): void {
   const ctxRef = useRef<AudioContext | null>(null)
   const lastStepRef = useRef(0)
   const stepCountRef = useRef(0)
@@ -21,29 +27,34 @@ export function useFootsteps(enabled: boolean, isMoving: () => boolean, isSprint
   useEffect(() => {
     if (!enabled) return
 
-    // Lazy create AudioContext on first user gesture; also try now
-    const ensureCtx = () => {
+    /**
+     * Lazily creates or resumes the AudioContext on user gesture.
+     * @returns Active AudioContext or null when unavailable
+     */
+    const ensureCtx = (): AudioContext | null => {
       if (!ctxRef.current) {
-        const AC = (window as unknown as { AudioContext: typeof AudioContext; webkitAudioContext: typeof AudioContext }).AudioContext
-          || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-        if (AC) {
-          ctxRef.current = new AC()
-        }
+        const AC =
+          (window as unknown as { AudioContext: typeof AudioContext; webkitAudioContext: typeof AudioContext })
+            .AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+        if (AC) ctxRef.current = new AC()
       }
-      if (ctxRef.current && ctxRef.current.state === 'suspended') {
+      if (ctxRef.current?.state === 'suspended') {
         ctxRef.current.resume().catch(() => {})
       }
       return ctxRef.current
     }
 
-    // Resume on any interaction (click/key)
-    const onInteract = () => ensureCtx()
+    const onInteract = (): AudioContext | null => ensureCtx()
     window.addEventListener('click', onInteract, { once: true })
     window.addEventListener('keydown', onInteract, { once: true })
 
     ensureCtx()
 
-    const playStep = () => {
+    /**
+     * Plays a single footstep with thud + bandpassed noise transient.
+     */
+    const playStep = (): void => {
       const ctx = ensureCtx()
       if (!ctx) return
 
@@ -52,7 +63,6 @@ export function useFootsteps(enabled: boolean, isMoving: () => boolean, isSprint
       const isLeft = stepCountRef.current % 2 === 0
       stepCountRef.current += 1
 
-      // Thud body
       const osc = ctx.createOscillator()
       const oscGain = ctx.createGain()
       const filter = ctx.createBiquadFilter()
@@ -65,7 +75,6 @@ export function useFootsteps(enabled: boolean, isMoving: () => boolean, isSprint
       oscGain.gain.linearRampToValueAtTime(isSprint ? 0.42 : 0.28, t + 0.012)
       oscGain.gain.exponentialRampToValueAtTime(0.01, t + 0.22)
 
-      // Noise transient (stone/wood)
       const bufferSize = ctx.sampleRate * 0.08
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
       const data = buffer.getChannelData(0)
@@ -83,7 +92,6 @@ export function useFootsteps(enabled: boolean, isMoving: () => boolean, isSprint
       noiseGain.gain.linearRampToValueAtTime(isSprint ? 0.22 : 0.14, t + 0.005)
       noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.09)
 
-      // Master subtle room
       const master = ctx.createGain()
       master.gain.setValueAtTime(0.95, t)
 
@@ -96,7 +104,7 @@ export function useFootsteps(enabled: boolean, isMoving: () => boolean, isSprint
       noise.stop(t + 0.09)
     }
 
-    const tick = () => {
+    const tick = (): void => {
       if (!isMoving()) return
       const now = performance.now()
       const isSprint = isSprinting()
