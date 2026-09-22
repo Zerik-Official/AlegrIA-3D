@@ -5,6 +5,7 @@ import { FiBox } from 'react-icons/fi'
 import { Modal } from '@/shared/components/Modal'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
+import { modelPreviews } from '@/features/editor/config/modelPreviews'
 
 /**
  * Props for {@link ModelBrowserModal}.
@@ -62,6 +63,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
 
   const [selectedKey, setSelectedKey] = useState<string>(entries[0]?.[0] ?? '')
   const selected = modelRegistry[selectedKey]
+  const PreviewComponent = modelPreviews[selectedKey]
 
   return (
     <Modal open={open} title="Explorador de Modelos" icon={<FiBox className="h-4 w-4 text-gold" />} onClose={onClose} maxWidthClassName="max-w-5xl">
@@ -92,7 +94,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
                 <directionalLight position={[4, 6, 3]} intensity={1.2} castShadow />
                 <Bounds fit clip observe margin={2.4}>
                   <Center>
-                    <ModelLoader src={selected.path} fallback={<PreviewPlaceholder />} />
+                    <ModelLoader src={selected.path} fallback={PreviewComponent ? <PreviewComponent /> : <PreviewPlaceholder />} />
                   </Center>
                 </Bounds>
                 <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
@@ -108,6 +110,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
             </div>
             <div className="mt-1">
               Fallback procedural: <span className="text-parchment/40">{selected?.fallback}</span>
+              {!PreviewComponent && <span className="text-parchment/30"> (aún sin diseño — cuadro genérico)</span>}
             </div>
           </div>
         </div>
