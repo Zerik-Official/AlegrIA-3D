@@ -9,6 +9,7 @@ Drop Blender `.glb` exports here to override procedural fallbacks without code c
 | `cityIntro/flying-car` | `flying-car.glb` | low sporty hull with light trail |
 | `cityIntro/flying-train` | `flying-train.glb` | nosed multi-car maglev |
 | `cityIntro/moon` | `moon.glb` | glowing sphere + halo |
-| `cityIntro/library-facade` | `library-facade.glb` | columned facade with glowing door |
+| `cityIntro/library-facade` | `library-facade.glb` | weathered Republican-style facade with arcade, shutters and pediment |
+| `cityIntro/planet` | `planet.glb` | banded, self-rotating distant planet |
 
 Export: Blender → File → Export → glTF 2.0 (.glb), Apply Modifiers, +Y Up.
