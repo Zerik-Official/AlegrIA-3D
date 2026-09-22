@@ -8,9 +8,10 @@
  * - `idle` waiting for user to start
  * - `exploring` free movement inside the library
  * - `wormhole` transition animation
- * - `museum` exploration of the museum hall
+ * - `phase1` Barrio Abajo origins (1857–1900) with bahareque and arroyo
+ * - `museum` deprecated alias for `phase1`
  */
-export type GamePhase = 'idle' | 'exploring' | 'wormhole' | 'museum'
+export type GamePhase = 'idle' | 'exploring' | 'wormhole' | 'phase1' | 'museum'
 
 /** @deprecated Use {@link GamePhase} */
 export type Phase = GamePhase
