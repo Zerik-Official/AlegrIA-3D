@@ -45,27 +45,28 @@ function ProceduralBookGeometry({ onNear: _onNear, ritualProgress = 0 }: Levitat
     const r = ritualProgress
     if (groupRef.current) {
       const baseY = 1.78 + Math.sin(t * 0.9) * 0.18 + Math.sin(t * 1.7) * 0.04
-      const lift = r * 0.45 + Math.sin(t * (2.2 + r * 6)) * r * 0.08
+      const lift = r * 1.15 + Math.sin(t * (2.2 + r * 6)) * r * 0.14
       groupRef.current.position.y = baseY + lift
-      const spin = 0.35 + r * 6.2
+      const spin = 0.35 + r * 9.5
       groupRef.current.rotation.y = t * spin
-      groupRef.current.rotation.z = Math.sin(t * 0.6) * 0.08 + r * Math.sin(t * 8) * 0.12
-      groupRef.current.rotation.x = Math.sin(t * 0.5) * 0.06 + r * 0.18
-      const s = 1 + r * 0.22
+      groupRef.current.rotation.z = Math.sin(t * 0.6) * 0.08 + r * Math.sin(t * 9) * 0.18
+      groupRef.current.rotation.x = Math.sin(t * 0.5) * 0.06 + r * 0.28
+      const s = 1 + r * 0.82 + Math.sin(t * 2.2) * r * 0.06
       groupRef.current.scale.set(s, s, s)
     }
     if (glowRef.current) {
-      const s = 1 + Math.sin(t * 1.4) * 0.12 + r * 0.9
+      const s = 1 + Math.sin(t * 1.4) * 0.12 + r * 1.85
       glowRef.current.scale.set(s, s, s)
       const mat = glowRef.current.material as THREE.MeshStandardMaterial
-      mat.opacity = 0.22 + Math.sin(t * 1.1) * 0.08 + r * 0.42
-      mat.emissiveIntensity = 1.2 + r * 2.8
+      mat.opacity = 0.22 + Math.sin(t * 1.1) * 0.08 + r * 0.52
+      mat.emissiveIntensity = 1.2 + r * 4.2
     }
     if (coverRef.current) {
-      const open = 0.18 + r * 1.05
-      coverRef.current.rotation.y = -0.12 - r * 0.62
-      coverRef.current.rotation.x = open * -0.18
-      coverRef.current.position.y = 0.09 + r * 0.18
+      const open = 0.18 + r * 1.45
+      coverRef.current.rotation.y = -0.12 - r * 0.92
+      coverRef.current.rotation.x = open * -0.22
+      coverRef.current.position.y = 0.09 + r * 0.28
+      coverRef.current.rotation.z = r * 0.18
     }
     if (particlesRef.current) {
       const pos = particlesRef.current.geometry.attributes.position as THREE.BufferAttribute
