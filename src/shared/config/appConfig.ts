@@ -34,6 +34,18 @@ export const playerConfig = {
 } as const
 
 /**
+ * City intro (Escena -1: prologue walk) configuration.
+ */
+export const cityIntroConfig = {
+  /** Constant forward speed along the walk path, in units per second. */
+  walkSpeed: 2.6,
+  /** Camera eye height while walking the street. */
+  eyeHeight: 1.75,
+  /** Progress in [0,1] along the path at which the player can enter the library. */
+  arrivalThreshold: 0.985,
+} as const
+
+/**
  * Wormhole transition configuration.
  */
 export const wormholeConfig = {
@@ -66,6 +78,7 @@ export const renderConfig = {
  */
 export const appConfig = {
   player: playerConfig,
+  cityIntro: cityIntroConfig,
   wormhole: wormholeConfig,
   render: renderConfig,
 } as const
