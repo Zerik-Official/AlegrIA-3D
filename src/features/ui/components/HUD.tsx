@@ -12,6 +12,8 @@ interface HUDProps {
   wormholeActive: boolean
   /** Interaction handler. */
   onInteract: () => void
+  /** Whether the HUD is rendered inside Phase 1. */
+  isPhase1?: boolean
 }
 
 /**
@@ -21,7 +23,7 @@ interface HUDProps {
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, isPhase1 = false }: HUDProps) {
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.65)_100%)]" />
@@ -35,9 +37,11 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract }: H
       <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">Biblioteca del Futuro — Año 2050</div>
+            <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">
+              {isPhase1 ? 'Fase 1 — Barrio Abajo (1857–1900)' : 'Biblioteca del Futuro — Año 2050'}
+            </div>
             <div className="font-cinzel mt-1.5 text-[22px] tracking-[0.08em] text-parchment drop-shadow-[0_2px_20px_rgba(255,220,120,0.4)]">
-              Penumbra del Futuro Abandonado
+              {isPhase1 ? 'Orígenes • Abajo del Río Magdalena' : 'Penumbra del Futuro Abandonado'}
             </div>
           </div>
 
@@ -83,6 +87,10 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract }: H
         <FiClock className="h-3.5 w-3.5 opacity-70 text-gold" />
         {wormholeActive ? (
           <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span>
+        ) : isPhase1 ? (
+          <span>
+            1857–1900 <span className="text-parchment/35">•</span> Barrio Abajo • Bahareque y Andenes Altos
+          </span>
         ) : (
           <span>
             25 de Septiembre — 2050 <span className="text-parchment/35">•</span> Biblioteca del Futuro
@@ -165,14 +173,14 @@ interface PastOverlayProps {
 export const PastOverlay = memo(function PastOverlay({ onReturn }: PastOverlayProps) {
   return (
     <div className="fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(18,30,35,0.96)_0%,rgba(4,10,14,0.98)_75%)] p-8 text-center">
-      <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-[#a8c8ff]/70">Portal del Tiempo — Memoria Despertada</div>
+      <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-[#a8c8ff]/70">Fase 1 — Orígenes (Fines S. XIX – Inicios S. XX)</div>
       <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.18em] uppercase text-[#e8f0ff] drop-shadow-[0_0_30px_rgba(100,160,255,0.45)]">
-        Museo del Tiempo
+        Barrio Abajo
       </h1>
       <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-white/70">
-        El Libro de Rosa se ha abierto. El Vórtice del Tiempo te ha absorbido y la línea de tiempo ha comenzado.
+        “Abajo del Río” Magdalena — 1857, declaratoria de ciudad, auge portuario de Aduana y Estación Montoya, inmigración en pasajes y arquitectura de bahareque con andenes altos contra los arroyos.
         <br />
-        Ahora el museo cobra vida — cada vitrina guarda un fragmento de memoria por descubrir.
+        Camina entre tierra y fotos sepia flotando. Cada imagen guarda un fragmento de memoria.
       </p>
       <button
         onClick={onReturn}
