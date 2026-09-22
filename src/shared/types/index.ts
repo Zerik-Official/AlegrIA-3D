@@ -1,0 +1,60 @@
+/**
+ * Core domain types for the AlegrIA 3D experience.
+ * @module shared/types
+ */
+
+/**
+ * Application flow phase.
+ * - `idle` waiting for user to start
+ * - `exploring` free movement inside the library
+ * - `wormhole` transition animation
+ * - `museum` exploration of the museum hall
+ */
+export type GamePhase = 'idle' | 'exploring' | 'wormhole' | 'museum'
+
+/** @deprecated Use {@link GamePhase} */
+export type Phase = GamePhase
+
+/**
+ * XZ player position on the ground plane.
+ */
+export interface PlayerPosition {
+  x: number
+  z: number
+}
+
+/**
+ * Axis-aligned movement bounds.
+ */
+export interface Bounds {
+  minX: number
+  maxX: number
+  minZ: number
+  maxZ: number
+}
+
+/**
+ * Keyboard movement state.
+ */
+export interface KeysState {
+  w: boolean
+  a: boolean
+  s: boolean
+  d: boolean
+  shift: boolean
+}
+
+/**
+ * Registry entry for a replaceable 3D model.
+ * @property path - Public URL to the `.glb/.gltf` asset (under `/models/...`)
+ * @property fallback - Identifier of the procedural fallback to use when the asset is missing
+ */
+export interface ModelEntry {
+  path: string
+  fallback: string
+}
+
+/**
+ * Map of logical model names to registry entries.
+ */
+export type ModelRegistry = Record<string, ModelEntry>
