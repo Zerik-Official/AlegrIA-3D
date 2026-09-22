@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { LibraryScene } from '@/features/library/components/LibraryScene'
 import { Phase1Scene } from '@/features/phase1/components/Phase1Scene'
+import { Phase2Scene } from '@/features/phase2/components/Phase2Scene'
 import { PlayerControls } from '@/features/player/components/PlayerControls'
 import { HUD, StartOverlay, PastOverlay } from '@/features/ui/components/HUD'
 import { appConfig } from '@/shared/config/appConfig'
@@ -112,10 +113,14 @@ export default function App() {
   const [distance, setDistance] = useState(9)
   const [wormholeProgress, setWormholeProgress] = useState(0)
   const [showPhase1Overlay, setShowPhase1Overlay] = useState(true)
+  const [showPhase2Overlay, setShowPhase2Overlay] = useState(true)
+  const [wormholeTarget, setWormholeTarget] = useState<GamePhase>('phase1')
   const playerPos = useRef(new THREE.Vector3(0, appConfig.player.eyeHeight, 9))
   const wormholeRaf = useRef<number | null>(null)
 
   const nearBook = distance < appConfig.player.interactDistance
+  const portalPos: [number, number] = [0, 14.8]
+  const nearPortal = Math.hypot(playerPos.current.x - portalPos[0], playerPos.current.z - portalPos[1]) < 2.6
 
   /**
    * Updates cached player position and distance to the central book.
@@ -130,39 +135,55 @@ export default function App() {
   /**
    * Starts the wormhole timeline with cubic easing and phase transition.
    */
-  const startWormhole = useCallback(() => {
-    if (phase === 'wormhole' || phase === 'phase1' || phase === 'museum') return
-    setPhase('wormhole')
-    const duration = appConfig.wormhole.durationMs
-    const start = performance.now()
-
-    /**
-     * @param now - Timestamp from requestAnimationFrame
-     */
-    const tick = (now: number): void => {
-      const p = Math.min((now - start) / duration, 1)
-      const eased = easeCubicInOut(p)
-      setWormholeProgress(eased)
-      if (p < 1) {
-        wormholeRaf.current = requestAnimationFrame(tick)
-      } else {
-        setPhase('phase1')
-        setWormholeProgress(0)
-        setShowPhase1Overlay(true)
+  const startWormhole = useCallback(
+    (target: GamePhase = 'phase1') => {
+      if (phase === 'wormhole' || phase === target) return
+      setWormholeTarget(target)
+      setPhase('wormhole')
+      const duration = appConfig.wormhole.durationMs
+      const start = performance.now()
+      const tick = (now: number): void => {
+        const p = Math.min((now - start) / duration, 1)
+        const eased = easeCubicInOut(p)
+        setWormholeProgress(eased)
+        if (p < 1) {
+          wormholeRaf.current = requestAnimationFrame(tick)
+        } else {
+          setPhase(target)
+          setWormholeProgress(0)
+          if (target === 'phase1') setShowPhase1Overlay(true)
+          if (target === 'phase2') setShowPhase2Overlay(true)
+        }
       }
-    }
-    wormholeRaf.current = requestAnimationFrame(tick)
-  }, [phase])
+      wormholeRaf.current = requestAnimationFrame(tick)
+    },
+    [phase]
+  )
+
+  const startWormholeToPhase1 = useCallback(() => startWormhole('phase1'), [startWormhole])
+  const startWormholeToPhase2 = useCallback(() => startWormhole('phase2'), [startWormhole])
 
   const handleStart = useCallback(() => setPhase('exploring'), [])
   const handleReturnToLibrary = useCallback(() => window.location.reload(), [])
   const handleDismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
+  const handleDismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
 
   const isPhase1 = phase === 'phase1' || phase === 'museum'
+  const isPhase2 = phase === 'phase2'
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if ((e.key.toLowerCase() === 'e' || e.key === 'Enter') && isPhase1 && nearPortal && !showPhase1Overlay) {
+        startWormholeToPhase2()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [isPhase1, nearPortal, showPhase1Overlay, startWormholeToPhase2])
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
-      <KeyListener nearBook={nearBook} phase={phase} onInteract={startWormhole} />
+      <KeyListener nearBook={nearBook} phase={phase} onInteract={startWormholeToPhase1} />
 
       <Canvas
         shadows
@@ -171,13 +192,15 @@ export default function App() {
         camera={{ fov: 72, near: 0.1, far: 80, position: [0, appConfig.player.eyeHeight, 9] }}
         style={{ width: '100%', height: '100%' }}
       >
-        {!isPhase1 ? <fog attach="fog" args={['#0a0806', 9, 26]} /> : <fog attach="fog" args={['#8a6a3a', 14, 38]} />}
-        {!isPhase1 ? <color attach="background" args={['#08060a']} /> : <color attach="background" args={['#6b4a2a']} />}
+        {!isPhase1 && !isPhase2 ? <fog attach="fog" args={['#0a0806', 9, 26]} /> : isPhase1 ? <fog attach="fog" args={['#8a6a3a', 14, 38]} /> : <fog attach="fog" args={['#bfa86a', 12, 32]} />}
+        {!isPhase1 && !isPhase2 ? <color attach="background" args={['#08060a']} /> : isPhase1 ? <color attach="background" args={['#6b4a2a']} /> : <color attach="background" args={['#c9b896']} />}
 
-        {!isPhase1 ? (
+        {!isPhase1 && !isPhase2 ? (
           <LibraryScene wormholeActive={phase === 'wormhole'} wormholeProgress={wormholeProgress} />
-        ) : (
+        ) : isPhase1 ? (
           <Phase1Scene />
+        ) : (
+          <Phase2Scene />
         )}
 
         {phase === 'exploring' && (
@@ -190,26 +213,78 @@ export default function App() {
             bounds={appConfig.player.phase1Bounds}
           />
         )}
+        {isPhase2 && (
+          <PlayerControls
+            enabled={!showPhase2Overlay}
+            onPositionChange={handlePosition}
+            bounds={appConfig.player.phase2Bounds}
+          />
+        )}
 
         <WormholeCamera active={phase === 'wormhole'} progress={wormholeProgress} />
       </Canvas>
 
       {phase === 'idle' && <StartOverlay onStart={handleStart} />}
-      {phase === 'exploring' && <HUD nearBook={nearBook} wormholeActive={false} onInteract={startWormhole} />}
-      {phase === 'wormhole' && <HUD nearBook={nearBook} wormholeActive onInteract={startWormhole} />}
+      {phase === 'exploring' && <HUD nearBook={nearBook} wormholeActive={false} onInteract={startWormholeToPhase1} />}
+      {phase === 'wormhole' && (
+        <HUD
+          nearBook={nearBook}
+          wormholeActive
+          onInteract={() => {}}
+          isPhase1={wormholeTarget === 'phase2'}
+        />
+      )}
       {isPhase1 && !showPhase1Overlay && (
         <>
           <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} isPhase1 />
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
             Explora • Aduana • Estación Montoya • Pasaje de los Chinos
           </div>
+          <div className="pointer-events-none fixed bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-[#0a0f1e]/90 px-4 py-2 text-[11px] font-semibold tracking-[0.14em] uppercase text-parchment shadow backdrop-blur">
+            Portal al sur — Avanza a la Época Dorada
+          </div>
         </>
       )}
       {isPhase1 && showPhase1Overlay && <PastOverlay onReturn={handleDismissPhase1Intro} />}
-      {isPhase1 && !showPhase1Overlay && (
+      {isPhase1 && !showPhase1Overlay && nearPortal && (
+        <button
+          onClick={startWormholeToPhase2}
+          className="pointer-events-auto fixed bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#ff8a1a]/40 bg-[#0a0f1e]/85 px-6 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment shadow-[0_0_30px_rgba(255,138,26,0.35)] backdrop-blur-xl"
+        >
+          Atravesar a la Época Dorada (1919–1950)
+        </button>
+      )}
+      {isPhase2 && !showPhase2Overlay && (
+        <>
+          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} isPhase1 />
+          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1a1208]/10 bg-[#f5e6c8]/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1a1208]/80 shadow backdrop-blur">
+            Fase 2 — Época Dorada • Carnaval y Béisbol • Trinitarias
+          </div>
+        </>
+      )}
+      {isPhase2 && showPhase2Overlay && (
+        <div className="fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(40,14,30,0.96)_0%,rgba(10,4,14,0.98)_75%)] p-8 text-center">
+          <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-[#ff8ad2]/70">Fase 2 — Época Dorada (1919–1950s)</div>
+          <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.18em] uppercase text-[#ffe0f0] drop-shadow-[0_0_30px_rgba(255,90,160,0.45)]">
+            Tradición y Carnaval
+          </h1>
+          <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-white/70">
+            Quinta de Turín (1919), Parroquia Sagrado Corazón (1920–22), radio de tubos con béisbol, fiesta de San Martín y disfraces.
+            <br />
+            Fachadas coloridas, trinitarias 3D y la silueta gótica iluminada te esperan.
+          </p>
+          <button
+            onClick={handleDismissPhase2Intro}
+            className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-[#ff8ad2] to-[#c94a8a] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-white shadow-[0_8px_30px_rgba(255,90,150,0.35)]"
+          >
+            Explorar el Carnaval
+          </button>
+        </div>
+      )}
+      {isPhase2 && !showPhase2Overlay && (
         <button
           onClick={handleReturnToLibrary}
-          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#3d2b1f] shadow backdrop-blur hover:bg-[#fff8e0]"
+          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#1a1208]/10 bg-[#f5e6c8]/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#1a1208] shadow backdrop-blur hover:bg-white"
         >
           Volver a la biblioteca
         </button>
@@ -217,7 +292,7 @@ export default function App() {
 
       {phase === 'exploring' && nearBook && (
         <div
-          onClick={startWormhole}
+          onClick={startWormholeToPhase1}
           style={{
             position: 'fixed',
             inset: 0,
@@ -226,6 +301,19 @@ export default function App() {
             pointerEvents: 'auto',
           }}
           title="Click para atravesar el vórtice"
+        />
+      )}
+      {isPhase1 && !showPhase1Overlay && nearPortal && (
+        <div
+          onClick={startWormholeToPhase2}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9,
+            cursor: 'pointer',
+            pointerEvents: 'auto',
+          }}
+          title="Click para atravesar al portal"
         />
       )}
     </div>
