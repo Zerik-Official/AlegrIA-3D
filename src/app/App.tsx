@@ -104,7 +104,7 @@ export default function App() {
         <fog attach="fog" args={[visual.fog.color, visual.fog.near, visual.fog.far]} />
         <color attach="background" args={[visual.background]} />
 
-        {visual.sceneId === 'cityIntro' ? (
+        {phaseFlow.phase === 'idle' && !phaseFlow.isLaunching ? null : visual.sceneId === 'cityIntro' ? (
           <CityIntroScene editableEntities={isEditorEnabled ? editors.cityIntroEditor.entities : undefined} />
         ) : visual.sceneId === 'library' ? (
           <LibraryScene
@@ -158,7 +158,7 @@ export default function App() {
         <WormholeCamera active={phaseFlow.phase === 'wormhole'} progress={phaseFlow.wormholeProgress} />
       </Canvas>
 
-      {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startCityWalk} />}
+      {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startCityWalk} loading={phaseFlow.isLaunching} />}
       {phaseFlow.isCityIntro && <CityIntroHUD arrived={arrivedAtLibrary} onEnter={phaseFlow.enterLibrary} />}
       {phaseFlow.phase === 'exploring' && <HUD nearBook={proximity.nearBook} wormholeActive={false} onInteract={phaseFlow.startWormholeToPhase1} />}
       {phaseFlow.phase === 'wormhole' && (
