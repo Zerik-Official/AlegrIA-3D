@@ -124,6 +124,7 @@ export default function App() {
   const portalPos: [number, number] = [0, 15.8]
   const nearPortal = Math.hypot(playerPos.current.x - portalPos[0], playerPos.current.z - portalPos[1]) < 2.8
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null)
+  const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
   const selectedPhoto = sepiaPhotos.find((p) => p.id === selectedPhotoId) ?? null
   const handlePhotoSelect = useCallback((id: string) => setSelectedPhotoId(id), [])
   const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
@@ -136,7 +137,23 @@ export default function App() {
     playerPos.current.copy(pos)
     const d = Math.hypot(pos.x, pos.z)
     setDistance(d)
-  }, [])
+    if (phase === 'phase1' || phase === 'museum') {
+      let nearest: string | null = null
+      let min = 2.4
+      for (const p of sepiaPhotos) {
+        const dx = pos.x - p.position[0]
+        const dz = pos.z - p.position[2]
+        const dist = Math.hypot(dx, dz)
+        if (dist < min) {
+          min = dist
+          nearest = p.id
+        }
+      }
+      setHighlightedPhotoId(nearest)
+    } else {
+      setHighlightedPhotoId(null)
+    }
+  }, [phase])
 
   /**
    * Starts the wormhole timeline with cubic easing and phase transition.
@@ -179,7 +196,16 @@ export default function App() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
-      if ((e.key.toLowerCase() === 'e' || e.key === 'Enter') && isPhase1 && nearPortal && !showPhase1Overlay && !selectedPhoto) {
+      const isE = e.key.toLowerCase() === 'e' || e.key === 'Enter'
+      if (isE && selectedPhoto) {
+        setSelectedPhotoId(null)
+        return
+      }
+      if (isE && highlightedPhotoId && !selectedPhoto && isPhase1 && !showPhase1Overlay) {
+        setSelectedPhotoId(highlightedPhotoId)
+        return
+      }
+      if (isE && isPhase1 && nearPortal && !showPhase1Overlay && !selectedPhoto) {
         startWormholeToPhase2()
       }
       if (e.key === 'Escape' && selectedPhoto) {
@@ -188,7 +214,7 @@ export default function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isPhase1, nearPortal, showPhase1Overlay, selectedPhoto, startWormholeToPhase2])
+  }, [isPhase1, nearPortal, showPhase1Overlay, selectedPhoto, highlightedPhotoId, startWormholeToPhase2])
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
@@ -207,7 +233,7 @@ export default function App() {
         {!isPhase1 && !isPhase2 ? (
           <LibraryScene wormholeActive={phase === 'wormhole'} wormholeProgress={wormholeProgress} />
         ) : isPhase1 ? (
-          <Phase1Scene onPhotoSelect={handlePhotoSelect} />
+          <Phase1Scene onPhotoSelect={handlePhotoSelect} highlightedPhotoId={highlightedPhotoId} />
         ) : (
           <Phase2Scene />
         )}
@@ -255,7 +281,15 @@ export default function App() {
         </>
       )}
       {isPhase1 && showPhase1Overlay && <PastOverlay onReturn={handleDismissPhase1Intro} />}
-      {isPhase1 && !showPhase1Overlay && nearPortal && (
+      {isPhase1 && !showPhase1Overlay && highlightedPhotoId && !selectedPhoto && (
+        <button
+          onClick={() => setSelectedPhotoId(highlightedPhotoId)}
+          className="pointer-events-auto fixed bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#c9a86a]/40 bg-[#0a0f1e]/85 px-6 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment shadow-[0_0_30px_rgba(255,138,26,0.35)] backdrop-blur-xl"
+        >
+          E — Ampliar: {sepiaPhotos.find((p) => p.id === highlightedPhotoId)?.title}
+        </button>
+      )}
+      {isPhase1 && !showPhase1Overlay && nearPortal && !highlightedPhotoId && !selectedPhoto && (
         <button
           onClick={startWormholeToPhase2}
           className="pointer-events-auto fixed bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#ff8a1a]/40 bg-[#0a0f1e]/85 px-6 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment shadow-[0_0_30px_rgba(255,138,26,0.35)] backdrop-blur-xl"
