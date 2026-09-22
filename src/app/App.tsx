@@ -225,6 +225,12 @@ export default function App() {
     if (isEditorEnabled && document.pointerLockElement) {
       document.exitPointerLock()
     }
+    if (!isEditorEnabled) return
+    const handler = (e: MouseEvent): void => {
+      if (document.pointerLockElement) document.exitPointerLock()
+    }
+    window.addEventListener('click', handler, true)
+    return () => window.removeEventListener('click', handler, true)
   }, [isEditorEnabled])
 
   useEffect(() => {
@@ -232,6 +238,17 @@ export default function App() {
       if (document.pointerLockElement) document.exitPointerLock()
     }
   }, [showPhase1Overlay, showPhase2Overlay, isPhase1, isPhase2, phase])
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if (e.key.toLowerCase() === 'q' && !isEditorEnabled && !showPhase1Overlay && !showPhase2Overlay && phase !== 'idle' && phase !== 'wormhole') {
+        if (document.pointerLockElement) document.exitPointerLock()
+        else document.body.requestPointerLock?.()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [isEditorEnabled, showPhase1Overlay, showPhase2Overlay, phase])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
@@ -416,7 +433,7 @@ export default function App() {
         </button>
       )}
 
-      {phase === 'exploring' && nearBook && (
+      {phase === 'exploring' && nearBook && !isEditorEnabled && (
         <div
           onClick={startWormholeToPhase1}
           style={{
@@ -429,7 +446,7 @@ export default function App() {
           title="Click para atravesar el vórtice"
         />
       )}
-      {isPhase1 && !showPhase1Overlay && nearPortal && !selectedPhoto && (
+      {isPhase1 && !showPhase1Overlay && nearPortal && !selectedPhoto && !isEditorEnabled && (
         <div
           onClick={startWormholeToPhase2}
           style={{
