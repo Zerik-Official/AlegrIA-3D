@@ -153,6 +153,8 @@ export default function App() {
   const handlePhotoSelect = useCallback((id: string) => setSelectedPhotoId(id), [])
   const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
   const [isEditorEnabled, setIsEditorEnabled] = useState(false)
+  const isPhase1 = phase === 'phase1' || phase === 'museum'
+  const isPhase2 = phase === 'phase2'
   const libraryEditor = useEditor(initialLibraryEntities)
   const phase1Editor = useEditor(initialPhase1Entities)
   const phase2Editor = useEditor(initialPhase2Entities)
@@ -220,9 +222,6 @@ export default function App() {
   const handleReturnToLibrary = useCallback(() => window.location.reload(), [])
   const handleDismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
   const handleDismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
-
-  const isPhase1 = phase === 'phase1' || phase === 'museum'
-  const isPhase2 = phase === 'phase2'
 
   useEffect(() => {
     if (isEditorEnabled && document.pointerLockElement) {
