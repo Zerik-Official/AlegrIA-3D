@@ -91,8 +91,8 @@ function ProceduralBookGeometry({ onNear: _onNear, ritualProgress = 0 }: Levitat
   })
 
   return (
-    <group>
-      <mesh ref={glowRef} position={[0, 1.78, 0]}>
+    <group renderOrder={6}>
+      <mesh ref={glowRef} position={[0, 1.78, 0]} renderOrder={6}>
         <sphereGeometry args={[0.95, 32, 32]} />
         <meshStandardMaterial
           color="#ffcc33"
