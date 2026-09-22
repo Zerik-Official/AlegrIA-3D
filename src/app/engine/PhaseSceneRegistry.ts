@@ -32,14 +32,15 @@ class PhaseSceneRegistry {
 
   /**
    * Maps a game phase to the scene it renders.
-   * `idle`, `exploring` and `wormhole` all render the library scene underneath;
-   * `museum` is the deprecated alias for `phase1`.
+   * `idle` resolves to the city intro's visuals (fog/background) since that's
+   * the scene about to load; `exploring` and `wormhole` render the library
+   * scene underneath; `museum` is the deprecated alias for `phase1`.
    *
    * @param phase - Current game phase
    * @returns Scene id
    */
   resolveScene(phase: GamePhase): SceneId {
-    if (phase === 'cityIntro') return 'cityIntro'
+    if (phase === 'cityIntro' || phase === 'idle') return 'cityIntro'
     if (phase === 'phase1' || phase === 'museum') return 'phase1'
     if (phase === 'phase2') return 'phase2'
     return 'library'
