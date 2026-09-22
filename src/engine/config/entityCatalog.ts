@@ -68,6 +68,12 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [-20, 26, -60], rotationY: 0, scale: 1 },
   },
   {
+    type: 'planet',
+    label: 'Planeta',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [45, 48, -100], rotationY: 0, scale: 4, variant: '#c9a877' },
+  },
+  {
     type: 'library-facade',
     label: 'Fachada de Biblioteca',
     scenes: ['cityIntro'],
