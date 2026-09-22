@@ -45,4 +45,5 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/flying-train': { path: `${base}models/cityIntro/flying-train.glb`, fallback: 'procedural-flying-train' },
   'cityIntro/moon': { path: `${base}models/cityIntro/moon.glb`, fallback: 'procedural-moon' },
   'cityIntro/library-facade': { path: `${base}models/cityIntro/library-facade.glb`, fallback: 'procedural-library-facade' },
+  'cityIntro/planet': { path: `${base}models/cityIntro/planet.glb`, fallback: 'procedural-planet' },
 }
