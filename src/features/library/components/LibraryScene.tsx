@@ -61,11 +61,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
         <planeGeometry args={[22, 22]} />
         <meshStandardMaterial color="#080a12" roughness={0.92} metalness={0.06} />
       </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.005, 0]} receiveShadow>
-        <planeGeometry args={[20, 20]} />
-        <meshStandardMaterial color="#0e1320" roughness={0.78} metalness={0.12} />
-      </mesh>
-      <gridHelper args={[20, 20, '#0a1a2e', '#0f1f36']} position={[0, 0.006, 0]} />
+      <gridHelper args={[20, 20, '#0a1a2e', '#0f1f36']} position={[0, 0.015, 0]} />
 
       <mesh rotation-x={Math.PI / 2} position={[0, 5.2, 0]}>
         <planeGeometry args={[22, 22]} />
@@ -93,8 +89,8 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
         <meshStandardMaterial color="#0a0f18" roughness={0.86} metalness={0.18} />
       </mesh>
 
-      <CyberWall position={[-11, 2.6, 0]} size={[0.45, 5.2, 22]} rotationY={Math.PI / 2} missingIndex={2} />
-      <CyberWall position={[11, 2.6, 0]} size={[0.45, 5.2, 22]} rotationY={-Math.PI / 2} missingIndex={7} />
+      <CyberWall position={[-11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={Math.PI / 2} missingIndex={2} />
+      <CyberWall position={[11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={-Math.PI / 2} missingIndex={7} />
 
       {torchLights.map(([x, y, z], i) => (
         <pointLight key={i} position={[x, y, z]} intensity={0.75} distance={5.2} color="#0ab8ff" decay={2} />
