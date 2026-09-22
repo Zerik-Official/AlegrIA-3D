@@ -10,16 +10,19 @@ import { modelRegistry } from '../../../shared/config/models'
 interface LevitatingBookProps {
   /** Optional proximity callback (reserved for future use). */
   onNear?: (near: boolean) => void
+  /** Vortex ritual progress in [0,1]; drives spin and opening. */
+  ritualProgress?: number
 }
 
 /**
  * Procedural levitating book with hover, rotation and particle aura.
  * Optimized: reuses single Float32Array, updates buffer in place, avoids per-frame allocations.
  */
-function ProceduralBookGeometry({ onNear: _onNear }: LevitatingBookProps) {
+function ProceduralBookGeometry({ onNear: _onNear, ritualProgress = 0 }: LevitatingBookProps) {
   const groupRef = useRef<THREE.Group>(null)
   const glowRef = useRef<THREE.Mesh>(null)
   const particlesRef = useRef<THREE.Points>(null)
+  const coverRef = useRef<THREE.Group>(null)
 
   const particleCount = 70
   const { positions, speeds } = useMemo(() => {
@@ -39,33 +42,50 @@ function ProceduralBookGeometry({ onNear: _onNear }: LevitatingBookProps) {
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
+    const r = ritualProgress
     if (groupRef.current) {
-      groupRef.current.position.y = 1.78 + Math.sin(t * 0.9) * 0.18 + Math.sin(t * 1.7) * 0.04
-      groupRef.current.rotation.y = t * 0.35
-      groupRef.current.rotation.z = Math.sin(t * 0.6) * 0.08
-      groupRef.current.rotation.x = Math.sin(t * 0.5) * 0.06
+      const baseY = 1.78 + Math.sin(t * 0.9) * 0.18 + Math.sin(t * 1.7) * 0.04
+      const lift = r * 0.45 + Math.sin(t * (2.2 + r * 6)) * r * 0.08
+      groupRef.current.position.y = baseY + lift
+      const spin = 0.35 + r * 6.2
+      groupRef.current.rotation.y = t * spin
+      groupRef.current.rotation.z = Math.sin(t * 0.6) * 0.08 + r * Math.sin(t * 8) * 0.12
+      groupRef.current.rotation.x = Math.sin(t * 0.5) * 0.06 + r * 0.18
+      const s = 1 + r * 0.22
+      groupRef.current.scale.set(s, s, s)
     }
     if (glowRef.current) {
-      const s = 1 + Math.sin(t * 1.4) * 0.12
+      const s = 1 + Math.sin(t * 1.4) * 0.12 + r * 0.9
       glowRef.current.scale.set(s, s, s)
-      ;(glowRef.current.material as THREE.MeshStandardMaterial).opacity = 0.22 + Math.sin(t * 1.1) * 0.08
+      const mat = glowRef.current.material as THREE.MeshStandardMaterial
+      mat.opacity = 0.22 + Math.sin(t * 1.1) * 0.08 + r * 0.42
+      mat.emissiveIntensity = 1.2 + r * 2.8
+    }
+    if (coverRef.current) {
+      const open = 0.18 + r * 1.05
+      coverRef.current.rotation.y = -0.12 - r * 0.62
+      coverRef.current.rotation.x = open * -0.18
+      coverRef.current.position.y = 0.09 + r * 0.18
     }
     if (particlesRef.current) {
       const pos = particlesRef.current.geometry.attributes.position as THREE.BufferAttribute
       for (let i = 0; i < particleCount; i++) {
         let y = pos.getY(i)
-        y += speeds[i] * 0.008
-        if (y > 0.7) {
-          y = -0.7
+        y += speeds[i] * (0.008 + ritualProgress * 0.022)
+        if (y > 0.7 + ritualProgress * 0.6) {
+          y = -0.7 - ritualProgress * 0.3
           const theta = Math.random() * Math.PI * 2
-          const r = 0.45 + Math.random() * 0.9
-          pos.setX(i, Math.cos(theta) * r)
-          pos.setZ(i, Math.sin(theta) * r)
+          const rad = 0.45 + Math.random() * (0.9 + ritualProgress * 1.2)
+          pos.setX(i, Math.cos(theta) * rad)
+          pos.setZ(i, Math.sin(theta) * rad)
         }
         pos.setY(i, y)
       }
       pos.needsUpdate = true
-      particlesRef.current.rotation.y = t * 0.08
+      particlesRef.current.rotation.y = t * (0.08 + ritualProgress * 0.42)
+      const pm = particlesRef.current.material as THREE.PointsMaterial
+      pm.size = 0.028 + ritualProgress * 0.022
+      pm.opacity = 0.85 + ritualProgress * 0.12
     }
   })
 
@@ -113,7 +133,7 @@ function ProceduralBookGeometry({ onNear: _onNear }: LevitatingBookProps) {
           <boxGeometry args={[0.66, 0.11, 0.46]} />
           <meshStandardMaterial color="#fff8e0" roughness={1} />
         </mesh>
-        <group rotation-z={0.18} rotation-y={-0.12} position={[0.06, 0.09, 0]}>
+        <group ref={coverRef} rotation-z={0.18} rotation-y={-0.12} position={[0.06, 0.09, 0]}>
           <mesh castShadow position={[0, 0.04, 0]}>
             <boxGeometry args={[0.74, 0.05, 0.54]} />
             <meshStandardMaterial color="#8b1a3a" roughness={0.42} metalness={0.18} />
