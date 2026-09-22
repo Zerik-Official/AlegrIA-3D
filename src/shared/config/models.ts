@@ -23,4 +23,10 @@ export const modelRegistry: ModelRegistry = {
   'museum/column': { path: '/models/museum/column.glb', fallback: 'procedural-column' },
   'museum/painting-frame': { path: '/models/museum/painting-frame.glb', fallback: 'procedural-painting' },
   'wormhole/portal': { path: '/models/wormhole/portal.glb', fallback: 'procedural-portal' },
+  'phase1/bahareque-house': { path: '/models/phase1/bahareque-house.glb', fallback: 'procedural-bahareque-house' },
+  'phase1/anden-alto': { path: '/models/phase1/anden-alto.glb', fallback: 'procedural-anden-alto' },
+  'phase1/arroyo': { path: '/models/phase1/arroyo.glb', fallback: 'procedural-arroyo' },
+  'phase1/aduana': { path: '/models/phase1/aduana.glb', fallback: 'procedural-aduana' },
+  'phase1/estacion-montoya': { path: '/models/phase1/estacion-montoya.glb', fallback: 'procedural-estacion' },
+  'phase1/sepia-photo': { path: '/models/phase1/sepia-photo.glb', fallback: 'procedural-sepia-photo' },
 }
