@@ -1,7 +1,10 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
+import { CityIntroScene } from '@/features/cityIntro/components/CityIntroScene'
+import { CityWalkControls } from '@/features/cityIntro/components/CityWalkControls'
+import { CityIntroHUD } from '@/features/cityIntro/components/CityIntroHUD'
 import { LibraryScene } from '@/features/library/components/LibraryScene'
 import { Phase1Scene } from '@/features/phase1/components/Phase1Scene'
 import { Phase2Scene } from '@/features/phase2/components/Phase2Scene'
@@ -14,6 +17,7 @@ import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
 import { EditorFlyControls } from '@/features/editor/components/EditorFlyControls'
 import { catalogForScene } from '@/engine/config/entityCatalog'
+import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import { WormholeCamera } from '@/app/components/WormholeCamera'
 import { EditorTargetFinder } from '@/app/components/EditorTargetFinder'
 import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
@@ -49,6 +53,11 @@ export default function App() {
   const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
   const orbitControlsRef = useRef<any>(null)
 
+  const [cityWalkProgress, setCityWalkProgress] = useState(0)
+  const arrivedAtLibrary = cityWalkProgress >= appConfig.cityIntro.arrivalThreshold
+  const cityIntroEntities = isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities
+  const cityIntroPath = useMemo(() => cityIntroEntities.filter((e) => e.type === 'path-point'), [cityIntroEntities])
+
   usePointerLockGuard(
     isEditorEnabled ||
       (phaseFlow.showPhase1Overlay && phaseFlow.isPhase1) ||
@@ -62,6 +71,8 @@ export default function App() {
     nearPortal: proximity.nearPortal,
     showPhase1Overlay: phaseFlow.showPhase1Overlay,
     showPhase2Overlay: phaseFlow.showPhase2Overlay,
+    isCityIntro: phaseFlow.isCityIntro,
+    arrivedAtLibrary,
     isPhase1: phaseFlow.isPhase1,
     isPhase2: phaseFlow.isPhase2,
     highlightedPhotoId: proximity.highlightedPhotoId,
@@ -70,7 +81,8 @@ export default function App() {
     toggleEditor,
     closeEditor,
     setEditorMode: editors.currentEditor.setMode,
-    startExploring: phaseFlow.startExploring,
+    startCityWalk: phaseFlow.startCityWalk,
+    enterLibrary: phaseFlow.enterLibrary,
     startWormholeToPhase1: phaseFlow.startWormholeToPhase1,
     startWormholeToPhase2: phaseFlow.startWormholeToPhase2,
     dismissPhase1Intro: phaseFlow.dismissPhase1Intro,
@@ -92,7 +104,9 @@ export default function App() {
         <fog attach="fog" args={[visual.fog.color, visual.fog.near, visual.fog.far]} />
         <color attach="background" args={[visual.background]} />
 
-        {visual.sceneId === 'library' ? (
+        {visual.sceneId === 'cityIntro' ? (
+          <CityIntroScene editableEntities={isEditorEnabled ? editors.cityIntroEditor.entities : undefined} />
+        ) : visual.sceneId === 'library' ? (
           <LibraryScene
             wormholeActive={phaseFlow.phase === 'wormhole'}
             wormholeProgress={phaseFlow.wormholeProgress}
@@ -104,6 +118,15 @@ export default function App() {
           <Phase2Scene editableEntities={isEditorEnabled ? editors.phase2Editor.entities : undefined} />
         )}
 
+        {phaseFlow.isCityIntro && !isEditorEnabled && (
+          <CityWalkControls
+            enabled
+            pathEntities={cityIntroPath}
+            speed={appConfig.cityIntro.walkSpeed}
+            eyeHeight={appConfig.cityIntro.eyeHeight}
+            onProgress={setCityWalkProgress}
+          />
+        )}
         {phaseFlow.phase === 'exploring' && !isEditorEnabled && (
           <PlayerControls enabled onPositionChange={proximity.handlePosition} bounds={appConfig.player.libraryBounds} />
         )}
@@ -135,7 +158,8 @@ export default function App() {
         <WormholeCamera active={phaseFlow.phase === 'wormhole'} progress={phaseFlow.wormholeProgress} />
       </Canvas>
 
-      {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startExploring} />}
+      {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startCityWalk} />}
+      {phaseFlow.isCityIntro && <CityIntroHUD arrived={arrivedAtLibrary} onEnter={phaseFlow.enterLibrary} />}
       {phaseFlow.phase === 'exploring' && <HUD nearBook={proximity.nearBook} wormholeActive={false} onInteract={phaseFlow.startWormholeToPhase1} />}
       {phaseFlow.phase === 'wormhole' && (
         <HUD nearBook={proximity.nearBook} wormholeActive onInteract={() => {}} isPhase1={phaseFlow.wormholeTarget === 'phase2'} />
