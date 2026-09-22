@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { ProceduralTrinitaria, ProceduralTree } from '@/shared/components/ReusableModels'
+import { SceneSun, SceneClouds } from '@/shared/components/SceneAtmosphere'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
@@ -143,9 +144,9 @@ export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase
         </>
       )}
 
+      <SceneClouds count={6} rangeZ={[-24, -9]} rangeY={[9, 13]} color="#fff4e0" underColor="#f0c88a" />
       <ambientLight intensity={0.72} color="#ffe9c4" />
-      <hemisphereLight args={['#ffecd0', '#bfa86a', 0.52]} />
-      <directionalLight position={[8, 12, 4]} intensity={1.45} color="#fff4d0" castShadow shadow-mapSize={[2048, 2048]} />
+      <SceneSun position={[8, 12, 4]} color="#fff4d0" glowColor="#ffd27a" intensity={1.45} hemisphere={{ sky: '#ffecd0', ground: '#bfa86a', intensity: 0.52 }} />
       <pointLight position={[0, 3.2, -9.2]} intensity={1.8} distance={12} color="#ff8a1a" decay={2} />
     </group>
   )
