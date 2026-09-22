@@ -187,7 +187,7 @@ export default function App() {
           <PlayerControls
             enabled={!showPhase1Overlay}
             onPositionChange={handlePosition}
-            bounds={appConfig.player.museumBounds}
+            bounds={appConfig.player.phase1Bounds}
           />
         )}
 
