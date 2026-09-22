@@ -13,14 +13,17 @@ interface TimeVortexSequenceProps {
 }
 
 /**
- * Cinematic sequence that fractures the abandoned library and throws a portal
- * in front of the viewer before absorption. Designed to be scalable: each
- * key beat is isolated so future cinematics can replace individual phases.
+ * Cinematic sequence that fractures the abandoned library, isolates the book
+ * in a white void and throws a portal in front of the viewer before absorption.
+ * Designed to be scalable: each key beat is isolated so future cinematics can
+ * replace individual phases.
  *
- * Beats:
- * 0.0-0.33 — Library fracture (cyber walls flicker, floor fissures, dust surge)
- * 0.33-0.66 — Book remains as sole stable element (handled via LevitatingBook ritualProgress)
- * 0.66-1.0 — Portal thrown in front of camera and expands to swallow the view
+ * Beats (11s total):
+ * 0.0-0.32 — Library fracture (cyber walls flicker, floor fissures, dust surge)
+ * 0.32-0.58 — White void: library fades, only El Libro de Rosa remains levitating
+ * 0.58-0.72 — Book ascension: spin, growth, cover opens fully
+ * 0.62-0.82 — Beam: book shoots ray that spawns portal in front of camera
+ * 0.72-1.0 — Portal expands and swallows the view
  *
  * @param props - Cinematic state
  * @returns Cinematic group
@@ -30,6 +33,8 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
   const portalRef = useRef<THREE.Mesh>(null)
   const crackRef = useRef<THREE.Group>(null)
   const dustRef = useRef<THREE.Points>(null)
+  const whiteVoidRef = useRef<THREE.Mesh>(null)
+  const beamRef = useRef<THREE.Mesh>(null)
 
   const portalMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
@@ -99,49 +104,89 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
     const t = clock.elapsedTime
     if (!active && progress === 0) return
 
+    if (whiteVoidRef.current) {
+      const voidProgress = THREE.MathUtils.clamp((progress - 0.32) / 0.26, 0, 1)
+      const fadeOut = THREE.MathUtils.clamp(1 - (progress - 0.82) / 0.18, 0, 1)
+      const alpha = voidProgress * fadeOut
+      const m = whiteVoidRef.current.material as THREE.MeshBasicMaterial
+      m.opacity = alpha * 0.96
+      whiteVoidRef.current.visible = alpha > 0.01
+      const s = 28 + voidProgress * 6
+      whiteVoidRef.current.scale.set(s, s, s)
+    }
+
+    if (beamRef.current) {
+      const beamGate = THREE.MathUtils.clamp((progress - 0.58) / 0.24, 0, 1)
+      const beamOut = THREE.MathUtils.clamp(1 - (progress - 0.82) / 0.12, 0, 1)
+      const vis = beamGate * beamOut
+      beamRef.current.visible = vis > 0.01
+      const m = beamRef.current.material as THREE.MeshStandardMaterial
+      m.opacity = vis * (0.72 + Math.sin(t * 18) * 0.18)
+      m.emissiveIntensity = 1.2 + vis * 2.2
+      const cam = camera as THREE.PerspectiveCamera
+      const bookPos = new THREE.Vector3(0, 1.78 + progress * 1.15, 0)
+      const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion)
+      const portalPos = cam.position.clone().add(forward.clone().multiplyScalar(1.65))
+      const dir = portalPos.clone().sub(bookPos)
+      const len = dir.length()
+      const mid = bookPos.clone().add(dir.clone().multiplyScalar(0.5))
+      beamRef.current.position.copy(mid)
+      beamRef.current.scale.set(1, len, 1)
+      beamRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize())
+      beamRef.current.rotateZ(t * 4.2 * vis)
+    }
+
     if (portalRef.current) {
       const mat = portalRef.current.material as THREE.ShaderMaterial
       mat.uniforms.uProgress.value = progress
       mat.uniforms.uTime.value = t
-
       const cam = camera as THREE.PerspectiveCamera
       const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion)
       const pos = cam.position.clone().add(forward.multiplyScalar(1.65 + progress * 0.22))
       portalRef.current.position.copy(pos)
       portalRef.current.quaternion.copy(cam.quaternion)
-
-      const gate = THREE.MathUtils.clamp((progress - 0.62) / 0.38, 0, 1)
+      const gate = THREE.MathUtils.clamp((progress - 0.72) / 0.28, 0, 1)
       const eased = gate * gate * (3 - 2 * gate)
-      const scale = 0.22 + eased * 9.2 + Math.sin(t * 8) * eased * 0.08
+      const scale = 0.08 + eased * 11.2 + Math.sin(t * 8) * eased * 0.08
       portalRef.current.scale.set(scale, scale, 1)
       portalRef.current.rotation.z = t * (0.32 + progress * 1.2)
     }
 
     if (crackRef.current) {
-      const crackProgress = THREE.MathUtils.clamp(progress / 0.38, 0, 1)
-      crackRef.current.visible = crackProgress > 0.01
+      const crackProgress = THREE.MathUtils.clamp(progress / 0.32, 0, 1)
+      const crackFade = THREE.MathUtils.clamp(1 - (progress - 0.38) / 0.18, 0, 1)
+      const vis = crackProgress * crackFade
+      crackRef.current.visible = vis > 0.01
       crackRef.current.traverse((obj) => {
         if ((obj as THREE.Mesh).isMesh) {
           const m = (obj as THREE.Mesh).material as THREE.MeshStandardMaterial
-          if (m.opacity !== undefined) m.opacity = crackProgress * 0.82
+          if (m.opacity !== undefined) m.opacity = vis * 0.82
         }
       })
-      const shake = progress < 0.38 ? Math.sin(t * 42) * progress * 0.06 : 0
+      const shake = progress < 0.32 ? Math.sin(t * 42) * progress * 0.09 : progress < 0.48 ? Math.sin(t * 28) * (0.48 - progress) * 0.12 : 0
       crackRef.current.position.x = shake
       crackRef.current.position.z = Math.sin(t * 37) * progress * 0.035
+      const flick = progress < 0.42 ? Math.sin(t * 22) * 0.5 + 0.5 : 0
+      crackRef.current.traverse((obj) => {
+        if ((obj as THREE.Points).isPoints) {
+          const m = (obj as THREE.Points).material as THREE.PointsMaterial
+          m.opacity = vis * (0.42 + flick * 0.22)
+        }
+      })
     }
 
     if (dustRef.current) {
       const attr = dustRef.current.geometry.attributes.position as THREE.BufferAttribute
       for (let i = 0; i < attr.count; i++) {
         let y = attr.getY(i)
-        y += 0.006 + progress * 0.028 + Math.sin(t + i) * 0.002
+        y += 0.006 + progress * 0.032 + Math.sin(t + i) * 0.002
         if (y > 5) y = 0.05
         attr.setY(i, y)
       }
       attr.needsUpdate = true
       const m = dustRef.current.material as THREE.PointsMaterial
-      m.opacity = 0.14 + progress * 0.42
+      const dustGate = progress < 0.58 ? 1 : THREE.MathUtils.clamp(1 - (progress - 0.58) / 0.22, 0, 1)
+      m.opacity = (0.14 + progress * 0.42) * dustGate
       m.size = 0.028 + progress * 0.04
     }
   })
@@ -175,7 +220,17 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
         <pointsMaterial size={0.032} color="#8a9ab8" transparent opacity={0.18} depthWrite={false} sizeAttenuation />
       </points>
 
-      <mesh ref={portalRef} visible={progress > 0.52}>
+      <mesh ref={whiteVoidRef} visible={false} renderOrder={5}>
+        <sphereGeometry args={[14, 32, 32]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0} depthWrite={false} side={THREE.BackSide} />
+      </mesh>
+
+      <mesh ref={beamRef} visible={false} renderOrder={6}>
+        <cylinderGeometry args={[0.015, 0.08, 1, 16, 1, true]} />
+        <meshStandardMaterial color="#ffe9a0" emissive="#ffcc33" emissiveIntensity={1.85} transparent opacity={0} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </mesh>
+
+      <mesh ref={portalRef} visible={progress > 0.68}>
         <planeGeometry args={[1, 1, 24, 24]} />
         <primitive object={portalMaterial} attach="material" />
       </mesh>
