@@ -90,7 +90,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
               <Canvas key={selectedKey} camera={{ fov: 42, position: [2.4, 1.8, 2.8] }} shadows>
                 <ambientLight intensity={0.6} />
                 <directionalLight position={[4, 6, 3]} intensity={1.2} castShadow />
-                <Bounds fit clip observe margin={1.3}>
+                <Bounds fit clip observe margin={2.4}>
                   <Center>
                     <ModelLoader src={selected.path} fallback={<PreviewPlaceholder />} />
                   </Center>
