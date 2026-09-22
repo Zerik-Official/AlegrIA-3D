@@ -7,9 +7,15 @@
 import phase1Json from '@/engine/config/phase1.json'
 import libraryJson from '@/engine/config/library.json'
 import phase2Json from '@/engine/config/phase2.json'
+import cityIntroJson from '@/engine/config/cityIntro.json'
 import type { EditableEntity } from '@/engine/types'
 
 export type { EditableEntity } from '@/engine/types'
+
+/**
+ * Initial City Intro entities — source `engine/config/cityIntro.json`.
+ */
+export const initialCityIntroEntities: EditableEntity[] = cityIntroJson as EditableEntity[]
 
 /**
  * Initial Phase 1 entities — single source is `engine/config/phase1.json`.
