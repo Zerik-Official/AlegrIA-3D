@@ -6,8 +6,6 @@ import { LuOrbit } from 'react-icons/lu'
  * Props for {@link HUD}.
  */
 interface HUDProps {
-  /** Distance to the book in meters. */
-  distance: number
   /** Whether the player is within interaction range. */
   nearBook: boolean
   /** Whether the wormhole transition is active. */
@@ -23,7 +21,7 @@ interface HUDProps {
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ distance, nearBook, wormholeActive, onInteract }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract }: HUDProps) {
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.65)_100%)]" />
@@ -81,9 +79,15 @@ export const HUD = memo(function HUD({ distance, nearBook, wormholeActive, onInt
         </div>
       </div>
 
-      <div className="pointer-events-none fixed bottom-6 left-6 z-10 flex items-center gap-2 rounded-md border border-white/5 bg-black/30 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/50 backdrop-blur-md">
-        <FiClock className="h-3.5 w-3.5 opacity-60" />
-        Distancia al libro: {distance.toFixed(1)} m {nearBook && <span className="text-gold-bright">— Cerca</span>}
+      <div className="pointer-events-none fixed bottom-6 left-6 z-10 flex items-center gap-2 rounded-md border border-white/5 bg-black/30 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/60 backdrop-blur-md">
+        <FiClock className="h-3.5 w-3.5 opacity-70 text-gold" />
+        {wormholeActive ? (
+          <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span>
+        ) : (
+          <span>
+            25 de Septiembre — 2050 <span className="text-parchment/35">•</span> Biblioteca del Futuro
+          </span>
+        )}
       </div>
 
       <div
