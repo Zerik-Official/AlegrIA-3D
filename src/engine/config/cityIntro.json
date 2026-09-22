@@ -48,5 +48,9 @@
 
   { "id": "moon", "type": "moon", "position": [-30, 34, -70], "rotationY": 0, "scale": 1 },
 
+  { "id": "planet-01", "type": "planet", "position": [48, 50, -110], "rotationY": 0, "scale": 4.5, "variant": "#c9855a" },
+  { "id": "planet-02", "type": "planet", "position": [-55, 40, -150], "rotationY": 0, "scale": 3, "variant": "#7aa8c9" },
+  { "id": "planet-03", "type": "planet", "position": [20, 60, -190], "rotationY": 0, "scale": 6, "variant": "#c9a877" },
+
   { "id": "library-facade", "type": "library-facade", "position": [0, 0, -46], "rotationY": 0, "scale": 1 }
 ]
