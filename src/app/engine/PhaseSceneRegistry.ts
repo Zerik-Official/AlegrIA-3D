@@ -26,7 +26,7 @@ class PhaseSceneRegistry {
   private readonly visuals: Record<SceneId, PhaseVisual> = {
     cityIntro: { sceneId: 'cityIntro', fog: { color: '#0a0a16', near: 20, far: 240 }, background: '#05050d' },
     library: { sceneId: 'library', fog: { color: '#0a0806', near: 9, far: 26 }, background: '#08060a' },
-    phase1: { sceneId: 'phase1', fog: { color: '#8a6a3a', near: 14, far: 38 }, background: '#6b4a2a' },
+    phase1: { sceneId: 'phase1', fog: { color: '#8a6a3a', near: 24, far: 160 }, background: '#6b4a2a' },
     phase2: { sceneId: 'phase2', fog: { color: '#bfa86a', near: 12, far: 32 }, background: '#c9b896' },
   }
 
