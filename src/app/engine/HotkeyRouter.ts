@@ -20,6 +20,10 @@ export interface HotkeyContext {
   showPhase1Overlay: boolean
   /** Whether Phase 2's intro overlay is showing. */
   showPhase2Overlay: boolean
+  /** Whether `phase` currently resolves to the city intro walk. */
+  isCityIntro: boolean
+  /** Whether the scripted city walk has reached the library door. */
+  arrivedAtLibrary: boolean
   /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
@@ -36,8 +40,10 @@ export interface HotkeyContext {
   closeEditor: () => void
   /** Sets the editor gizmo mode (`W`/`E`/`R`). */
   setEditorMode: (mode: 'translate' | 'rotate' | 'scale') => void
-  /** Transitions from `idle` into `exploring`. */
-  startExploring: () => void
+  /** Transitions from `idle` into `cityIntro`, starting the scripted walk to the library. */
+  startCityWalk: () => void
+  /** Transitions from `cityIntro` into `exploring`, once the player has reached the library door. */
+  enterLibrary: () => void
   /** Starts the wormhole transition into Phase 1 (triggered near the book while exploring). */
   startWormholeToPhase1: () => void
   /** Starts the wormhole transition into Phase 2 (triggered near the Phase 1 portal). */
@@ -96,7 +102,11 @@ export class HotkeyRouter {
       return
     }
     if (isConfirmKey && ctx.phase === 'idle') {
-      ctx.startExploring()
+      ctx.startCityWalk()
+      return
+    }
+    if (isConfirmKey && ctx.isCityIntro && ctx.arrivedAtLibrary) {
+      ctx.enterLibrary()
       return
     }
     if (isConfirmKey && ctx.hasSelectedPhoto) {
@@ -125,7 +135,7 @@ export class HotkeyRouter {
    * @param ctx - Context snapshot
    */
   private togglePointerLock(ctx: HotkeyContext): void {
-    if (ctx.isEditorEnabled || ctx.showPhase1Overlay || ctx.showPhase2Overlay || ctx.phase === 'idle' || ctx.phase === 'wormhole') return
+    if (ctx.isEditorEnabled || ctx.showPhase1Overlay || ctx.showPhase2Overlay || ctx.phase === 'idle' || ctx.phase === 'wormhole' || ctx.isCityIntro) return
     if (document.pointerLockElement) document.exitPointerLock()
     else document.body.requestPointerLock?.()
   }
