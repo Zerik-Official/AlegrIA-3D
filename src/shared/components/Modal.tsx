@@ -1,4 +1,5 @@
 import { memo, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { FiX } from 'react-icons/fi'
 
 /**
@@ -31,7 +32,7 @@ interface ModalProps {
  */
 export const Modal = memo(function Modal({ open, title, icon, onClose, children, footer, maxWidthClassName = 'max-w-3xl' }: ModalProps) {
   if (!open) return null
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/68 p-6 backdrop-blur-sm" onClick={onClose}>
       <div
         className={`relative flex max-h-[86vh] w-full ${maxWidthClassName} flex-col overflow-hidden rounded-2xl border border-gold/20 bg-[#0f0a04]/92 shadow-[0_20px_60px_rgba(0,0,0,0.55)] backdrop-blur-xl`}
@@ -49,6 +50,7 @@ export const Modal = memo(function Modal({ open, title, icon, onClose, children,
         <div className="relative flex flex-1 flex-col overflow-y-auto">{children}</div>
         {footer && <div className="border-t border-gold/10 bg-black/20 px-5 py-4">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 })
