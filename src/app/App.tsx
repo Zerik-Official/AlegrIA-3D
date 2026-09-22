@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, memo } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { LibraryScene } from '@/features/library/components/LibraryScene'
 import { Phase1Scene } from '@/features/phase1/components/Phase1Scene'
 import { Phase2Scene } from '@/features/phase2/components/Phase2Scene'
