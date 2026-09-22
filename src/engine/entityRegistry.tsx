@@ -7,7 +7,6 @@
  * @module engine/entityRegistry
  */
 
-import type { ReactNode } from 'react'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHouse'
@@ -17,22 +16,10 @@ import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
-import type { EditableEntity, EngineRenderContext } from '@/engine/types'
+import { cityIntroRenderers } from '@/engine/cityIntroRenderers'
+import type { EntityRenderer, EntityRendererProps } from '@/engine/types'
 
-/**
- * Props passed to every entity renderer.
- * The entity's own `position`/`rotationY`/`scale` are already applied by `PhaseEngine`'s
- * wrapping group, so renderers place their content at the origin.
- */
-export interface EntityRendererProps {
-  /** The JSON-driven entity being rendered. */
-  entity: EditableEntity
-  /** Optional per-frame render context (highlight state, ritual progress, ...). */
-  context?: EngineRenderContext
-}
-
-/** A component that renders one entity type. */
-export type EntityRenderer = (props: EntityRendererProps) => ReactNode
+export type { EntityRenderer, EntityRendererProps } from '@/engine/types'
 
 function BahareqHouseRenderer({ entity }: EntityRendererProps) {
   const variant = (entity.variant as 'short' | 'medium' | 'long') ?? 'medium'
@@ -132,6 +119,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   facade: FacadeRenderer,
   temple: TempleRenderer,
   trinitaria: TrinitariaRenderer,
+  ...cityIntroRenderers,
 }
 
 /**
