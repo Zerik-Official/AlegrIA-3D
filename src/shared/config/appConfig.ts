@@ -43,6 +43,8 @@ export const cityIntroConfig = {
   eyeHeight: 1.75,
   /** Progress in [0,1] along the path at which the player can enter the library. */
   arrivalThreshold: 0.985,
+  /** How long the Start button shows its loading spinner before the city scene reveals, in ms. */
+  launchDelayMs: 650,
 } as const
 
 /**
