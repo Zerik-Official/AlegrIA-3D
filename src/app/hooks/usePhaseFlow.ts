@@ -24,6 +24,8 @@ export interface PhaseFlow {
   showPhase2Overlay: boolean
   /** Whether `phase` currently resolves to the city intro walk. */
   isCityIntro: boolean
+  /** Whether the Start button was pressed and the city scene is warming up before reveal. */
+  isLaunching: boolean
   /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
@@ -53,6 +55,7 @@ export function usePhaseFlow(): PhaseFlow {
   const [wormholeTarget, setWormholeTarget] = useState<GamePhase>('phase1')
   const [showPhase1Overlay, setShowPhase1Overlay] = useState(true)
   const [showPhase2Overlay, setShowPhase2Overlay] = useState(true)
+  const [isLaunching, setIsLaunching] = useState(false)
   const timeline = useRef(new WormholeTimeline()).current
 
   const isCityIntro = phase === 'cityIntro'
@@ -76,13 +79,25 @@ export function usePhaseFlow(): PhaseFlow {
 
   const startWormholeToPhase1 = useCallback(() => startWormhole('phase1'), [startWormhole])
   const startWormholeToPhase2 = useCallback(() => startWormhole('phase2'), [startWormhole])
-  const startCityWalk = useCallback(() => setPhase('cityIntro'), [])
+  const startCityWalk = useCallback(() => {
+    if (phase !== 'idle' || isLaunching) return
+    setIsLaunching(true)
+  }, [phase, isLaunching])
   const enterLibrary = useCallback(() => setPhase('exploring'), [])
   const dismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
   const dismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
   const returnToLibrary = useCallback(() => window.location.reload(), [])
 
   useEffect(() => () => timeline.cancel(), [timeline])
+
+  useEffect(() => {
+    if (!isLaunching) return
+    const id = window.setTimeout(() => {
+      setPhase('cityIntro')
+      setIsLaunching(false)
+    }, appConfig.cityIntro.launchDelayMs)
+    return () => window.clearTimeout(id)
+  }, [isLaunching])
 
   return {
     phase,
@@ -91,6 +106,7 @@ export function usePhaseFlow(): PhaseFlow {
     showPhase1Overlay,
     showPhase2Overlay,
     isCityIntro,
+    isLaunching,
     isPhase1,
     isPhase2,
     startCityWalk,
