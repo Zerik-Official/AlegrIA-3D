@@ -1,4 +1,4 @@
-import { memo, useRef } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
@@ -14,17 +14,60 @@ interface SepiaPhotoFrameProps {
   imageIndex?: number
   /** Whether the frame is highlighted due to proximity. */
   highlighted?: boolean
+  /** JSON-declared image URL; falls back to the plain sepia tint when absent or unreachable. */
+  imageSrc?: string
+}
+
+/**
+ * Loads an image texture without suspending — resolves to `null` when `src` is
+ * empty or fails to load, so callers can fall back to a procedural look.
+ * Mirrors `ModelLoader`'s "degrade gracefully" convention for JSON-declared assets.
+ *
+ * @param src - Image URL, or undefined/empty to skip loading
+ * @returns Loaded texture, or null while loading/missing
+ */
+function useSafeTexture(src?: string): THREE.Texture | null {
+  const [texture, setTexture] = useState<THREE.Texture | null>(null)
+
+  useEffect(() => {
+    if (!src) {
+      setTexture(null)
+      return
+    }
+    let cancelled = false
+    const loader = new THREE.TextureLoader()
+    loader.load(
+      src,
+      (tex) => {
+        if (cancelled) return
+        tex.colorSpace = THREE.SRGBColorSpace
+        setTexture(tex)
+      },
+      undefined,
+      () => {
+        if (!cancelled) setTexture(null)
+      }
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [src])
+
+  return texture
 }
 
 /**
  * Floating sepia photo with orange tint and proximity highlight.
+ * Renders `imageSrc` on the frame when provided by the entity JSON, otherwise
+ * stays a plain sepia-tinted placeholder.
  *
  * @param props - Frame appearance
  * @returns Frame group
  */
-export const SepiaPhotoFrame = memo(function SepiaPhotoFrame({ position, rotationY = 0, imageIndex = 0, highlighted = false }: SepiaPhotoFrameProps) {
+export const SepiaPhotoFrame = memo(function SepiaPhotoFrame({ position, rotationY = 0, imageIndex = 0, highlighted = false, imageSrc }: SepiaPhotoFrameProps) {
   const ref = useRef<THREE.Group>(null)
   const frameRef = useRef<THREE.Mesh>(null)
+  const texture = useSafeTexture(imageSrc)
 
   useFrame(({ clock }) => {
     if (!ref.current) return
@@ -56,7 +99,13 @@ export const SepiaPhotoFrame = memo(function SepiaPhotoFrame({ position, rotatio
       </mesh>
       <mesh position={[0, 0, 0.042]}>
         <planeGeometry args={[1.32, 0.9]} />
-        <meshStandardMaterial color="#704214" roughness={0.98} emissive={highlighted ? '#ff8a1a' : '#000000'} emissiveIntensity={highlighted ? 0.18 : 0} />
+        <meshStandardMaterial
+          map={texture}
+          color={texture ? '#ffffff' : '#704214'}
+          roughness={0.98}
+          emissive={highlighted ? '#ff8a1a' : '#000000'}
+          emissiveIntensity={highlighted ? 0.18 : 0}
+        />
       </mesh>
       <mesh position={[0, 0, 0.044]}>
         <planeGeometry args={[1.32, 0.9]} />
