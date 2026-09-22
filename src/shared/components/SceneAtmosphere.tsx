@@ -307,11 +307,15 @@ export const ScenePlanet = memo(function ScenePlanet({ radius = 3, color = '#c9a
     <group rotation-z={0.3}>
       <mesh ref={bodyRef}>
         <sphereGeometry args={[radius, 32, 32]} />
-        <meshStandardMaterial map={texture} roughness={0.85} metalness={0.05} />
+        <meshStandardMaterial map={texture} emissive={color} emissiveIntensity={0.35} roughness={0.85} metalness={0.05} />
       </mesh>
       <mesh>
-        <sphereGeometry args={[radius * 1.08, 24, 24]} />
-        <meshBasicMaterial color={color} transparent opacity={0.08} depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} />
+        <sphereGeometry args={[radius * 1.1, 24, 24]} />
+        <meshBasicMaterial color={color} transparent opacity={0.16} depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[radius * 1.35, 20, 20]} />
+        <meshBasicMaterial color={color} transparent opacity={0.06} depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} />
       </mesh>
       {hasRing && (
         <mesh rotation-x={Math.PI / 2 - 0.15}>
