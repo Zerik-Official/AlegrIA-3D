@@ -22,12 +22,16 @@ export interface PhaseFlow {
   showPhase1Overlay: boolean
   /** Whether Phase 2's intro overlay is showing. */
   showPhase2Overlay: boolean
+  /** Whether `phase` currently resolves to the city intro walk. */
+  isCityIntro: boolean
   /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
   isPhase2: boolean
-  /** Transitions from `idle` into `exploring`. */
-  startExploring: () => void
+  /** Transitions from `idle` into `cityIntro`, starting the scripted walk to the library. */
+  startCityWalk: () => void
+  /** Transitions from `cityIntro` into `exploring`, once the player has reached the library door. */
+  enterLibrary: () => void
   /** Starts the wormhole transition into Phase 1. */
   startWormholeToPhase1: () => void
   /** Starts the wormhole transition into Phase 2. */
@@ -51,6 +55,7 @@ export function usePhaseFlow(): PhaseFlow {
   const [showPhase2Overlay, setShowPhase2Overlay] = useState(true)
   const timeline = useRef(new WormholeTimeline()).current
 
+  const isCityIntro = phase === 'cityIntro'
   const isPhase1 = phase === 'phase1' || phase === 'museum'
   const isPhase2 = phase === 'phase2'
 
@@ -71,7 +76,8 @@ export function usePhaseFlow(): PhaseFlow {
 
   const startWormholeToPhase1 = useCallback(() => startWormhole('phase1'), [startWormhole])
   const startWormholeToPhase2 = useCallback(() => startWormhole('phase2'), [startWormhole])
-  const startExploring = useCallback(() => setPhase('exploring'), [])
+  const startCityWalk = useCallback(() => setPhase('cityIntro'), [])
+  const enterLibrary = useCallback(() => setPhase('exploring'), [])
   const dismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
   const dismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
   const returnToLibrary = useCallback(() => window.location.reload(), [])
@@ -84,9 +90,11 @@ export function usePhaseFlow(): PhaseFlow {
     wormholeTarget,
     showPhase1Overlay,
     showPhase2Overlay,
+    isCityIntro,
     isPhase1,
     isPhase2,
-    startExploring,
+    startCityWalk,
+    enterLibrary,
     startWormholeToPhase1,
     startWormholeToPhase2,
     dismissPhase1Intro,
