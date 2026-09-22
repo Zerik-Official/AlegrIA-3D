@@ -29,4 +29,9 @@ export const modelRegistry: ModelRegistry = {
   'phase1/aduana': { path: '/models/phase1/aduana.glb', fallback: 'procedural-aduana' },
   'phase1/estacion-montoya': { path: '/models/phase1/estacion-montoya.glb', fallback: 'procedural-estacion' },
   'phase1/sepia-photo': { path: '/models/phase1/sepia-photo.glb', fallback: 'procedural-sepia-photo' },
+  'phase1/portal': { path: '/models/phase1/portal.glb', fallback: 'procedural-portal-phase1' },
+  'phase2/facade': { path: '/models/phase2/facade.glb', fallback: 'procedural-facade' },
+  'phase2/temple': { path: '/models/phase2/temple.glb', fallback: 'procedural-temple' },
+  'phase2/trinitaria': { path: '/models/phase2/trinitaria.glb', fallback: 'procedural-trinitaria' },
+  'phase2/portal': { path: '/models/phase2/portal.glb', fallback: 'procedural-portal-phase2' },
 }
