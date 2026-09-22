@@ -6,6 +6,7 @@ import { AndenAlto } from '@/features/phase1/components/parts/AndenAlto'
 import { Arroyo } from '@/features/phase1/components/parts/Arroyo'
 import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
 import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
+import { Phase1Backdrop } from '@/features/phase1/components/parts/Phase1Backdrop'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
@@ -34,6 +35,10 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
 
   return (
     <group>
+      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, 0]} receiveShadow>
+        <planeGeometry args={[320, 320]} />
+        <meshStandardMaterial color="#5a4022" roughness={1} metalness={0} />
+      </mesh>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[42, 42]} />
         <meshStandardMaterial color="#6b4a2a" roughness={1} metalness={0} />
@@ -44,6 +49,7 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
       </mesh>
       <gridHelper args={[40, 10, '#5a3d1a', '#7a5a2e']} position={[0, 0.002, 0]} />
       <GroundDetail />
+      <Phase1Backdrop />
 
       <Phase1Sun />
       <Phase1Clouds />
