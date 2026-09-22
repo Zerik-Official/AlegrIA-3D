@@ -58,8 +58,8 @@ function SepiaPhotoRenderer({ entity, context }: EntityRendererProps) {
   )
 }
 
-function PortalRenderer() {
-  return <ProceduralPortal position={[0, 0, 0]} radius={1.55} />
+function PortalRenderer({ entity }: EntityRendererProps) {
+  return <ProceduralPortal position={[0, 0, 0]} radius={1.55} accentColor={entity.variant} />
 }
 
 function CyberWallRenderer({ entity }: EntityRendererProps) {
