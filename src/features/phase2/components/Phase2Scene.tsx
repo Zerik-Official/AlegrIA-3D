@@ -11,7 +11,7 @@ import type { EditableEntity } from '@/features/editor/config/editableEntities'
 /**
  * Colorful facade with trinitaria balcony.
  */
-function ColorfulFacade({
+export function ColorfulFacade({
   position,
   color,
   rotationY = 0,
@@ -53,7 +53,7 @@ function ColorfulFacade({
 /**
  * Gothic temple silhouette with illuminated windows.
  */
-function GothicTemple({ position }: { position: [number, number, number] }) {
+export function GothicTemple({ position }: { position: [number, number, number] }) {
   const glowRef = useRef<THREE.Mesh>(null)
   useFrame(({ clock }) => {
     if (!glowRef.current) return
