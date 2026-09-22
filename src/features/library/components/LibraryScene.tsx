@@ -1,4 +1,6 @@
-import { memo, useMemo } from 'react'
+import { memo, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 import { Bookshelf } from './Bookshelf'
 import { Pedestal } from '../../pedestal/components/Pedestal'
 import { LevitatingBook } from '../../pedestal/components/LevitatingBook'
@@ -27,6 +29,27 @@ interface LibrarySceneProps {
  * @returns Library group
  */
 export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormholeProgress }: LibrarySceneProps) {
+  const libraryRef = useRef<THREE.Group>(null)
+
+  useFrame(() => {
+    if (!libraryRef.current) return
+    const voidProgress = THREE.MathUtils.clamp((wormholeProgress - 0.32) / 0.28, 0, 1)
+    const fade = 1 - voidProgress * 0.96
+    libraryRef.current.traverse((obj) => {
+      const mesh = obj as THREE.Mesh
+      if (mesh.isMesh && mesh.material) {
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+        mats.forEach((m) => {
+          const mat = m as THREE.MeshStandardMaterial & { transparent?: boolean; opacity?: number }
+          if (mat.opacity !== undefined && mat.transparent !== undefined) {
+            if (voidProgress > 0.01) mat.transparent = true
+            if (mesh.userData.isBook !== true) mat.opacity = THREE.MathUtils.lerp(mat.opacity, fade, 0.12)
+          }
+        })
+      }
+    })
+  })
+
   const torchLights = useMemo(
     () =>
       [
@@ -58,11 +81,12 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
 
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[22, 22]} />
-        <meshStandardMaterial color="#080a12" roughness={0.92} metalness={0.06} />
-      </mesh>
-      <gridHelper args={[20, 20, '#0a1a2e', '#0f1f36']} position={[0, 0.015, 0]} />
+      <group ref={libraryRef}>
+        <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
+          <planeGeometry args={[22, 22]} />
+          <meshStandardMaterial color="#080a12" roughness={0.92} metalness={0.06} transparent opacity={1} />
+        </mesh>
+        <gridHelper args={[20, 20, '#0a1a2e', '#0f1f36']} position={[0, 0.015, 0]} />
 
       <mesh rotation-x={Math.PI / 2} position={[0, 5.2, 0]}>
         <planeGeometry args={[22, 22]} />
@@ -115,14 +139,15 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       <Bookshelf position={[10.05, 1.6, 0]} rotationY={-Math.PI / 2} width={5} />
       <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
 
+      <ScatteredBooks />
+      </group>
+
       <Pedestal />
+      <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
       <LevitatingBook ritualProgress={wormholeProgress} />
 
       <Wormhole active={wormholeActive} progress={wormholeProgress} />
       <TimeVortexParticles active={wormholeActive} progress={wormholeProgress} />
-      <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
-
-      <ScatteredBooks />
 
       <ambientLight intensity={0.18} color="#7ab8ff" />
       <hemisphereLight args={['#0a1a2e', '#020508', 0.38]} />
