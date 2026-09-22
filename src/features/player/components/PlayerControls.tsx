@@ -1,29 +1,57 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { PointerLockControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useKeyboard } from '../hooks/useKeyboard'
+import { playerConfig } from '../../../shared/config/appConfig'
 
-interface Props {
+/**
+ * Props for {@link PlayerControls}.
+ */
+interface PlayerControlsProps {
+  /** Whether movement and pointer lock are active. */
   enabled: boolean
+  /** Callback invoked every frame with the current camera position. */
   onPositionChange: (pos: THREE.Vector3) => void
+  /** Optional movement bounds clamping. */
   bounds?: { minX: number; maxX: number; minZ: number; maxZ: number }
 }
 
-export function PlayerControls({ enabled, onPositionChange, bounds }: Props) {
+/** Reusable vectors to avoid per-frame GC. */
+const scratch = {
+  velocity: new THREE.Vector3(),
+  direction: new THREE.Vector3(),
+  yaw: new THREE.Euler(0, 0, 0, 'YXZ'),
+  forward: new THREE.Vector3(),
+  right: new THREE.Vector3(),
+  move: new THREE.Vector3(),
+  next: new THREE.Vector3(),
+}
+
+/**
+ * First-person pointer-lock controls with WASD movement, sprint, pedestal collision and synthesized footsteps.
+ * Reusable across library and museum by swapping {@link PlayerControlsProps.bounds}.
+ *
+ * @param props - Control configuration
+ * @returns PointerLockControls element
+ * @link https://github.com/pmndrs/drei#pointerlockcontrols
+ */
+export const PlayerControls = memo(function PlayerControls({ enabled, onPositionChange, bounds }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
-  const velocity = useRef(new THREE.Vector3())
-  const direction = useRef(new THREE.Vector3())
-  const controlsRef = useRef<any>(null)
   const audioCtxRef = useRef<AudioContext | null>(null)
   const lastStepRef = useRef(0)
   const stepIdxRef = useRef(0)
 
-  const ensureAudio = () => {
+  /**
+   * Lazily creates and resumes the AudioContext.
+   * @returns AudioContext or null
+   */
+  const ensureAudio = (): AudioContext | null => {
     if (!audioCtxRef.current) {
       const AC =
-        (window as unknown as { AudioContext: typeof AudioContext; webkitAudioContext: typeof AudioContext }).AudioContext ||
+        (window as unknown as { AudioContext: typeof AudioContext; webkitAudioContext: typeof AudioContext })
+          .AudioContext ||
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       if (AC) audioCtxRef.current = new AC()
     }
@@ -31,13 +59,16 @@ export function PlayerControls({ enabled, onPositionChange, bounds }: Props) {
     return audioCtxRef.current
   }
 
-  const playStep = (sprinting: boolean) => {
+  /**
+   * Plays a footstep thud + transient.
+   * @param sprinting - Whether the player is sprinting
+   */
+  const playStep = (sprinting: boolean): void => {
     const ctx = ensureAudio()
     if (!ctx) return
     const t = ctx.currentTime
     const left = stepIdxRef.current % 2 === 0
     stepIdxRef.current += 1
-    // thud
     const osc = ctx.createOscillator()
     const oscGain = ctx.createGain()
     const filt = ctx.createBiquadFilter()
@@ -49,7 +80,6 @@ export function PlayerControls({ enabled, onPositionChange, bounds }: Props) {
     oscGain.gain.setValueAtTime(0, t)
     oscGain.gain.linearRampToValueAtTime(sprinting ? 0.33 : 0.22, t + 0.01)
     oscGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2)
-    // click transient
     const bufSize = ctx.sampleRate * 0.06
     const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate)
     const data = buf.getChannelData(0)
@@ -74,9 +104,8 @@ export function PlayerControls({ enabled, onPositionChange, bounds }: Props) {
     src.stop(t + 0.07)
   }
 
-  // resume audio on first interaction
   useEffect(() => {
-    const h = () => ensureAudio()
+    const h = (): AudioContext | null => ensureAudio()
     window.addEventListener('click', h, { once: true })
     window.addEventListener('keydown', h, { once: true })
     return () => {
@@ -85,67 +114,57 @@ export function PlayerControls({ enabled, onPositionChange, bounds }: Props) {
     }
   }, [])
 
-  // Initial position: entrance of the library, facing the pedestal (center)
   useEffect(() => {
-    camera.position.set(0, 1.7, 9)
-    camera.lookAt(0, 1.2, 0)
+    camera.position.set(playerConfig.startPosition.x, playerConfig.startPosition.y, playerConfig.startPosition.z)
+    camera.lookAt(playerConfig.startLookAt.x, playerConfig.startLookAt.y, playerConfig.startLookAt.z)
   }, [camera])
 
   useFrame((_, delta) => {
     if (!enabled) return
 
-    const speed = keys.current.shift ? 4.5 : 2.8
+    const speed = keys.current.shift ? playerConfig.sprintSpeed : playerConfig.walkSpeed
     const dt = Math.min(delta, 0.05)
 
-    // friction
-    velocity.current.x *= 0.88
-    velocity.current.z *= 0.88
+    scratch.velocity.x *= 0.88
+    scratch.velocity.z *= 0.88
 
-    direction.current.set(0, 0, 0)
-    if (keys.current.w) direction.current.z -= 1
-    if (keys.current.s) direction.current.z += 1
-    if (keys.current.a) direction.current.x -= 1
-    if (keys.current.d) direction.current.x += 1
-    if (direction.current.lengthSq() > 0) direction.current.normalize()
+    scratch.direction.set(0, 0, 0)
+    if (keys.current.w) scratch.direction.z -= 1
+    if (keys.current.s) scratch.direction.z += 1
+    if (keys.current.a) scratch.direction.x -= 1
+    if (keys.current.d) scratch.direction.x += 1
+    if (scratch.direction.lengthSq() > 0) scratch.direction.normalize()
 
-    // Move relative to camera yaw (ignore pitch)
-    const yaw = new THREE.Euler(0, 0, 0, 'YXZ')
-    yaw.setFromQuaternion(camera.quaternion)
-    yaw.x = 0
-    yaw.z = 0
+    scratch.yaw.setFromQuaternion(camera.quaternion)
+    scratch.yaw.x = 0
+    scratch.yaw.z = 0
 
-    const forward = new THREE.Vector3(0, 0, -1).applyEuler(yaw)
-    const right = new THREE.Vector3(1, 0, 0).applyEuler(yaw)
+    scratch.forward.set(0, 0, -1).applyEuler(scratch.yaw)
+    scratch.right.set(1, 0, 0).applyEuler(scratch.yaw)
 
-    const move = new THREE.Vector3()
-    move.addScaledVector(forward, -direction.current.z)
-    move.addScaledVector(right, direction.current.x)
-    if (move.lengthSq() > 0) move.normalize().multiplyScalar(speed * dt)
+    scratch.move.set(0, 0, 0)
+    scratch.move.addScaledVector(scratch.forward, -scratch.direction.z)
+    scratch.move.addScaledVector(scratch.right, scratch.direction.x)
+    if (scratch.move.lengthSq() > 0) scratch.move.normalize().multiplyScalar(speed * dt)
 
-    // Simple collision vs bounds + pedestal cylinder
-    let next = camera.position.clone().add(move)
+    scratch.next.copy(camera.position).add(scratch.move)
 
     if (bounds) {
-      next.x = THREE.MathUtils.clamp(next.x, bounds.minX, bounds.maxX)
-      next.z = THREE.MathUtils.clamp(next.z, bounds.minZ, bounds.maxZ)
+      scratch.next.x = THREE.MathUtils.clamp(scratch.next.x, bounds.minX, bounds.maxX)
+      scratch.next.z = THREE.MathUtils.clamp(scratch.next.z, bounds.minZ, bounds.maxZ)
     }
 
-    // Pedestal collision (center radius ~0.9, height irrelevant)
-    const distToPedestal = Math.hypot(next.x, next.z)
-    if (distToPedestal < 1.05) {
-      const angle = Math.atan2(next.z, next.x)
-      next.x = Math.cos(angle) * 1.05
-      next.z = Math.sin(angle) * 1.05
+    const distToPedestal = Math.hypot(scratch.next.x, scratch.next.z)
+    if (distToPedestal < playerConfig.pedestalRadius) {
+      const angle = Math.atan2(scratch.next.z, scratch.next.x)
+      scratch.next.x = Math.cos(angle) * playerConfig.pedestalRadius
+      scratch.next.z = Math.sin(angle) * playerConfig.pedestalRadius
     }
 
-    // bookshelf outer walls implicit via bounds; inner bookshelf collisions (approx)
-    // we keep bounds tight so no need for complex mesh collision
+    camera.position.copy(scratch.next)
+    camera.position.y = playerConfig.eyeHeight
 
-    camera.position.copy(next)
-    camera.position.y = 1.7
-
-    // footsteps: trigger when actually moving
-    const isMoving = move.lengthSq() > 0.00001
+    const isMoving = scratch.move.lengthSq() > 0.00001
     const sprinting = keys.current.shift && isMoving
     if (enabled && isMoving) {
       const now = performance.now()
@@ -159,11 +178,5 @@ export function PlayerControls({ enabled, onPositionChange, bounds }: Props) {
     onPositionChange(camera.position)
   })
 
-  return (
-    <PointerLockControls
-      ref={controlsRef}
-      enabled={enabled}
-      // drei's PointerLockControls locks on click automatically
-    />
-  )
-}
+  return <PointerLockControls enabled={enabled} />
+})
