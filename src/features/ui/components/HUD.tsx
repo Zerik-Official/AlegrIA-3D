@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer } from 'react-icons/fi'
+import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
 
 /**
@@ -109,46 +109,61 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, isP
  * Props for {@link StartOverlay}.
  */
 interface StartOverlayProps {
-  /** Starts the exploration phase. */
+  /** Starts the city walk. */
   onStart: () => void
+  /** Whether the city scene is warming up before reveal — disables the button and shows a spinner. */
+  loading?: boolean
 }
 
 /**
- * Full-screen start screen prompting the user to begin.
+ * Full-screen start screen prompting the user to begin the city walk.
  *
- * @param props - Overlay actions
+ * @param props - Overlay actions and loading state
  * @returns Start overlay
  */
-export const StartOverlay = memo(function StartOverlay({ onStart }: StartOverlayProps) {
+export const StartOverlay = memo(function StartOverlay({ onStart, loading = false }: StartOverlayProps) {
+  const handleStart = (): void => {
+    if (!loading) onStart()
+  }
   return (
     <div
-      onClick={onStart}
-      className="fixed inset-0 z-20 flex cursor-pointer flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(20,14,30,0.92)_0%,rgba(5,4,10,0.97)_70%)] p-8 text-center backdrop-blur-xs"
+      onClick={handleStart}
+      className={`fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(10,10,22,0.94)_0%,rgba(4,4,10,0.98)_70%)] p-8 text-center backdrop-blur-xs ${loading ? 'cursor-progress' : 'cursor-pointer'}`}
     >
       <div className="max-w-2xl">
-        <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena 0 — Año 2050</div>
-        <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(255,180,40,0.5)]">
-          Biblioteca del Futuro
-          <span className="block bg-linear-to-r from-gold-bright to-[#ff8a00] bg-clip-text text-transparent">Abandonada</span>
+        <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena -1 — Año 2050</div>
+        <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(120,180,255,0.4)]">
+          Una Noche en la
+          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Ciudad Futura</span>
         </h1>
         <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-parchment/70">
-          Año 2050. Muros cibernéticos resquebrajados — falta la pieza clave para volver a funcionar.
+          Año 2050. Autos y trenes voladores cruzan el cielo entre rascacielos de neón.
           <br />
-          En el centro, sobre pedestal rústico, <span className="text-gold-bright font-semibold">El Libro de Rosa</span> pulsa con resplandor dorado.
+          Al final de una calle olvidada espera la sombra de una <span className="text-gold-bright font-semibold">biblioteca abandonada</span>, donde
+          duerme El Libro de Rosa y el Vórtice del Tiempo.
           <br />
-          Acércate al libro, despierta el Vórtice del Tiempo y deja que el portal te absorba.
+          Solo falta caminar hacia ella.
         </p>
         <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
-          <FiMove className="h-3.5 w-3.5" /> WASD moverte <span className="opacity-30">•</span> <FiEye className="h-3.5 w-3.5" /> mouse mirar{' '}
-          <span className="opacity-30">•</span> <FiMousePointer className="h-3.5 w-3.5" /> E interactuar
+          <FiEye className="h-3.5 w-3.5" /> mouse — mirar alrededor mientras caminas
         </p>
 
         <button
-          onClick={onStart}
-          className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)]"
+          onClick={handleStart}
+          disabled={loading}
+          className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)] disabled:cursor-progress disabled:opacity-80 disabled:hover:translate-y-0 disabled:hover:scale-100"
         >
-          <FiArrowRight className="h-4 w-4" />
-          Despertar el Portal
+          {loading ? (
+            <>
+              <FiLoader className="h-4 w-4 animate-spin" />
+              Despertando la Ciudad…
+            </>
+          ) : (
+            <>
+              <FiArrowRight className="h-4 w-4" />
+              Comenzar el Camino
+            </>
+          )}
         </button>
         <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles — ESC para salir</p>
       </div>
