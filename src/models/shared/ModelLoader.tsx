@@ -64,7 +64,10 @@ export function ModelLoader({ src, fallback, scale, position, rotation }: ModelL
     let cancelled = false
     fetch(src, { method: 'HEAD' })
       .then((r) => {
-        if (!cancelled) setAvailable(r.ok)
+        if (cancelled) return
+        const ct = r.headers.get('content-type') ?? ''
+        const isHtmlFallback = ct.includes('text/html')
+        setAvailable(r.ok && !isHtmlFallback)
       })
       .catch(() => {
         if (!cancelled) setAvailable(false)
