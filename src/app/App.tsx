@@ -222,6 +222,18 @@ export default function App() {
   const isPhase2 = phase === 'phase2'
 
   useEffect(() => {
+    if (isEditorEnabled && document.pointerLockElement) {
+      document.exitPointerLock()
+    }
+  }, [isEditorEnabled])
+
+  useEffect(() => {
+    if ((showPhase1Overlay && isPhase1) || (showPhase2Overlay && isPhase2) || phase === 'idle') {
+      if (document.pointerLockElement) document.exitPointerLock()
+    }
+  }, [showPhase1Overlay, showPhase2Overlay, isPhase1, isPhase2, phase])
+
+  useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
       if (e.key === 'F2') {
         setIsEditorEnabled((v) => !v)
@@ -239,7 +251,19 @@ export default function App() {
         editor.setMode('scale')
         return
       }
-      const isE = e.key.toLowerCase() === 'e' || e.key === 'Enter'
+      const isE = e.key.toLowerCase() === 'e' || e.key === 'Enter' || e.key === ' '
+      if (isE && showPhase1Overlay && isPhase1) {
+        setShowPhase1Overlay(false)
+        return
+      }
+      if (isE && showPhase2Overlay && isPhase2) {
+        setShowPhase2Overlay(false)
+        return
+      }
+      if (isE && phase === 'idle') {
+        setPhase('exploring')
+        return
+      }
       if (isE && selectedPhoto) {
         setSelectedPhotoId(null)
         return
@@ -260,7 +284,7 @@ export default function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isPhase1, nearPortal, showPhase1Overlay, selectedPhoto, highlightedPhotoId, startWormholeToPhase2, isEditorEnabled, editor])
+  }, [isPhase1, isPhase2, nearPortal, showPhase1Overlay, showPhase2Overlay, phase, selectedPhoto, highlightedPhotoId, startWormholeToPhase2, isEditorEnabled, editor])
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
