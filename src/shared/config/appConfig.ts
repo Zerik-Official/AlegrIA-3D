@@ -27,6 +27,8 @@ export const playerConfig = {
   libraryBounds: { minX: -9.2, maxX: 9.2, minZ: -9.2, maxZ: 9.2 } as Bounds,
   /** Movement bounds inside the museum hall. */
   museumBounds: { minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 } as Bounds,
+  /** Movement bounds inside Phase 1 barrio (larger, open). */
+  phase1Bounds: { minX: -18, maxX: 18, minZ: -18, maxZ: 18 } as Bounds,
 } as const
 
 /**
