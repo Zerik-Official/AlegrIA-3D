@@ -16,7 +16,7 @@ import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
-import { cityIntroRenderers } from '@/engine/cityIntroRenderers'
+import { cityIntroRenderers } from '@/features/cityIntro/renderers'
 import type { EntityRenderer, EntityRendererProps } from '@/engine/types'
 
 export type { EntityRenderer, EntityRendererProps } from '@/engine/types'
