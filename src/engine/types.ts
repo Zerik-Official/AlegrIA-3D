@@ -3,6 +3,7 @@
  * @module engine/types
  */
 
+import type { ReactNode } from 'react'
 import type { Vector3Tuple } from 'three'
 
 /**
@@ -53,3 +54,19 @@ export interface EngineRenderContext {
   /** Ritual progress for book animation. */
   ritualProgress?: number
 }
+
+/**
+ * Props passed to every entity renderer registered in `engine/entityRegistry`
+ * (and any per-scene renderer module it merges in, e.g. `engine/cityIntroRenderers`).
+ * The entity's own `position`/`rotationY`/`scale` are already applied by `PhaseEngine`'s
+ * wrapping group, so renderers place their content at the origin.
+ */
+export interface EntityRendererProps {
+  /** The JSON-driven entity being rendered. */
+  entity: EditableEntity
+  /** Optional per-frame render context (highlight state, ritual progress, ...). */
+  context?: EngineRenderContext
+}
+
+/** A component that renders one entity type. */
+export type EntityRenderer = (props: EntityRendererProps) => ReactNode
