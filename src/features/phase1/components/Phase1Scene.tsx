@@ -5,6 +5,7 @@ import { ProceduralTree, ProceduralTrinitaria } from '@/shared/components/Reusab
 import { AndenAlto } from '@/features/phase1/components/parts/AndenAlto'
 import { Arroyo } from '@/features/phase1/components/parts/Arroyo'
 import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
+import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
@@ -42,6 +43,7 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
         <meshStandardMaterial color="#7a5a2e" roughness={0.98} />
       </mesh>
       <gridHelper args={[40, 10, '#5a3d1a', '#7a5a2e']} position={[0, 0.002, 0]} />
+      <GroundDetail />
 
       <Phase1Sun />
       <Phase1Clouds />
