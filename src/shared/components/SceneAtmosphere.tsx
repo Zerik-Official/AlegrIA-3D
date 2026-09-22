@@ -1,6 +1,7 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createPlanetTexture } from '@/shared/utils/textures'
 
 /**
  * Props for {@link SceneSun}.
@@ -266,5 +267,58 @@ export const SceneStars = memo(function SceneStars({ count = 900, radius = 120, 
         <bufferAttribute attach="attributes-aSize" args={[sizes, 1]} />
       </bufferGeometry>
     </points>
+  )
+})
+
+/**
+ * Props for {@link ScenePlanet}.
+ */
+interface ScenePlanetProps {
+  /** Planet radius. */
+  radius?: number
+  /** Base surface color. */
+  color?: string
+  /** Ring color; defaults to the surface color. */
+  ringColor?: string
+  /** Whether to draw a ring. */
+  hasRing?: boolean
+  /** Self-rotation speed in radians/second. */
+  rotationSpeed?: number
+  /** Deterministic seed for the surface pattern. */
+  seed?: number
+}
+
+/**
+ * Reusable distant planet: a banded, self-rotating sphere with a soft
+ * atmospheric halo and an optional ring. Drop into any night sky.
+ *
+ * @param props - Planet appearance
+ * @returns Planet group
+ */
+export const ScenePlanet = memo(function ScenePlanet({ radius = 3, color = '#c9a877', ringColor, hasRing = false, rotationSpeed = 0.05, seed = 1 }: ScenePlanetProps) {
+  const bodyRef = useRef<THREE.Mesh>(null)
+  const texture = useMemo(() => createPlanetTexture(seed, color), [seed, color])
+
+  useFrame((_, delta) => {
+    if (bodyRef.current) bodyRef.current.rotation.y += rotationSpeed * delta
+  })
+
+  return (
+    <group rotation-z={0.3}>
+      <mesh ref={bodyRef}>
+        <sphereGeometry args={[radius, 32, 32]} />
+        <meshStandardMaterial map={texture} roughness={0.85} metalness={0.05} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[radius * 1.08, 24, 24]} />
+        <meshBasicMaterial color={color} transparent opacity={0.08} depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.BackSide} />
+      </mesh>
+      {hasRing && (
+        <mesh rotation-x={Math.PI / 2 - 0.15}>
+          <ringGeometry args={[radius * 1.4, radius * 2.1, 48]} />
+          <meshStandardMaterial color={ringColor ?? color} side={THREE.DoubleSide} transparent opacity={0.55} roughness={0.9} />
+        </mesh>
+      )}
+    </group>
   )
 })
