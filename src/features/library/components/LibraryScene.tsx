@@ -106,7 +106,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
   useFrame(() => {
     if (!libraryRef.current) return
     const voidProgress = THREE.MathUtils.clamp((wormholeProgress - 0.32) / 0.28, 0, 1)
-    const fade = 1 - voidProgress * 0.96
+    const fade = 1 - voidProgress
     libraryRef.current.traverse((obj) => {
       const mesh = obj as THREE.Mesh
       if (mesh.isMesh && mesh.material) {
@@ -115,7 +115,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
           const mat = m as THREE.MeshStandardMaterial & { transparent?: boolean; opacity?: number }
           if (mat.opacity !== undefined && mat.transparent !== undefined) {
             if (voidProgress > 0.01) mat.transparent = true
-            if (mesh.userData.isBook !== true) mat.opacity = THREE.MathUtils.lerp(mat.opacity, fade, 0.12)
+            mat.opacity = THREE.MathUtils.lerp(mat.opacity, fade, 0.12)
           }
         })
       }
@@ -173,7 +173,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       ))}
 
       {editableEntities ? (
-        <PhaseEngine entities={editableEntities} />
+        <PhaseEngine entities={editableEntities.filter((e) => e.type !== 'book')} />
       ) : (
         <>
           <CyberWall position={[0, 2.6, -11]} size={[22, 5.2, 0.45]} missingIndex={5} />
@@ -206,6 +206,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
           <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
 
           <ScatteredBooks />
+          <Pedestal />
         </>
       )}
 
@@ -218,12 +219,9 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       </group>
 
       {editableEntities ? (
-        <PhaseEngine entities={editableEntities.filter((e) => e.type === 'pedestal' || e.type === 'book')} context={{ ritualProgress: wormholeProgress }} />
+        <PhaseEngine entities={editableEntities.filter((e) => e.type === 'book')} context={{ ritualProgress: wormholeProgress }} />
       ) : (
-        <>
-          <Pedestal />
-          <LevitatingBook ritualProgress={wormholeProgress} />
-        </>
+        <LevitatingBook ritualProgress={wormholeProgress} />
       )}
       <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
 
