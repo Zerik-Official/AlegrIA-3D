@@ -8,6 +8,8 @@ import { HUD, StartOverlay, PastOverlay } from '@/features/ui/components/HUD'
 import { appConfig } from '@/shared/config/appConfig'
 import { easeCubicInOut } from '@/shared/utils/perf'
 import type { GamePhase } from '@/shared/types'
+import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
+import { PhotoModal } from '@/shared/components/PhotoModal'
 import * as THREE from 'three'
 
 /**
@@ -119,8 +121,12 @@ export default function App() {
   const wormholeRaf = useRef<number | null>(null)
 
   const nearBook = distance < appConfig.player.interactDistance
-  const portalPos: [number, number] = [0, 14.8]
-  const nearPortal = Math.hypot(playerPos.current.x - portalPos[0], playerPos.current.z - portalPos[1]) < 2.6
+  const portalPos: [number, number] = [0, 15.8]
+  const nearPortal = Math.hypot(playerPos.current.x - portalPos[0], playerPos.current.z - portalPos[1]) < 2.8
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null)
+  const selectedPhoto = sepiaPhotos.find((p) => p.id === selectedPhotoId) ?? null
+  const handlePhotoSelect = useCallback((id: string) => setSelectedPhotoId(id), [])
+  const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
 
   /**
    * Updates cached player position and distance to the central book.
@@ -173,13 +179,16 @@ export default function App() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
-      if ((e.key.toLowerCase() === 'e' || e.key === 'Enter') && isPhase1 && nearPortal && !showPhase1Overlay) {
+      if ((e.key.toLowerCase() === 'e' || e.key === 'Enter') && isPhase1 && nearPortal && !showPhase1Overlay && !selectedPhoto) {
         startWormholeToPhase2()
+      }
+      if (e.key === 'Escape' && selectedPhoto) {
+        setSelectedPhotoId(null)
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isPhase1, nearPortal, showPhase1Overlay, startWormholeToPhase2])
+  }, [isPhase1, nearPortal, showPhase1Overlay, selectedPhoto, startWormholeToPhase2])
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
@@ -198,7 +207,7 @@ export default function App() {
         {!isPhase1 && !isPhase2 ? (
           <LibraryScene wormholeActive={phase === 'wormhole'} wormholeProgress={wormholeProgress} />
         ) : isPhase1 ? (
-          <Phase1Scene />
+          <Phase1Scene onPhotoSelect={handlePhotoSelect} />
         ) : (
           <Phase2Scene />
         )}
@@ -208,7 +217,7 @@ export default function App() {
         )}
         {isPhase1 && (
           <PlayerControls
-            enabled={!showPhase1Overlay}
+            enabled={!showPhase1Overlay && !selectedPhoto}
             onPositionChange={handlePosition}
             bounds={appConfig.player.phase1Bounds}
           />
@@ -257,7 +266,7 @@ export default function App() {
       {isPhase2 && !showPhase2Overlay && (
         <>
           <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} isPhase1 />
-          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1a1208]/10 bg-[#f5e6c8]/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1a1208]/80 shadow backdrop-blur">
+          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1a1208]/10 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1a1208]/80 shadow backdrop-blur">
             Fase 2 — Época Dorada • Carnaval y Béisbol • Trinitarias
           </div>
         </>
@@ -284,7 +293,7 @@ export default function App() {
       {isPhase2 && !showPhase2Overlay && (
         <button
           onClick={handleReturnToLibrary}
-          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#1a1208]/10 bg-[#f5e6c8]/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#1a1208] shadow backdrop-blur hover:bg-white"
+          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#1a1208]/10 bg-parchment/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#1a1208] shadow backdrop-blur hover:bg-white"
         >
           Volver a la biblioteca
         </button>
@@ -303,7 +312,7 @@ export default function App() {
           title="Click para atravesar el vórtice"
         />
       )}
-      {isPhase1 && !showPhase1Overlay && nearPortal && (
+      {isPhase1 && !showPhase1Overlay && nearPortal && !selectedPhoto && (
         <div
           onClick={startWormholeToPhase2}
           style={{
@@ -316,6 +325,14 @@ export default function App() {
           title="Click para atravesar al portal"
         />
       )}
+
+      <PhotoModal
+        open={!!selectedPhoto}
+        src={selectedPhoto?.src ?? ''}
+        title={selectedPhoto?.title ?? ''}
+        description={selectedPhoto?.description ?? ''}
+        onClose={handlePhotoClose}
+      />
     </div>
   )
 }
