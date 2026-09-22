@@ -10,6 +10,11 @@ import { easeCubicInOut } from '@/shared/utils/perf'
 import type { GamePhase } from '@/shared/types'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import { PhotoModal } from '@/shared/components/PhotoModal'
+import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
+import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
+import { useEditor } from '@/features/editor/hooks/useEditor'
+import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
+import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
 /**
@@ -105,6 +110,25 @@ const KeyListener = memo(function KeyListener({ nearBook, phase, onInteract }: K
 })
 
 /**
+ * Finds the 3D object for the current editor selection.
+ *
+ * @param props - Finder props
+ * @returns Null
+ */
+function EditorTargetFinder({ selectedId, onFound }: { selectedId: string | null; onFound: (o: THREE.Object3D | null) => void }) {
+  const { scene } = useThree()
+  useEffect(() => {
+    if (!selectedId) {
+      onFound(null)
+      return
+    }
+    const obj = scene.getObjectByName(selectedId)
+    onFound(obj as THREE.Object3D | null)
+  }, [selectedId, scene, onFound])
+  return null
+}
+
+/**
  * Root application orchestrating scene phases, wormhole timing and player distance.
  * Designed to be reusable: swap `LibraryScene` / `MuseumScene` via props or registry without editing the phase logic.
  *
@@ -128,6 +152,9 @@ export default function App() {
   const selectedPhoto = sepiaPhotos.find((p) => p.id === selectedPhotoId) ?? null
   const handlePhotoSelect = useCallback((id: string) => setSelectedPhotoId(id), [])
   const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
+  const [isEditorEnabled, setIsEditorEnabled] = useState(false)
+  const editor = useEditor(initialPhase1Entities)
+  const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
 
   /**
    * Updates cached player position and distance to the central book.
@@ -196,25 +223,44 @@ export default function App() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
+      if (e.key === 'F2') {
+        setIsEditorEnabled((v) => !v)
+        return
+      }
+      if (e.key.toLowerCase() === 'w' && isEditorEnabled) {
+        editor.setMode('translate')
+        return
+      }
+      if (e.key.toLowerCase() === 'e' && isEditorEnabled) {
+        editor.setMode('rotate')
+        return
+      }
+      if (e.key.toLowerCase() === 'r' && isEditorEnabled) {
+        editor.setMode('scale')
+        return
+      }
       const isE = e.key.toLowerCase() === 'e' || e.key === 'Enter'
       if (isE && selectedPhoto) {
         setSelectedPhotoId(null)
         return
       }
-      if (isE && highlightedPhotoId && !selectedPhoto && isPhase1 && !showPhase1Overlay) {
+      if (isE && highlightedPhotoId && !selectedPhoto && isPhase1 && !showPhase1Overlay && !isEditorEnabled) {
         setSelectedPhotoId(highlightedPhotoId)
         return
       }
-      if (isE && isPhase1 && nearPortal && !showPhase1Overlay && !selectedPhoto) {
+      if (isE && isPhase1 && nearPortal && !showPhase1Overlay && !selectedPhoto && !isEditorEnabled) {
         startWormholeToPhase2()
       }
       if (e.key === 'Escape' && selectedPhoto) {
         setSelectedPhotoId(null)
       }
+      if (e.key === 'Escape' && isEditorEnabled) {
+        setIsEditorEnabled(false)
+      }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isPhase1, nearPortal, showPhase1Overlay, selectedPhoto, highlightedPhotoId, startWormholeToPhase2])
+  }, [isPhase1, nearPortal, showPhase1Overlay, selectedPhoto, highlightedPhotoId, startWormholeToPhase2, isEditorEnabled, editor])
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
@@ -233,26 +279,39 @@ export default function App() {
         {!isPhase1 && !isPhase2 ? (
           <LibraryScene wormholeActive={phase === 'wormhole'} wormholeProgress={wormholeProgress} />
         ) : isPhase1 ? (
-          <Phase1Scene onPhotoSelect={handlePhotoSelect} highlightedPhotoId={highlightedPhotoId} />
+          <Phase1Scene highlightedPhotoId={highlightedPhotoId} editableEntities={isEditorEnabled ? editor.entities : undefined} />
         ) : (
           <Phase2Scene />
         )}
 
         {phase === 'exploring' && (
-          <PlayerControls enabled onPositionChange={handlePosition} bounds={appConfig.player.libraryBounds} />
+          <PlayerControls enabled={!isEditorEnabled} onPositionChange={handlePosition} bounds={appConfig.player.libraryBounds} />
         )}
         {isPhase1 && (
           <PlayerControls
-            enabled={!showPhase1Overlay && !selectedPhoto}
+            enabled={!showPhase1Overlay && !selectedPhoto && !isEditorEnabled}
             onPositionChange={handlePosition}
             bounds={appConfig.player.phase1Bounds}
           />
         )}
         {isPhase2 && (
           <PlayerControls
-            enabled={!showPhase2Overlay}
+            enabled={!showPhase2Overlay && !isEditorEnabled}
             onPositionChange={handlePosition}
             bounds={appConfig.player.phase2Bounds}
+          />
+        )}
+        {isEditorEnabled && <OrbitControls enableDamping={false} />}
+        {isEditorEnabled && <EditorTargetFinder selectedId={editor.selectedId} onFound={setEditorTarget} />}
+        {isEditorEnabled && (
+          <EditorGizmo
+            target={editorTarget}
+            mode={editor.mode}
+            enabled={!!editorTarget}
+            onChange={(pos, rotY, scale) => {
+              if (!editor.selectedId) return
+              editor.updateEntity(editor.selectedId, { position: pos, rotationY: rotY, scale })
+            }}
           />
         )}
 
@@ -367,6 +426,26 @@ export default function App() {
         description={selectedPhoto?.description ?? ''}
         onClose={handlePhotoClose}
       />
+
+      <EditorOverlay
+        enabled={isEditorEnabled}
+        entities={editor.entities}
+        selectedId={editor.selectedId}
+        mode={editor.mode}
+        onModeChange={editor.setMode}
+        onSelect={editor.setSelectedId}
+        onUpdate={editor.updateEntity}
+        onAdd={editor.addEntity}
+        onRemove={editor.removeEntity}
+        onExport={editor.exportJson}
+        onClose={() => setIsEditorEnabled(false)}
+      />
+
+      {!isEditorEnabled && (
+        <div className="pointer-events-none fixed bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-[10px] tracking-[0.12em] uppercase text-parchment/40 backdrop-blur">
+          F2 — Editor de Posiciones
+        </div>
+      )}
     </div>
   )
 }
