@@ -103,7 +103,7 @@ function ProceduralBookGeometry({ onNear: _onNear }: LevitatingBookProps) {
 
         <mesh position={[0, -0.06, 0]} castShadow>
           <boxGeometry args={[0.72, 0.08, 0.52]} />
-          <meshStandardMaterial color="#3d1a0a" roughness={0.55} metalness={0.1} />
+          <meshStandardMaterial color="#5b0f1f" roughness={0.52} metalness={0.12} />
         </mesh>
         <mesh position={[0, 0.02, 0]}>
           <boxGeometry args={[0.68, 0.12, 0.48]} />
@@ -116,7 +116,7 @@ function ProceduralBookGeometry({ onNear: _onNear }: LevitatingBookProps) {
         <group rotation-z={0.18} rotation-y={-0.12} position={[0.06, 0.09, 0]}>
           <mesh castShadow position={[0, 0.04, 0]}>
             <boxGeometry args={[0.74, 0.05, 0.54]} />
-            <meshStandardMaterial color="#6b1d0f" roughness={0.45} metalness={0.15} />
+            <meshStandardMaterial color="#8b1a3a" roughness={0.42} metalness={0.18} />
           </mesh>
           <mesh position={[0.32, 0.07, 0.22]}>
             <boxGeometry args={[0.08, 0.01, 0.08]} />
