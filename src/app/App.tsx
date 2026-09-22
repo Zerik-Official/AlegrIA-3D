@@ -13,7 +13,7 @@ import { PhotoModal } from '@/shared/components/PhotoModal'
 import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
 import { useEditor } from '@/features/editor/hooks/useEditor'
-import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
+import { initialPhase1Entities, initialLibraryEntities, initialPhase2Entities } from '@/features/editor/config/editableEntities'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -153,7 +153,10 @@ export default function App() {
   const handlePhotoSelect = useCallback((id: string) => setSelectedPhotoId(id), [])
   const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
   const [isEditorEnabled, setIsEditorEnabled] = useState(false)
-  const editor = useEditor(initialPhase1Entities)
+  const libraryEditor = useEditor(initialLibraryEntities)
+  const phase1Editor = useEditor(initialPhase1Entities)
+  const phase2Editor = useEditor(initialPhase2Entities)
+  const currentEditor = phase === 'exploring' || phase === 'idle' || phase === 'wormhole' ? libraryEditor : isPhase1 ? phase1Editor : isPhase2 ? phase2Editor : libraryEditor
   const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
 
   /**
@@ -257,15 +260,15 @@ export default function App() {
         return
       }
       if (e.key.toLowerCase() === 'w' && isEditorEnabled) {
-        editor.setMode('translate')
+        currentEditor.setMode('translate')
         return
       }
       if (e.key.toLowerCase() === 'e' && isEditorEnabled) {
-        editor.setMode('rotate')
+        currentEditor.setMode('rotate')
         return
       }
       if (e.key.toLowerCase() === 'r' && isEditorEnabled) {
-        editor.setMode('scale')
+        currentEditor.setMode('scale')
         return
       }
       const isE = e.key.toLowerCase() === 'e' || e.key === 'Enter' || e.key === ' '
@@ -301,7 +304,7 @@ export default function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isPhase1, isPhase2, nearPortal, showPhase1Overlay, showPhase2Overlay, phase, selectedPhoto, highlightedPhotoId, startWormholeToPhase2, isEditorEnabled, editor])
+  }, [isPhase1, isPhase2, nearPortal, showPhase1Overlay, showPhase2Overlay, phase, selectedPhoto, highlightedPhotoId, startWormholeToPhase2, isEditorEnabled, currentEditor])
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
@@ -318,11 +321,15 @@ export default function App() {
         {!isPhase1 && !isPhase2 ? <color attach="background" args={['#08060a']} /> : isPhase1 ? <color attach="background" args={['#6b4a2a']} /> : <color attach="background" args={['#c9b896']} />}
 
         {!isPhase1 && !isPhase2 ? (
-          <LibraryScene wormholeActive={phase === 'wormhole'} wormholeProgress={wormholeProgress} />
+          <LibraryScene
+            wormholeActive={phase === 'wormhole'}
+            wormholeProgress={wormholeProgress}
+            editableEntities={isEditorEnabled ? libraryEditor.entities : undefined}
+          />
         ) : isPhase1 ? (
-          <Phase1Scene highlightedPhotoId={highlightedPhotoId} editableEntities={isEditorEnabled ? editor.entities : undefined} />
+          <Phase1Scene highlightedPhotoId={highlightedPhotoId} editableEntities={isEditorEnabled ? phase1Editor.entities : undefined} />
         ) : (
-          <Phase2Scene />
+          <Phase2Scene editableEntities={isEditorEnabled ? phase2Editor.entities : undefined} />
         )}
 
         {phase === 'exploring' && (
@@ -343,15 +350,15 @@ export default function App() {
           />
         )}
         {isEditorEnabled && <OrbitControls enableDamping={false} />}
-        {isEditorEnabled && <EditorTargetFinder selectedId={editor.selectedId} onFound={setEditorTarget} />}
+        {isEditorEnabled && <EditorTargetFinder selectedId={currentEditor.selectedId} onFound={setEditorTarget} />}
         {isEditorEnabled && (
           <EditorGizmo
             target={editorTarget}
-            mode={editor.mode}
+            mode={currentEditor.mode}
             enabled={!!editorTarget}
             onChange={(pos, rotY, scale) => {
-              if (!editor.selectedId) return
-              editor.updateEntity(editor.selectedId, { position: pos, rotationY: rotY, scale })
+              if (!currentEditor.selectedId) return
+              currentEditor.updateEntity(currentEditor.selectedId, { position: pos, rotationY: rotY, scale })
             }}
           />
         )}
@@ -470,15 +477,15 @@ export default function App() {
 
       <EditorOverlay
         enabled={isEditorEnabled}
-        entities={editor.entities}
-        selectedId={editor.selectedId}
-        mode={editor.mode}
-        onModeChange={editor.setMode}
-        onSelect={editor.setSelectedId}
-        onUpdate={editor.updateEntity}
-        onAdd={editor.addEntity}
-        onRemove={editor.removeEntity}
-        onExport={editor.exportJson}
+        entities={currentEditor.entities}
+        selectedId={currentEditor.selectedId}
+        mode={currentEditor.mode}
+        onModeChange={currentEditor.setMode}
+        onSelect={currentEditor.setSelectedId}
+        onUpdate={currentEditor.updateEntity}
+        onAdd={currentEditor.addEntity}
+        onRemove={currentEditor.removeEntity}
+        onExport={currentEditor.exportJson}
         onClose={() => setIsEditorEnabled(false)}
       />
 
