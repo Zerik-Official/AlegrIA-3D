@@ -82,7 +82,7 @@ export function ModelLoader({ src, fallback, scale, position, rotation }: ModelL
 
   return (
     <Suspense fallback={fallback}>
-      <GltfScene src={src} scale={scale} position={position} rotation={rotation} />
+      <GltfScene src={src} scale={scale} position={position ?? [0, 0, 0]} rotation={rotation ?? [0, 0, 0]} />
     </Suspense>
   )
 }
