@@ -1,77 +1,122 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { LibraryScene } from '../features/library/components/LibraryScene'
 import { MuseumScene } from '../features/museum/components/MuseumScene'
 import { PlayerControls } from '../features/player/components/PlayerControls'
 import { HUD, StartOverlay, PastOverlay } from '../features/ui/components/HUD'
+import { appConfig } from '../shared/config/appConfig'
+import { easeCubicInOut } from '../shared/utils/perf'
+import type { GamePhase } from '../shared/types'
 import * as THREE from 'three'
 
-type Phase = 'idle' | 'exploring' | 'wormhole' | 'museum'
-
-function WormholeCamera({ active, progress }: { active: boolean; progress: number }) {
-  useFrame(({ camera }) => {
-    if (!active) return
-    const fovTarget = 74 + progress * 38
-    const cam = camera as THREE.PerspectiveCamera
-    if (cam.fov !== undefined) {
-      cam.fov = THREE.MathUtils.lerp(cam.fov, fovTarget, 0.08)
-      cam.updateProjectionMatrix()
-    }
-    // NMS-like forward surge + subtle chromatic shake
-    camera.position.z -= 0.02 + progress * 0.09
-    camera.position.x += (Math.random() - 0.5) * progress * 0.08
-    camera.position.y += (Math.random() - 0.5) * progress * 0.06
-  })
-  return null
+/**
+ * Props for {@link WormholeCamera}.
+ */
+interface WormholeCameraProps {
+  /** Whether camera animation is active. */
+  active: boolean
+  /** Normalized progress in [0,1]. */
+  progress: number
 }
 
-function KeyListener({
-  nearBook,
-  phase,
-  onInteract,
-}: {
+/**
+ * Animates the camera FOV and subtle shake during the wormhole transition.
+ * Uses lerp for smooth FOV and random jitter scaled by progress.
+ *
+ * @param props - Camera animation state
+ * @returns Null (side-effect only)
+ */
+const WormholeCamera = memo(function WormholeCamera({ active, progress }: WormholeCameraProps) {
+  useFrame(({ camera }) => {
+    if (!active) return
+    const fovTarget = appConfig.wormhole.fov.from + progress * (appConfig.wormhole.fov.to - appConfig.wormhole.fov.from)
+    const cam = camera as THREE.PerspectiveCamera
+    if (cam.fov !== undefined) {
+      cam.fov = THREE.MathUtils.lerp(cam.fov, fovTarget, appConfig.wormhole.fov.lerp)
+      cam.updateProjectionMatrix()
+    }
+    camera.position.z -= 0.02 + progress * 0.09
+    camera.position.x += (Math.random() - 0.5) * progress * appConfig.wormhole.shake.x
+    camera.position.y += (Math.random() - 0.5) * progress * appConfig.wormhole.shake.y
+  })
+  return null
+})
+
+/**
+ * Props for {@link KeyListener}.
+ */
+interface KeyListenerProps {
+  /** Whether the player is near the book. */
   nearBook: boolean
-  phase: Phase
+  /** Current game phase. */
+  phase: GamePhase
+  /** Interaction handler. */
   onInteract: () => void
-}) {
+}
+
+/**
+ * Global keyboard listener for the `E` / `Enter` interaction.
+ *
+ * @param props - Listener configuration
+ * @returns Null (side-effect only)
+ */
+const KeyListener = memo(function KeyListener({ nearBook, phase, onInteract }: KeyListenerProps) {
   useEffect(() => {
-    const h = (e: KeyboardEvent) => {
+    /**
+     * @param e - Keyboard event
+     */
+    const handler = (e: KeyboardEvent): void => {
       if ((e.key.toLowerCase() === 'e' || e.key === 'Enter') && nearBook && phase === 'exploring') {
         onInteract()
       }
     }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
   }, [nearBook, phase, onInteract])
   return null
-}
+})
 
+/**
+ * Root application orchestrating scene phases, wormhole timing and player distance.
+ * Designed to be reusable: swap `LibraryScene` / `MuseumScene` via props or registry without editing the phase logic.
+ *
+ * @returns Application element
+ */
 export default function App() {
-  const [phase, setPhase] = useState<Phase>('idle')
+  const [phase, setPhase] = useState<GamePhase>('idle')
   const [distance, setDistance] = useState(9)
   const [wormholeProgress, setWormholeProgress] = useState(0)
   const [showMuseumOverlay, setShowMuseumOverlay] = useState(true)
-  const playerPos = useRef(new THREE.Vector3(0, 1.7, 9))
+  const playerPos = useRef(new THREE.Vector3(0, appConfig.player.eyeHeight, 9))
   const wormholeRaf = useRef<number | null>(null)
 
-  const nearBook = distance < 2.4
+  const nearBook = distance < appConfig.player.interactDistance
 
+  /**
+   * Updates cached player position and distance to the central book.
+   * @param pos - Current camera position
+   */
   const handlePosition = useCallback((pos: THREE.Vector3) => {
     playerPos.current.copy(pos)
-    // only library distance matters; in museum keep same but hidden
     const d = Math.hypot(pos.x, pos.z)
     setDistance(d)
   }, [])
 
+  /**
+   * Starts the wormhole timeline with cubic easing and phase transition.
+   */
   const startWormhole = useCallback(() => {
     if (phase === 'wormhole' || phase === 'museum') return
     setPhase('wormhole')
-    const duration = 4200
+    const duration = appConfig.wormhole.durationMs
     const start = performance.now()
 
-    const tick = (now: number) => {
+    /**
+     * @param now - Timestamp from requestAnimationFrame
+     */
+    const tick = (now: number): void => {
       const p = Math.min((now - start) / duration, 1)
-      const eased = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
+      const eased = easeCubicInOut(p)
       setWormholeProgress(eased)
       if (p < 1) {
         wormholeRaf.current = requestAnimationFrame(tick)
@@ -84,13 +129,9 @@ export default function App() {
     wormholeRaf.current = requestAnimationFrame(tick)
   }, [phase])
 
-  const handleStart = () => setPhase('exploring')
-
-  const handleReturnToLibrary = () => {
-    window.location.reload()
-  }
-
-  const handleDismissMuseumIntro = () => setShowMuseumOverlay(false)
+  const handleStart = useCallback(() => setPhase('exploring'), [])
+  const handleReturnToLibrary = useCallback(() => window.location.reload(), [])
+  const handleDismissMuseumIntro = useCallback(() => setShowMuseumOverlay(false), [])
 
   const isMuseum = phase === 'museum'
 
@@ -100,12 +141,11 @@ export default function App() {
 
       <Canvas
         shadows
-        dpr={[1, 1.8]}
+        dpr={appConfig.render.dpr}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.15 }}
-        camera={{ fov: 72, near: 0.1, far: 80, position: [0, 1.7, 9] }}
+        camera={{ fov: 72, near: 0.1, far: 80, position: [0, appConfig.player.eyeHeight, 9] }}
         style={{ width: '100%', height: '100%' }}
       >
-        {/* Fog adapts to scene */}
         {!isMuseum ? <fog attach="fog" args={['#0a0806', 9, 26]} /> : <fog attach="fog" args={['#eef1f6', 14, 36]} />}
         {!isMuseum ? <color attach="background" args={['#08060a']} /> : <color attach="background" args={['#eef1f6']} />}
 
@@ -116,17 +156,13 @@ export default function App() {
         )}
 
         {phase === 'exploring' && (
-          <PlayerControls
-            enabled
-            onPositionChange={handlePosition}
-            bounds={{ minX: -9.2, maxX: 9.2, minZ: -9.2, maxZ: 9.2 }}
-          />
+          <PlayerControls enabled onPositionChange={handlePosition} bounds={appConfig.player.libraryBounds} />
         )}
         {isMuseum && (
           <PlayerControls
             enabled={!showMuseumOverlay}
             onPositionChange={handlePosition}
-            bounds={{ minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 }}
+            bounds={appConfig.player.museumBounds}
           />
         )}
 
@@ -145,7 +181,6 @@ export default function App() {
         </>
       )}
       {isMuseum && showMuseumOverlay && <PastOverlay onReturn={handleDismissMuseumIntro} />}
-      {/* Hidden reload option after dismissal: small button to go back */}
       {isMuseum && !showMuseumOverlay && (
         <button
           onClick={handleReturnToLibrary}
