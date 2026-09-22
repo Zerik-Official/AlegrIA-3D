@@ -9,9 +9,10 @@
  * - `exploring` free movement inside the library
  * - `wormhole` transition animation
  * - `phase1` Barrio Abajo origins (1857–1900) with bahareque and arroyo
+ * - `phase2` Época Dorada, Tradición y Carnaval with trinitaria and temple
  * - `museum` deprecated alias for `phase1`
  */
-export type GamePhase = 'idle' | 'exploring' | 'wormhole' | 'phase1' | 'museum'
+export type GamePhase = 'idle' | 'exploring' | 'wormhole' | 'phase1' | 'phase2' | 'museum'
 
 /** @deprecated Use {@link GamePhase} */
 export type Phase = GamePhase
