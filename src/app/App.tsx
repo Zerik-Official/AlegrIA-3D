@@ -98,7 +98,7 @@ export default function App() {
         shadows
         dpr={appConfig.render.dpr}
         gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.15 }}
-        camera={{ fov: 72, near: 0.1, far: 80, position: [0, appConfig.player.eyeHeight, 9] }}
+        camera={{ fov: 72, near: 0.1, far: 280, position: [0, appConfig.player.eyeHeight, 9] }}
         style={{ width: '100%', height: '100%' }}
       >
         <fog attach="fog" args={[visual.fog.color, visual.fog.near, visual.fog.far]} />
