@@ -6,6 +6,7 @@ import { Wormhole } from '../../wormhole/components/Wormhole'
 import { TimeVortexParticles } from '../../wormhole/components/TimeVortexParticles'
 import { CyberWall } from './CyberWall'
 import { ScatteredBooks } from './ScatteredBooks'
+import { TimeVortexSequence } from '../../cinematics/components/TimeVortexSequence'
 
 /**
  * Props for {@link LibraryScene}.
@@ -115,10 +116,11 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
 
       <Pedestal />
-      <LevitatingBook />
+      <LevitatingBook ritualProgress={wormholeProgress} />
 
       <Wormhole active={wormholeActive} progress={wormholeProgress} />
       <TimeVortexParticles active={wormholeActive} progress={wormholeProgress} />
+      <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
 
       <ScatteredBooks />
 
