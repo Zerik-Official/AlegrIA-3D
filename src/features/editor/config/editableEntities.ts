@@ -4,33 +4,12 @@
  * @module features/editor/config/editableEntities
  */
 
-import type { Vector3Tuple } from 'three'
 import phase1Json from '@/engine/config/phase1.json'
 import libraryJson from '@/engine/config/library.json'
 import phase2Json from '@/engine/config/phase2.json'
+import type { EditableEntity } from '@/engine/types'
 
-/**
- * Editable entity type.
- */
-export type EditableEntityType = 'bahareque-house' | 'anden-alto' | 'tree' | 'trinitaria' | 'sepia-photo' | 'portal' | 'generic'
-
-/**
- * Editable entity record.
- */
-export interface EditableEntity {
-  /** Unique identifier. */
-  id: string
-  /** Logical type for icon and model lookup. */
-  type: EditableEntityType
-  /** World position. */
-  position: Vector3Tuple
-  /** Y rotation in radians. */
-  rotationY: number
-  /** Uniform scale. */
-  scale: number
-  /** Variant or color hint. */
-  variant?: string
-}
+export type { EditableEntity } from '@/engine/types'
 
 /**
  * Initial Phase 1 entities — single source is `engine/config/phase1.json`.
