@@ -14,6 +14,73 @@ import { PhaseEngine } from '@/engine/PhaseEngine'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
 /**
+ * Props for {@link FlickeringTorch}.
+ */
+interface FlickeringTorchProps {
+  /** World position of the light source. */
+  position: readonly [number, number, number]
+}
+
+/**
+ * Warm, unsteady point light standing in for emergency lighting in an
+ * abandoned building — intensity wanders via layered sine noise.
+ *
+ * @param props - Light placement
+ * @returns Point light
+ */
+const FlickeringTorch = memo(function FlickeringTorch({ position }: FlickeringTorchProps) {
+  const lightRef = useRef<THREE.PointLight>(null)
+  useFrame(({ clock }) => {
+    if (!lightRef.current) return
+    const t = clock.elapsedTime
+    lightRef.current.intensity = 0.55 + Math.sin(t * 8 + position[0]) * 0.14 + Math.sin(t * 19 + position[2]) * 0.08
+  })
+  return <pointLight ref={lightRef} position={position as [number, number, number]} intensity={0.6} distance={5.2} color="#ff8a1a" decay={2} />
+})
+
+/**
+ * Props for {@link WallTorchFixture}.
+ */
+interface WallTorchFixtureProps {
+  /** World position of the wall mount. */
+  position: readonly [number, number, number]
+}
+
+/**
+ * Small wall-mounted bracket + glowing bulb, oriented to face into the room
+ * from whichever side wall it's mounted on.
+ *
+ * @param props - Fixture placement
+ * @returns Fixture group
+ */
+const WallTorchFixture = memo(function WallTorchFixture({ position }: WallTorchFixtureProps) {
+  const bulbRef = useRef<THREE.Mesh>(null)
+  const facesRight = position[0] < 0
+  useFrame(({ clock }) => {
+    if (!bulbRef.current) return
+    const mat = bulbRef.current.material as THREE.MeshStandardMaterial
+    const t = clock.elapsedTime
+    mat.emissiveIntensity = Math.max(0.25, 0.75 + Math.sin(t * 9 + position[0]) * 0.18 + Math.sin(t * 21 + position[2]) * 0.1)
+  })
+  return (
+    <group position={position as [number, number, number]} rotation-y={facesRight ? Math.PI / 2 : -Math.PI / 2}>
+      <mesh castShadow>
+        <boxGeometry args={[0.06, 0.06, 0.2]} />
+        <meshStandardMaterial color="#1a1e26" metalness={0.7} roughness={0.5} />
+      </mesh>
+      <mesh position={[0, -0.16, 0.14]}>
+        <cylinderGeometry args={[0.02, 0.02, 0.2, 6]} />
+        <meshStandardMaterial color="#1a1e26" metalness={0.7} roughness={0.5} />
+      </mesh>
+      <mesh ref={bulbRef} position={[0, -0.26, 0.16]}>
+        <icosahedronGeometry args={[0.055, 0]} />
+        <meshStandardMaterial color="#ffcf6b" emissive="#ff8a1a" emissiveIntensity={0.75} />
+      </mesh>
+    </group>
+  )
+})
+
+/**
  * Props for {@link LibraryScene}.
  */
 interface LibrarySceneProps {
@@ -141,6 +208,13 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
           <ScatteredBooks />
         </>
       )}
+
+      {torchLights.map((p) => (
+        <FlickeringTorch key={`torch-light-${p[0]}-${p[1]}-${p[2]}`} position={p} />
+      ))}
+      {torchMeshes.map((p, i) => (
+        <WallTorchFixture key={`torch-mesh-${i}`} position={p} />
+      ))}
       </group>
 
       {editableEntities ? (
