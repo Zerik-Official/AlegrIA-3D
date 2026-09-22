@@ -62,7 +62,7 @@ function TrainCar({ index, isEngine, color, windowTexture }: { index: number; is
  * @param props - Livery color and deterministic seed
  * @returns Train group
  */
-function ProceduralFlyingTrain({ color, seed }: { color: string; seed: number }) {
+export function ProceduralFlyingTrain({ color = '#7ad8ff', seed = 42 }: { color?: string; seed?: number }) {
   const windowTexture = useMemo(() => createWindowGridTexture(seed + 7, 14, 2), [seed])
   const offset = -((TRAIN_CAR_COUNT - 1) * (TRAIN_CAR_LENGTH + 0.1)) / 2
   return (
