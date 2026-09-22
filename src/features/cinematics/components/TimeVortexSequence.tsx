@@ -220,17 +220,17 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
         <pointsMaterial size={0.032} color="#8a9ab8" transparent opacity={0.18} depthWrite={false} sizeAttenuation />
       </points>
 
-      <mesh ref={whiteVoidRef} visible={false} renderOrder={5}>
+      <mesh ref={whiteVoidRef} visible={false} renderOrder={4}>
         <sphereGeometry args={[14, 32, 32]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0} depthWrite={false} side={THREE.BackSide} />
       </mesh>
 
-      <mesh ref={beamRef} visible={false} renderOrder={6}>
+      <mesh ref={beamRef} visible={false} renderOrder={8}>
         <cylinderGeometry args={[0.015, 0.08, 1, 16, 1, true]} />
         <meshStandardMaterial color="#ffe9a0" emissive="#ffcc33" emissiveIntensity={1.85} transparent opacity={0} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      <mesh ref={portalRef} visible={progress > 0.68}>
+      <mesh ref={portalRef} visible={progress > 0.68} renderOrder={10}>
         <planeGeometry args={[1, 1, 24, 24]} />
         <primitive object={portalMaterial} attach="material" />
       </mesh>
