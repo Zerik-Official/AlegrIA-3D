@@ -1,0 +1,10 @@
+[
+  { "id": "cyber-wall-back", "type": "cyber-wall", "position": [0, 2.6, -11], "rotationY": 0, "scale": 1, "variant": "22x5.2" },
+  { "id": "cyber-wall-left", "type": "cyber-wall", "position": [-11, 2.6, 0], "rotationY": 1.57079632679, "scale": 1 },
+  { "id": "cyber-wall-right", "type": "cyber-wall", "position": [11, 2.6, 0], "rotationY": -1.57079632679, "scale": 1 },
+  { "id": "bookshelf-01", "type": "bookshelf", "position": [-7.2, 1.6, -10.05], "rotationY": 0, "scale": 1, "variant": "5.2" },
+  { "id": "bookshelf-02", "type": "bookshelf", "position": [0, 1.6, -10.05], "rotationY": 0, "scale": 1, "variant": "5.2" },
+  { "id": "bookshelf-03", "type": "bookshelf", "position": [7.2, 1.6, -10.05], "rotationY": 0, "scale": 1, "variant": "5.2" },
+  { "id": "pedestal", "type": "pedestal", "position": [0, 0, 0], "rotationY": 0, "scale": 1 },
+  { "id": "book-rosa", "type": "book", "position": [0, 0, 0], "rotationY": 0, "scale": 1 }
+]

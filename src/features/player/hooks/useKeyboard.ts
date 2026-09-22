@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import type { KeysState } from '../../../shared/types'
+import type { KeysState } from '@/shared/types'
 
 /**
  * Tracks WASD + Shift state via window key events.

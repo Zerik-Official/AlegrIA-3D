@@ -1,8 +1,8 @@
 import { useRef, memo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { ModelLoader } from '../../../models/shared/ModelLoader'
-import { modelRegistry } from '../../../shared/config/models'
+import { ModelLoader } from '@/models/shared/ModelLoader'
+import { modelRegistry } from '@/shared/config/models'
 
 /**
  * Procedural pedestal geometry.
@@ -31,7 +31,7 @@ function ProceduralPedestalGeometry() {
 
       <mesh position={[0, 0.65, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[0.42, 0.52, 0.8, 32]} />
-        <meshStandardMaterial color="#2c1e0f" roughness={0.65} />
+        <meshStandardMaterial color="#3d2612" roughness={0.78} metalness={0.06} />
       </mesh>
       <mesh position={[0, 0.65, 0]}>
         <cylinderGeometry args={[0.44, 0.44, 0.78, 32, 1, true]} />

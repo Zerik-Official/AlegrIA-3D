@@ -2,8 +2,8 @@ import { useEffect, useRef, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { PointerLockControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { useKeyboard } from '../hooks/useKeyboard'
-import { playerConfig } from '../../../shared/config/appConfig'
+import { useKeyboard } from '@/features/player/hooks/useKeyboard'
+import { playerConfig } from '@/shared/config/appConfig'
 
 /**
  * Props for {@link PlayerControls}.

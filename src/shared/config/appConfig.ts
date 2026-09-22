@@ -3,7 +3,7 @@
  * @module shared/config/appConfig
  */
 
-import type { Bounds } from '../types'
+import type { Bounds } from '@/shared/types'
 
 /**
  * Player movement configuration.
@@ -27,6 +27,24 @@ export const playerConfig = {
   libraryBounds: { minX: -9.2, maxX: 9.2, minZ: -9.2, maxZ: 9.2 } as Bounds,
   /** Movement bounds inside the museum hall. */
   museumBounds: { minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 } as Bounds,
+  /** Movement bounds inside Phase 1 barrio (larger, open). */
+  phase1Bounds: { minX: -18, maxX: 18, minZ: -18, maxZ: 18 } as Bounds,
+  /** Movement bounds inside Phase 2 barrio (colorful facades). */
+  phase2Bounds: { minX: -18, maxX: 18, minZ: -18, maxZ: 18 } as Bounds,
+} as const
+
+/**
+ * City intro (Escena -1: prologue walk) configuration.
+ */
+export const cityIntroConfig = {
+  /** Constant forward speed along the walk path, in units per second. */
+  walkSpeed: 2.6,
+  /** Camera eye height while walking the street. */
+  eyeHeight: 1.75,
+  /** Progress in [0,1] along the path at which the player can enter the library. */
+  arrivalThreshold: 0.985,
+  /** How long the Start button shows its loading spinner before the city scene reveals, in ms. */
+  launchDelayMs: 650,
 } as const
 
 /**
@@ -34,7 +52,7 @@ export const playerConfig = {
  */
 export const wormholeConfig = {
   /** Duration of the wormhole sequence in milliseconds. */
-  durationMs: 4200,
+  durationMs: 11000,
   /** Camera FOV interpolation targets. */
   fov: { from: 74, to: 112, lerp: 0.08 },
   /** Number of torus rings in the tunnel. */
@@ -62,6 +80,7 @@ export const renderConfig = {
  */
 export const appConfig = {
   player: playerConfig,
+  cityIntro: cityIntroConfig,
   wormhole: wormholeConfig,
   render: renderConfig,
 } as const

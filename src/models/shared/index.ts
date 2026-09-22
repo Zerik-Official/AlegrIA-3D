@@ -1,1 +1,1 @@
-export * from './ModelLoader'
+export * from '@/models/shared/ModelLoader'
