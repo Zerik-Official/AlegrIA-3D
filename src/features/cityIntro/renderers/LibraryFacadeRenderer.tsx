@@ -103,9 +103,9 @@ const FRONT_Z = FACADE_DEPTH / 2
  * windows with balustraded balconies and awnings, and a pedimented roofline
  * with a fading "BIBLIOTECA" sign — reworked as abandoned (boarded door,
  * broken shutters, missing balusters, grime streaks, climbing vines).
- * @returns Renderer element
+ * @returns Facade group
  */
-export function LibraryFacadeRenderer() {
+export function ProceduralLibraryFacade() {
   const glowRef = useRef<THREE.Mesh>(null)
   const signRef = useRef<THREE.Mesh>(null)
   const signTexture = useLibrarySignTexture()
@@ -150,11 +150,8 @@ export function LibraryFacadeRenderer() {
   })
 
   return (
-    <ModelLoader
-      src={modelRegistry['cityIntro/library-facade'].path}
-      fallback={
-        <group>
-          {/* ground floor body */}
+    <group>
+      {/* ground floor body */}
           <mesh position={[0, GROUND_HEIGHT / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[FACADE_WIDTH, GROUND_HEIGHT, FACADE_DEPTH]} />
             <meshStandardMaterial color="#8a7238" roughness={0.94} />
@@ -310,10 +307,15 @@ export function LibraryFacadeRenderer() {
             </mesh>
           ))}
 
-          <pointLight position={[0, 1.8, FRONT_Z + 1.3]} intensity={1.4} distance={7} color="#ff8a1a" decay={2} />
-          <pointLight position={[0, GROUND_HEIGHT + UPPER_HEIGHT, FRONT_Z + 2]} intensity={0.5} distance={10} color="#8fa8ff" decay={2} />
-        </group>
-      }
-    />
+      <pointLight position={[0, 1.8, FRONT_Z + 1.3]} intensity={1.4} distance={7} color="#ff8a1a" decay={2} />
+      <pointLight position={[0, GROUND_HEIGHT + UPPER_HEIGHT, FRONT_Z + 2]} intensity={0.5} distance={10} color="#8fa8ff" decay={2} />
+    </group>
   )
+}
+
+/**
+ * @returns Renderer element
+ */
+export function LibraryFacadeRenderer() {
+  return <ModelLoader src={modelRegistry['cityIntro/library-facade'].path} fallback={<ProceduralLibraryFacade />} />
 }
