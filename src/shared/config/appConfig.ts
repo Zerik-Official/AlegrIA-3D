@@ -34,7 +34,7 @@ export const playerConfig = {
  */
 export const wormholeConfig = {
   /** Duration of the wormhole sequence in milliseconds. */
-  durationMs: 4200,
+  durationMs: 11000,
   /** Camera FOV interpolation targets. */
   fov: { from: 74, to: 112, lerp: 0.08 },
   /** Number of torus rings in the tunnel. */
