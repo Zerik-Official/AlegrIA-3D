@@ -1,29 +1,40 @@
+import { memo } from 'react'
 import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
 
-interface Props {
+/**
+ * Props for {@link HUD}.
+ */
+interface HUDProps {
+  /** Distance to the book in meters. */
   distance: number
+  /** Whether the player is within interaction range. */
   nearBook: boolean
+  /** Whether the wormhole transition is active. */
   wormholeActive: boolean
+  /** Interaction handler. */
   onInteract: () => void
 }
 
-export function HUD({ distance, nearBook, wormholeActive, onInteract }: Props) {
+/**
+ * Heads-up display with crosshair, controls legend and interaction prompts.
+ * Memoized to avoid re-renders from unrelated scene updates.
+ *
+ * @param props - HUD state
+ * @returns HUD overlay
+ */
+export const HUD = memo(function HUD({ distance, nearBook, wormholeActive, onInteract }: HUDProps) {
   return (
     <>
-      {/* Vignette */}
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.65)_100%)]" />
 
-      {/* Crosshair */}
       <div className="pointer-events-none fixed left-1/2 top-1/2 z-10 h-6 w-6 -translate-x-1/2 -translate-y-1/2 opacity-90">
         <div className="absolute left-1/2 top-0 h-full w-[1.5px] -translate-x-1/2 bg-parchment shadow-[0_0_6px_rgba(255,220,120,0.8)]" />
         <div className="absolute left-0 top-1/2 h-[1.5px] w-full -translate-y-1/2 bg-parchment shadow-[0_0_6px_rgba(255,220,120,0.8)]" />
         <div className="absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold-bright shadow-[0_0_8px_#ffcc33]" />
       </div>
 
-      {/* HUD Layer */}
       <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between p-6">
-        {/* Top bar */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">AlegrIA — Experiencia Inmersiva</div>
@@ -48,7 +59,6 @@ export function HUD({ distance, nearBook, wormholeActive, onInteract }: Props) {
           </div>
         </div>
 
-        {/* Bottom — interaction */}
         <div className="flex justify-center">
           {nearBook && !wormholeActive && (
             <button
@@ -71,23 +81,38 @@ export function HUD({ distance, nearBook, wormholeActive, onInteract }: Props) {
         </div>
       </div>
 
-      {/* Distance */}
       <div className="pointer-events-none fixed bottom-6 left-6 z-10 flex items-center gap-2 rounded-md border border-white/5 bg-black/30 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/50 backdrop-blur-md">
         <FiClock className="h-3.5 w-3.5 opacity-60" />
         Distancia al libro: {distance.toFixed(1)} m {nearBook && <span className="text-gold-bright">— Cerca</span>}
       </div>
 
-      {/* Wormhole overlay */}
       <div
         className={`pointer-events-none fixed inset-0 z-15 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.85)_80%)] transition-opacity duration-700 ${wormholeActive ? 'opacity-100' : 'opacity-0'}`}
       />
     </>
   )
+})
+
+/**
+ * Props for {@link StartOverlay}.
+ */
+interface StartOverlayProps {
+  /** Starts the exploration phase. */
+  onStart: () => void
 }
 
-export function StartOverlay({ onStart }: { onStart: () => void }) {
+/**
+ * Full-screen start screen prompting the user to begin.
+ *
+ * @param props - Overlay actions
+ * @returns Start overlay
+ */
+export const StartOverlay = memo(function StartOverlay({ onStart }: StartOverlayProps) {
   return (
-    <div onClick={onStart} className="fixed inset-0 z-20 flex cursor-pointer flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(20,14,30,0.92)_0%,rgba(5,4,10,0.97)_70%)] p-8 text-center backdrop-blur-xs">
+    <div
+      onClick={onStart}
+      className="fixed inset-0 z-20 flex cursor-pointer flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(20,14,30,0.92)_0%,rgba(5,4,10,0.97)_70%)] p-8 text-center backdrop-blur-xs"
+    >
       <div className="max-w-2xl">
         <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">AlegrIA — Experiencia 3D</div>
         <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(255,180,40,0.5)]">
@@ -100,7 +125,8 @@ export function StartOverlay({ onStart }: { onStart: () => void }) {
           Acércate, atraviesa el <span className="text-gold-bright font-semibold">vórtice</span> y despierta dentro de un museo olvidado.
         </p>
         <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
-          <FiMove className="h-3.5 w-3.5" /> WASD moverte <span className="opacity-30">•</span> <FiEye className="h-3.5 w-3.5" /> mouse mirar <span className="opacity-30">•</span> <FiMousePointer className="h-3.5 w-3.5" /> E interactuar
+          <FiMove className="h-3.5 w-3.5" /> WASD moverte <span className="opacity-30">•</span> <FiEye className="h-3.5 w-3.5" /> mouse mirar{' '}
+          <span className="opacity-30">•</span> <FiMousePointer className="h-3.5 w-3.5" /> E interactuar
         </p>
 
         <button
@@ -114,9 +140,23 @@ export function StartOverlay({ onStart }: { onStart: () => void }) {
       </div>
     </div>
   )
+})
+
+/**
+ * Props for {@link PastOverlay}.
+ */
+interface PastOverlayProps {
+  /** Dismisses the museum intro. */
+  onReturn: () => void
 }
 
-export function PastOverlay({ onReturn }: { onReturn: () => void }) {
+/**
+ * Museum intro overlay displayed after wormhole completion.
+ *
+ * @param props - Overlay actions
+ * @returns Past overlay
+ */
+export const PastOverlay = memo(function PastOverlay({ onReturn }: PastOverlayProps) {
   return (
     <div className="fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(18,30,35,0.96)_0%,rgba(4,10,14,0.98)_75%)] p-8 text-center">
       <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-[#a8c8ff]/70">Vórtice completado</div>
@@ -137,4 +177,4 @@ export function PastOverlay({ onReturn }: { onReturn: () => void }) {
       </button>
     </div>
   )
-}
+})
