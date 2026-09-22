@@ -1,7 +1,8 @@
 import { memo, useCallback, useEffect, useState } from 'react'
-import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX } from 'react-icons/fi'
+import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox } from 'react-icons/fi'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import type { EntityCatalogItem } from '@/engine/config/entityCatalog'
+import { ModelBrowserModal } from '@/features/editor/components/ModelBrowserModal'
 
 /**
  * Props for {@link EditorOverlay}.
@@ -56,6 +57,7 @@ export const EditorOverlay = memo(function EditorOverlay({
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
   const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
+  const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
 
   useEffect(() => {
     if (catalog.length && !catalog.some((c) => c.type === addType)) {
@@ -87,9 +89,17 @@ export const EditorOverlay = memo(function EditorOverlay({
     <div className="pointer-events-auto fixed inset-y-0 right-0 z-30 flex w-90 flex-col border-l border-white/10 bg-[#0a0f1e]/92 p-4 text-parchment shadow-[-12px_0_40px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       <div className="flex items-center justify-between">
         <div className="font-cinzel text-[11px] tracking-[0.22em] uppercase text-gold">Editor de Posiciones</div>
-        <button onClick={onClose} className="rounded-full bg-white/10 p-1.5 hover:bg-white/15">
-          <FiX className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setIsModelBrowserOpen(true)}
+            className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] hover:bg-white/15"
+          >
+            <FiBox className="h-3.5 w-3.5" /> Modelos
+          </button>
+          <button onClick={onClose} className="rounded-full bg-white/10 p-1.5 hover:bg-white/15">
+            <FiX className="h-4 w-4" />
+          </button>
+        </div>
       </div>
       <div className="mt-3 flex gap-1.5">
         <button onClick={() => onModeChange('translate')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === 'translate' ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}>
@@ -242,8 +252,12 @@ export const EditorOverlay = memo(function EditorOverlay({
         </button>
       </div>
       <div className="mt-2 text-[10px] leading-4 text-parchment/30">
-        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • Sin colisiones en edición
+        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor
+        <br />
+        Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
       </div>
+
+      <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} />
     </div>
   )
 })
