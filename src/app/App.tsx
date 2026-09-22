@@ -170,11 +170,11 @@ export default function App() {
       </Canvas>
 
       {phase === 'idle' && <StartOverlay onStart={handleStart} />}
-      {phase === 'exploring' && <HUD distance={distance} nearBook={nearBook} wormholeActive={false} onInteract={startWormhole} />}
-      {phase === 'wormhole' && <HUD distance={distance} nearBook={nearBook} wormholeActive onInteract={startWormhole} />}
+      {phase === 'exploring' && <HUD nearBook={nearBook} wormholeActive={false} onInteract={startWormhole} />}
+      {phase === 'wormhole' && <HUD nearBook={nearBook} wormholeActive onInteract={startWormhole} />}
       {isMuseum && !showMuseumOverlay && (
         <>
-          <HUD distance={distance} nearBook={false} wormholeActive={false} onInteract={() => {}} />
+          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} />
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1e2430]/10 bg-white/80 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1e2430]/70 shadow backdrop-blur">
             Museo del Tiempo — Explora las vitrinas
           </div>
