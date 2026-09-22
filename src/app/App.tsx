@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect, memo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { LibraryScene } from '../features/library/components/LibraryScene'
-import { MuseumScene } from '../features/museum/components/MuseumScene'
+import { Phase1Scene } from '../features/phase1/components/Phase1Scene'
 import { PlayerControls } from '../features/player/components/PlayerControls'
 import { HUD, StartOverlay, PastOverlay } from '../features/ui/components/HUD'
 import { appConfig } from '../shared/config/appConfig'
@@ -111,7 +111,7 @@ export default function App() {
   const [phase, setPhase] = useState<GamePhase>('idle')
   const [distance, setDistance] = useState(9)
   const [wormholeProgress, setWormholeProgress] = useState(0)
-  const [showMuseumOverlay, setShowMuseumOverlay] = useState(true)
+  const [showPhase1Overlay, setShowPhase1Overlay] = useState(true)
   const playerPos = useRef(new THREE.Vector3(0, appConfig.player.eyeHeight, 9))
   const wormholeRaf = useRef<number | null>(null)
 
@@ -131,7 +131,7 @@ export default function App() {
    * Starts the wormhole timeline with cubic easing and phase transition.
    */
   const startWormhole = useCallback(() => {
-    if (phase === 'wormhole' || phase === 'museum') return
+    if (phase === 'wormhole' || phase === 'phase1' || phase === 'museum') return
     setPhase('wormhole')
     const duration = appConfig.wormhole.durationMs
     const start = performance.now()
@@ -146,9 +146,9 @@ export default function App() {
       if (p < 1) {
         wormholeRaf.current = requestAnimationFrame(tick)
       } else {
-        setPhase('museum')
+        setPhase('phase1')
         setWormholeProgress(0)
-        setShowMuseumOverlay(true)
+        setShowPhase1Overlay(true)
       }
     }
     wormholeRaf.current = requestAnimationFrame(tick)
@@ -156,9 +156,9 @@ export default function App() {
 
   const handleStart = useCallback(() => setPhase('exploring'), [])
   const handleReturnToLibrary = useCallback(() => window.location.reload(), [])
-  const handleDismissMuseumIntro = useCallback(() => setShowMuseumOverlay(false), [])
+  const handleDismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
 
-  const isMuseum = phase === 'museum'
+  const isPhase1 = phase === 'phase1' || phase === 'museum'
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#06040a', position: 'relative' }}>
@@ -171,21 +171,21 @@ export default function App() {
         camera={{ fov: 72, near: 0.1, far: 80, position: [0, appConfig.player.eyeHeight, 9] }}
         style={{ width: '100%', height: '100%' }}
       >
-        {!isMuseum ? <fog attach="fog" args={['#0a0806', 9, 26]} /> : <fog attach="fog" args={['#eef1f6', 14, 36]} />}
-        {!isMuseum ? <color attach="background" args={['#08060a']} /> : <color attach="background" args={['#eef1f6']} />}
+        {!isPhase1 ? <fog attach="fog" args={['#0a0806', 9, 26]} /> : <fog attach="fog" args={['#8a6a3a', 14, 38]} />}
+        {!isPhase1 ? <color attach="background" args={['#08060a']} /> : <color attach="background" args={['#6b4a2a']} />}
 
-        {!isMuseum ? (
+        {!isPhase1 ? (
           <LibraryScene wormholeActive={phase === 'wormhole'} wormholeProgress={wormholeProgress} />
         ) : (
-          <MuseumScene />
+          <Phase1Scene />
         )}
 
         {phase === 'exploring' && (
           <PlayerControls enabled onPositionChange={handlePosition} bounds={appConfig.player.libraryBounds} />
         )}
-        {isMuseum && (
+        {isPhase1 && (
           <PlayerControls
-            enabled={!showMuseumOverlay}
+            enabled={!showPhase1Overlay}
             onPositionChange={handlePosition}
             bounds={appConfig.player.museumBounds}
           />
@@ -197,19 +197,19 @@ export default function App() {
       {phase === 'idle' && <StartOverlay onStart={handleStart} />}
       {phase === 'exploring' && <HUD nearBook={nearBook} wormholeActive={false} onInteract={startWormhole} />}
       {phase === 'wormhole' && <HUD nearBook={nearBook} wormholeActive onInteract={startWormhole} />}
-      {isMuseum && !showMuseumOverlay && (
+      {isPhase1 && !showPhase1Overlay && (
         <>
-          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} />
-          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1e2430]/10 bg-white/80 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1e2430]/70 shadow backdrop-blur">
-            Museo del Tiempo — Explora las vitrinas
+          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} isPhase1 />
+          <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-[#f5e6c8]/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
+            Explora • Aduana • Estación Montoya • Pasaje de los Chinos
           </div>
         </>
       )}
-      {isMuseum && showMuseumOverlay && <PastOverlay onReturn={handleDismissMuseumIntro} />}
-      {isMuseum && !showMuseumOverlay && (
+      {isPhase1 && showPhase1Overlay && <PastOverlay onReturn={handleDismissPhase1Intro} />}
+      {isPhase1 && !showPhase1Overlay && (
         <button
           onClick={handleReturnToLibrary}
-          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#1e2430]/10 bg-white/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#1e2430] shadow backdrop-blur hover:bg-white"
+          className="fixed bottom-6 right-6 z-10 rounded-full border border-[#3d2b1f]/15 bg-[#f5e6c8]/90 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase text-[#3d2b1f] shadow backdrop-blur hover:bg-[#fff8e0]"
         >
           Volver a la biblioteca
         </button>
