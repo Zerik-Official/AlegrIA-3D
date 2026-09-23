@@ -155,6 +155,7 @@ export default function App() {
             target={editorTarget}
             mode={editors.currentEditor.mode}
             enabled={!!editorTarget}
+            orbitControlsRef={orbitControlsRef}
             onChange={(pos, rotY, scale) => {
               if (!editors.currentEditor.selectedId) return
               editors.currentEditor.updateEntity(editors.currentEditor.selectedId, { position: pos, rotationY: rotY, scale })
