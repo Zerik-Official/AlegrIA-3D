@@ -90,8 +90,31 @@ function TempleRenderer() {
   )
 }
 
+/**
+ * The source `.glb` is authored ~220 units wide (real-world scale mismatch,
+ * not a design choice) — `targetSize` normalizes its footprint down to fit
+ * the plaza, and the extra Y-only `scale` compensates for how flat that
+ * leaves it so it still reads as a building rather than a slab.
+ */
 function ParroquiaRenderer() {
-  return <ModelLoader src={modelRegistry['phase2/parroquia'].path} fallback={<GothicTemple position={[0, 0, 0]} />} />
+  return (
+    <ModelLoader src={modelRegistry['phase2/parroquia'].path} targetSize={11} scale={[1, 2.3, 1]} fallback={<GothicTemple position={[0, 0, 0]} />} />
+  )
+}
+
+function CarnivalHouseRenderer() {
+  return (
+    <ModelLoader
+      src={modelRegistry['phase2/casa-carnavalera'].path}
+      targetSize={8}
+      fallback={
+        <mesh position={[0, 1.5, 0]} castShadow receiveShadow>
+          <boxGeometry args={[8, 3, 6]} />
+          <meshStandardMaterial color="#e8542a" roughness={0.85} />
+        </mesh>
+      }
+    />
+  )
 }
 
 function TrinitariaRenderer({ entity }: EntityRendererProps) {
@@ -189,6 +212,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   facade: FacadeRenderer,
   temple: TempleRenderer,
   parroquia: ParroquiaRenderer,
+  'carnival-house': CarnivalHouseRenderer,
   trinitaria: TrinitariaRenderer,
   dancer: DancerRenderer,
   'parade-vehicle': ParadeVehicleRenderer,
