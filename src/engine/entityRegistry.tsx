@@ -13,11 +13,13 @@ import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHous
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
+import { DancerPerformer } from '@/features/phase2/components/parts/DancerPerformer'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
 import { cityIntroRenderers } from '@/features/cityIntro/renderers'
+import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import type { EntityRenderer, EntityRendererProps } from '@/engine/types'
 
 export type { EntityRenderer, EntityRendererProps } from '@/engine/types'
@@ -97,6 +99,69 @@ function TrinitariaRenderer({ entity }: EntityRendererProps) {
   return <ProceduralTrinitaria position={[0, 0, 0]} bloomColor={bloom} />
 }
 
+/** `dancer` entity variant → registry key + a fallback dress/shirt color. */
+const DANCER_MODELS: Record<string, { key: keyof typeof modelRegistry; color: string }> = {
+  'bailarina-amarilla': { key: 'phase2/bailarina-amarilla', color: '#e8c23a' },
+  'bailarina-azul': { key: 'phase2/bailarina-azul', color: '#2a4ad8' },
+  'bailarina-roja': { key: 'phase2/bailarina-roja', color: '#d82a2a' },
+  'bailarina-verde': { key: 'phase2/bailarina-verde', color: '#2a9a4a' },
+  'bailarin-blanco': { key: 'phase2/bailarin-blanco', color: '#e8dfc8' },
+  'bailarin-blanco-azul': { key: 'phase2/bailarin-blanco-azul', color: '#3a5ad8' },
+}
+
+function DancerRenderer({ entity }: EntityRendererProps) {
+  const dancer = DANCER_MODELS[entity.variant ?? ''] ?? DANCER_MODELS['bailarina-amarilla']
+  const seed = createSeededRandom(hashSeed(entity.id))()
+  return (
+    <DancerPerformer
+      src={modelRegistry[dancer.key].path}
+      seed={seed}
+      fallback={
+        <group>
+          <mesh position={[0, 0.85, 0]} castShadow>
+            <capsuleGeometry args={[0.3, 0.85, 4, 8]} />
+            <meshStandardMaterial color={dancer.color} roughness={0.85} />
+          </mesh>
+          <mesh position={[0, 1.5, 0]} castShadow>
+            <sphereGeometry args={[0.2, 12, 12]} />
+            <meshStandardMaterial color="#4a3320" roughness={0.9} />
+          </mesh>
+        </group>
+      }
+    />
+  )
+}
+
+/** `parade-vehicle` entity variant → registry key. */
+const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
+  'carrosa-riwi': 'phase2/carrosa-riwi',
+  'carrosa-marimonda': 'phase2/carrosa-marimonda',
+  'chiva-rumbera': 'phase2/chiva-rumbera',
+}
+
+function ParadeVehicleRenderer({ entity }: EntityRendererProps) {
+  const key = VEHICLE_MODELS[entity.variant ?? ''] ?? VEHICLE_MODELS['chiva-rumbera']
+  return (
+    <ModelLoader
+      src={modelRegistry[key].path}
+      fallback={
+        <group>
+          <mesh position={[0, 0.7, 0]} castShadow receiveShadow>
+            <boxGeometry args={[3.6, 1.4, 1.7]} />
+            <meshStandardMaterial color="#d8542a" roughness={0.7} />
+          </mesh>
+          {([[-1.3, 0.9], [1.3, 0.9], [-1.3, -0.9], [1.3, -0.9]] as const).map(([x, z]) => (
+            <mesh key={`${x}-${z}`} position={[x, 0.32, z]} rotation-z={Math.PI / 2} castShadow>
+              <cylinderGeometry args={[0.32, 0.32, 0.26, 14]} />
+              <meshStandardMaterial color="#1a1208" roughness={0.9} />
+            </mesh>
+          ))}
+        </group>
+      }
+    />
+  )
+}
+
 /** Rendered for a `type` with no registry entry, so missing types stay visible instead of silently vanishing. */
 function UnknownEntityRenderer({ entity }: EntityRendererProps) {
   console.warn(`[PhaseEngine] Unknown entity type "${entity.type}" (id "${entity.id}") — check entityRegistry.tsx`)
@@ -125,6 +190,8 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   temple: TempleRenderer,
   parroquia: ParroquiaRenderer,
   trinitaria: TrinitariaRenderer,
+  dancer: DancerRenderer,
+  'parade-vehicle': ParadeVehicleRenderer,
   ...cityIntroRenderers,
 }
 
