@@ -51,3 +51,16 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/logo-tower': { path: `${base}models/cityIntro/logo-tower.glb`, fallback: 'procedural-logo-tower' },
   'cityIntro/ad-tower': { path: `${base}models/cityIntro/ad-tower.glb`, fallback: 'procedural-ad-tower' },
 }
+
+/**
+ * Every `cityIntro/*` model URL in the registry, used to preload city-intro
+ * assets while the launch spinner is showing (`usePhaseFlow`'s launch
+ * effect) so the walk doesn't freeze mid-reveal parsing them. Includes
+ * entries with no real `.glb` yet — their preload just resolves/404s fast.
+ * @returns Model URLs
+ */
+export function cityIntroModelUrls(): string[] {
+  return Object.entries(modelRegistry)
+    .filter(([key]) => key.startsWith('cityIntro/'))
+    .map(([, entry]) => entry.path)
+}
