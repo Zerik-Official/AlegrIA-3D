@@ -62,6 +62,24 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 9, 0], rotationY: 0, scale: 1, variant: '#7ad8ff' },
   },
   {
+    type: 'flight-lane-point',
+    label: 'Punto de Carril de Vuelo',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 8, 0], rotationY: 0, scale: 1, variant: 'nuevo-carril:0' },
+  },
+  {
+    type: 'logo-tower',
+    label: 'Torre con Logo riwi',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'ad-tower',
+    label: 'Torre de Pantallas',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#ff2a6d' },
+  },
+  {
     type: 'moon',
     label: 'Luna',
     scenes: ['cityIntro'],
