@@ -12,7 +12,7 @@
 import { useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { buildRibbonGeometry } from '@/features/phase1/components/parts/Arroyo/riverPath'
+import { buildLoftGeometry } from '@/features/phase1/components/parts/Arroyo/riverPath'
 
 /** Props for {@link ArroyoWater}. */
 interface ArroyoWaterProps {
@@ -29,12 +29,16 @@ interface ArroyoWaterProps {
  * @returns Water mesh
  */
 export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
-  const geometry = useMemo(() => buildRibbonGeometry(curve, width, y), [curve, width, y])
+  const geometry = useMemo(
+    () => buildLoftGeometry(curve, [{ offset: -width / 2, y }, { offset: width / 2, y }]),
+    [curve, width, y]
+  )
 
   const material = useMemo(
     () =>
       new THREE.ShaderMaterial({
         transparent: true,
+        side: THREE.DoubleSide,
         uniforms: {
           uTime: { value: 0 },
           uColorNear: { value: new THREE.Color('#2e2214') },
