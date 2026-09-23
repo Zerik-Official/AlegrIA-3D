@@ -1,58 +1,73 @@
 /**
- * Stylized, curving river — a sunken-looking but always above-ground-level
- * (see `BANK_Y`/`WATER_Y`) channel so the water reads as contained by its
- * banks instead of a flat sheet over the whole ground, carrying an animated,
- * noise-textured water surface (`ArroyoWater`), with rocky banks and reeds
- * scattered along its curved edge (`ArroyoBanks`).
+ * Stylized, curving river. The banks are one continuous sloped surface per
+ * side — ground level at the outer edge, rising to a crest, then dipping
+ * back down to the water's edge — built by sweeping a cross-section profile
+ * along the curve (`buildLoftGeometry`), so there's no gap or floating-platform
+ * seam where it should blend into the surrounding ground. The animated,
+ * noise-textured water (`ArroyoWater`) sits in the groove between the two
+ * banks, and rocks/reeds scatter along the curved edge (`ArroyoBanks`).
  * @module features/phase1/components/parts/Arroyo
  */
 
 import { memo, useMemo } from 'react'
-import { createSoftCircleTexture } from '@/shared/utils/textures'
-import { createRiverCurve, buildRibbonGeometry, sampleBankEdge } from '@/features/phase1/components/parts/Arroyo/riverPath'
+import * as THREE from 'three'
+import { createRiverCurve, buildLoftGeometry, sampleBankEdge, type CrossSectionPoint } from '@/features/phase1/components/parts/Arroyo/riverPath'
 import { BankRocks, ReedLine } from '@/features/phase1/components/parts/Arroyo/ArroyoBanks'
 import { ArroyoWater } from '@/features/phase1/components/parts/Arroyo/ArroyoWater'
 
-/** Muddy bank strip: half-width and height above the surrounding ground. */
-const BANK_WIDTH = 2.0
-const BANK_Y = 0.14
-/** Water ribbon: narrower and a touch lower than the bank, so it reads as sitting in a shallow groove. */
-const WATER_WIDTH = 1.4
-const WATER_Y = 0.05
-/** How far past the bank strip's edge the soft dirt-to-ground fade extends. */
-const SHORE_FADE_WIDTH = BANK_WIDTH + 1.6
+/** Where each bank meets the surrounding ground (must be `y: 0` to blend seamlessly). */
+const OUTER_HALF = 1.8
+/** Bank crest — the highest point of each side, containing the water. */
+const BANK_HALF = 1.0
+const BANK_Y = 0.16
+/** Water's edge, at the foot of the inward slope from the bank crest. */
+const WATER_HALF = 0.7
+const WATER_Y = 0.04
+const WATER_WIDTH = WATER_HALF * 2
+
+/**
+ * One bank's cross-section: ground → up to the crest → down to the water's edge.
+ * @param side - Which side of the centerline this bank is on
+ * @returns Ordered cross-section stations
+ */
+function bankProfile(side: 1 | -1): CrossSectionPoint[] {
+  return [
+    { offset: side * OUTER_HALF, y: 0 },
+    { offset: side * BANK_HALF, y: BANK_Y },
+    { offset: side * WATER_HALF, y: WATER_Y },
+  ]
+}
 
 /**
  * @returns Arroyo group
  */
 export const Arroyo = memo(function Arroyo() {
   const curve = useMemo(() => createRiverCurve(), [])
-  const bankAlphaMap = useMemo(() => createSoftCircleTexture(), [])
 
-  const bankGeometry = useMemo(() => buildRibbonGeometry(curve, BANK_WIDTH, BANK_Y), [curve])
-  const shoreFadeGeometry = useMemo(() => buildRibbonGeometry(curve, SHORE_FADE_WIDTH, BANK_Y - 0.01), [curve])
+  const leftBankGeometry = useMemo(() => buildLoftGeometry(curve, bankProfile(-1)), [curve])
+  const rightBankGeometry = useMemo(() => buildLoftGeometry(curve, bankProfile(1)), [curve])
 
   const rockEdgePoints = useMemo(
-    () => [...sampleBankEdge(curve, BANK_WIDTH / 2, -1, 22), ...sampleBankEdge(curve, BANK_WIDTH / 2, 1, 22)],
+    () => [...sampleBankEdge(curve, BANK_HALF, -1, 22), ...sampleBankEdge(curve, BANK_HALF, 1, 22)],
     [curve]
   )
   const reedEdgePoints = useMemo(
-    () => [...sampleBankEdge(curve, BANK_WIDTH / 2 + 0.5, -1, 19), ...sampleBankEdge(curve, BANK_WIDTH / 2 + 0.5, 1, 19)],
+    () => [...sampleBankEdge(curve, BANK_HALF + 0.4, -1, 19), ...sampleBankEdge(curve, BANK_HALF + 0.4, 1, 19)],
     [curve]
   )
   const midStreamRocks = useMemo(() => sampleBankEdge(curve, 0, 1, 14), [curve])
 
   return (
     <group>
-      <mesh geometry={shoreFadeGeometry} receiveShadow>
-        <meshStandardMaterial color="#5a4a2a" alphaMap={bankAlphaMap} transparent roughness={1} depthWrite={false} />
+      <mesh geometry={leftBankGeometry} receiveShadow>
+        <meshStandardMaterial color="#4a3a22" roughness={1} side={THREE.DoubleSide} />
       </mesh>
-      <mesh geometry={bankGeometry} receiveShadow>
-        <meshStandardMaterial color="#4a3a22" roughness={1} />
+      <mesh geometry={rightBankGeometry} receiveShadow>
+        <meshStandardMaterial color="#4a3a22" roughness={1} side={THREE.DoubleSide} />
       </mesh>
 
       <BankRocks points={rockEdgePoints} y={BANK_Y} />
-      <ReedLine points={reedEdgePoints} />
+      <ReedLine points={reedEdgePoints} y={BANK_Y} />
       <BankRocks points={midStreamRocks} y={WATER_Y} />
 
       <ArroyoWater curve={curve} width={WATER_WIDTH} y={WATER_Y} />
