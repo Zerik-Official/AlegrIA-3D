@@ -48,6 +48,7 @@ export const modelRegistry: ModelRegistry = {
   'phase2/carrosa-riwi': { path: `${base}models/phase2/carrosa-azul-riwi.glb`, fallback: 'procedural-parade-vehicle' },
   'phase2/carrosa-marimonda': { path: `${base}models/phase2/carrosa-marimonda.glb`, fallback: 'procedural-parade-vehicle' },
   'phase2/chiva-rumbera': { path: `${base}models/phase2/chiva-rumbera.glb`, fallback: 'procedural-parade-vehicle' },
+  'phase2/casa-carnavalera': { path: `${base}models/phase2/casa-carnavalera-marimonda.glb`, fallback: 'procedural-carnival-house' },
   'cityIntro/skyscraper': { path: `${base}models/cityIntro/skyscraper.glb`, fallback: 'procedural-skyscraper' },
   'cityIntro/streetlight': { path: `${base}models/cityIntro/streetlight.glb`, fallback: 'procedural-streetlight' },
   'cityIntro/flying-car-retro': { path: `${base}models/cityIntro/flyning-retro-car.glb`, fallback: 'procedural-flying-car' },
