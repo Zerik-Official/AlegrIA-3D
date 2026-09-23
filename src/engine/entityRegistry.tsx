@@ -12,6 +12,7 @@ import { modelRegistry } from '@/shared/config/models'
 import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHouse'
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
+import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
@@ -87,6 +88,10 @@ function TempleRenderer() {
   )
 }
 
+function ParroquiaRenderer() {
+  return <ModelLoader src={modelRegistry['phase2/parroquia'].path} fallback={<GothicTemple position={[0, 0, 0]} />} />
+}
+
 function TrinitariaRenderer({ entity }: EntityRendererProps) {
   const bloom = entity.variant ?? '#d82a7a'
   return <ProceduralTrinitaria position={[0, 0, 0]} bloomColor={bloom} />
@@ -118,6 +123,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   book: BookRenderer,
   facade: FacadeRenderer,
   temple: TempleRenderer,
+  parroquia: ParroquiaRenderer,
   trinitaria: TrinitariaRenderer,
   ...cityIntroRenderers,
 }
