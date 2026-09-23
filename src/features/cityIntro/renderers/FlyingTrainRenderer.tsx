@@ -20,6 +20,12 @@ const TRAIN_TRAIL_LENGTH = 22
 const TRAIN_CAR_COUNT = 4
 /** Length of one train car body. */
 const TRAIN_CAR_LENGTH = 1.3
+/**
+ * Largest bounding-box dimension (scene units) the train hull is rescaled to
+ * fit, matching the `ProceduralFlyingTrain` fallback's overall length — the
+ * source `.glb` is authored at an unrelated unit scale.
+ */
+const TRAIN_TARGET_SIZE = 5.4
 
 /**
  * One capsule-bodied, window-striped train car; the lead car also gets a nose cone.
@@ -138,7 +144,7 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
         <meshBasicMaterial color={color} transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
       <group ref={groupRef}>
-        <ModelLoader src={modelRegistry['cityIntro/flying-train'].path} fallback={<ProceduralFlyingTrain color={color} seed={seed} />} />
+        <ModelLoader src={modelRegistry['cityIntro/flying-train'].path} fallback={<ProceduralFlyingTrain color={color} seed={seed} />} targetSize={TRAIN_TARGET_SIZE} castShadow={false} />
       </group>
       <points ref={trailRef} material={trailMaterial} frustumCulled={false}>
         <bufferGeometry>
