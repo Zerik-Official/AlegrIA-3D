@@ -29,8 +29,8 @@ export interface ArroyoWaterConfig {
  * the last stretch before each bank.
  */
 export const arroyoWaterConfig: ArroyoWaterConfig = {
-  colorNear: '#2e2214',
-  colorFar: '#6b5230',
+  colorNear: '#3d5560',
+  colorFar: '#7fa3ad',
   textureSize: 45,
   waveSpeed: 1.1,
   waveAmplitude: 0.03,
