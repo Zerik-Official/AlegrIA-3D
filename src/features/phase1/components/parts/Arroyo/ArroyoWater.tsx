@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { buildLoftGeometry } from '@/features/phase1/components/parts/Arroyo/riverPath'
+import { arroyoWaterConfig } from '@/features/phase1/config/arroyoWater'
 
 /** Props for {@link ArroyoWater}. */
 interface ArroyoWaterProps {
@@ -35,11 +36,13 @@ export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
         side: THREE.DoubleSide,
         uniforms: {
           uTime: { value: 0 },
-          uColorNear: { value: new THREE.Color('#2e2214') },
-          uColorFar: { value: new THREE.Color('#6b5230') },
-          uTextureSize: { value: 45 },
-          uWaveSpeed: { value: 1.1 },
-          uWaveAmplitude: { value: 0.03 },
+          uColorNear: { value: new THREE.Color(arroyoWaterConfig.colorNear) },
+          uColorFar: { value: new THREE.Color(arroyoWaterConfig.colorFar) },
+          uTextureSize: { value: arroyoWaterConfig.textureSize },
+          uWaveSpeed: { value: arroyoWaterConfig.waveSpeed },
+          uWaveAmplitude: { value: arroyoWaterConfig.waveAmplitude },
+          uBankFadeStart: { value: arroyoWaterConfig.bankFadeStart },
+          uBankFadeEnd: { value: arroyoWaterConfig.bankFadeEnd },
         },
         vertexShader: `
           varying vec2 vUv;
@@ -58,6 +61,8 @@ export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
           uniform vec3 uColorNear;
           uniform vec3 uColorFar;
           uniform float uTextureSize;
+          uniform float uBankFadeStart;
+          uniform float uBankFadeEnd;
           varying vec2 vUv;
 
           vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -103,7 +108,7 @@ export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
             waveEffect = step(0.5, waveEffect);
 
             float vignette = abs(vUv.y - 0.5) * 2.0;
-            vec3 baseEffect = smoothstep(0.1, 0.3, vec3(vignette));
+            vec3 baseEffect = smoothstep(uBankFadeStart, uBankFadeEnd, vec3(vignette));
             vec3 baseColor = mix(finalColor, uColorFar, baseEffect);
 
             vec3 combinedEffect = min(waveEffect + foam, 1.0);
