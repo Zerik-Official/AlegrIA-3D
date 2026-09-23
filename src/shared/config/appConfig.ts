@@ -30,7 +30,7 @@ export const playerConfig = {
   /** Movement bounds inside Phase 1 barrio (larger, open). */
   phase1Bounds: { minX: -18, maxX: 18, minZ: -18, maxZ: 18 } as Bounds,
   /** Movement bounds inside Phase 2 barrio (colorful facades). */
-  phase2Bounds: { minX: -28, maxX: 28, minZ: -28, maxZ: 28 } as Bounds,
+  phase2Bounds: { minX: -36, maxX: 36, minZ: -36, maxZ: 36 } as Bounds,
 } as const
 
 /**
