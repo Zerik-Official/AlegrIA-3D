@@ -17,6 +17,7 @@ import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
 import { EditorFlyControls } from '@/features/editor/components/EditorFlyControls'
 import { Phase1FloodTimer } from '@/features/phase1/components/Phase1FloodTimer'
+import { phase2Obstacles } from '@/features/phase2/config/phase2Collision'
 import { catalogForScene } from '@/engine/config/entityCatalog'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import { WormholeCamera } from '@/app/components/WormholeCamera'
@@ -139,7 +140,12 @@ export default function App() {
           />
         )}
         {phaseFlow.isPhase2 && !isEditorEnabled && (
-          <PlayerControls enabled={!phaseFlow.showPhase2Overlay} onPositionChange={proximity.handlePosition} bounds={appConfig.player.phase2Bounds} />
+          <PlayerControls
+            enabled={!phaseFlow.showPhase2Overlay}
+            onPositionChange={proximity.handlePosition}
+            bounds={appConfig.player.phase2Bounds}
+            obstacles={phase2Obstacles}
+          />
         )}
         {isEditorEnabled && <OrbitControls ref={orbitControlsRef} enableDamping={false} />}
         {isEditorEnabled && <EditorFlyControls controlsRef={orbitControlsRef} enabled={isEditorEnabled} />}
