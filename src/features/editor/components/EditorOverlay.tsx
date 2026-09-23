@@ -208,7 +208,31 @@ export const EditorOverlay = memo(function EditorOverlay({
               className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
             />
           </label>
-          {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
+          {(selected.type === 'flying-car' || selected.type === 'flying-train') && (
+            <label className="mt-2 flex flex-col gap-1">
+              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Carril de vuelo (opcional)</span>
+              <input
+                type="text"
+                placeholder="ej. carsEast, trainHigh"
+                value={selected.title ?? ''}
+                onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
+                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+              />
+            </label>
+          )}
+          {(selected.type === 'ad-tower' || selected.videoSrc !== undefined) && (
+            <label className="mt-2 flex flex-col gap-1">
+              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Video (URL, opcional)</span>
+              <input
+                type="text"
+                placeholder="/videos/cityIntro/first.mp4"
+                value={selected.videoSrc ?? ''}
+                onChange={(ev) => onUpdate(selected.id, { videoSrc: ev.target.value || undefined })}
+                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+              />
+            </label>
+          )}
+          {(selected.type === 'sepia-photo' || selected.type === 'logo-tower' || selected.imageSrc !== undefined) && (
             <>
               <label className="mt-2 flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-widest text-parchment/50">Imagen (URL)</span>
