@@ -7,7 +7,7 @@ const COUNT = 320
 /** Half-width of the near corridor kept clear so filler never clips the curated JSON buildings. */
 const CLEAR_CORRIDOR_X = 16
 /** Z beyond which the near corridor no longer needs protecting (past the last curated building/library). */
-const CLEAR_CORRIDOR_MIN_Z = -55
+const CLEAR_CORRIDOR_MIN_Z = -65
 /** Deterministic seed so the skyline looks the same every load without being JSON-authored. */
 const SEED = 9182731
 
@@ -36,7 +36,7 @@ export const CityFillerSkyline = memo(function CityFillerSkyline() {
     while (placed < COUNT && attempts < COUNT * 6) {
       attempts++
       const x = (rand() > 0.5 ? 1 : -1) * (18 + rand() * 130)
-      const z = 30 - rand() * 280
+      const z = 80 - rand() * 310
       if (Math.abs(x) < CLEAR_CORRIDOR_X && z > CLEAR_CORRIDOR_MIN_Z) continue
 
       const width = 3 + rand() * 5
