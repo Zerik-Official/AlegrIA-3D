@@ -17,6 +17,13 @@ import type { EntityRendererProps } from '@/engine/types'
 const CAR_TRAIL_LENGTH = 16
 /** Registry keys of the available car hulls; one is picked per-entity from its id seed for variety. */
 const CAR_MODEL_KEYS = ['cityIntro/flying-car-retro', 'cityIntro/flying-car-star', 'cityIntro/flying-car-classic'] as const
+/**
+ * Largest bounding-box dimension (scene units) a car hull is rescaled to fit,
+ * matching the `ProceduralFlyingCar` fallback's size — the source `.glb` files
+ * are authored at an unrelated unit scale and would otherwise render car-sized
+ * models the size of buildings.
+ */
+const CAR_TARGET_SIZE = 1.15
 
 /**
  * Low, sporty hull built from a flattened capsule + canopy + nose + fins,
@@ -133,7 +140,7 @@ export function FlyingCarRenderer({ entity, context }: EntityRendererProps) {
   return (
     <>
       <group ref={groupRef}>
-        <ModelLoader src={modelRegistry[modelKey].path} fallback={<ProceduralFlyingCar color={color} />} />
+        <ModelLoader src={modelRegistry[modelKey].path} fallback={<ProceduralFlyingCar color={color} />} targetSize={CAR_TARGET_SIZE} castShadow={false} />
       </group>
       <points ref={trailRef} material={trailMaterial} frustumCulled={false}>
         <bufferGeometry>
