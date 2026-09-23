@@ -146,6 +146,12 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
   {
+    type: 'parroquia',
+    label: 'Parroquia Sagrado Corazón',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
     type: 'trinitaria',
     label: 'Trinitaria',
     scenes: ['phase2'],
