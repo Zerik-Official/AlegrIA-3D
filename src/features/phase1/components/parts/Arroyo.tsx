@@ -1,6 +1,8 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { ModelLoader } from '@/models/shared/ModelLoader'
+import { modelRegistry } from '@/shared/config/models'
 import { createSoftCircleTexture } from '@/shared/utils/textures'
 
 /** X span the river, its banks and reeds run across. */
@@ -214,14 +216,22 @@ export const Arroyo = memo(function Arroyo() {
       <ReedLine zCenter={-3.5} count={38} />
       <ReedLine zCenter={1.3} count={38} />
 
-      <mesh ref={waterRef} rotation-x={-Math.PI / 2} position={[0, 0.038, -1.1]} receiveShadow>
-        <planeGeometry args={[38, 2.2, 36, 8]} />
-        <primitive object={waterMaterial} attach="material" />
-      </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.042, -1.1]}>
-        <planeGeometry args={[38, 0.62]} />
-        <meshStandardMaterial color="#8ab4c2" roughness={0.22} metalness={0.18} transparent opacity={0.16} />
-      </mesh>
+      <ModelLoader
+        src={modelRegistry['phase1/arroyo'].path}
+        position={[0, 0.1, -1.1]}
+        fallback={
+          <>
+            <mesh ref={waterRef} rotation-x={-Math.PI / 2} position={[0, 0.038, -1.1]} receiveShadow>
+              <planeGeometry args={[38, 2.2, 36, 8]} />
+              <primitive object={waterMaterial} attach="material" />
+            </mesh>
+            <mesh rotation-x={-Math.PI / 2} position={[0, 0.042, -1.1]}>
+              <planeGeometry args={[38, 0.62]} />
+              <meshStandardMaterial color="#8ab4c2" roughness={0.22} metalness={0.18} transparent opacity={0.16} />
+            </mesh>
+          </>
+        }
+      />
 
       <BankRocks zCenter={-1.1} zJitter={1.6} count={12} />
     </group>
