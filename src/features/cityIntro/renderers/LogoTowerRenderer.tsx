@@ -1,14 +1,16 @@
 /**
- * `logo-tower` entity renderer for the `cityIntro` scene — a skyscraper
- * topped with a tall, backlit riwi banner rotated to face the road (resolved
- * from which side of the street the entity's `position.x` puts it on), so it
- * reads clearly from the walk instead of edge-on.
+ * `logo-tower` entity renderer for the `cityIntro` scene — a riwi
+ * headquarters tower with a stepped crown, vertical accent light strips, a
+ * vector-traced neon riwi mark (rebuilt from the SVG via `SVGLoader`, not a
+ * flat texture on a backing plate) glowing on its road-facing side, and a
+ * pair of ground spotlights washing it in light.
  * @module features/cityIntro/renderers/LogoTowerRenderer
  */
 
-import { Suspense, useMemo } from 'react'
-import { useTexture } from '@react-three/drei'
-import type { Texture } from 'three'
+import { Suspense, useEffect, useMemo, useRef } from 'react'
+import { useLoader } from '@react-three/fiber'
+import { SVGLoader } from 'three-stdlib'
+import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createWindowGridTexture } from '@/shared/utils/textures'
@@ -16,39 +18,87 @@ import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import { resolvePublicSrc, RIWI_LOGO_SRC } from '@/shared/utils/media'
 import type { EntityRendererProps } from '@/engine/types'
 
-/** Intrinsic aspect ratio (height/width) of `public/images/riwi-logo.svg`. */
-const LOGO_ASPECT = 70.793 / 246.192
+/** `riwi-logo.svg`'s declared viewBox size, used to center and scale the traced vector shapes. */
+const LOGO_VIEWBOX = { width: 246.192, height: 70.793 }
+/** Neon tint for the recreated logo and its glow. */
+const LOGO_NEON_COLOR = '#8a7aff'
 
-/** Backlit rooftop banner, rotated to face the road. */
-function LogoBanner({ rotationY, plateWidth, plateHeight, logoWidth, logoHeight, logoTexture }: { rotationY: number; plateWidth: number; plateHeight: number; logoWidth: number; logoHeight: number; logoTexture: Texture }) {
+/**
+ * Traces `riwi-logo.svg` into flat `THREE.ShapeGeometry` meshes via
+ * `SVGLoader` — real vector geometry instead of a flat texture — so the mark
+ * can glow like neon: a bright core shape plus two soft, additive-blended
+ * halo copies (scaled up around the mark's own center, which is why each
+ * geometry is pre-centered before any grouping) bleeding onto the tower
+ * wall behind it, lit by a matching point light. No backing plate — the
+ * source mark has none.
+ * @param props - Target mark width, and which side of the street to face
+ * @returns Neon logo group
+ */
+function RiwiNeonLogo({ src, width, roadSign }: { src: string; width: number; roadSign: number }) {
+  const { paths } = useLoader(SVGLoader, src)
+  const geometries = useMemo(() => {
+    const geoms: THREE.ShapeGeometry[] = []
+    for (const path of paths) {
+      for (const shape of path.toShapes()) {
+        const geo = new THREE.ShapeGeometry(shape)
+        geo.translate(-LOGO_VIEWBOX.width / 2, -LOGO_VIEWBOX.height / 2, 0)
+        geoms.push(geo)
+      }
+    }
+    return geoms
+  }, [paths])
+  const scale = width / LOGO_VIEWBOX.width
+
   return (
-    <group position={[0, plateHeight / 2 + 0.4, 0]} rotation-y={rotationY}>
-      <mesh position={[0, 0, 0.01]}>
-        <planeGeometry args={[plateWidth, plateHeight]} />
-        <meshStandardMaterial color="#0c1420" emissive="#132038" emissiveIntensity={0.6} roughness={0.6} />
-      </mesh>
-      <mesh position={[0, 0, 0.03]}>
-        <planeGeometry args={[logoWidth, logoHeight]} />
-        <meshBasicMaterial map={logoTexture} transparent toneMapped={false} />
-      </mesh>
+    <group rotation-y={roadSign * (Math.PI / 2)}>
+      {/* SVGLoader keeps the SVG's own Y-down convention; flip Y here (the
+          documented three.js fix) while sizing to `width`. */}
+      <group scale={[scale, -scale, scale]}>
+        <group scale={1.35} position={[0, 0, -0.08]}>
+          {geometries.map((geo, i) => (
+            <mesh key={`halo2-${i}`} geometry={geo}>
+              <meshBasicMaterial color={LOGO_NEON_COLOR} transparent opacity={0.1} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+            </mesh>
+          ))}
+        </group>
+        <group scale={1.14} position={[0, 0, -0.04]}>
+          {geometries.map((geo, i) => (
+            <mesh key={`halo1-${i}`} geometry={geo}>
+              <meshBasicMaterial color={LOGO_NEON_COLOR} transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+            </mesh>
+          ))}
+        </group>
+        {geometries.map((geo, i) => (
+          <mesh key={`core-${i}`} geometry={geo}>
+            <meshBasicMaterial color={LOGO_NEON_COLOR} toneMapped={false} side={THREE.DoubleSide} />
+          </mesh>
+        ))}
+      </group>
+      <pointLight position={[0, 0, roadSign * 0.6]} intensity={1.4} distance={9} color={LOGO_NEON_COLOR} decay={2} />
     </group>
   )
 }
 
-/** Loads the banner logo texture; isolated so `Suspense` only guards this bit. */
-function LogoBanners({ src, roadSign }: { src: string; roadSign: number }) {
-  const logoTexture = useTexture(src)
-  const logoWidth = 5.4
-  const logoHeight = logoWidth * LOGO_ASPECT
-  const plateWidth = logoWidth + 1.4
-  const plateHeight = logoHeight + 1.4
-  return <LogoBanner rotationY={roadSign * (Math.PI / 2)} plateWidth={plateWidth} plateHeight={plateHeight} logoWidth={logoWidth} logoHeight={logoHeight} logoTexture={logoTexture} />
+/** A pair of ground floodlights flanking the tower's front/back, angled up at it. */
+function GroundSpotlight({ z, aimHeight, color }: { z: number; aimHeight: number; color: string }) {
+  const lightRef = useRef<THREE.SpotLight>(null)
+  const targetRef = useRef<THREE.Object3D>(null)
+  useEffect(() => {
+    if (lightRef.current && targetRef.current) lightRef.current.target = targetRef.current
+  }, [])
+  return (
+    <>
+      <spotLight ref={lightRef} position={[0, 0.6, z]} angle={0.5} penumbra={0.55} intensity={6} distance={40} color={color} decay={2} />
+      <object3D ref={targetRef} position={[0, aimHeight, 0]} />
+    </>
+  )
 }
 
 /**
- * Boxy tower like `ProceduralSkyscraper` but topped with a tall, backlit
- * banner facing the road, showing the entity's `imageSrc` logo, defaulting
- * to the riwi mark.
+ * Boxy tower like `ProceduralSkyscraper`, but with a stepped crown and
+ * vertical accent light strips, topped with the riwi neon mark facing the
+ * road (resolved from which side of the street the entity's `position.x`
+ * puts it on) and washed by a pair of ground spotlights.
  * @param props - Entity props
  * @returns Renderer element
  */
@@ -60,6 +110,9 @@ export function LogoTowerRenderer({ entity }: EntityRendererProps) {
   }, [seed])
   /** +1/-1 X direction from the tower's center toward the road, based on which side of the street it sits on. */
   const roadSign = entity.position[0] > 0 ? -1 : 1
+  const crownWidth = width * 0.6
+  const crownDepth = depth * 0.6
+  const crownHeight = towerHeight * 0.18
   const windowTexture = useMemo(() => createWindowGridTexture(seed, 6, Math.round(towerHeight * 1.4)), [seed, towerHeight])
   const logoSrc = useMemo(() => resolvePublicSrc(entity.imageSrc) ?? RIWI_LOGO_SRC, [entity.imageSrc])
 
@@ -84,12 +137,33 @@ export function LogoTowerRenderer({ entity }: EntityRendererProps) {
             <planeGeometry args={[depth * 0.92, towerHeight * 0.9]} />
             <meshBasicMaterial map={windowTexture} transparent />
           </mesh>
-          <group position={[0, towerHeight, 0]}>
+
+          {/* Stepped crown, giving the tower a distinct silhouette instead of a bare box. */}
+          <mesh position={[0, towerHeight + crownHeight / 2, 0]} castShadow>
+            <boxGeometry args={[crownWidth, crownHeight, crownDepth]} />
+            <meshStandardMaterial color="#232842" roughness={0.5} metalness={0.4} />
+          </mesh>
+          <mesh position={[0, towerHeight + crownHeight + 0.03, 0]}>
+            <boxGeometry args={[crownWidth * 1.02, 0.06, crownDepth * 1.02]} />
+            <meshStandardMaterial color={LOGO_NEON_COLOR} emissive={LOGO_NEON_COLOR} emissiveIntensity={1.2} toneMapped={false} />
+          </mesh>
+
+          {/* Vertical accent light strips along the two front corners. */}
+          {[-1, 1].map((side) => (
+            <mesh key={side} position={[side * (width / 2 - 0.12), towerHeight / 2, roadSign * (depth / 2 + 0.02)]}>
+              <boxGeometry args={[0.1, towerHeight * 0.94, 0.05]} />
+              <meshStandardMaterial color="#7ad8ff" emissive="#7ad8ff" emissiveIntensity={1.4} toneMapped={false} />
+            </mesh>
+          ))}
+
+          <group position={[0, towerHeight + crownHeight + 1.6, 0]}>
             <Suspense fallback={null}>
-              <LogoBanners src={logoSrc} roadSign={roadSign} />
+              <RiwiNeonLogo src={logoSrc} width={5.4} roadSign={roadSign} />
             </Suspense>
           </group>
-          <pointLight position={[roadSign * (width / 2 + 1.4), towerHeight + 3, 0]} intensity={0.7} distance={7} color="#7ad8ff" decay={2} />
+
+          <GroundSpotlight z={depth / 2 + 3} aimHeight={towerHeight * 0.55} color="#7ad8ff" />
+          <GroundSpotlight z={-(depth / 2 + 3)} aimHeight={towerHeight * 0.55} color="#ffcf6b" />
         </group>
       }
     />
