@@ -14,9 +14,16 @@ interface CityIntroSceneProps {
   editableEntities?: EditableEntity[]
 }
 
-/** Z span the road/sidewalk strips and lane dashes run across. */
-const ROAD_FROM_Z = 26
-const ROAD_TO_Z = -50
+/**
+ * Z span the road/sidewalk strips and lane dashes run across. `ROAD_FROM_Z`
+ * reaches well past the walk's starting point (path-0 at z=22) so looking
+ * back from the start doesn't reveal the ground's edge nearby.
+ */
+const ROAD_FROM_Z = 75
+const ROAD_TO_Z = -60
+/** Center/size of the plain dark ground plane, sized to clear the road strip and skyline filler on every side. */
+const GROUND_CENTER_Z = 7
+const GROUND_SIZE: [number, number] = [380, 240]
 
 /**
  * Escena -1 — a futuristic city street the player walks (camera on rails,
@@ -42,26 +49,26 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
       <SceneStars count={1400} radius={260} color="#eaf2ff" />
       <CityFillerSkyline />
 
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, -115]} receiveShadow>
-        <planeGeometry args={[320, 300]} />
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0, GROUND_CENTER_Z]} receiveShadow>
+        <planeGeometry args={GROUND_SIZE} />
         <meshStandardMaterial color="#0d0e14" roughness={0.85} metalness={0.15} />
       </mesh>
 
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.006, -12]} receiveShadow>
-        <planeGeometry args={[8.6, 82]} />
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0.006, (ROAD_FROM_Z + ROAD_TO_Z) / 2]} receiveShadow>
+        <planeGeometry args={[8.6, ROAD_FROM_Z - ROAD_TO_Z]} />
         <meshStandardMaterial color="#15161c" roughness={0.7} metalness={0.2} />
       </mesh>
 
       {[-4.6, 4.6].map((x) => (
-        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.01, -12]} receiveShadow>
-          <planeGeometry args={[2.4, 82]} />
+        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.01, (ROAD_FROM_Z + ROAD_TO_Z) / 2]} receiveShadow>
+          <planeGeometry args={[2.4, ROAD_FROM_Z - ROAD_TO_Z]} />
           <meshStandardMaterial color="#232530" roughness={0.9} />
         </mesh>
       ))}
 
       {[-3.55, 3.55].map((x) => (
-        <mesh key={x} position={[x, 0.03, -12]}>
-          <boxGeometry args={[0.06, 0.04, 82]} />
+        <mesh key={x} position={[x, 0.03, (ROAD_FROM_Z + ROAD_TO_Z) / 2]}>
+          <boxGeometry args={[0.06, 0.04, ROAD_FROM_Z - ROAD_TO_Z]} />
           <meshStandardMaterial color="#5ad8ff" emissive="#5ad8ff" emissiveIntensity={0.9} />
         </mesh>
       ))}
