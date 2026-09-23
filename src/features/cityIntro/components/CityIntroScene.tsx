@@ -2,6 +2,7 @@ import { memo, useMemo } from 'react'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { SceneStars } from '@/shared/components/SceneAtmosphere'
 import { CityFillerSkyline } from '@/features/cityIntro/components/CityFillerSkyline'
+import { buildFlightLanes } from '@/features/cityIntro/renderers/flightLane'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
@@ -29,6 +30,7 @@ const ROAD_TO_Z = -50
  */
 export const CityIntroScene = memo(function CityIntroScene({ editableEntities }: CityIntroSceneProps) {
   const entities = editableEntities ?? initialCityIntroEntities
+  const flightLanes = useMemo(() => buildFlightLanes(entities), [entities])
   const laneDashes = useMemo(() => {
     const dashes: number[] = []
     for (let z = ROAD_FROM_Z; z > ROAD_TO_Z; z -= 3.2) dashes.push(z)
@@ -71,7 +73,7 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
         </mesh>
       ))}
 
-      <PhaseEngine entities={entities} />
+      <PhaseEngine entities={entities} context={{ flightLanes }} />
 
       <ambientLight intensity={0.22} color="#8fa8ff" />
       <hemisphereLight args={['#3a2a5a', '#0a0a16', 0.4]} />
