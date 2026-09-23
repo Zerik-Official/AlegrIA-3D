@@ -36,9 +36,9 @@ export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase
 
       <PhaseEngine entities={entities} />
 
-      <SceneClouds count={6} rangeZ={[-24, -9]} rangeY={[9, 13]} color="#fff4e0" underColor="#f0c88a" />
+      <SceneClouds count={6} rangeZ={[-24, -9]} rangeY={[18, 24]} color="#fff4e0" underColor="#f0c88a" />
       <ambientLight intensity={0.72} color="#ffe9c4" />
-      <SceneSun position={[8, 12, 4]} color="#fff4d0" glowColor="#ffd27a" intensity={1.45} hemisphere={{ sky: '#ffecd0', ground: '#bfa86a', intensity: 0.52 }} />
+      <SceneSun position={[8, 24, 4]} color="#fff4d0" glowColor="#ffd27a" intensity={1.45} hemisphere={{ sky: '#ffecd0', ground: '#bfa86a', intensity: 0.52 }} />
       <pointLight position={[0, 3.2, -9.2]} intensity={1.8} distance={12} color="#ff8a1a" decay={2} />
     </group>
   )
