@@ -92,13 +92,13 @@ function TempleRenderer() {
 
 /**
  * The source `.glb` is authored ~220 units wide (real-world scale mismatch,
- * not a design choice) — `targetSize` normalizes its footprint down to fit
- * the plaza, and the extra Y-only `scale` compensates for how flat that
- * leaves it so it still reads as a building rather than a slab.
+ * not a design choice) — `targetSize` normalizes its footprint down to a
+ * corner-plot-sized building, and the extra Y-only `scale` compensates for
+ * how flat that leaves it so it still reads as a building rather than a slab.
  */
 function ParroquiaRenderer() {
   return (
-    <ModelLoader src={modelRegistry['phase2/parroquia'].path} targetSize={11} scale={[1, 2.3, 1]} fallback={<GothicTemple position={[0, 0, 0]} />} />
+    <ModelLoader src={modelRegistry['phase2/parroquia'].path} targetSize={16} scale={[1, 2.3, 1]} fallback={<GothicTemple position={[0, 0, 0]} />} />
   )
 }
 
