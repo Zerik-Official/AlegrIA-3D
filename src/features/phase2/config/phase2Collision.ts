@@ -6,8 +6,13 @@
 
 import { initialPhase2Entities } from '@/features/editor/config/editableEntities'
 
-/** Footprint radius for the parroquia model at `scale: 1`. */
-const PARROQUIA_COLLISION_RADIUS = 2.4
+/**
+ * Footprint radius for the parroquia model at `scale: 1` — the renderer
+ * normalizes the source `.glb` to a `targetSize: 11` footprint (see
+ * `entityRegistry`'s `ParroquiaRenderer`), so this stays half that plus a
+ * small buffer.
+ */
+const PARROQUIA_COLLISION_RADIUS = 5.7
 
 const parroquia = initialPhase2Entities.find((e) => e.id === 'parroquia')
 
