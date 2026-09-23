@@ -11,6 +11,7 @@ import { modelRegistry } from '@/shared/config/models'
 import { createWindowGridTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import { useTrailBuffer, createTrailMaterial } from '@/features/cityIntro/renderers/trail'
+import { buildLaneCurve } from '@/features/cityIntro/renderers/flightLane'
 import type { EntityRendererProps } from '@/engine/types'
 
 /** Trail sample count for the lead engine of a flying train. */
@@ -76,18 +77,29 @@ export function ProceduralFlyingTrain({ color = '#7ad8ff', seed = 42 }: { color?
 }
 
 /**
- * Slides a flying train back and forth along local X and trails a fading light behind the lead car.
+ * Follows its assigned flight lane (JSON `title`, looked up in
+ * `context.flightLanes`) at a constant arc-length speed when one exists;
+ * otherwise slides back and forth along local X like before. Trails a fading
+ * light behind the lead car either way.
  * @param props - Entity props
  * @returns Renderer element
  */
-export function FlyingTrainRenderer({ entity }: EntityRendererProps) {
+export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
   const color = entity.variant ?? '#7ad8ff'
   const seed = useMemo(() => hashSeed(entity.id), [entity.id])
   const groupRef = useRef<THREE.Group>(null)
   const trailRef = useRef<THREE.Points>(null)
-  const { range, speed } = useMemo(() => {
+  const laneWaypoints = entity.title ? context?.flightLanes?.[entity.title] : undefined
+  const laneCurve = useMemo(() => buildLaneCurve(laneWaypoints), [laneWaypoints])
+  const { range, speed, laneSpeed, laneStart, laneReverse } = useMemo(() => {
     const rand = createSeededRandom(seed)
-    return { range: 12 + rand() * 10, speed: 0.06 + rand() * 0.05 }
+    return {
+      range: 12 + rand() * 10,
+      speed: 0.06 + rand() * 0.05,
+      laneSpeed: 2.4 + rand() * 1.6,
+      laneStart: rand(),
+      laneReverse: rand() > 0.5,
+    }
   }, [seed])
   const { positions: trailPositions, push: pushTrail } = useTrailBuffer(TRAIN_TRAIL_LENGTH)
   const trailIndices = useMemo(() => Float32Array.from({ length: TRAIN_TRAIL_LENGTH }, (_, i) => i), [])
@@ -95,11 +107,26 @@ export function FlyingTrainRenderer({ entity }: EntityRendererProps) {
   const leadOffset = ((TRAIN_CAR_COUNT - 1) * (TRAIN_CAR_LENGTH + 0.1)) / 2
 
   useFrame(({ clock }) => {
-    const t = clock.elapsedTime * speed + seed
-    const x = Math.sin(t) * range
-    const direction = Math.cos(t) >= 0 ? 1 : -1
-    if (groupRef.current) groupRef.current.position.x = x
-    pushTrail(x - direction * leadOffset, -0.06, 0)
+    if (laneCurve) {
+      const length = laneCurve.getLength()
+      const dir = laneReverse ? -1 : 1
+      const u = THREE.MathUtils.euclideanModulo(laneStart + (clock.elapsedTime * laneSpeed * dir) / length, 1)
+      const point = laneCurve.getPointAt(u)
+      const tangent = laneCurve.getTangentAt(u)
+      const y = point.y + Math.sin(clock.elapsedTime * 0.8 + seed) * 0.15
+      const heading = Math.atan2(tangent.x * dir, tangent.z * dir)
+      if (groupRef.current) {
+        groupRef.current.position.set(point.x, y, point.z)
+        groupRef.current.rotation.y = heading
+      }
+      pushTrail(point.x - Math.sin(heading) * leadOffset, y - 0.06, point.z - Math.cos(heading) * leadOffset)
+    } else {
+      const t = clock.elapsedTime * speed + seed
+      const x = Math.sin(t) * range
+      const direction = Math.cos(t) >= 0 ? 1 : -1
+      if (groupRef.current) groupRef.current.position.x = x
+      pushTrail(x - direction * leadOffset, -0.06, 0)
+    }
     const attr = trailRef.current?.geometry.attributes.position as THREE.BufferAttribute | undefined
     if (attr) attr.needsUpdate = true
   })
