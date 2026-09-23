@@ -69,8 +69,10 @@ function useSafeTexture(src?: string): THREE.Texture | null {
         setTexture(tex)
       },
       undefined,
-      () => {
-        if (!cancelled) setTexture(null)
+      (err) => {
+        if (cancelled) return
+        console.warn(`[SepiaPhotoFrame] Failed to load "${src}"`, err)
+        setTexture(null)
       }
     )
     return () => {
