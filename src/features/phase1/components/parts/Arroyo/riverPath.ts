@@ -1,7 +1,10 @@
 /**
  * Curved centerline for the arroyo — a gentle meander instead of a straight
- * strip — plus helpers to turn it into flat ribbon geometry and to sample
- * offset points along its edge for scattering bank detail (rocks, reeds).
+ * strip — plus a cross-section "loft" builder (sweep a profile of
+ * `{offset, y}` points along the curve) so the banks slope continuously
+ * down to the surrounding ground with no gap/floating-platform seam, and a
+ * helper to sample offset points along the curve for scattering bank detail
+ * (rocks, reeds).
  * @module features/phase1/components/parts/Arroyo/riverPath
  */
 
@@ -19,7 +22,7 @@ const CONTROL_POINTS: Array<[number, number]> = [
 
 /**
  * Builds the river's centerline curve. Y is unused here — height comes from
- * whichever tier's ribbon geometry samples this curve at.
+ * whichever loft profile samples this curve.
  * @returns Centerline curve
  */
 export function createRiverCurve(): THREE.CatmullRomCurve3 {
@@ -31,35 +34,48 @@ export function createRiverCurve(): THREE.CatmullRomCurve3 {
   )
 }
 
+/** One cross-section station: perpendicular distance from the centerline (signed) and world Y there. */
+export interface CrossSectionPoint {
+  offset: number
+  y: number
+}
+
 /**
- * Flat ribbon geometry of constant `width` following `curve` at height `y`,
- * built directly in world-aligned X/Z (no `rotation-x` needed on the mesh).
+ * Sweeps a cross-section `profile` along `curve`, producing one continuous
+ * mesh — adjacent profile stations share exact edge vertices at every
+ * length step, so a profile that starts at `y=0` (matching the surrounding
+ * ground) and rises to a bank crest has no gap or floating-platform seam at
+ * its outer edge.
  * @param curve - Centerline
- * @param width - Ribbon width, perpendicular to the curve
- * @param y - World Y the ribbon sits at
+ * @param profile - Ordered cross-section stations, e.g. ground → bank crest → water edge
  * @param segments - Length subdivisions
- * @returns Ribbon geometry
+ * @returns Loft geometry
  */
-export function buildRibbonGeometry(curve: THREE.CatmullRomCurve3, width: number, y: number, segments = 64): THREE.BufferGeometry {
-  const points = curve.getSpacedPoints(segments)
+export function buildLoftGeometry(curve: THREE.CatmullRomCurve3, profile: CrossSectionPoint[], segments = 64): THREE.BufferGeometry {
+  const centerPoints = curve.getSpacedPoints(segments)
+  const rows = profile.length
   const positions: number[] = []
   const uvs: number[] = []
   const indices: number[] = []
-  const half = width / 2
 
   for (let i = 0; i <= segments; i++) {
     const t = i / segments
-    const point = points[i]
+    const center = centerPoints[i]
     const tangent = curve.getTangentAt(t)
     const normal = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize()
-    positions.push(point.x + normal.x * half, y, point.z + normal.z * half)
-    positions.push(point.x - normal.x * half, y, point.z - normal.z * half)
-    uvs.push(t, 0, t, 1)
-    if (i < segments) {
-      const a = i * 2
+    for (let r = 0; r < rows; r++) {
+      const { offset, y } = profile[r]
+      positions.push(center.x + normal.x * offset, y, center.z + normal.z * offset)
+      uvs.push(t, rows > 1 ? r / (rows - 1) : 0)
+    }
+  }
+
+  for (let i = 0; i < segments; i++) {
+    for (let r = 0; r < rows - 1; r++) {
+      const a = i * rows + r
       const b = a + 1
-      const c = a + 2
-      const d = a + 3
+      const c = (i + 1) * rows + r
+      const d = c + 1
       indices.push(a, c, b, b, c, d)
     }
   }
