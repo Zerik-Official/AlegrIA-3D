@@ -120,12 +120,15 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
       const point = laneCurve.getPointAt(u)
       const tangent = laneCurve.getTangentAt(u)
       const y = point.y + Math.sin(clock.elapsedTime * 0.8 + seed) * 0.15
-      const heading = Math.atan2(tangent.x * dir, tangent.z * dir)
+      // `flying-train.glb`'s nose points along local +X (verified in the editor's Model Browser
+      // with an axes helper), not +Z like `flying-car`'s hull, so heading uses the swapped/negated
+      // atan2 form for an X-forward object instead of the Z-forward one `FlyingCarRenderer` uses.
+      const heading = Math.atan2(-tangent.z * dir, tangent.x * dir)
       if (groupRef.current) {
         groupRef.current.position.set(point.x, y, point.z)
         groupRef.current.rotation.y = heading
       }
-      pushTrail(point.x - Math.sin(heading) * leadOffset, y - 0.06, point.z - Math.cos(heading) * leadOffset)
+      pushTrail(point.x - Math.cos(heading) * leadOffset, y - 0.06, point.z + Math.sin(heading) * leadOffset)
     } else {
       const t = clock.elapsedTime * speed + seed
       const x = Math.sin(t) * range
