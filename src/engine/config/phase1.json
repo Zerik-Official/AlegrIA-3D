@@ -77,24 +77,10 @@
     "scale": 1
   },
   {
-    "id": "photo-pasaje-chinos",
-    "type": "sepia-photo",
-    "position": [-3.2, 1.78, 6.8],
-    "rotationY": 0.42,
-    "scale": 1
-  },
-  {
     "id": "photo-andenes-altos",
     "type": "sepia-photo",
     "position": [3.4, 1.78, 7.2],
     "rotationY": -0.32,
-    "scale": 1
-  },
-  {
-    "id": "photo-bahareque",
-    "type": "sepia-photo",
-    "position": [0, 2.18, -4.2],
-    "rotationY": 0.02,
     "scale": 1
   },
   {
