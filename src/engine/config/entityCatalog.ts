@@ -158,6 +158,18 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0.42, 0], rotationY: 0, scale: 1.1, variant: '#d82a7a' },
   },
   {
+    type: 'dancer',
+    label: 'Bailarín/a de Carnaval',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'bailarina-amarilla' },
+  },
+  {
+    type: 'parade-vehicle',
+    label: 'Carro/Carroza de Carnaval',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'chiva-rumbera' },
+  },
+  {
     type: 'portal',
     label: 'Portal',
     scenes: ['phase1', 'phase2'],
