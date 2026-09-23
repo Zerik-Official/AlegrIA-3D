@@ -18,13 +18,36 @@ interface SepiaPhotoFrameProps {
   imageSrc?: string
 }
 
+/** Width/height of the frame's photo plane — texture UVs are cropped to match this aspect. */
+const FRAME_PHOTO_ASPECT = 1.32 / 0.9
+
+/**
+ * Crops `texture`'s UVs (repeat + offset) so its image covers `targetAspect`
+ * without stretching, the same way CSS `object-fit: cover` would.
+ * @param texture - Loaded texture to adjust in place
+ * @param targetAspect - Destination plane's width/height ratio
+ */
+function applyCoverUv(texture: THREE.Texture, targetAspect: number): void {
+  const image = texture.image as { width: number; height: number }
+  const imageAspect = image.width / image.height
+  if (imageAspect > targetAspect) {
+    const repeatX = targetAspect / imageAspect
+    texture.repeat.set(repeatX, 1)
+    texture.offset.set((1 - repeatX) / 2, 0)
+  } else {
+    const repeatY = imageAspect / targetAspect
+    texture.repeat.set(1, repeatY)
+    texture.offset.set(0, (1 - repeatY) / 2)
+  }
+}
+
 /**
  * Loads an image texture without suspending — resolves to `null` when `src` is
  * empty or fails to load, so callers can fall back to a procedural look.
  * Mirrors `ModelLoader`'s "degrade gracefully" convention for JSON-declared assets.
  *
  * @param src - Image URL, or undefined/empty to skip loading
- * @returns Loaded texture, or null while loading/missing
+ * @returns Loaded texture, cropped to {@link FRAME_PHOTO_ASPECT}, or null while loading/missing
  */
 function useSafeTexture(src?: string): THREE.Texture | null {
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
@@ -41,6 +64,7 @@ function useSafeTexture(src?: string): THREE.Texture | null {
       (tex) => {
         if (cancelled) return
         tex.colorSpace = THREE.SRGBColorSpace
+        applyCoverUv(tex, FRAME_PHOTO_ASPECT)
         setTexture(tex)
       },
       undefined,
