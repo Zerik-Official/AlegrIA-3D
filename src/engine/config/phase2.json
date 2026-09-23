@@ -1,12 +1,13 @@
 [
   { "id": "parroquia", "type": "parroquia", "position": [0, 0, 0], "rotationY": 0, "scale": 1 },
-  { "id": "dancer-01", "type": "dancer", "position": [0, 0, 5.5], "rotationY": 3.14, "scale": 1, "variant": "bailarina-amarilla" },
-  { "id": "dancer-02", "type": "dancer", "position": [4.76, 0, 2.75], "rotationY": -2.09, "scale": 1, "variant": "bailarin-blanco" },
-  { "id": "dancer-03", "type": "dancer", "position": [4.76, 0, -2.75], "rotationY": -1.05, "scale": 1, "variant": "bailarina-azul" },
-  { "id": "dancer-04", "type": "dancer", "position": [0, 0, -5.5], "rotationY": 0, "scale": 1, "variant": "bailarin-blanco-azul" },
-  { "id": "dancer-05", "type": "dancer", "position": [-4.76, 0, -2.75], "rotationY": 1.05, "scale": 1, "variant": "bailarina-roja" },
-  { "id": "dancer-06", "type": "dancer", "position": [-4.76, 0, 2.75], "rotationY": 2.09, "scale": 1, "variant": "bailarina-verde" },
+  { "id": "dancer-01", "type": "dancer", "position": [0, 0, 6.3], "rotationY": 3.14, "scale": 1, "variant": "bailarina-amarilla" },
+  { "id": "dancer-02", "type": "dancer", "position": [5.46, 0, 3.15], "rotationY": -2.09, "scale": 1, "variant": "bailarin-blanco" },
+  { "id": "dancer-03", "type": "dancer", "position": [5.46, 0, -3.15], "rotationY": -1.05, "scale": 1, "variant": "bailarina-azul" },
+  { "id": "dancer-04", "type": "dancer", "position": [0, 0, -6.3], "rotationY": 0, "scale": 1, "variant": "bailarin-blanco-azul" },
+  { "id": "dancer-05", "type": "dancer", "position": [-5.46, 0, -3.15], "rotationY": 1.05, "scale": 1, "variant": "bailarina-roja" },
+  { "id": "dancer-06", "type": "dancer", "position": [-5.46, 0, 3.15], "rotationY": 2.09, "scale": 1, "variant": "bailarina-verde" },
   { "id": "vehicle-chiva", "type": "parade-vehicle", "position": [16, 0, -9], "rotationY": 0, "scale": 1, "variant": "chiva-rumbera" },
   { "id": "vehicle-carrosa-riwi", "type": "parade-vehicle", "position": [16, 0, 0], "rotationY": 0, "scale": 1, "variant": "carrosa-riwi" },
-  { "id": "vehicle-carrosa-marimonda", "type": "parade-vehicle", "position": [16, 0, 9], "rotationY": 0, "scale": 1, "variant": "carrosa-marimonda" }
+  { "id": "vehicle-carrosa-marimonda", "type": "parade-vehicle", "position": [16, 0, 9], "rotationY": 0, "scale": 1, "variant": "carrosa-marimonda" },
+  { "id": "casa-carnavalera", "type": "carnival-house", "position": [8, 0, 8], "rotationY": 0, "scale": 1 }
 ]
