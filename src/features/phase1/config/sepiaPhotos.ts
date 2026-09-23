@@ -24,11 +24,11 @@ export interface SepiaPhotoConfig {
 const base = import.meta.env.BASE_URL
 
 /**
- * @param filename - Raw filename under `public/images/placeholders`
- * @returns URL-safe path, so spaces/accents in the original asset names still resolve
+ * @param filename - Filename under `public/images/placeholders`
+ * @returns Full public URL for the asset
  */
 function placeholder(filename: string): string {
-  return `${base}images/placeholders/${encodeURIComponent(filename)}`
+  return `${base}images/placeholders/${filename}`
 }
 
 /**
@@ -38,7 +38,7 @@ function placeholder(filename: string): string {
 export const sepiaPhotos: SepiaPhotoConfig[] = [
   {
     id: 'photo-1857-declaratoria',
-    src: placeholder('Declalatoria de la ciudad.jpg'),
+    src: placeholder('declaratoria-1857.jpg'),
     title: '1857 — Declaratoria de Ciudad',
     description: 'Barranquilla es elevada a ciudad. Primer trazo urbano cerca del Magdalena.',
     position: [-1.2, 1.85, 3.8],
@@ -46,7 +46,7 @@ export const sepiaPhotos: SepiaPhotoConfig[] = [
   },
   {
     id: 'photo-aduana',
-    src: placeholder('Aduana y puerto fluvial.png'),
+    src: placeholder('aduana-puerto-fluvial.png'),
     title: 'Aduana y Puerto Fluvial',
     description: 'Auge portuario. Bodegas y muelles que dieron nombre a Barrio Abajo.',
     position: [1.6, 1.92, 4.4],
@@ -54,7 +54,7 @@ export const sepiaPhotos: SepiaPhotoConfig[] = [
   },
   {
     id: 'photo-estacion-montoya',
-    src: placeholder('Estación montoya.png'),
+    src: placeholder('estacion-montoya.png'),
     title: 'Estación Montoya',
     description: 'Nodo ferroviario y comercial. Llegada de inmigrantes y mercancías.',
     position: [0.2, 2.05, 5.8],
@@ -62,7 +62,7 @@ export const sepiaPhotos: SepiaPhotoConfig[] = [
   },
   {
     id: 'photo-andenes-altos',
-    src: placeholder('Andenes altos en abarrio abajo.png'),
+    src: placeholder('andenes-altos.png'),
     title: 'Andenes Altos',
     description: 'Arquitectura vernácula elevada para resistir los arroyos.',
     position: [3.4, 1.78, 7.2],
