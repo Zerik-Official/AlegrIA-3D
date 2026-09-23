@@ -11,6 +11,7 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createWeatheredWallTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
+import { ProceduralStreetlight } from '@/features/cityIntro/renderers/StreetlightRenderer'
 
 /** Generates (once) a weathered "BIBLIOTECA" sign texture with a few dead/flickering letters. */
 function useLibrarySignTexture(): THREE.Texture {
@@ -314,14 +315,38 @@ export function ProceduralLibraryFacade() {
 }
 
 /**
+ * Futuristic lighting rig framing the landmark facade — a pair of the city's
+ * streetlight fixtures flanking it, warm floodlights washing the colonnade,
+ * and a cool accent glow near the roofline — kept outside the procedural
+ * fallback so it lights the real `.glb` too, which has no light sources of
+ * its own (its neon sign is emissive-only, it doesn't cast light).
+ * @returns Light rig elements
+ */
+function FacadeLightRig() {
+  return (
+    <>
+      <group position={[-24, 0, 9]}>
+        <ProceduralStreetlight />
+      </group>
+      <group position={[24, 0, 9]}>
+        <ProceduralStreetlight />
+      </group>
+      <pointLight position={[-12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
+      <pointLight position={[12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
+      <pointLight position={[0, 10.5, 10]} intensity={1.6} distance={22} color="#5ad8ff" decay={2} />
+      <pointLight position={[0, 3.5, 13]} intensity={1.1} distance={18} color="#8fd8ff" decay={2} />
+    </>
+  )
+}
+
+/**
  * @returns Renderer element
  */
 export function LibraryFacadeRenderer() {
   return (
-    <ModelLoader
-      src={modelRegistry['cityIntro/library-facade'].path}
-      fallback={<ProceduralLibraryFacade />}
-      targetSize={FACADE_WIDTH}
-    />
+    <>
+      <ModelLoader src={modelRegistry['cityIntro/library-facade'].path} fallback={<ProceduralLibraryFacade />} />
+      <FacadeLightRig />
+    </>
   )
 }
