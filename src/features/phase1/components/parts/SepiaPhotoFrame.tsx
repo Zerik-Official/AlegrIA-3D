@@ -29,6 +29,7 @@ const FRAME_PHOTO_ASPECT = 1.32 / 0.9
  */
 function applyCoverUv(texture: THREE.Texture, targetAspect: number): void {
   const image = texture.image as { width: number; height: number }
+  if (!image.width || !image.height) return
   const imageAspect = image.width / image.height
   if (imageAspect > targetAspect) {
     const repeatX = targetAspect / imageAspect
@@ -123,17 +124,18 @@ export const SepiaPhotoFrame = memo(function SepiaPhotoFrame({ position, rotatio
       </mesh>
       <mesh position={[0, 0, 0.042]}>
         <planeGeometry args={[1.32, 0.9]} />
-        <meshStandardMaterial
-          map={texture}
-          color={texture ? '#ffffff' : '#704214'}
-          roughness={0.98}
-          emissive={highlighted ? '#ff8a1a' : '#000000'}
-          emissiveIntensity={highlighted ? 0.18 : 0}
-        />
+        <meshBasicMaterial map={texture} color={texture ? '#ffffff' : '#704214'} toneMapped={false} />
       </mesh>
       <mesh position={[0, 0, 0.044]}>
         <planeGeometry args={[1.32, 0.9]} />
-        <meshStandardMaterial color="#ff8a1a" transparent opacity={highlighted ? 0.32 : 0.22} roughness={1} blending={THREE.AdditiveBlending} depthWrite={false} />
+        <meshBasicMaterial
+          color="#ff8a1a"
+          transparent
+          opacity={highlighted ? 0.32 : 0.22}
+          toneMapped={false}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
       </mesh>
       <mesh position={[0, -0.58, 0.02]}>
         <planeGeometry args={[0.92, 0.08]} />
