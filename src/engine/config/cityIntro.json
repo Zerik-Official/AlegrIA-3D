@@ -5,7 +5,7 @@
   { "id": "path-3", "type": "path-point", "position": [1.8, 0, -8], "rotationY": 0, "scale": 1, "variant": "3" },
   { "id": "path-4", "type": "path-point", "position": [-1.2, 0, -18], "rotationY": 0, "scale": 1, "variant": "4" },
   { "id": "path-5", "type": "path-point", "position": [0.6, 0, -28], "rotationY": 0, "scale": 1, "variant": "5" },
-  { "id": "path-6", "type": "path-point", "position": [0, 0, -38], "rotationY": 0, "scale": 1, "variant": "6" },
+  { "id": "path-6", "type": "path-point", "position": [0, 0, -32], "rotationY": 0, "scale": 1, "variant": "6" },
 
   { "id": "streetlight-01", "type": "streetlight", "position": [-3.6, 0, 18], "rotationY": 0, "scale": 1 },
   { "id": "streetlight-02", "type": "streetlight", "position": [5.8, 0, 15], "rotationY": 0, "scale": 1 },
@@ -89,5 +89,5 @@
   { "id": "planet-07", "type": "planet", "position": [-40, 72, 95], "rotationY": 0, "scale": 5, "variant": "#c97a7a" },
   { "id": "planet-08", "type": "planet", "position": [90, 30, 30], "rotationY": 0, "scale": 2.2, "variant": "#8aa8ff" },
 
-  { "id": "library-facade", "type": "library-facade", "position": [0, 0, -46], "rotationY": 0, "scale": 1 }
+  { "id": "library-facade", "type": "library-facade", "position": [0, 0, -54], "rotationY": 0, "scale": 1 }
 ]
