@@ -36,6 +36,7 @@ export const modelRegistry: ModelRegistry = {
   'phase1/portal': { path: `${base}models/phase1/portal.glb`, fallback: 'procedural-portal-phase1' },
   'phase2/facade': { path: `${base}models/phase2/facade.glb`, fallback: 'procedural-facade' },
   'phase2/temple': { path: `${base}models/phase2/temple.glb`, fallback: 'procedural-temple' },
+  'phase2/parroquia': { path: `${base}models/phase2/parroquia-sagrado-jesus.glb`, fallback: 'procedural-parroquia' },
   'phase2/trinitaria': { path: `${base}models/phase2/trinitaria.glb`, fallback: 'procedural-trinitaria' },
   'phase2/portal': { path: `${base}models/phase2/portal.glb`, fallback: 'procedural-portal-phase2' },
   'cityIntro/skyscraper': { path: `${base}models/cityIntro/skyscraper.glb`, fallback: 'procedural-skyscraper' },
