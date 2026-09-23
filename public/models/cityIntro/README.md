@@ -11,7 +11,7 @@ Drop Blender `.glb` exports here to override procedural fallbacks without code c
 | `cityIntro/flying-car-classic` | `toyota-corolla.glb` | low sporty hull with light trail |
 | `cityIntro/flying-train` | `flying-train.glb` | nosed multi-car maglev |
 | `cityIntro/moon` | `moon.glb` | glowing sphere + halo |
-| `cityIntro/library-facade` | `library-facade.glb` | weathered Republican-style facade with arcade, shutters and pediment |
+| `cityIntro/library-facade` | `aduana-barranquilla.glb` | weathered Republican-style facade with arcade, shutters and pediment |
 | `cityIntro/planet` | `planet.glb` | banded, self-rotating distant planet |
 | `cityIntro/logo-tower` | `logo-tower.glb` | boxy tower with a backlit riwi banner front and back |
 | `cityIntro/ad-tower` | `ad-tower.glb` | boxy tower with a big video/ad screen and ticker band |
