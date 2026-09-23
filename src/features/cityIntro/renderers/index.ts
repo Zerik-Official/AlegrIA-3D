@@ -14,6 +14,9 @@ import { MoonRenderer } from '@/features/cityIntro/renderers/MoonRenderer'
 import { PlanetRenderer } from '@/features/cityIntro/renderers/PlanetRenderer'
 import { LibraryFacadeRenderer } from '@/features/cityIntro/renderers/LibraryFacadeRenderer'
 import { PathPointRenderer } from '@/features/cityIntro/renderers/PathPointRenderer'
+import { FlightLanePointRenderer } from '@/features/cityIntro/renderers/FlightLanePointRenderer'
+import { AdTowerRenderer } from '@/features/cityIntro/renderers/AdTowerRenderer'
+import { LogoTowerRenderer } from '@/features/cityIntro/renderers/LogoTowerRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -25,4 +28,7 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   planet: PlanetRenderer,
   'library-facade': LibraryFacadeRenderer,
   'path-point': PathPointRenderer,
+  'flight-lane-point': FlightLanePointRenderer,
+  'ad-tower': AdTowerRenderer,
+  'logo-tower': LogoTowerRenderer,
 }
