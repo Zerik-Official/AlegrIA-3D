@@ -30,7 +30,6 @@ export const modelRegistry: ModelRegistry = {
   'phase1/bahareque-house-long': { path: `${base}models/phase1/bahareque-house-long.glb`, fallback: 'procedural-bahareque-long' },
   'phase1/bahareque-house': { path: `${base}models/phase1/bahareque-house.glb`, fallback: 'procedural-bahareque-house' },
   'phase1/anden-alto': { path: `${base}models/phase1/anden-alto.glb`, fallback: 'procedural-anden-alto' },
-  'phase1/arroyo': { path: `${base}models/phase1/arroyo.glb`, fallback: 'procedural-arroyo' },
   'phase1/aduana': { path: `${base}models/phase1/aduana.glb`, fallback: 'procedural-aduana' },
   'phase1/estacion-montoya': { path: `${base}models/phase1/estacion-montoya.glb`, fallback: 'procedural-estacion' },
   'phase1/sepia-photo': { path: `${base}models/phase1/sepia-photo.glb`, fallback: 'procedural-sepia-photo' },
