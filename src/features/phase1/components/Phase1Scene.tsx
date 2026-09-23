@@ -6,6 +6,7 @@ import { AndenAlto } from '@/features/phase1/components/parts/AndenAlto'
 import { Arroyo } from '@/features/phase1/components/parts/Arroyo'
 import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
 import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
+import { Phase1Flood } from '@/features/phase1/components/parts/Phase1Flood'
 import { Phase1Backdrop } from '@/features/phase1/components/parts/Phase1Backdrop'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
@@ -54,6 +55,7 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
       <Phase1Sun />
       <Phase1Clouds />
       <Arroyo />
+      <Phase1Flood />
 
       <ModelLoader
         src={aduanaEntry.path}
