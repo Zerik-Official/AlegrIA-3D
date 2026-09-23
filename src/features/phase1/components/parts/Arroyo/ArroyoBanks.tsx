@@ -83,15 +83,17 @@ export function BankRocks({ points, y }: BankRocksProps) {
 interface ReedLineProps {
   /** Edge points (from `sampleBankEdge`) each reed is jittered around. */
   points: Array<[number, number]>
+  /** Ground level the reeds root at. */
+  y: number
 }
 
 /**
  * Instanced crossed-plane reeds, one jittered around each sampled edge
  * point, hugging just outside the riverbank along the curve.
- * @param props - Placement points
+ * @param props - Placement points and ground level
  * @returns Instanced reed mesh
  */
-export function ReedLine({ points }: ReedLineProps) {
+export function ReedLine({ points, y }: ReedLineProps) {
   const texture = useReedTexture()
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const geometry = useMemo(() => {
@@ -110,14 +112,14 @@ export function ReedLine({ points }: ReedLineProps) {
     const dummy = new THREE.Object3D()
     points.forEach(([x, z], i) => {
       const s = 0.6 + Math.random() * 0.7
-      dummy.position.set(x + (Math.random() - 0.5) * 0.5, 0, z + (Math.random() - 0.5) * 0.5)
+      dummy.position.set(x + (Math.random() - 0.5) * 0.5, y, z + (Math.random() - 0.5) * 0.5)
       dummy.rotation.set(0, Math.random() * Math.PI, 0)
       dummy.scale.setScalar(s)
       dummy.updateMatrix()
       mesh.setMatrixAt(i, dummy.matrix)
     })
     mesh.instanceMatrix.needsUpdate = true
-  }, [points])
+  }, [points, y])
 
   return <instancedMesh ref={meshRef} args={[geometry, material, points.length]} castShadow />
 }
