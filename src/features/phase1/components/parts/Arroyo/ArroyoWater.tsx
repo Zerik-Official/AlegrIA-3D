@@ -1,11 +1,5 @@
 /**
- * Stylized, noise-textured water surface for the arroyo — ported from a
- * reference `three-custom-shader-material` demo (`stylized-water/src/components/Water`)
- * into a plain `THREE.ShaderMaterial` matching this project's convention: an
- * animated simplex-noise pattern doubling as both a wave texture and a foam
- * mask, blended from a near to a far color, plus a gentle whole-surface
- * rise/fall (the reference's "water level" oscillation). Muddy, sediment-heavy
- * tones instead of the reference's tropical palette, to read as a river.
+ * Stylized, noise-textured water surface for the arroyo
  * @module features/phase1/components/parts/Arroyo/ArroyoWater
  */
 
@@ -108,7 +102,7 @@ export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
               + smoothstep(threshold, threshold - 0.01, vec3(noiseWaves)));
             waveEffect = step(0.5, waveEffect);
 
-            float vignette = length(vUv - 0.5) * 1.5;
+            float vignette = abs(vUv.y - 0.5) * 2.0;
             vec3 baseEffect = smoothstep(0.1, 0.3, vec3(vignette));
             vec3 baseColor = mix(finalColor, uColorFar, baseEffect);
 
