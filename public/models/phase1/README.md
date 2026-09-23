@@ -6,7 +6,6 @@ Drop Blender `.glb` exports here to override procedural fallbacks without code c
 |---|---|---|
 | `phase1/bahareque-house` | `bahareque-house.glb` | mud walls + log frame |
 | `phase1/anden-alto` | `anden-alto.glb` | elevated sidewalk |
-| `phase1/arroyo` | `arroyo.glb` | water stream |
 | `phase1/aduana` | `aduana.glb` | port customs |
 | `phase1/estacion-montoya` | `estacion-montoya.glb` | station |
 | `phase1/sepia-photo` | `sepia-photo.glb` | floating sepia frame |
