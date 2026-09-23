@@ -27,18 +27,18 @@ export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[64, 64]} />
+        <planeGeometry args={[84, 84]} />
         <meshStandardMaterial color="#bfa86a" roughness={1} />
       </mesh>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.001, 0]} receiveShadow>
-        <planeGeometry args={[60, 60]} />
+        <planeGeometry args={[80, 80]} />
         <meshStandardMaterial color="#c9b896" roughness={0.96} />
       </mesh>
       <Phase2Streets />
 
       <PhaseEngine entities={entities} />
 
-      <SceneClouds count={10} spreadX={56} rangeZ={[-30, -10]} rangeY={[18, 24]} color="#fff4e0" underColor="#f0c88a" />
+      <SceneClouds count={10} spreadX={70} rangeZ={[-36, -14]} rangeY={[18, 24]} color="#fff4e0" underColor="#f0c88a" />
       <ambientLight intensity={0.72} color="#ffe9c4" />
       <SceneSun position={[8, 24, 4]} color="#fff4d0" glowColor="#ffd27a" intensity={1.45} hemisphere={{ sky: '#ffecd0', ground: '#bfa86a', intensity: 0.52 }} />
       <pointLight position={[0, 3.2, 2.5]} intensity={1.8} distance={12} color="#ff8a1a" decay={2} />
