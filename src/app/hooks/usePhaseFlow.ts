@@ -5,8 +5,10 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useGLTF } from '@react-three/drei'
 import { appConfig } from '@/shared/config/appConfig'
 import { easeCubicInOut } from '@/shared/utils/perf'
+import { cityIntroModelUrls } from '@/shared/config/models'
 import type { GamePhase } from '@/shared/types'
 import { WormholeTimeline } from '@/app/engine/WormholeTimeline'
 
@@ -92,11 +94,32 @@ export function usePhaseFlow(): PhaseFlow {
 
   useEffect(() => {
     if (!isLaunching) return
-    const id = window.setTimeout(() => {
+    let settled = false
+    const reveal = () => {
+      if (settled) return
+      settled = true
       setPhase('cityIntro')
       setIsLaunching(false)
-    }, appConfig.cityIntro.launchDelayMs)
-    return () => window.clearTimeout(id)
+    }
+
+    // Warm the city-intro models' fetch + glTF-parse (and drei's Suspense
+    // cache) behind the spinner, so the walk doesn't freeze mid-reveal
+    // loading them — capped by `launchMaxWaitMs` in case an asset is slow
+    // or unreachable, and never shorter than `launchDelayMs`.
+    const urls = cityIntroModelUrls()
+    urls.forEach((url) => useGLTF.preload(url))
+    const preloaded = Promise.all(urls.map((url) => fetch(url, { method: 'HEAD' }).catch(() => null)))
+    const minDelay = new Promise((resolve) => window.setTimeout(resolve, appConfig.cityIntro.launchDelayMs))
+    const maxWaitId = window.setTimeout(reveal, appConfig.cityIntro.launchMaxWaitMs)
+    Promise.all([preloaded, minDelay]).then(() => {
+      window.clearTimeout(maxWaitId)
+      reveal()
+    })
+
+    return () => {
+      settled = true
+      window.clearTimeout(maxWaitId)
+    }
   }, [isLaunching])
 
   return {
