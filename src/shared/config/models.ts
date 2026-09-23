@@ -46,7 +46,7 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/flying-car-classic': { path: `${base}models/cityIntro/toyota-corolla.glb`, fallback: 'procedural-flying-car' },
   'cityIntro/flying-train': { path: `${base}models/cityIntro/flying-train.glb`, fallback: 'procedural-flying-train' },
   'cityIntro/moon': { path: `${base}models/cityIntro/moon.glb`, fallback: 'procedural-moon' },
-  'cityIntro/library-facade': { path: `${base}models/cityIntro/library-facade.glb`, fallback: 'procedural-library-facade' },
+  'cityIntro/library-facade': { path: `${base}models/cityIntro/aduana-barranquilla.glb`, fallback: 'procedural-library-facade' },
   'cityIntro/planet': { path: `${base}models/cityIntro/planet.glb`, fallback: 'procedural-planet' },
   'cityIntro/logo-tower': { path: `${base}models/cityIntro/logo-tower.glb`, fallback: 'procedural-logo-tower' },
   'cityIntro/ad-tower': { path: `${base}models/cityIntro/ad-tower.glb`, fallback: 'procedural-ad-tower' },
