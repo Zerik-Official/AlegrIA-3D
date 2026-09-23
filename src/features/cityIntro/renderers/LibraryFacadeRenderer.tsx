@@ -317,5 +317,11 @@ export function ProceduralLibraryFacade() {
  * @returns Renderer element
  */
 export function LibraryFacadeRenderer() {
-  return <ModelLoader src={modelRegistry['cityIntro/library-facade'].path} fallback={<ProceduralLibraryFacade />} />
+  return (
+    <ModelLoader
+      src={modelRegistry['cityIntro/library-facade'].path}
+      fallback={<ProceduralLibraryFacade />}
+      targetSize={FACADE_WIDTH}
+    />
+  )
 }
