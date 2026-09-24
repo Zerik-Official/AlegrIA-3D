@@ -17,6 +17,8 @@ import { PathPointRenderer } from '@/features/cityIntro/renderers/PathPointRende
 import { FlightLanePointRenderer } from '@/features/cityIntro/renderers/FlightLanePointRenderer'
 import { AdTowerRenderer } from '@/features/cityIntro/renderers/AdTowerRenderer'
 import { RiwiBuildingRenderer } from '@/features/cityIntro/renderers/RiwiBuildingRenderer'
+import { MeshTowerRenderer, NeedleTowerRenderer, NeonBenchRenderer, NeonPlanterRenderer } from '@/features/cityIntro/renderers/FuturisticPropRenderers'
+import { ScreenBuildingRenderer } from '@/features/cityIntro/renderers/ScreenBuildingRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -31,4 +33,9 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   'flight-lane-point': FlightLanePointRenderer,
   'ad-tower': AdTowerRenderer,
   'riwi-building': RiwiBuildingRenderer,
+  'screen-building': ScreenBuildingRenderer,
+  'mesh-tower': MeshTowerRenderer,
+  'needle-tower': NeedleTowerRenderer,
+  'neon-bench': NeonBenchRenderer,
+  'neon-planter': NeonPlanterRenderer,
 }
