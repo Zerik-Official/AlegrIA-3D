@@ -14,6 +14,14 @@ import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { buildMagdalenaCurve } from '@/features/phase1/components/parts/MagdalenaRiver'
 
+/**
+ * The steamboat `.glb` is authored bow-toward local `-X` rather than `+X`,
+ * so aligning local `+X` with the direction of travel (as the raw tangent
+ * heading below does) puts the stern forward. Rotating the hull an extra
+ * half-turn corrects it to bow-first without touching the tangent/lane math.
+ */
+const HULL_FACING_OFFSET = Math.PI
+
 /** Props for {@link PuertoBoat}. */
 interface PuertoBoatProps {
   /** Public URL to the boat `.glb`. */
@@ -51,7 +59,7 @@ export function PuertoBoat({ src, fallback, seed, patrol }: PuertoBoatProps) {
       const forward = rawU % 2 < 1 ? 1 : -1
       const normal = new THREE.Vector3(-tangent.z, 0, tangent.x)
       group.position.set(point.x + normal.x * patrol.offset, bob, point.z + normal.z * patrol.offset)
-      group.rotation.y = Math.atan2(tangent.z * forward, tangent.x * forward)
+      group.rotation.y = Math.atan2(tangent.z * forward, tangent.x * forward) + HULL_FACING_OFFSET
     } else {
       group.position.y = bob
     }
