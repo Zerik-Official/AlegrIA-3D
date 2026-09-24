@@ -13,7 +13,7 @@ interface HUDProps {
   /** Interaction handler. */
   onInteract: () => void
   /** Which scene's title/date labels to show. */
-  variant: 'library' | 'phase1' | 'phase2'
+  variant: 'library' | 'phase1' | 'phase2' | 'cityIntro'
 }
 
 /** Title-area copy per {@link HUDProps.variant}. */
@@ -42,6 +42,15 @@ const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string
     clock: (
       <span>
         1919–1950s <span className="text-parchment/35">•</span> Época Dorada • Trinitarias y Carnaval
+      </span>
+    ),
+  },
+  cityIntro: {
+    eyebrow: 'Escena Final — Año 2050',
+    title: 'El Futuro que Construimos',
+    clock: (
+      <span>
+        2050 <span className="text-parchment/35">•</span> Ciudad Futura
       </span>
     ),
   },
@@ -153,19 +162,19 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
       <div className="max-w-2xl">
         <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena -1 — Año 2050</div>
         <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(120,180,255,0.4)]">
-          Una Noche en la
-          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Ciudad Futura</span>
+          La Biblioteca
+          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Abandonada</span>
         </h1>
         <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-parchment/70">
-          Año 2050. Autos y trenes voladores cruzan el cielo entre rascacielos de neón.
+          Año 2050. Despiertas entre estanterías polvorientas, iluminadas por antorchas que no deberían seguir ardiendo.
           <br />
-          Al final de una calle olvidada espera la sombra de una <span className="text-gold-bright font-semibold">biblioteca abandonada</span>, donde
-          duerme El Libro de Rosa y el Vórtice del Tiempo.
+          En el centro de la sala flota <span className="text-gold-bright font-semibold">El Libro de Rosa</span>, guardián del Vórtice del
+          Tiempo.
           <br />
-          Solo falta caminar hacia ella.
+          Acércate y despiértalo para cruzar hacia el pasado.
         </p>
         <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
-          <FiEye className="h-3.5 w-3.5" /> mouse — mirar alrededor mientras caminas
+          <FiEye className="h-3.5 w-3.5" /> WASD — moverse · mouse — mirar alrededor
         </p>
 
         <button
@@ -176,16 +185,16 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
           {loading ? (
             <>
               <FiLoader className="h-4 w-4 animate-spin" />
-              Despertando la Ciudad…
+              Despertando la Biblioteca…
             </>
           ) : (
             <>
               <FiArrowRight className="h-4 w-4" />
-              Comenzar el Camino
+              Entrar a la Biblioteca
             </>
           )}
         </button>
-        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles — ESC para salir</p>
+        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles y sonido — ESC para salir</p>
       </div>
     </div>
   )
