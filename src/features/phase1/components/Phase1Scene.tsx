@@ -2,7 +2,6 @@ import { memo } from 'react'
 import { ProceduralTree, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
 import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
-import { Phase1Flood } from '@/features/phase1/components/parts/Phase1Flood'
 import { Phase1Backdrop } from '@/features/phase1/components/parts/Phase1Backdrop'
 import { MagdalenaRiver } from '@/features/phase1/components/parts/MagdalenaRiver'
 import { PhaseEngine } from '@/engine/PhaseEngine'
@@ -39,47 +38,52 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, 0]} receiveShadow>
-        <planeGeometry args={[480, 480]} />
+        <planeGeometry args={[600, 600]} />
         <meshStandardMaterial color="#5a4022" roughness={1} metalness={0} />
       </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[-14, 0, 0]} receiveShadow>
-        <planeGeometry args={[68, 120]} />
+      <mesh rotation-x={-Math.PI / 2} position={[-12, 0, 0]} receiveShadow>
+        <planeGeometry args={[137, 192]} />
         <meshStandardMaterial color="#6b4a2a" roughness={1} metalness={0} />
       </mesh>
-      <mesh rotation-x={-Math.PI / 2} position={[-14, 0.001, 0]} receiveShadow>
-        <planeGeometry args={[66, 118]} />
+      <mesh rotation-x={-Math.PI / 2} position={[-12, 0.001, 0]} receiveShadow>
+        <planeGeometry args={[135, 190]} />
         <meshStandardMaterial color="#7a5a2e" roughness={0.98} />
       </mesh>
-      <gridHelper args={[66, 16, '#5a3d1a', '#7a5a2e']} position={[-14, 0.002, 0]} />
+      <gridHelper args={[135, 24, '#5a3d1a', '#7a5a2e']} position={[-12, 0.002, 0]} />
       <GroundDetail />
       <Phase1Backdrop />
 
       <Phase1Sun />
       <Phase1Clouds />
       <MagdalenaRiver />
-      <Phase1Flood />
 
       <PhaseEngine entities={entities} context={{ highlightedPhotoId }} shadowDistance={SHADOW_DISTANCE} />
 
-      <ProceduralTree position={[-30, 0, -12]} scale={1.15} foliageColor="#2a5a1e" />
-      <ProceduralTree position={[-4, 0, -30]} scale={1.28} foliageColor="#1e4a14" trunkColor="#2e1f14" />
-      <ProceduralTree position={[-22, 0, 20]} scale={0.92} foliageColor="#3a6a1e" />
-      <ProceduralTree position={[-2, 0, 30]} scale={1.05} foliageColor="#2a5a1e" />
-      <ProceduralTree position={[-34, 0, 4]} scale={0.98} foliageColor="#1e3a0f" />
-      <ProceduralTree position={[-10, 0, -4]} scale={1.12} foliageColor="#2a4a14" />
-      <ProceduralTree position={[-26, 0, 36]} scale={1.08} foliageColor="#2a4a1e" />
-      <ProceduralTree position={[-16, 0, -38]} scale={1.02} foliageColor="#3a5a1e" />
-      <ProceduralTrinitaria position={[-20, 0, -8]} bloomColor="#d82a7a" scale={1} />
-      <ProceduralTrinitaria position={[-10, 0, -20]} bloomColor="#7a2ad8" scale={1.1} />
-      <ProceduralTrinitaria position={[-30, 0, 16]} bloomColor="#ff6a1a" scale={0.92} />
-      <ProceduralTrinitaria position={[-6, 0, 18]} bloomColor="#d82a7a" scale={1.05} />
-      <ProceduralTrinitaria position={[-24, 0, -30]} bloomColor="#a52ad8" scale={0.98} />
-      <ProceduralTrinitaria position={[-16, 0, 44]} bloomColor="#ff6a1a" scale={1} />
+      <ProceduralTree position={[-52, 0, -30]} scale={1.15} foliageColor="#2a5a1e" />
+      <ProceduralTree position={[-20, 0, -55]} scale={1.28} foliageColor="#1e4a14" trunkColor="#2e1f14" />
+      <ProceduralTree position={[-42, 0, 32]} scale={0.92} foliageColor="#3a6a1e" />
+      <ProceduralTree position={[-8, 0, 48]} scale={1.05} foliageColor="#2a5a1e" />
+      <ProceduralTree position={[-62, 0, 8]} scale={0.98} foliageColor="#1e3a0f" />
+      <ProceduralTree position={[-26, 0, -6]} scale={1.12} foliageColor="#2a4a14" />
+      <ProceduralTree position={[-48, 0, 62]} scale={1.08} foliageColor="#2a4a1e" />
+      <ProceduralTree position={[-30, 0, -68]} scale={1.02} foliageColor="#3a5a1e" />
+      <ProceduralTree position={[-66, 0, -50]} scale={1.1} foliageColor="#2a5a1e" />
+      <ProceduralTree position={[-58, 0, 42]} scale={0.95} foliageColor="#1e4a14" />
+      <ProceduralTree position={[-14, 0, 70]} scale={1.18} foliageColor="#2a4a1e" />
+      <ProceduralTree position={[-36, 0, -82]} scale={1.06} foliageColor="#3a6a1e" />
+      <ProceduralTrinitaria position={[-34, 0, -14]} bloomColor="#d82a7a" scale={1} />
+      <ProceduralTrinitaria position={[-18, 0, -36]} bloomColor="#7a2ad8" scale={1.1} />
+      <ProceduralTrinitaria position={[-54, 0, 22]} bloomColor="#ff6a1a" scale={0.92} />
+      <ProceduralTrinitaria position={[-12, 0, 26]} bloomColor="#d82a7a" scale={1.05} />
+      <ProceduralTrinitaria position={[-44, 0, -52]} bloomColor="#a52ad8" scale={0.98} />
+      <ProceduralTrinitaria position={[-24, 0, 60]} bloomColor="#ff6a1a" scale={1} />
+      <ProceduralTrinitaria position={[-64, 0, -10]} bloomColor="#d82a3a" scale={0.9} />
+      <ProceduralTrinitaria position={[-6, 0, -60]} bloomColor="#7a2ad8" scale={1.02} />
 
       <ambientLight intensity={0.62} color="#ffe9c4" />
       <hemisphereLight args={['#ffecd0', '#6b4a2a', 0.52]} />
-      <directionalLight position={[18, 14, -12]} intensity={1.05} color="#fff4d0" castShadow shadow-mapSize={[2048, 2048]} />
-      <pointLight position={[9, 3.2, -8]} intensity={0.42} distance={16} color="#8ab4c2" decay={2} />
+      <directionalLight position={[40, 34, -24]} intensity={1.05} color="#fff4d0" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-90} shadow-camera-right={90} shadow-camera-top={90} shadow-camera-bottom={-90} shadow-camera-far={220} />
+      <pointLight position={[30, 5, 10]} intensity={0.42} distance={24} color="#8ab4c2" decay={2} />
     </group>
   )
 })
