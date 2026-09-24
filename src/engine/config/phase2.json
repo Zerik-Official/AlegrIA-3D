@@ -558,6 +558,7 @@
   {"id":"plaza-deco-2","type":"phase2/decorations/mesa-corona","position":[9.5,0,-6.5],"rotationY":-0.97,"scale":0.8},
   {"id":"plaza-deco-3","type":"phase2/decorations/vitrina-super-fritos","position":[-9.5,0,-6.5],"rotationY":0.97,"scale":1.1},
   {"id":"plaza-deco-4","type":"phase2/decorations/vitrina-super-fritos","position":[9.5,0,6.5],"rotationY":-2.17,"scale":1.1},
+  {"id":"plaza-congas-personaje","type":"congas-personaje","position":[11.4,0,7.8],"rotationY":-2.17,"scale":1},
   {"id":"plaza-el-poderoso","type":"phase2/decorations/el-poderoso","position":[-3,0,0],"rotationY":1.57,"scale":1.5},
   {"id":"plaza-rey-momo","type":"rey-momo","position":[3,0,0],"rotationY":-1.57,"scale":1},
   {"id":"portal-to-library","type":"portal","position":[0,1.05,-16],"rotationY":0,"scale":1.55}
