@@ -6,11 +6,12 @@
  * @module features/cityIntro/renderers/ScreenBuildingRenderer
  */
 
-import { Suspense, useEffect, useMemo } from 'react'
-import { useGLTF, useVideoTexture } from '@react-three/drei'
+import { useEffect, useMemo } from 'react'
+import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { modelRegistry } from '@/shared/config/models'
-import { resolvePublicSrc } from '@/shared/utils/media'
+import { resolvePublicSrc, resolvePublicSrcs } from '@/shared/utils/media'
+import { useVideoPlaylistTexture, resolvePlaylist } from '@/shared/hooks/useVideoPlaylistTexture'
 import type { EntityRendererProps } from '@/engine/types'
 
 /** Material names authored in Blender that should show the video. */
@@ -51,33 +52,17 @@ function Building({ texture }: { texture: THREE.Texture | null }) {
 }
 
 /**
- * Loads the video and hands it to {@link Building}; isolated so `Suspense`
- * only holds back the building while the video is loading.
- * @param props.src - Resolved video URL
- * @returns Building with video screens
- */
-function BuildingWithVideo({ src }: { src: string }) {
-  const texture = useVideoTexture(src, { muted: true, loop: true, start: true, crossOrigin: 'anonymous' })
-  texture.flipY = false
-  texture.colorSpace = THREE.SRGBColorSpace
-  return <Building texture={texture} />
-}
-
-/**
- * @param props - Entity props (`videoSrc` optional)
+ * @param props - Entity props (`videoSrc`/`videoSrcs` optional)
  * @returns Renderer element
  */
 export function ScreenBuildingRenderer({ entity }: EntityRendererProps) {
-  const videoSrc = useMemo(() => resolvePublicSrc(entity.videoSrc), [entity.videoSrc])
-  return (
-    <Suspense fallback={null}>
-      {videoSrc ? (
-        <Suspense fallback={<Building texture={null} />}>
-          <BuildingWithVideo src={videoSrc} />
-        </Suspense>
-      ) : (
-        <Building texture={null} />
-      )}
-    </Suspense>
+  const playlist = useMemo(
+    () => resolvePlaylist(resolvePublicSrc(entity.videoSrc), resolvePublicSrcs(entity.videoSrcs)),
+    [entity.videoSrc, entity.videoSrcs]
   )
+  const texture = useVideoPlaylistTexture(playlist)
+  useEffect(() => {
+    if (texture) texture.flipY = false
+  }, [texture])
+  return <Building texture={texture} />
 }
