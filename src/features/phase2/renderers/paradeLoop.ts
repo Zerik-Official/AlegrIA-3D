@@ -45,17 +45,17 @@ export interface ParadeLoopParams {
   speed: number
   /** Starting position in `[0, 1)` around the loop. */
   startU: number
-  /** Travel direction. */
-  reverse: boolean
 }
 
 /**
  * @param id - Entity id, seeding this vehicle's pacing so it differs from its siblings
- * @returns Deterministic loop pacing for that entity
+ * @returns Deterministic loop pacing for that entity — every vehicle travels the same
+ *   direction around the loop so they never meet head-on/collide; only speed and starting
+ *   position vary per vehicle.
  */
 export function paradeLoopParamsFor(id: string): ParadeLoopParams {
   const rand = createSeededRandom(hashSeed(id))
-  return { speed: 1.0 + rand() * 0.6, startU: rand(), reverse: rand() > 0.5 }
+  return { speed: 1.0 + rand() * 0.6, startU: rand() }
 }
 
 /**
@@ -87,11 +87,10 @@ export function useParadeLoopMotion(groupRef: RefObject<THREE.Group | null>, id:
     const group = groupRef.current
     if (!group) return
     const length = curve.getLength()
-    const dir = params.reverse ? -1 : 1
-    const u = THREE.MathUtils.euclideanModulo(params.startU + (clock.elapsedTime * params.speed * dir) / length, 1)
+    const u = THREE.MathUtils.euclideanModulo(params.startU + (clock.elapsedTime * params.speed) / length, 1)
     const point = curve.getPointAt(u)
     const tangent = curve.getTangentAt(u)
-    const heading = Math.atan2(-tangent.x * dir, -tangent.z * dir)
+    const heading = Math.atan2(-tangent.x, -tangent.z)
     group.position.set(point.x, point.y, point.z)
     group.rotation.y = heading + facingOffset
   })
