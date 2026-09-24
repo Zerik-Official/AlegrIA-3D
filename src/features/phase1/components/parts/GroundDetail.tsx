@@ -1,7 +1,6 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
-import { createSoftCircleTexture } from '@/shared/utils/textures'
 
 /** Circular area other scatter points must avoid. */
 interface ExclusionZone {
@@ -92,44 +91,6 @@ function useGrassTexture(): THREE.Texture {
 }
 
 /**
- * Props for {@link MudPatches}.
- */
-interface MudPatchesProps {
-  /** Patch center points. */
-  points: [number, number][]
-}
-
-/**
- * Soft-edged mud/lodo blotches scattered across the ground.
- * @param props - Patch positions
- * @returns Patch meshes
- */
-function MudPatches({ points }: MudPatchesProps) {
-  const alphaMap = useMemo(() => createSoftCircleTexture(), [])
-  const patches = useMemo(
-    () =>
-      points.map(([x, z]) => ({
-        x,
-        z,
-        scale: 1.1 + Math.random() * 1.6,
-        rotation: Math.random() * Math.PI,
-        dark: Math.random() > 0.4,
-      })),
-    [points]
-  )
-  return (
-    <>
-      {patches.map((p, i) => (
-        <mesh key={i} rotation-x={-Math.PI / 2} rotation-z={p.rotation} position={[p.x, 0.004, p.z]} scale={p.scale} receiveShadow>
-          <circleGeometry args={[1, 18]} />
-          <meshStandardMaterial color={p.dark ? '#2e2013' : '#4a3820'} alphaMap={alphaMap} transparent roughness={1} depthWrite={false} />
-        </mesh>
-      ))}
-    </>
-  )
-}
-
-/**
  * Props for {@link GrassField}.
  */
 interface GrassFieldProps {
@@ -193,8 +154,8 @@ function GrassField({ points }: GrassFieldProps) {
 }
 
 /**
- * Adds ground-level texture to Phase 1's otherwise-empty dirt plaza: mud
- * patches and grass tufts scattered around the houses, landmarks and river.
+ * Adds ground-level texture to Phase 1's otherwise-empty dirt plaza: grass
+ * tufts scattered around the houses, landmarks and river.
  *
  * @returns Ground detail group
  */
@@ -210,12 +171,10 @@ export const GroundDetail = memo(function GroundDetail() {
         })),
     []
   )
-  const grassPoints = useScatterPoints(1400, dynamicZones)
-  const mudPoints = useScatterPoints(110, dynamicZones)
+  const grassPoints = useScatterPoints(1900, dynamicZones)
 
   return (
     <group>
-      <MudPatches points={mudPoints} />
       <GrassField points={grassPoints} />
     </group>
   )
