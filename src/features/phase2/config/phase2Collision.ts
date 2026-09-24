@@ -16,7 +16,15 @@ const PARROQUIA_COLLISION_RADIUS = 8.3
 
 const parroquia = initialPhase2Entities.find((e) => e.id === 'parroquia')
 
+/** Footprint radius for each generated house (`scale` 1.3 on a 6-unit normalized model). */
+const HOUSE_COLLISION_RADIUS = 2.6
+
+const houseObstacles = initialPhase2Entities
+  .filter((e) => e.type.startsWith('phase2/houses/'))
+  .map((e) => ({ x: e.position[0], z: e.position[2], radius: HOUSE_COLLISION_RADIUS }))
+
 /** Collision circles the player can't walk into while exploring Phase 2. */
-export const phase2Obstacles: Array<{ x: number; z: number; radius: number }> = parroquia
-  ? [{ x: parroquia.position[0], z: parroquia.position[2], radius: PARROQUIA_COLLISION_RADIUS * parroquia.scale }]
-  : []
+export const phase2Obstacles: Array<{ x: number; z: number; radius: number }> = [
+  ...(parroquia ? [{ x: parroquia.position[0], z: parroquia.position[2], radius: PARROQUIA_COLLISION_RADIUS * parroquia.scale }] : []),
+  ...houseObstacles,
+]
