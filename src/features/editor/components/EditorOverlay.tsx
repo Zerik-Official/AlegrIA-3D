@@ -269,17 +269,61 @@ export const EditorOverlay = memo(function EditorOverlay({
               />
             </label>
           )}
-          {(selected.type === 'ad-tower' || selected.videoSrc !== undefined) && (
-            <label className="mt-2 flex flex-col gap-1">
-              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Video (URL, opcional)</span>
-              <input
-                type="text"
-                placeholder="/videos/cityIntro/first.mp4"
-                value={selected.videoSrc ?? ''}
-                onChange={(ev) => onUpdate(selected.id, { videoSrc: ev.target.value || undefined })}
-                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-              />
-            </label>
+          {(selected.type === 'ad-tower' ||
+            selected.type === 'screen-building' ||
+            (selected.type === 'parade-vehicle' && selected.variant === 'carrosa-riwi') ||
+            selected.videoSrc !== undefined ||
+            selected.videoSrcs !== undefined) && (
+            <>
+              <label className="mt-2 flex flex-col gap-1">
+                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Video (URL, opcional — usado si no hay lista)</span>
+                <input
+                  type="text"
+                  placeholder="/videos/cityIntro/first.mp4"
+                  value={selected.videoSrc ?? ''}
+                  onChange={(ev) => onUpdate(selected.id, { videoSrc: ev.target.value || undefined })}
+                  className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+                />
+              </label>
+              <div className="mt-2 flex flex-col gap-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-widest text-parchment/50">Videos en bucle (lista)</span>
+                  <button
+                    onClick={() => onUpdate(selected.id, { videoSrcs: [...(selected.videoSrcs ?? []), ''] })}
+                    className="flex items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[10px] hover:bg-white/15"
+                  >
+                    <FiPlus className="h-3 w-3" /> Añadir video
+                  </button>
+                </div>
+                {(selected.videoSrcs ?? []).map((src, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      placeholder="/videos/mocadevia/mocadevia-1.mp4"
+                      value={src}
+                      onChange={(ev) => {
+                        const next = [...(selected.videoSrcs ?? [])]
+                        next[i] = ev.target.value
+                        onUpdate(selected.id, { videoSrcs: next })
+                      }}
+                      className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+                    />
+                    <button
+                      onClick={() => {
+                        const next = (selected.videoSrcs ?? []).filter((_, j) => j !== i)
+                        onUpdate(selected.id, { videoSrcs: next.length ? next : undefined })
+                      }}
+                      className="rounded-md bg-red-500/15 p-1.5 text-red-300 hover:bg-red-500/25"
+                    >
+                      <FiTrash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <div className="text-[10px] leading-4 text-parchment/40">
+                  Se reproducen en orden, muteados; al terminar uno empieza el siguiente y vuelve al primero al final.
+                </div>
+              </div>
+            </>
           )}
           {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
             <>
