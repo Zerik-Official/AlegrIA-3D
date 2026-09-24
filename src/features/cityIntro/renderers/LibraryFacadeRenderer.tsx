@@ -315,23 +315,27 @@ export function ProceduralLibraryFacade() {
   )
 }
 
-/** Ground-level yellow floodlights (x offsets in front of the facade). */
-const FACADE_SPOT_XS = [-15, -5, 5, 15]
+/** Ground-level yellow floodlights (x offsets in front of the facade) — wide enough to reach both ends of the real `.glb`, which is broader than the procedural fallback's 16-unit width. */
+const FACADE_SPOT_XS = [-20, -12, -4, 4, 12, 20]
 const FACADE_SPOT_COLOR = '#ffd23a'
 
 /**
  * Futuristic lighting rig framing the landmark facade — a pair of the city's
  * streetlight fixtures flanking it, warm floodlights washing the colonnade,
- * and a cool accent glow near the roofline — kept outside the procedural
- * fallback so it lights the real `.glb` too, which has no light sources of
- * its own (its neon sign is emissive-only, it doesn't cast light).
+ * a second row aimed higher to reach the upper floor and roofline, and side
+ * fill so the building's flanks don't fall into darkness — kept outside the
+ * procedural fallback so it lights the real `.glb` too, which has no light
+ * sources of its own (its neon sign is emissive-only, it doesn't cast light).
  * @returns Light rig elements
  */
 function FacadeLightRig() {
   return (
     <>
       {FACADE_SPOT_XS.map((x) => (
-        <Reflector key={x} position={[x, 0.45, 15]} aimAt={[x * 0.7, 6, 0]} color={FACADE_SPOT_COLOR} />
+        <Reflector key={`low-${x}`} position={[x, 0.45, 15]} aimAt={[x * 0.7, 3, 0]} color={FACADE_SPOT_COLOR} />
+      ))}
+      {FACADE_SPOT_XS.map((x) => (
+        <Reflector key={`high-${x}`} position={[x, 0.45, 15]} aimAt={[x * 0.7, 9.5, 0]} color={FACADE_SPOT_COLOR} intensity={70} />
       ))}
       <group position={[-24, 0, 9]}>
         <ProceduralStreetlight />
@@ -343,6 +347,9 @@ function FacadeLightRig() {
       <pointLight position={[12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
       <pointLight position={[0, 10.5, 10]} intensity={1.6} distance={22} color="#5ad8ff" decay={2} />
       <pointLight position={[0, 3.5, 13]} intensity={1.1} distance={18} color="#8fd8ff" decay={2} />
+      <pointLight position={[-22, 5, 4]} intensity={1.8} distance={22} color="#ffd23a" decay={2} />
+      <pointLight position={[22, 5, 4]} intensity={1.8} distance={22} color="#ffd23a" decay={2} />
+      <pointLight position={[0, 4.5, -6]} intensity={1.3} distance={24} color="#8fa8ff" decay={2} />
     </>
   )
 }
