@@ -160,13 +160,14 @@ export default function App() {
           />
         )}
         {phaseFlow.phase === 'exploring' && !isEditorEnabled && (
-          <PlayerControls enabled onPositionChange={proximity.handlePosition} bounds={appConfig.player.libraryBounds} />
+          <PlayerControls enabled onPositionChange={proximity.handlePosition} bounds={appConfig.player.libraryBounds} useCollisionWorld />
         )}
         {phaseFlow.isPhase1 && !isEditorEnabled && (
           <PlayerControls
             enabled={!phaseFlow.showPhase1Overlay && !selectedPhoto}
             onPositionChange={proximity.handlePosition}
             bounds={appConfig.player.phase1Bounds}
+            useCollisionWorld
           />
         )}
         {phaseFlow.isPhase2 && !isEditorEnabled && (
