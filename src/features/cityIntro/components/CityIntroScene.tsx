@@ -23,7 +23,7 @@ const ROAD_FROM_Z = 75
 const ROAD_TO_Z = -60
 /** Center/size of the plain dark ground plane, sized to clear the road strip and skyline filler on every side. */
 const GROUND_CENTER_Z = 7
-const GROUND_SIZE: [number, number] = [380, 240]
+const GROUND_SIZE: [number, number] = [280, 180]
 
 /**
  * Escena -1 — a futuristic city street the player walks (camera on rails,
