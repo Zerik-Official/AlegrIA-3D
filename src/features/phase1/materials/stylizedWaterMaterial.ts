@@ -113,12 +113,18 @@ const FRAGMENT_SHADER = `
 `
 
 /**
+ * `depthWrite: false` avoids z-fighting flicker against the bank mesh, which
+ * sits only ~0.02 units below the water surface and gets pushed through it
+ * every frame by the vertex shader's wave bob — a transparent depth-writing
+ * surface racing an opaque one at nearly the same depth pops in/out as the
+ * camera moves.
  * @param params - Color, noise and edge-fade tuning
  * @returns Shader material with `uTime` left at `0`, to be driven by the caller
  */
 export function createStylizedWaterMaterial(params: StylizedWaterParams): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     transparent: true,
+    depthWrite: false,
     side: THREE.DoubleSide,
     uniforms: {
       uTime: { value: 0 },
