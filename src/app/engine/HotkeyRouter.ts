@@ -17,6 +17,8 @@ export interface HotkeyContext {
   nearBook: boolean
   /** Whether the player is within interact range of the phase portal. */
   nearPortal: boolean
+  /** Whether the library's `cityIntro` portal has appeared and can be used. */
+  libraryPortalUnlocked: boolean
   /** Whether Phase 1's intro overlay is showing. */
   showPhase1Overlay: boolean
   /** Whether Phase 2's intro overlay is showing. */
@@ -51,6 +53,8 @@ export interface HotkeyContext {
   startWormholeToPhase2: () => void
   /** Starts the wormhole transition back to the library (triggered near the Phase 2 portal). */
   startWormholeToLibrary: () => void
+  /** Starts the wormhole transition into the `cityIntro` finale (triggered at the library's unlocked portal). */
+  startWormholeToCityIntro: () => void
   /** Dismisses the Phase 1 intro overlay. */
   dismissPhase1Intro: () => void
   /** Dismisses the Phase 2 intro overlay. */
@@ -126,6 +130,9 @@ export class HotkeyRouter {
     }
     if (isConfirmKey && ctx.isPhase2 && ctx.nearPortal && !ctx.showPhase2Overlay && !ctx.isEditorEnabled) {
       ctx.startWormholeToLibrary()
+    }
+    if (isConfirmKey && ctx.phase === 'exploring' && ctx.nearPortal && ctx.libraryPortalUnlocked && !ctx.isEditorEnabled) {
+      ctx.startWormholeToCityIntro()
     }
 
     if (event.key === 'Escape' && ctx.hasSelectedPhoto) {
