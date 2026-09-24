@@ -16,7 +16,6 @@ import { PhotoModal } from '@/shared/components/PhotoModal'
 import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
 import { EditorFlyControls } from '@/features/editor/components/EditorFlyControls'
-import { Phase1FloodTimer } from '@/features/phase1/components/Phase1FloodTimer'
 import { phase2Obstacles } from '@/features/phase2/config/phase2Collision'
 import { catalogForScene } from '@/engine/config/entityCatalog'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
@@ -189,7 +188,6 @@ export default function App() {
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
             Explora • Aduana • Estación Montoya
           </div>
-          <Phase1FloodTimer />
         </>
       )}
       {phaseFlow.isPhase1 && phaseFlow.showPhase1Overlay && <PastOverlay onReturn={phaseFlow.dismissPhase1Intro} />}
