@@ -46,6 +46,11 @@ export interface PhaseFlow {
   dismissPhase2Intro: () => void
   /** Reloads the page to return to the library from Phase 2. */
   returnToLibrary: () => void
+  /**
+   * Instantly jumps to any phase without the linear walk/wormhole sequence.
+   * Intended for editor/dev use: cancels any in-flight wormhole timeline and clears overlays.
+   */
+  jumpToPhase: (target: GamePhase) => void
 }
 
 /**
@@ -89,6 +94,25 @@ export function usePhaseFlow(): PhaseFlow {
   const dismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
   const dismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
   const returnToLibrary = useCallback(() => window.location.reload(), [])
+
+  /**
+   * Instantly jumps to `target`, bypassing walk/wormhole sequencing.
+   * @param target - Destination game phase
+   */
+  const jumpToPhase = useCallback(
+    (target: GamePhase) => {
+      timeline.cancel()
+      setWormholeProgress(0)
+      setIsLaunching(false)
+      setShowPhase1Overlay(false)
+      setShowPhase2Overlay(false)
+      setPhase(target)
+      if (target === 'phase1' || target === 'phase2') {
+        setWormholeTarget(target)
+      }
+    },
+    [timeline]
+  )
 
   useEffect(() => () => timeline.cancel(), [timeline])
 
@@ -139,5 +163,6 @@ export function usePhaseFlow(): PhaseFlow {
     dismissPhase1Intro,
     dismissPhase2Intro,
     returnToLibrary,
+    jumpToPhase,
   }
 }
