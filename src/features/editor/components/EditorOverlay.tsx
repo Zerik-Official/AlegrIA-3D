@@ -325,7 +325,7 @@ export const EditorOverlay = memo(function EditorOverlay({
         </button>
       </div>
       <div className="mt-2 text-[10px] leading-4 text-parchment/30">
-        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor
+        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • <span className="text-parchment/60">Alt + clic derecho</span> seleccionar
         <br />
         Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
       </div>
