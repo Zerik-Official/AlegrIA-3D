@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useState } from 'react'
 import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap } from 'react-icons/fi'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
-import type { EntityCatalogItem } from '@/engine/config/entityCatalog'
+import type { EntityCatalogItem, SceneId } from '@/engine/config/entityCatalog'
 import type { GamePhase } from '@/shared/types'
 import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import { ModelBrowserModal } from '@/features/editor/components/ModelBrowserModal'
@@ -38,6 +38,8 @@ interface EditorOverlayProps {
   currentPhase?: GamePhase
   /** Handles an instant phase jump without linear walk/wormhole sequencing. */
   onJumpToPhase?: (phase: GamePhase) => void
+  /** Scene currently edited, used to filter the model browser to that phase. */
+  currentScene?: SceneId
 }
 
 /**
@@ -62,12 +64,27 @@ export const EditorOverlay = memo(function EditorOverlay({
   onClose,
   currentPhase,
   onJumpToPhase,
+  currentScene,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
   const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
   const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
   const jumpTargets = phaseSceneRegistry.listJumpTargets()
   const hasJump = typeof onJumpToPhase === 'function' && typeof currentPhase === 'string'
+
+  /**
+   * Handles quick-add from the model browser: creates an entity whose `type`
+   * is the model registry key itself, so `entityRegistry.getEntityRenderer`
+   * resolves it via the generic phase2 fallback.
+   * @param modelKey - Registry key, e.g. `phase2/houses/casa-cafe`
+   */
+  const handleModelQuickAdd = useCallback(
+    (modelKey: string) => {
+      onAdd({ id: `${modelKey.replace(/\//g, '-')}-${Date.now()}`, type: modelKey, position: [0, 0, 0], rotationY: 0, scale: 1 })
+      setIsModelBrowserOpen(false)
+    },
+    [onAdd]
+  )
 
   useEffect(() => {
     if (catalog.length && !catalog.some((c) => c.type === addType)) {
@@ -313,7 +330,7 @@ export const EditorOverlay = memo(function EditorOverlay({
         Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
       </div>
 
-      <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} />
+      <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} currentScene={currentScene} onQuickAdd={handleModelQuickAdd} />
     </div>
   )
 })
