@@ -5,7 +5,7 @@
  * @module app/hooks/usePhaseAudio
  */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { audioTracks, type AudioTrackKey } from '@/shared/config/audio'
 import type { GamePhase } from '@/shared/types'
 
@@ -42,13 +42,16 @@ function trackKeyForPhase(phase: GamePhase, libraryVisitCount: number): AudioTra
 /**
  * @param phase - Current game phase
  * @param libraryVisitCount - How many times `exploring` has been entered so far
+ * @returns Seconds remaining in the current narration/dialogue, or `null` when no track is active
  */
-export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): void {
+export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): number | null {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   if (audioRef.current === null && typeof Audio !== 'undefined') {
     audioRef.current = new Audio()
     audioRef.current.volume = VOLUME
   }
+
+  const [remaining, setRemaining] = useState<number | null>(null)
 
   useEffect(() => {
     const el = audioRef.current
@@ -56,16 +59,67 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): void
     const key = trackKeyForPhase(phase, libraryVisitCount)
     if (!key) {
       el.pause()
+      setRemaining(null)
       return
     }
     const src = audioTracks[key]
+    // Ensure PART* narrations never loop, even when reusing the same element.
+    el.loop = false
     if (!el.src.endsWith(src)) {
       el.src = src
-      el.loop = key !== 'vortex'
       el.currentTime = 0
       el.play().catch(() => {})
     } else if (el.paused) {
       el.play().catch(() => {})
+    }
+  }, [phase, libraryVisitCount])
+
+  useEffect(() => {
+    const el = audioRef.current
+    if (!el) return
+
+    const update = (): void => {
+      if (!el.duration || Number.isNaN(el.duration) || !Number.isFinite(el.duration)) {
+        setRemaining(null)
+        return
+      }
+      if (el.paused || el.ended) {
+        // Keep 0 visible for a moment at the very end, then hide once ended and paused.
+        if (el.ended) {
+          setRemaining(0)
+        } else {
+          // When paused but seekable (e.g. phase with no key cleared pause earlier),
+          // hide the indicator.
+          setRemaining(null)
+        }
+        return
+      }
+      const r = Math.max(0, el.duration - el.currentTime)
+      setRemaining(r)
+    }
+
+    const onLoaded = (): void => update()
+    const onTimeUpdate = (): void => update()
+    const onEnded = (): void => setRemaining(0)
+    const onPlay = (): void => update()
+    const onPause = (): void => update()
+
+    el.addEventListener('loadedmetadata', onLoaded)
+    el.addEventListener('timeupdate', onTimeUpdate)
+    el.addEventListener('ended', onEnded)
+    el.addEventListener('play', onPlay)
+    el.addEventListener('pause', onPause)
+
+    // Fallback interval for smoother 1s countdown when `timeupdate` fires sparsely (~4Hz).
+    const id = window.setInterval(update, 250)
+
+    return () => {
+      el.removeEventListener('loadedmetadata', onLoaded)
+      el.removeEventListener('timeupdate', onTimeUpdate)
+      el.removeEventListener('ended', onEnded)
+      el.removeEventListener('play', onPlay)
+      el.removeEventListener('pause', onPause)
+      window.clearInterval(id)
     }
   }, [phase, libraryVisitCount])
 
@@ -75,4 +129,6 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): void
     },
     []
   )
+
+  return remaining
 }
