@@ -43,9 +43,37 @@ function applyCoverUv(texture: THREE.Texture, targetAspect: number): void {
 }
 
 /**
+ * Resolves a user-provided or JSON-driven `imageSrc` to a fetchable public URL
+ * that respects `vite.base` (`/AlegrIA-3D/`). Handles the common editor case where
+ * the user types `/images/placeholders/x.jpg` or `images/...` without the base,
+ * and passes through external URLs (`https://…`, `data:`, `blob:`) unchanged.
+ * @param src - Raw src from entity JSON / editor input
+ * @returns Normalized URL, or the original if it is already absolute/data/blob
+ */
+function resolvePublicUrl(src: string): string {
+  if (/^(https?:)?\/\//.test(src) || src.startsWith('data:') || src.startsWith('blob:')) return src
+  const base = import.meta.env.BASE_URL as string
+  if (src.startsWith(base)) return src
+  const withoutPublic = src.replace(/^public\//, '')
+  const withoutLeadingSlash = withoutPublic.replace(/^\//, '')
+  return `${base}${withoutLeadingSlash}`
+}
+
+/**
+ * Whether a URL is external (needs CORS handling for WebGL textures).
+ * @param src - Normalized URL
+ * @returns True for http/https external resources
+ */
+function isExternalUrl(src: string): boolean {
+  return /^(https?:)?\/\//.test(src)
+}
+
+/**
  * Loads an image texture without suspending — resolves to `null` when `src` is
  * empty or fails to load, so callers can fall back to a procedural look.
- * Mirrors `ModelLoader`'s "degrade gracefully" convention for JSON-declared assets.
+ * Uses a DOM `Image` → `THREE.Texture` path so the same URL that works for
+ * `PhotoModal`'s `<img>` also works for the levitating mesh, avoiding
+ * `TextureLoader` NPOT/mipmap inconsistencies for PNG assets.
  *
  * @param src - Image URL, or undefined/empty to skip loading
  * @returns Loaded texture, cropped to {@link FRAME_PHOTO_ASPECT}, or null while loading/missing
@@ -55,28 +83,88 @@ function useSafeTexture(src?: string): THREE.Texture | null {
 
   useEffect(() => {
     if (!src) {
-      setTexture(null)
+      setTexture((prev) => {
+        if (prev) prev.dispose()
+        return null
+      })
       return
     }
+    const resolvedSrc = resolvePublicUrl(src)
+    const external = isExternalUrl(resolvedSrc)
     let cancelled = false
-    const loader = new THREE.TextureLoader()
-    loader.load(
-      src,
-      (tex) => {
-        if (cancelled) return
-        tex.colorSpace = THREE.SRGBColorSpace
-        applyCoverUv(tex, FRAME_PHOTO_ASPECT)
-        setTexture(tex)
-      },
-      undefined,
-      (err) => {
-        if (cancelled) return
-        console.warn(`[SepiaPhotoFrame] Failed to load "${src}"`, err)
-        setTexture(null)
+    let activeTexture: THREE.Texture | null = null
+
+    /**
+     * Creates a `THREE.Texture` from a loaded `HTMLImageElement` with the
+     * correct color space and UV cover handling.
+     * @param img - Loaded image element
+     * @returns Configured texture
+     */
+    const createTexture = (img: HTMLImageElement): THREE.Texture => {
+      const tex = new THREE.Texture(img)
+      tex.colorSpace = THREE.SRGBColorSpace
+      tex.wrapS = THREE.ClampToEdgeWrapping
+      tex.wrapT = THREE.ClampToEdgeWrapping
+      tex.generateMipmaps = false
+      tex.minFilter = THREE.LinearFilter
+      tex.magFilter = THREE.LinearFilter
+      applyCoverUv(tex, FRAME_PHOTO_ASPECT)
+      tex.needsUpdate = true
+      return tex
+    }
+
+    let img: HTMLImageElement | null = new Image()
+    if (external) img.crossOrigin = 'anonymous'
+
+    const onLoad = () => {
+      if (cancelled || !img) return
+      const tex = createTexture(img)
+      activeTexture = tex
+      setTexture((prev) => {
+        if (prev && prev !== tex) prev.dispose()
+        return tex
+      })
+    }
+
+    const onError = (err: unknown) => {
+      if (cancelled) return
+      if (external && img && img.crossOrigin === 'anonymous') {
+        const retry = new Image()
+        retry.onload = () => {
+          if (cancelled) return
+          const tex = createTexture(retry)
+          activeTexture = tex
+          setTexture((prev) => {
+            if (prev && prev !== tex) prev.dispose()
+            return tex
+          })
+        }
+        retry.onerror = (retryErr) => {
+          if (cancelled) return
+          console.warn(`[SepiaPhotoFrame] Failed to load external "${src}" (resolved "${resolvedSrc}")`, retryErr)
+          setTexture((prev) => {
+            if (prev) prev.dispose()
+            return null
+          })
+        }
+        retry.src = resolvedSrc
+        img = retry
+        return
       }
-    )
+      console.warn(`[SepiaPhotoFrame] Failed to load "${src}" (resolved "${resolvedSrc}")`, err)
+      setTexture((prev) => {
+        if (prev) prev.dispose()
+        return null
+      })
+    }
+
+    img.onload = onLoad
+    img.onerror = onError
+    img.src = resolvedSrc
     return () => {
       cancelled = true
+      if (activeTexture) activeTexture.dispose()
+      img = null
     }
   }, [src])
 
