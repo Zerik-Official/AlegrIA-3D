@@ -176,6 +176,12 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'chiva-rumbera' },
   },
   {
+    type: 'rey-momo',
+    label: 'Rey Momo (baila)',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
     type: 'phase2-house',
     label: 'Casa Phase2 (genérica)',
     scenes: ['phase2'],
