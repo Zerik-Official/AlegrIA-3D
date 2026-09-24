@@ -33,18 +33,22 @@ export interface Phase2StreetsConfig {
 }
 
 export const phase2StreetsConfig: Phase2StreetsConfig = {
-  roadWidth: 4,
+  roadWidth: 4.4,
   sidewalkWidth: 6,
   plazaSize: 14,
-  roadColor: '#6f6a5f',
-  sidewalkColor: '#cfc3a0',
+  roadColor: '#7d7568',
+  sidewalkColor: '#d9a878',
   plazaColor: '#8a8060',
   segments: [
-    { axis: 'z', offset: -16, length: 58 },
-    { axis: 'z', offset: 0, length: 58 },
-    { axis: 'z', offset: 16, length: 58 },
-    { axis: 'x', offset: -16, length: 58 },
-    { axis: 'x', offset: 0, length: 58 },
-    { axis: 'x', offset: 16, length: 58 },
+    { axis: 'z', offset: -32, length: 84 },
+    { axis: 'z', offset: -16, length: 84 },
+    { axis: 'z', offset: 0, length: 84 },
+    { axis: 'z', offset: 16, length: 84 },
+    { axis: 'z', offset: 32, length: 84 },
+    { axis: 'x', offset: -32, length: 84 },
+    { axis: 'x', offset: -16, length: 84 },
+    { axis: 'x', offset: 0, length: 84 },
+    { axis: 'x', offset: 16, length: 84 },
+    { axis: 'x', offset: 32, length: 84 },
   ],
 }
