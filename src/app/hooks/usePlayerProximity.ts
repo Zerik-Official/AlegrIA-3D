@@ -9,17 +9,29 @@ import * as THREE from 'three'
 import { appConfig } from '@/shared/config/appConfig'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import { findNearestSepiaPhoto } from '@/app/engine/proximity'
-import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
+import { initialPhase1Entities, initialPhase2Entities } from '@/features/editor/config/editableEntities'
+import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import type { GamePhase } from '@/shared/types'
 
 /**
- * Portal position on the XZ ground plane (world units) — read from
- * `phase1.json`'s `portal` entity so this stays correct however the map is
- * laid out, instead of a position hardcoded here going stale on the next redesign.
+ * Finds `entities`' `portal` entity's XZ position, so proximity stays
+ * correct however each phase's map is laid out instead of a position
+ * hardcoded here going stale on the next redesign.
+ * @param entities - Phase entity list to search
+ * @returns Portal XZ, or `null` if that phase has none
  */
-const portalEntity = initialPhase1Entities.find((e) => e.type === 'portal')
-const PORTAL_XZ: [number, number] = portalEntity ? [portalEntity.position[0], portalEntity.position[2]] : [0, 0]
-/** Interact range around the phase portal. */
+function portalXZFrom(entities: EditableEntity[]): [number, number] | null {
+  const portal = entities.find((e) => e.type === 'portal')
+  return portal ? [portal.position[0], portal.position[2]] : null
+}
+
+/** Phase 1's portal (to Phase 2) and Phase 2's portal (back to the library), read once from their JSON. */
+const PORTAL_XZ_BY_PHASE: Partial<Record<GamePhase, [number, number]>> = {
+  phase1: portalXZFrom(initialPhase1Entities) ?? undefined,
+  museum: portalXZFrom(initialPhase1Entities) ?? undefined,
+  phase2: portalXZFrom(initialPhase2Entities) ?? undefined,
+}
+/** Interact range around the current scene's portal. */
 const PORTAL_RANGE = 2.8
 /** Interact range around a sepia photo. */
 const PHOTO_RANGE = 2.4
@@ -46,7 +58,8 @@ export function usePlayerProximity(phase: GamePhase): PlayerProximity {
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
 
   const nearBook = distance < appConfig.player.interactDistance
-  const nearPortal = Math.hypot(playerPos.current.x - PORTAL_XZ[0], playerPos.current.z - PORTAL_XZ[1]) < PORTAL_RANGE
+  const portalXZ = PORTAL_XZ_BY_PHASE[phase]
+  const nearPortal = !!portalXZ && Math.hypot(playerPos.current.x - portalXZ[0], playerPos.current.z - portalXZ[1]) < PORTAL_RANGE
 
   const handlePosition = useCallback(
     (pos: THREE.Vector3) => {
