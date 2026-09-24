@@ -38,7 +38,14 @@ function BahareqHouseRenderer({ entity }: EntityRendererProps) {
   const variant = (entity.variant as 'short' | 'medium' | 'long') ?? 'medium'
   const key = `phase1/bahareque-house-${variant}` as keyof typeof modelRegistry
   const path = modelRegistry[key]?.path ?? modelRegistry['phase1/bahareque-house'].path
-  return <ModelLoader src={path} fallback={<BaharequeHouse position={[0, 0, 0]} rotationY={0} variant={variant} scale={1} />} />
+  return (
+    <ModelLoader
+      src={path}
+      collisionId={entity.id}
+      collisionFallback="bounds"
+      fallback={<BaharequeHouse position={[0, 0, 0]} rotationY={0} variant={variant} scale={1} />}
+    />
+  )
 }
 
 /**
@@ -256,7 +263,7 @@ function GenericModelRenderer({ entity }: EntityRendererProps) {
     )
   }
   if (normalizedKey.startsWith('phase1/')) {
-    return <ModelLoader src={entry.path} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
+    return <ModelLoader src={entry.path} collisionId={entity.id} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
   }
   const isFloor = normalizedKey.includes('/floors/')
   const isDecoration = normalizedKey.includes('/decorations/')
