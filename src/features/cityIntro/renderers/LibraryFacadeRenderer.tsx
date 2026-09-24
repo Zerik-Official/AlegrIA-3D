@@ -11,6 +11,7 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createWeatheredWallTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
+import { Reflector } from '@/features/cityIntro/renderers/Reflector'
 import { ProceduralStreetlight } from '@/features/cityIntro/renderers/StreetlightRenderer'
 
 /** Generates (once) a weathered "BIBLIOTECA" sign texture with a few dead/flickering letters. */
@@ -319,47 +320,6 @@ const FACADE_SPOT_XS = [-15, -5, 5, 15]
 const FACADE_SPOT_COLOR = '#ffd23a'
 
 /**
- * One yellow ground reflector aimed up at the facade: a spot light, its housing
- * and a faint additive beam cone so the light reads even in the dark.
- * @param props.x - X offset of the fixture
- * @returns Reflector group
- */
-function FacadeReflector({ x }: { x: number }) {
-  const target = useMemo(() => {
-    const t = new THREE.Object3D()
-    t.position.set(x * 0.7, 6, 0)
-    return t
-  }, [x])
-  const pos: [number, number, number] = [x, 0.45, 15]
-  const beamLength = 20
-  const beamQuaternion = useMemo(() => {
-    const dir = target.position.clone().sub(new THREE.Vector3(...pos)).normalize()
-    return new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), dir)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target])
-  return (
-    <group>
-      <primitive object={target} />
-      <spotLight position={pos} target={target} color={FACADE_SPOT_COLOR} intensity={90} angle={0.42} penumbra={0.65} distance={45} decay={1.6} />
-      <mesh position={[pos[0], 0.2, pos[2]]} castShadow>
-        <boxGeometry args={[0.9, 0.4, 0.9]} />
-        <meshStandardMaterial color="#1c1c22" roughness={0.6} metalness={0.5} />
-      </mesh>
-      <mesh position={[pos[0], 0.42, pos[2]]} rotation-x={-0.25}>
-        <cylinderGeometry args={[0.32, 0.36, 0.3, 14]} />
-        <meshStandardMaterial color="#fff2a8" emissive={FACADE_SPOT_COLOR} emissiveIntensity={2.2} toneMapped={false} />
-      </mesh>
-      <group position={pos} quaternion={beamQuaternion}>
-        <mesh position={[0, 0, beamLength / 2]} rotation-x={-Math.PI / 2} raycast={() => null}>
-          <coneGeometry args={[Math.tan(0.42) * beamLength * 0.55, beamLength, 20, 1, true]} />
-          <meshBasicMaterial color={FACADE_SPOT_COLOR} transparent opacity={0.05} depthWrite={false} blending={THREE.AdditiveBlending} side={THREE.DoubleSide} toneMapped={false} />
-        </mesh>
-      </group>
-    </group>
-  )
-}
-
-/**
  * Futuristic lighting rig framing the landmark facade — a pair of the city's
  * streetlight fixtures flanking it, warm floodlights washing the colonnade,
  * and a cool accent glow near the roofline — kept outside the procedural
@@ -371,7 +331,7 @@ function FacadeLightRig() {
   return (
     <>
       {FACADE_SPOT_XS.map((x) => (
-        <FacadeReflector key={x} x={x} />
+        <Reflector key={x} position={[x, 0.45, 15]} aimAt={[x * 0.7, 6, 0]} color={FACADE_SPOT_COLOR} />
       ))}
       <group position={[-24, 0, 9]}>
         <ProceduralStreetlight />
