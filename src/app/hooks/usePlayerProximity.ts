@@ -25,11 +25,22 @@ function portalXZFrom(entities: EditableEntity[]): [number, number] | null {
   return portal ? [portal.position[0], portal.position[2]] : null
 }
 
+/**
+ * The library's portal to the `cityIntro` finale, in front of the back wall's
+ * broken panel — not JSON-driven since `LibraryScene`'s default (non-editor)
+ * render is itself hardcoded JSX, not entity-driven. It only becomes visible
+ * and usable once the returning book has been read and shelved (see
+ * `usePhaseFlow`'s `libraryPortalUnlocked`); its position stays fixed here so
+ * proximity is correct even while it's hidden.
+ */
+const LIBRARY_PORTAL_XZ: [number, number] = [0, -9.8]
+
 /** Phase 1's portal (to Phase 2) and Phase 2's portal (back to the library), read once from their JSON. */
 const PORTAL_XZ_BY_PHASE: Partial<Record<GamePhase, [number, number]>> = {
   phase1: portalXZFrom(initialPhase1Entities) ?? undefined,
   museum: portalXZFrom(initialPhase1Entities) ?? undefined,
   phase2: portalXZFrom(initialPhase2Entities) ?? undefined,
+  exploring: LIBRARY_PORTAL_XZ,
 }
 /** Interact range around the current scene's portal. */
 const PORTAL_RANGE = 2.8
