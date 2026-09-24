@@ -43,7 +43,7 @@ export const phase1FloodConfig: Phase1FloodConfig = {
   riseDuration: 1.6,
   holdDuration: 2.4,
   recedeDuration: 2,
-  size: 42,
+  size: 130,
   colorNear: '#3d5560',
   colorFar: '#7fa3ad',
   textureSize: 45,
