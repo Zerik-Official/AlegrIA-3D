@@ -281,7 +281,7 @@ export const EditorOverlay = memo(function EditorOverlay({
               />
             </label>
           )}
-          {(selected.type === 'sepia-photo' || selected.type === 'logo-tower' || selected.imageSrc !== undefined) && (
+          {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
             <>
               <label className="mt-2 flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-widest text-parchment/50">Imagen (URL)</span>
