@@ -50,7 +50,7 @@ export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
   })
 
   return (
-    <mesh geometry={geometry} receiveShadow>
+    <mesh geometry={geometry} receiveShadow frustumCulled={false}>
       <primitive object={material} attach="material" />
     </mesh>
   )
