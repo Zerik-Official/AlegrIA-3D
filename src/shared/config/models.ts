@@ -85,6 +85,7 @@ export const modelRegistry: ModelRegistry = {
   'phase2/bailarin-blanco': { path: `${base}models/phase2/characters/bailarin-blanco-camisa.glb`, fallback: 'procedural-dancer' },
   'phase2/bailarin-blanco-azul': { path: `${base}models/phase2/characters/bailarin-blanco-azul-camisa.glb`, fallback: 'procedural-dancer' },
   'phase2/rey-momo': { path: `${base}models/phase2/characters/rey-momo-sombrero.glb`, fallback: 'procedural-dancer' },
+  'phase2/congas-personaje': { path: `${base}models/phase2/characters/congas-personaje.glb`, fallback: 'procedural-dancer' },
   'phase2/carrosa-riwi': { path: `${base}models/phase2/carrosa-azul-riwi.glb`, fallback: 'procedural-parade-vehicle' },
   'phase2/carrosa-marimonda': { path: `${base}models/phase2/carrosa-marimonda.glb`, fallback: 'procedural-parade-vehicle' },
   'phase2/chiva-rumbera': { path: `${base}models/phase2/chiva-rumbera.glb`, fallback: 'procedural-parade-vehicle' },
