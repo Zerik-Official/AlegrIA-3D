@@ -6,6 +6,7 @@
  * @module app/engine/HotkeyRouter
  */
 
+import { isDebugEnabled } from '@/shared/config/debug'
 import type { GamePhase } from '@/shared/types'
 
 /** Everything {@link HotkeyRouter.handle} needs to decide what a keypress should do. */
@@ -79,11 +80,12 @@ export class HotkeyRouter {
     }
 
     if (event.key === 'F2') {
+      if (!isDebugEnabled) return
       ctx.toggleEditor()
       return
     }
 
-    if (ctx.isEditorEnabled && (key === 'w' || key === 'e' || key === 'r')) {
+    if (isDebugEnabled && ctx.isEditorEnabled && (key === 'w' || key === 'e' || key === 'r')) {
       ctx.setEditorMode(key === 'w' ? 'translate' : key === 'e' ? 'rotate' : 'scale')
       return
     }
