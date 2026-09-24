@@ -177,6 +177,71 @@ const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
   'chiva-rumbera': 'phase2/chiva-rumbera',
 }
 
+/**
+ * Generic phase2 model renderer — resolves any `phase2/...` model key stored
+ * in `entity.variant` or directly in `entity.type`. Allows the editor to
+ * spawn new `public/models/phase2/**` assets without adding a dedicated
+ * renderer per file, keeping the JSON-driven workflow.
+ * @param props - Entity props
+ * @returns Model loader or fallback box
+ */
+function GenericPhase2ModelRenderer({ entity }: EntityRendererProps) {
+  const rawKey = (entity.variant || entity.type) as string
+  const normalizedKey = rawKey as keyof typeof modelRegistry
+  const entry = modelRegistry[normalizedKey]
+  if (!entry) {
+    return (
+      <mesh castShadow>
+        <boxGeometry args={[0.8, 0.8, 0.8]} />
+        <meshStandardMaterial color="#8a3a2a" />
+      </mesh>
+    )
+  }
+  const isFloor = normalizedKey.includes('/floors/')
+  const isDecoration = normalizedKey.includes('/decorations/')
+  const isScene = normalizedKey.includes('/scenes/')
+  const targetSize = isFloor ? 4 : isDecoration ? 1.6 : isScene ? 22 : 6
+  return <ModelLoader src={entry.path} targetSize={targetSize} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
+}
+
+/**
+ * Procedural fallback for the generic phase2 renderer.
+ * @param props - Key hint to pick a plausible primitive
+ * @returns Placeholder mesh
+ */
+function FallbackForModel({ normalizedKey }: { normalizedKey: string }) {
+  if (normalizedKey.includes('/floors/')) {
+    return (
+      <mesh rotation-x={-Math.PI / 2} receiveShadow>
+        <planeGeometry args={[3, 3]} />
+        <meshStandardMaterial color="#cfc3a0" roughness={1} />
+      </mesh>
+    )
+  }
+  if (normalizedKey.includes('/decorations/')) {
+    return (
+      <mesh castShadow>
+        <boxGeometry args={[0.5, 0.5, 0.5]} />
+        <meshStandardMaterial color="#d9b06a" roughness={0.8} />
+      </mesh>
+    )
+  }
+  if (normalizedKey.includes('/houses/')) {
+    return (
+      <mesh castShadow receiveShadow position={[0, 0.8, 0]}>
+        <boxGeometry args={[2.2, 1.6, 2.2]} />
+        <meshStandardMaterial color="#e8a040" roughness={0.9} />
+      </mesh>
+    )
+  }
+  return (
+    <mesh castShadow>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="#c9a87a" wireframe />
+    </mesh>
+  )
+}
+
 function ParadeVehicleRenderer({ entity }: EntityRendererProps) {
   const key = VEHICLE_MODELS[entity.variant ?? ''] ?? VEHICLE_MODELS['chiva-rumbera']
   return (
@@ -231,14 +296,24 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   trinitaria: TrinitariaRenderer,
   dancer: DancerRenderer,
   'parade-vehicle': ParadeVehicleRenderer,
+  'phase2-house': GenericPhase2ModelRenderer,
+  'phase2-floor': GenericPhase2ModelRenderer,
+  'phase2-decoration': GenericPhase2ModelRenderer,
+  'phase2-scene': GenericPhase2ModelRenderer,
+  'phase2-model': GenericPhase2ModelRenderer,
   ...cityIntroRenderers,
 }
 
 /**
- * Looks up the renderer for an entity type, falling back to a visible warning box.
+ * Looks up the renderer for an entity type. If the type itself is a
+ * `modelRegistry` key (e.g. `phase2/houses/casa-cafe`), a generic model
+ * renderer is returned so new `public/models/phase2/**` files work
+ * without manual registry edits.
  * @param type - `EditableEntity.type` value
  * @returns Renderer component
  */
 export function getEntityRenderer(type: string): EntityRenderer {
-  return entityRegistry[type] ?? UnknownEntityRenderer
+  if (entityRegistry[type]) return entityRegistry[type]
+  if ((modelRegistry as Record<string, unknown>)[type]) return GenericPhase2ModelRenderer
+  return UnknownEntityRenderer
 }
