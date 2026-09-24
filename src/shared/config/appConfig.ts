@@ -23,6 +23,14 @@ export const playerConfig = {
   interactDistance: 2.4,
   /** Collision radius around the central pedestal. */
   pedestalRadius: 1.05,
+  /** Player's body radius, used against the `COL_*`-driven collision world (see `features/player/collision`). */
+  collisionRadius: 0.38,
+  /** Tallest surface the player can step up onto unaided — anything higher blocks instead, so decks need their authored stairs or ramp. */
+  stepUpHeight: 0.7,
+  /** Standing height: colliders whose underside clears it pass overhead instead of blocking. */
+  bodyHeight: 1.85,
+  /** How quickly the camera settles to a new floor height when stepping up or down. */
+  floorDamping: 11,
   /** Movement bounds inside the library hall. */
   libraryBounds: { minX: -9.2, maxX: 9.2, minZ: -9.2, maxZ: 9.2 } as Bounds,
   /** Movement bounds inside the museum hall. */
