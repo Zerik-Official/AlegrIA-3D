@@ -126,7 +126,7 @@ function CarrozaLoader({ entity, fallback }: { entity: EntityRendererProps['enti
 export function CarrozaRiwiRenderer({ entity, fallback }: { entity: EntityRendererProps['entity']; fallback: ReactNode }) {
   const loopRef = useRef<THREE.Group>(null)
   const swayRef = useRef<THREE.Group>(null)
-  useParadeLoopMotion(loopRef, entity.id)
+  useParadeLoopMotion(loopRef, entity.id, entity.variant)
 
   useFrame(({ clock }) => {
     if (!swayRef.current) return
