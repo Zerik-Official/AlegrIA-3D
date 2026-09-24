@@ -14,6 +14,8 @@ interface HUDProps {
   onInteract: () => void
   /** Which scene's title/date labels to show. */
   variant: 'library' | 'phase1' | 'phase2' | 'cityIntro'
+  /** Seconds remaining in the current narration/dialogue; `null` to hide the countdown. */
+  audioRemainingSec?: number | null
 }
 
 /** Title-area copy per {@link HUDProps.variant}. */
@@ -63,8 +65,10 @@ const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec }: HUDProps) {
   const copy = VARIANT_COPY[variant]
+  const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
+  const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.65)_100%)]" />
@@ -126,6 +130,15 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
         <FiClock className="h-3.5 w-3.5 opacity-70 text-gold" />
         {wormholeActive ? <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span> : copy.clock}
       </div>
+
+      {showCountdown && (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-gold/20 bg-black/45 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/70 backdrop-blur-md">
+          <FiClock className="h-3.5 w-3.5 opacity-80 text-gold" />
+          <span>
+            Diálogo: <span className="text-gold-bright font-semibold tabular-nums">{countdownSec}s</span>
+          </span>
+        </div>
+      )}
 
       <div
         className={`pointer-events-none fixed inset-0 z-15 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.85)_80%)] transition-opacity duration-700 ${wormholeActive ? 'opacity-100' : 'opacity-0'}`}
