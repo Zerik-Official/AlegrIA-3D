@@ -214,7 +214,7 @@ export const SepiaPhotoFrame = memo(function SepiaPhotoFrame({ position, rotatio
       </mesh>
       <mesh position={[0, 0, 0.042]}>
         <planeGeometry args={[1.32, 0.9]} />
-        <meshBasicMaterial map={texture} color={texture ? '#ffffff' : '#704214'} toneMapped={false} />
+        <meshBasicMaterial key={texture ? texture.uuid : 'no-map'} map={texture} color={texture ? '#ffffff' : '#704214'} toneMapped={false} />
       </mesh>
       <mesh position={[0, 0, 0.044]}>
         <planeGeometry args={[1.32, 0.9]} />
