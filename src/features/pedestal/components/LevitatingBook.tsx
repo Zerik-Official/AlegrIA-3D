@@ -12,7 +12,14 @@ interface LevitatingBookProps {
   onNear?: (near: boolean) => void
   /** Vortex ritual progress in [0,1]; drives spin and opening. */
   ritualProgress?: number
+  /** Materialize-in scale target, `[0,1]`; `0` hides the book entirely (empty pedestal), `1` (default) is fully visible. Smoothly damped, not instant. */
+  appear?: number
+  /** Target progress `[0,1]` flying from the pedestal to its shelf slot; `0` (default) stays at the pedestal, `1` sits shelved. Smoothly damped, not instant. */
+  shelved?: number
 }
+
+/** World-space delta from the pedestal to the first bookshelf slot the returning book settles into, once read. */
+const SHELF_OFFSET = new THREE.Vector3(-7.2, -0.18, -10.05)
 
 /**
  * Procedural levitating book with hover, rotation and particle aura.
@@ -191,9 +198,30 @@ function ProceduralBookGeometry({ onNear: _onNear, ritualProgress = 0 }: Levitat
  * @param props - Optional interaction callback
  * @returns Book group
  */
-export const LevitatingBook = memo(function LevitatingBook(props: LevitatingBookProps) {
+export const LevitatingBook = memo(function LevitatingBook({ appear = 1, shelved = 0, ...rest }: LevitatingBookProps) {
   const entry = modelRegistry['pedestal/book']
-  return <ModelLoader src={entry.path} fallback={<ProceduralBookGeometry {...props} />} />
+  const wrapRef = useRef<THREE.Group>(null)
+  /** Current (damped) appear/shelved values, tracked outside React state so the smoothing runs every frame without re-rendering. */
+  const current = useRef({ appear, shelved })
+
+  useFrame((_, delta) => {
+    const group = wrapRef.current
+    if (!group) return
+    current.current.appear = THREE.MathUtils.damp(current.current.appear, appear, 3, delta)
+    current.current.shelved = THREE.MathUtils.damp(current.current.shelved, shelved, 2.2, delta)
+    const s = current.current.appear
+    group.scale.set(s, s, s)
+    group.position.set(SHELF_OFFSET.x * current.current.shelved, SHELF_OFFSET.y * current.current.shelved, SHELF_OFFSET.z * current.current.shelved)
+  })
+
+  // Fully hidden (empty pedestal) once both the target and the damped current scale have settled at 0 — skip mounting the (heavier) model/fallback subtree.
+  if (appear <= 0.001 && current.current.appear <= 0.001) return <group ref={wrapRef} />
+
+  return (
+    <group ref={wrapRef}>
+      <ModelLoader src={entry.path} fallback={<ProceduralBookGeometry {...rest} />} />
+    </group>
+  )
 })
 
 export { ProceduralBookGeometry }
