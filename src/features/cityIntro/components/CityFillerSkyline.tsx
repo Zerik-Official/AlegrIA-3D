@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
 
 /** Instance count for the hazy background skyline. */
-const COUNT = 320
+const COUNT = 220
 /** Half-width of the near corridor kept clear so filler never clips the curated JSON buildings. */
 const CLEAR_CORRIDOR_X = 16
 /** Z beyond which the near corridor no longer needs protecting (past the last curated building/library). */
@@ -35,8 +35,8 @@ export const CityFillerSkyline = memo(function CityFillerSkyline() {
     let attempts = 0
     while (placed < COUNT && attempts < COUNT * 6) {
       attempts++
-      const x = (rand() > 0.5 ? 1 : -1) * (18 + rand() * 130)
-      const z = 80 - rand() * 310
+      const x = (rand() > 0.5 ? 1 : -1) * (18 + rand() * 95)
+      const z = 80 - rand() * 230
       if (Math.abs(x) < CLEAR_CORRIDOR_X && z > CLEAR_CORRIDOR_MIN_Z) continue
 
       const width = 3 + rand() * 5
