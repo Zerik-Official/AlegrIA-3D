@@ -13,15 +13,18 @@ import * as THREE from 'three'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 
 /**
- * `[x, z]` corners of the loop — the outer street ring in `phase2.json`'s
- * paving grid (see the `suelo-calles-adoquin-calle-recta`/`-cruce` tiles at
- * `±32`), well inside `appConfig.player.phase2Bounds`.
+ * `[x, z]` corners of the loop — the small block right around the central
+ * platform/dancers, on the paving grid's `±16` street row/column (see the
+ * `suelo-calles-adoquin-calle-recta`/`-cruce` tiles), matching where these
+ * vehicles originally sat (`x: 16`) and passing right by the portal at
+ * `[0, -16]`. This is deliberately not the whole plaza — just the block the
+ * vehicles were parked around originally, now driven instead of parked.
  */
 const LOOP_CORNERS: Array<[number, number]> = [
-  [-32, -32],
-  [32, -32],
-  [32, 32],
-  [-32, 32],
+  [-16, -16],
+  [16, -16],
+  [16, 16],
+  [-16, 16],
 ]
 
 let cachedLoopCurve: THREE.CatmullRomCurve3 | null = null
@@ -52,20 +55,33 @@ export interface ParadeLoopParams {
  */
 export function paradeLoopParamsFor(id: string): ParadeLoopParams {
   const rand = createSeededRandom(hashSeed(id))
-  return { speed: 2.4 + rand() * 1.4, startU: rand(), reverse: rand() > 0.5 }
+  return { speed: 1.0 + rand() * 0.6, startU: rand(), reverse: rand() > 0.5 }
 }
 
 /**
- * Drives `groupRef`'s position/heading around the shared parade loop every
- * frame. The model's forward is assumed to be local `+Z` (Blender `+Y`,
- * matching this asset family's authoring convention — see
- * `FlyingCarRenderer`'s identical heading formula for cars).
+ * Per-`entity.variant` heading correction, in radians, added on top of the
+ * loop's computed heading. Every model here is assumed to be authored
+ * front-forward on local `+Z` (Blender `+Y`) — same convention as
+ * `FlyingCarRenderer`'s cars — but if a given `.glb` was actually authored
+ * facing the other way, it'll drive tail-first until its entry here is
+ * flipped by `Math.PI`.
+ */
+const FACING_OFFSET: Record<string, number> = {
+  'carrosa-riwi': 0,
+  'carrosa-marimonda': 0,
+  'chiva-rumbera': 0,
+}
+
+/**
+ * Drives `groupRef`'s position/heading around the shared parade loop every frame.
  * @param groupRef - Ref to the group wrapping the vehicle's model
  * @param id - Entity id, for deterministic per-vehicle pacing
+ * @param variant - `entity.variant`, used to look up this model's {@link FACING_OFFSET}
  */
-export function useParadeLoopMotion(groupRef: RefObject<THREE.Group | null>, id: string): void {
+export function useParadeLoopMotion(groupRef: RefObject<THREE.Group | null>, id: string, variant?: string): void {
   const curve = useMemo(() => getParadeLoopCurve(), [])
   const params = useMemo(() => paradeLoopParamsFor(id), [id])
+  const facingOffset = FACING_OFFSET[variant ?? ''] ?? 0
 
   useFrame(({ clock }) => {
     const group = groupRef.current
@@ -75,8 +91,8 @@ export function useParadeLoopMotion(groupRef: RefObject<THREE.Group | null>, id:
     const u = THREE.MathUtils.euclideanModulo(params.startU + (clock.elapsedTime * params.speed * dir) / length, 1)
     const point = curve.getPointAt(u)
     const tangent = curve.getTangentAt(u)
-    const heading = Math.atan2(tangent.x * dir, tangent.z * dir)
+    const heading = Math.atan2(-tangent.x * dir, -tangent.z * dir)
     group.position.set(point.x, point.y, point.z)
-    group.rotation.y = heading
+    group.rotation.y = heading + facingOffset
   })
 }
