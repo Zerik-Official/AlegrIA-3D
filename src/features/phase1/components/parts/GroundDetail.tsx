@@ -11,12 +11,12 @@ interface ExclusionZone {
 }
 
 /** Town ground plane center and half-extents scatter points are drawn from (see `Phase1Scene`'s ground meshes). */
-const GROUND_CENTER_X = -14
-const GROUND_HALF_X = 31
-const GROUND_HALF_Z = 57
+const GROUND_CENTER_X = -12
+const GROUND_HALF_X = 67
+const GROUND_HALF_Z = 95
 
-/** West-most X the Río Magdalena's town-side bluff starts rising from — scatter stays clear of it and the port beyond. */
-const RIVER_BAND_X = 3
+/** West-most X the port cluster/Río Magdalena bluff occupies — scatter stays clear of it. */
+const RIVER_BAND_X = 50
 
 /**
  * @param x - Candidate X
@@ -210,8 +210,8 @@ export const GroundDetail = memo(function GroundDetail() {
         })),
     []
   )
-  const grassPoints = useScatterPoints(520, dynamicZones)
-  const mudPoints = useScatterPoints(40, dynamicZones)
+  const grassPoints = useScatterPoints(1400, dynamicZones)
+  const mudPoints = useScatterPoints(110, dynamicZones)
 
   return (
     <group>
