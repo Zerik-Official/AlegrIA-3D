@@ -19,6 +19,7 @@ import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/Reus
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { MusicalJukebox } from '@/features/phase2/components/parts/MusicalJukebox'
 import { ReyMomoPerformer } from '@/features/phase2/components/parts/ReyMomoPerformer'
+import { CongasPerformer } from '@/features/phase2/components/parts/CongasPerformer'
 import { DancerPerformer } from '@/features/phase2/components/parts/DancerPerformer'
 import { CarrozaRiwiRenderer } from '@/features/phase2/components/parts/CarrozaRiwiRenderer'
 import { useParadeLoopMotion } from '@/features/phase2/renderers/paradeLoop'
@@ -187,6 +188,32 @@ function ReyMomoRenderer() {
           <capsuleGeometry args={[0.35, 1.2, 4, 8]} />
           <meshStandardMaterial color="#e8dfc8" roughness={0.85} />
         </mesh>
+      }
+    />
+  )
+}
+
+/**
+ * The congas player parked by a fritos stand, watching the plaza dance —
+ * its `.glb` carries a baked conga-drumming loop clip (see `CongasPerformer`),
+ * so it gets its own renderer instead of the generic `ModelLoader`-based one.
+ * @returns Animated congas character or fallback
+ */
+function CongasRenderer() {
+  return (
+    <CongasPerformer
+      src={modelRegistry['phase2/congas-personaje'].path}
+      fallback={
+        <group>
+          <mesh position={[0, 0.85, 0]} castShadow>
+            <capsuleGeometry args={[0.3, 0.85, 4, 8]} />
+            <meshStandardMaterial color="#8a5a2a" roughness={0.85} />
+          </mesh>
+          <mesh position={[0, 1.5, 0]} castShadow>
+            <sphereGeometry args={[0.2, 12, 12]} />
+            <meshStandardMaterial color="#4a3320" roughness={0.9} />
+          </mesh>
+        </group>
       }
     />
   )
@@ -504,6 +531,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   trinitaria: TrinitariaRenderer,
   dancer: DancerRenderer,
   'rey-momo': ReyMomoRenderer,
+  'congas-personaje': CongasRenderer,
   'parade-vehicle': ParadeVehicleDispatcher,
   'phase2/decorations/el-poderoso': ElPoderosoRenderer,
   'phase2-house': GenericModelRenderer,
