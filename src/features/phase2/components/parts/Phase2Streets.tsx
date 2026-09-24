@@ -32,19 +32,15 @@ function Street({ segment }: { segment: StreetSegment }) {
 }
 
 /**
- * @returns Street grid plus the parroquia's plaza, all sitting just above the ground plane
+ * @returns Street grid sitting just above the ground plane
  */
 export function Phase2Streets() {
-  const { segments, plazaSize, plazaColor } = phase2StreetsConfig
+  const { segments } = phase2StreetsConfig
   return (
     <group>
       {segments.map((segment, i) => (
         <Street key={i} segment={segment} />
       ))}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.003, 0]} receiveShadow>
-        <planeGeometry args={[plazaSize, plazaSize]} />
-        <meshStandardMaterial color={plazaColor} roughness={0.92} />
-      </mesh>
     </group>
   )
 }
