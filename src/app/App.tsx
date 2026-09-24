@@ -281,6 +281,7 @@ export default function App() {
         onClose={closeEditor}
         currentPhase={phaseFlow.phase}
         onJumpToPhase={phaseFlow.jumpToPhase}
+        currentScene={editors.currentScene}
       />
 
       {!isEditorEnabled && (
