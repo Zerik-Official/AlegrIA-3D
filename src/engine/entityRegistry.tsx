@@ -14,6 +14,7 @@ import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFr
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { MusicalJukebox } from '@/features/phase2/components/parts/MusicalJukebox'
+import { ReyMomoPerformer } from '@/features/phase2/components/parts/ReyMomoPerformer'
 import { DancerPerformer } from '@/features/phase2/components/parts/DancerPerformer'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
@@ -171,6 +172,20 @@ function DancerRenderer({ entity }: EntityRendererProps) {
   )
 }
 
+function ReyMomoRenderer() {
+  return (
+    <ReyMomoPerformer
+      src={modelRegistry['phase2/rey-momo'].path}
+      fallback={
+        <mesh position={[0, 1.1, 0]} castShadow>
+          <capsuleGeometry args={[0.35, 1.2, 4, 8]} />
+          <meshStandardMaterial color="#e8dfc8" roughness={0.85} />
+        </mesh>
+      }
+    />
+  )
+}
+
 /** `parade-vehicle` entity variant → registry key. */
 const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
   'carrosa-riwi': 'phase2/carrosa-riwi',
@@ -309,6 +324,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'carnival-house': CarnivalHouseRenderer,
   trinitaria: TrinitariaRenderer,
   dancer: DancerRenderer,
+  'rey-momo': ReyMomoRenderer,
   'parade-vehicle': ParadeVehicleRenderer,
   'phase2/decorations/el-poderoso': ElPoderosoRenderer,
   'phase2-house': GenericPhase2ModelRenderer,
