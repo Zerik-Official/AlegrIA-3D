@@ -33,6 +33,13 @@ export interface EditableEntity {
   description?: string
   /** Video URL carried by screen-like entities (e.g. `ad-tower`), looped and muted. */
   videoSrc?: string
+  /**
+   * Video playlist carried by screen-like entities — plays each URL in order,
+   * advancing to the next when one ends and looping back to the first after
+   * the last, muted throughout. Takes priority over {@link videoSrc} when set
+   * and non-empty; a single-item array behaves like `videoSrc`.
+   */
+  videoSrcs?: string[]
 }
 
 /**
