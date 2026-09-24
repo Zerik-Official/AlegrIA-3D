@@ -5,9 +5,9 @@ import { createSeededRandom } from '@/shared/utils/random'
 /** Instance counts for the two instanced backdrop layers. */
 const HILL_COUNT = 28
 const TREE_COUNT = 220
-/** Annulus the backdrop is scattered across, clear of the authored plaza. */
-const INNER_RADIUS = 24
-const OUTER_RADIUS = 140
+/** Annulus the backdrop is scattered across, clear of the authored plaza/river/port. */
+const INNER_RADIUS = 80
+const OUTER_RADIUS = 200
 /** Deterministic seed so the backdrop looks the same every load. */
 const SEED = 4471
 
