@@ -9,9 +9,11 @@ import { TimeVortexParticles } from '@/features/wormhole/components/TimeVortexPa
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { ScatteredBooks } from '@/features/library/components/ScatteredBooks'
 import { TimeVortexSequence } from '@/features/cinematics/components/TimeVortexSequence'
+import { ProceduralPortal } from '@/shared/components/ReusableModels'
 
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import type { LibraryBookStage } from '@/app/hooks/usePhaseFlow'
 
 /**
  * Props for {@link FlickeringTorch}.
@@ -88,6 +90,10 @@ interface LibrarySceneProps {
   wormholeActive: boolean
   /** Wormhole progress in [0,1]. */
   wormholeProgress: number
+  /** Book/portal choreography stage — see {@link LibraryBookStage}. Defaults to `'ready'` (book always present, no portal), matching the first visit. */
+  bookStage?: LibraryBookStage
+  /** Whether the `cityIntro` portal has appeared and can be used. */
+  libraryPortalUnlocked?: boolean
   /** Optional engine-driven entities for editor. */
   editableEntities?: EditableEntity[]
 }
@@ -100,8 +106,16 @@ interface LibrarySceneProps {
  * @param props - Scene state
  * @returns Library group
  */
-export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormholeProgress, editableEntities }: LibrarySceneProps) {
+export const LibraryScene = memo(function LibraryScene({
+  wormholeActive,
+  wormholeProgress,
+  bookStage = 'ready',
+  libraryPortalUnlocked = false,
+  editableEntities,
+}: LibrarySceneProps) {
   const libraryRef = useRef<THREE.Group>(null)
+  const bookAppear = bookStage === 'hidden' ? 0 : 1
+  const bookShelved = bookStage === 'stored' ? 1 : 0
 
   useFrame(() => {
     if (!libraryRef.current) return
@@ -221,8 +235,9 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       {editableEntities ? (
         <PhaseEngine entities={editableEntities.filter((e) => e.type === 'book')} context={{ ritualProgress: wormholeProgress }} />
       ) : (
-        <LevitatingBook ritualProgress={wormholeProgress} />
+        <LevitatingBook ritualProgress={wormholeProgress} appear={bookAppear} shelved={bookShelved} />
       )}
+      {libraryPortalUnlocked && <ProceduralPortal position={[0, 1.1, -9.8]} radius={1.3} accentColor="#ffcc33" glowColor="#5ad8ff" />}
       <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
 
       <Wormhole active={wormholeActive} progress={wormholeProgress} />
