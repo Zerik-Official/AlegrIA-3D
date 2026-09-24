@@ -26,12 +26,14 @@ interface TrenAnimadoProps {
   speed?: number
   /** `[0, 1)` starting point along the loop. */
   startU?: number
+  /** Arc-length distance this piece trails behind `startU`, so a multi-car consist can place each car at its own point on the curve instead of the whole train pivoting as one rigid body. */
+  trailDistance?: number
 }
 
 /**
  * Internal glTF + animation-mixer renderer, isolated so `Suspense` works.
  */
-function TrenGltf({ src, loopCurve, speed = 7, startU = 0 }: Omit<TrenAnimadoProps, 'fallback'>) {
+function TrenGltf({ src, loopCurve, speed = 7, startU = 0, trailDistance = 0 }: Omit<TrenAnimadoProps, 'fallback'>) {
   const { scene, animations } = useGLTF(src) as unknown as { scene: THREE.Group; animations: THREE.AnimationClip[] }
   const modelRef = useRef<THREE.Group>(null)
   const trackRef = useRef<THREE.Group>(null)
@@ -63,7 +65,10 @@ function TrenGltf({ src, loopCurve, speed = 7, startU = 0 }: Omit<TrenAnimadoPro
 
   useFrame(({ clock }) => {
     if (!trackRef.current) return
-    const u = THREE.MathUtils.euclideanModulo(startU + (clock.elapsedTime * speed) / loopLength, 1)
+    const u = THREE.MathUtils.euclideanModulo(
+      startU + (clock.elapsedTime * speed - trailDistance) / loopLength,
+      1
+    )
     const point = loopCurve.getPointAt(u)
     const tangent = loopCurve.getTangentAt(u)
     trackRef.current.position.set(point.x, point.y, point.z)
@@ -87,7 +92,7 @@ function TrenGltf({ src, loopCurve, speed = 7, startU = 0 }: Omit<TrenAnimadoPro
  * @param props - Loader properties
  * @returns Either the animated train or the provided fallback
  */
-export function TrenAnimado({ src, fallback, loopCurve, speed, startU }: TrenAnimadoProps) {
+export function TrenAnimado({ src, fallback, loopCurve, speed, startU, trailDistance }: TrenAnimadoProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
 
   useEffect(() => {
