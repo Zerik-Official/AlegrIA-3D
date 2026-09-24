@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { FiEye, FiBookOpen } from 'react-icons/fi'
+import { FiEye, FiBookOpen, FiClock } from 'react-icons/fi'
 
 /**
  * Props for {@link CityIntroHUD}.
@@ -9,6 +9,8 @@ interface CityIntroHUDProps {
   arrived: boolean
   /** Enters the library. */
   onEnter: () => void
+  /** Seconds remaining in the current narration/dialogue; `null` to hide. */
+  audioRemainingSec?: number | null
 }
 
 /**
@@ -18,7 +20,9 @@ interface CityIntroHUDProps {
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const CityIntroHUD = memo(function CityIntroHUD({ arrived, onEnter }: CityIntroHUDProps) {
+export const CityIntroHUD = memo(function CityIntroHUD({ arrived, onEnter, audioRemainingSec }: CityIntroHUDProps) {
+  const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
+  const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(0,0,0,0.55)_100%)]" />
@@ -48,6 +52,15 @@ export const CityIntroHUD = memo(function CityIntroHUD({ arrived, onEnter }: Cit
               Volver a la Biblioteca
             </span>
           </button>
+        </div>
+      )}
+
+      {showCountdown && (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-gold/20 bg-black/45 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/70 backdrop-blur-md">
+          <FiClock className="h-3.5 w-3.5 opacity-80 text-gold" />
+          <span>
+            Diálogo: <span className="text-gold-bright font-semibold tabular-nums">{countdownSec}s</span>
+          </span>
         </div>
       )}
     </>
