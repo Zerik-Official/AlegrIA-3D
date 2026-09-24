@@ -338,6 +338,24 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
   {
+    type: 'phase2/decorations/mesa-corona',
+    label: 'Decoración · Mesa · Corona',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'phase2/decorations/vitrina-super-fritos',
+    label: 'Decoración · Puesto · Fritos',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'phase2/decorations/el-poderoso',
+    label: 'Decoración · El Poderoso',
+    scenes: ['phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
     type: 'phase2/decorations/farol-calle',
     label: 'Deco · Farol Calle',
     scenes: ['phase2'],
