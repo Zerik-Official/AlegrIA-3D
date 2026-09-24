@@ -9,10 +9,16 @@ import * as THREE from 'three'
 import { appConfig } from '@/shared/config/appConfig'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import { findNearestSepiaPhoto } from '@/app/engine/proximity'
+import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
 import type { GamePhase } from '@/shared/types'
 
-/** Portal position on the XZ ground plane (world units). */
-const PORTAL_XZ: [number, number] = [0, 15.8]
+/**
+ * Portal position on the XZ ground plane (world units) — read from
+ * `phase1.json`'s `portal` entity so this stays correct however the map is
+ * laid out, instead of a position hardcoded here going stale on the next redesign.
+ */
+const portalEntity = initialPhase1Entities.find((e) => e.type === 'portal')
+const PORTAL_XZ: [number, number] = portalEntity ? [portalEntity.position[0], portalEntity.position[2]] : [0, 0]
 /** Interact range around the phase portal. */
 const PORTAL_RANGE = 2.8
 /** Interact range around a sepia photo. */
