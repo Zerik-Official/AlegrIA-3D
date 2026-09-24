@@ -84,12 +84,9 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
         return
       }
       if (el.paused || el.ended) {
-        // Keep 0 visible for a moment at the very end, then hide once ended and paused.
         if (el.ended) {
           setRemaining(0)
         } else {
-          // When paused but seekable (e.g. phase with no key cleared pause earlier),
-          // hide the indicator.
           setRemaining(null)
         }
         return
