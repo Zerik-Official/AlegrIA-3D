@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -59,6 +59,10 @@ export default function App() {
   const arrivedAtLibrary = cityWalkProgress >= appConfig.cityIntro.arrivalThreshold
   const cityIntroEntities = isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities
   const cityIntroPath = useMemo(() => cityIntroEntities.filter((e) => e.type === 'path-point'), [cityIntroEntities])
+
+  useEffect(() => {
+    if (phaseFlow.phase !== 'cityIntro') setCityWalkProgress(0)
+  }, [phaseFlow.phase])
 
   usePointerLockGuard(
     isEditorEnabled ||
@@ -275,6 +279,8 @@ export default function App() {
         onRemove={editors.currentEditor.removeEntity}
         onExport={editors.currentEditor.exportJson}
         onClose={closeEditor}
+        currentPhase={phaseFlow.phase}
+        onJumpToPhase={phaseFlow.jumpToPhase}
       />
 
       {!isEditorEnabled && (
