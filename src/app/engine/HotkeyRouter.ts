@@ -40,14 +40,16 @@ export interface HotkeyContext {
   closeEditor: () => void
   /** Sets the editor gizmo mode (`W`/`E`/`R`). */
   setEditorMode: (mode: 'translate' | 'rotate' | 'scale') => void
-  /** Transitions from `idle` into `cityIntro`, starting the scripted walk to the library. */
-  startCityWalk: () => void
+  /** Transitions from `idle` straight into `exploring` (the library), where the experience now starts. */
+  startExperience: () => void
   /** Transitions from `cityIntro` into `exploring`, once the player has reached the library door. */
   enterLibrary: () => void
-  /** Starts the wormhole transition into Phase 1 (triggered near the book while exploring). */
-  startWormholeToPhase1: () => void
+  /** Book interaction in the library: first visit heads to Phase 1, the second (and later) heads to the `cityIntro` finale. */
+  handleBookInteract: () => void
   /** Starts the wormhole transition into Phase 2 (triggered near the Phase 1 portal). */
   startWormholeToPhase2: () => void
+  /** Starts the wormhole transition back to the library (triggered near the Phase 2 portal). */
+  startWormholeToLibrary: () => void
   /** Dismisses the Phase 1 intro overlay. */
   dismissPhase1Intro: () => void
   /** Dismisses the Phase 2 intro overlay. */
@@ -90,7 +92,7 @@ export class HotkeyRouter {
     const isConfirmKey = isInteractKey || event.key === ' '
 
     if (isInteractKey && ctx.nearBook && ctx.phase === 'exploring') {
-      ctx.startWormholeToPhase1()
+      ctx.handleBookInteract()
     }
 
     if (isConfirmKey && ctx.showPhase1Overlay && ctx.isPhase1) {
@@ -102,7 +104,7 @@ export class HotkeyRouter {
       return
     }
     if (isConfirmKey && ctx.phase === 'idle') {
-      ctx.startCityWalk()
+      ctx.startExperience()
       return
     }
     if (isConfirmKey && ctx.isCityIntro && ctx.arrivedAtLibrary) {
@@ -119,6 +121,9 @@ export class HotkeyRouter {
     }
     if (isConfirmKey && ctx.isPhase1 && ctx.nearPortal && !ctx.showPhase1Overlay && !ctx.hasSelectedPhoto && !ctx.isEditorEnabled) {
       ctx.startWormholeToPhase2()
+    }
+    if (isConfirmKey && ctx.isPhase2 && ctx.nearPortal && !ctx.showPhase2Overlay && !ctx.isEditorEnabled) {
+      ctx.startWormholeToLibrary()
     }
 
     if (event.key === 'Escape' && ctx.hasSelectedPhoto) {
