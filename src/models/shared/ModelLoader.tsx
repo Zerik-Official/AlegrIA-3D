@@ -4,9 +4,10 @@
  * @module models/shared/ModelLoader
  */
 
-import { Suspense, useEffect, useState, useMemo } from 'react'
+import { Suspense, useEffect, useRef, useState, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
+import { extractBoundsSolid, extractCollisionSolids, registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 
 /**
  * Props for {@link ModelLoader}.
@@ -32,6 +33,20 @@ export interface ModelLoaderProps {
   targetSize?: number
   /** Whether loaded meshes cast/receive shadows. Disable for small, fast-moving background props where shadow cost isn't worth it. Defaults to `true`. */
   castShadow?: boolean
+  /**
+   * When set, this model's `COL_*` proxy meshes (see {@link isCollisionMesh})
+   * are published to the shared collision world under this id, making the
+   * asset solid — and its decks, platforms and stairs walkable — for
+   * `PlayerControls`. Use a stable, unique id such as the entity's own id.
+   */
+  collisionId?: string
+  /**
+   * What to publish when the model ships no `COL_*` proxies: nothing by
+   * default, or one collider covering its whole bounding box. Only set
+   * `'bounds'` for box-shaped assets (houses), never for sprawling set pieces
+   * where a single AABB would wall off open ground. Requires {@link collisionId}.
+   */
+  collisionFallback?: 'none' | 'bounds'
 }
 
 /**
@@ -55,8 +70,18 @@ export function isCollisionMesh(mesh: THREE.Mesh): boolean {
  * Internal glTF scene renderer.
  * Isolated to allow Suspense to work correctly.
  */
-function GltfScene({ src, scale, position, rotation, targetSize, castShadow = true }: Omit<ModelLoaderProps, 'fallback'>) {
+function GltfScene({
+  src,
+  scale,
+  position,
+  rotation,
+  targetSize,
+  castShadow = true,
+  collisionId,
+  collisionFallback = 'none',
+}: Omit<ModelLoaderProps, 'fallback'>) {
   const { scene } = useGLTF(src) as unknown as { scene: THREE.Group }
+  const rootRef = useRef<THREE.Object3D>(null)
 
   const cloned = useMemo(() => {
     const c = scene.clone(true)
@@ -85,7 +110,20 @@ function GltfScene({ src, scale, position, rotation, targetSize, castShadow = tr
     return Array.isArray(base) ? (base.map((v) => v * normalizedScale) as [number, number, number]) : base * normalizedScale
   }, [scale, normalizedScale])
 
-  return <primitive object={cloned} scale={finalScale} position={position} rotation={rotation} />
+  useEffect(() => {
+    if (!collisionId) return
+    const root = rootRef.current
+    if (!root) return
+    const proxies = extractCollisionSolids(root, isCollisionMesh)
+    if (proxies.length === 0 && collisionFallback === 'bounds') {
+      const bounds = extractBoundsSolid(root, isCollisionMesh)
+      if (bounds) proxies.push(bounds)
+    }
+    registerCollisionSolids(collisionId, proxies)
+    return () => unregisterCollisionSolids(collisionId)
+  }, [collisionId, collisionFallback, cloned, finalScale, position, rotation])
+
+  return <primitive ref={rootRef} object={cloned} scale={finalScale} position={position} rotation={rotation} />
 }
 
 /**
@@ -100,7 +138,17 @@ function GltfScene({ src, scale, position, rotation, targetSize, castShadow = tr
  * ```
  * @link https://github.com/pmndrs/drei#usegltf
  */
-export function ModelLoader({ src, fallback, scale, position, rotation, targetSize, castShadow }: ModelLoaderProps) {
+export function ModelLoader({
+  src,
+  fallback,
+  scale,
+  position,
+  rotation,
+  targetSize,
+  castShadow,
+  collisionId,
+  collisionFallback,
+}: ModelLoaderProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -125,7 +173,16 @@ export function ModelLoader({ src, fallback, scale, position, rotation, targetSi
 
   return (
     <Suspense fallback={fallback}>
-      <GltfScene src={src} scale={scale} position={position ?? [0, 0, 0]} rotation={rotation ?? [0, 0, 0]} targetSize={targetSize} castShadow={castShadow} />
+      <GltfScene
+        src={src}
+        scale={scale}
+        position={position ?? [0, 0, 0]}
+        rotation={rotation ?? [0, 0, 0]}
+        targetSize={targetSize}
+        castShadow={castShadow}
+        collisionId={collisionId}
+        collisionFallback={collisionFallback}
+      />
     </Suspense>
   )
 }
