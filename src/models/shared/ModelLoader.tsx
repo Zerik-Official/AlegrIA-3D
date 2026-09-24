@@ -16,33 +16,76 @@ export interface ModelLoaderProps {
   src: string
   /** Fallback rendered when the asset cannot be loaded. */
   fallback: React.ReactNode
-  /** Optional scale applied to the loaded scene. */
+  /** Optional scale applied to the loaded scene, on top of any {@link targetSize} normalization. */
   scale?: number | [number, number, number]
   /** Optional position. */
   position?: [number, number, number]
   /** Optional rotation in radians. */
   rotation?: [number, number, number]
+  /**
+   * When set, the loaded model is uniformly rescaled so its largest bounding-box
+   * dimension equals this many scene units, before `scale` is applied on top.
+   * Use for third-party `.glb` assets authored at an unknown/inconsistent unit
+   * scale, so they land at a size consistent with the rest of the scene
+   * regardless of how the source file was modeled.
+   */
+  targetSize?: number
+  /** Whether loaded meshes cast/receive shadows. Disable for small, fast-moving background props where shadow cost isn't worth it. Defaults to `true`. */
+  castShadow?: boolean
+}
+
+/**
+ * Whether a mesh is a Blender-authored collision proxy, not meant to be
+ * rendered: the Python export scripts (`.vscode/scripts/*.py`) name these
+ * `COL_*` and paint them with a "Colision" placeholder material (flat
+ * magenta, `[1, 0, 1, 0.25]`), for a future physics pass rather than display.
+ * Filtered out here at load time — the same `.glb` a physics system would
+ * later read the `COL_*` nodes from stays visually correct without a re-export.
+ * @param mesh - Candidate mesh from a loaded glTF scene graph
+ * @returns Whether this mesh should stay hidden
+ */
+export function isCollisionMesh(mesh: THREE.Mesh): boolean {
+  if (mesh.name.startsWith('COL_')) return true
+  const material = mesh.material as THREE.Material | THREE.Material[] | undefined
+  const materials = Array.isArray(material) ? material : material ? [material] : []
+  return materials.some((mat) => mat.name === 'Colision')
 }
 
 /**
  * Internal glTF scene renderer.
  * Isolated to allow Suspense to work correctly.
  */
-function GltfScene({ src, scale, position, rotation }: Omit<ModelLoaderProps, 'fallback'>) {
+function GltfScene({ src, scale, position, rotation, targetSize, castShadow = true }: Omit<ModelLoaderProps, 'fallback'>) {
   const { scene } = useGLTF(src) as unknown as { scene: THREE.Group }
 
   const cloned = useMemo(() => {
     const c = scene.clone(true)
     c.traverse((obj) => {
       if ((obj as THREE.Mesh).isMesh) {
-        obj.castShadow = true
-        obj.receiveShadow = true
+        if (isCollisionMesh(obj as THREE.Mesh)) {
+          obj.visible = false
+          return
+        }
+        obj.castShadow = castShadow
+        obj.receiveShadow = castShadow
       }
     })
     return c
-  }, [scene])
+  }, [scene, castShadow])
 
-  return <primitive object={cloned} scale={scale ?? 1} position={position} rotation={rotation} />
+  const normalizedScale = useMemo(() => {
+    if (!targetSize) return 1
+    const size = new THREE.Box3().setFromObject(cloned).getSize(new THREE.Vector3())
+    const maxDim = Math.max(size.x, size.y, size.z)
+    return maxDim > 0 ? targetSize / maxDim : 1
+  }, [cloned, targetSize])
+
+  const finalScale = useMemo(() => {
+    const base = scale ?? 1
+    return Array.isArray(base) ? (base.map((v) => v * normalizedScale) as [number, number, number]) : base * normalizedScale
+  }, [scale, normalizedScale])
+
+  return <primitive object={cloned} scale={finalScale} position={position} rotation={rotation} />
 }
 
 /**
@@ -57,7 +100,7 @@ function GltfScene({ src, scale, position, rotation }: Omit<ModelLoaderProps, 'f
  * ```
  * @link https://github.com/pmndrs/drei#usegltf
  */
-export function ModelLoader({ src, fallback, scale, position, rotation }: ModelLoaderProps) {
+export function ModelLoader({ src, fallback, scale, position, rotation, targetSize, castShadow }: ModelLoaderProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -82,7 +125,7 @@ export function ModelLoader({ src, fallback, scale, position, rotation }: ModelL
 
   return (
     <Suspense fallback={fallback}>
-      <GltfScene src={src} scale={scale} position={position ?? [0, 0, 0]} rotation={rotation ?? [0, 0, 0]} />
+      <GltfScene src={src} scale={scale} position={position ?? [0, 0, 0]} rotation={rotation ?? [0, 0, 0]} targetSize={targetSize} castShadow={castShadow} />
     </Suspense>
   )
 }

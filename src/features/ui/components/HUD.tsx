@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, type ReactNode } from 'react'
 import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
 
@@ -12,8 +12,48 @@ interface HUDProps {
   wormholeActive: boolean
   /** Interaction handler. */
   onInteract: () => void
-  /** Whether the HUD is rendered inside Phase 1. */
-  isPhase1?: boolean
+  /** Which scene's title/date labels to show. */
+  variant: 'library' | 'phase1' | 'phase2' | 'cityIntro'
+}
+
+/** Title-area copy per {@link HUDProps.variant}. */
+const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string; clock: ReactNode }> = {
+  library: {
+    eyebrow: 'Biblioteca del Futuro — Año 2050',
+    title: 'Penumbra del Futuro Abandonado',
+    clock: (
+      <span>
+        25 de Septiembre — 2050 <span className="text-parchment/35">•</span> Biblioteca del Futuro
+      </span>
+    ),
+  },
+  phase1: {
+    eyebrow: 'Fase 1 — Barrio Abajo (1857–1900)',
+    title: 'Orígenes • Abajo del Río Magdalena',
+    clock: (
+      <span>
+        1857–1900 <span className="text-parchment/35">•</span> Barrio Abajo • Bahareque y Andenes Altos
+      </span>
+    ),
+  },
+  phase2: {
+    eyebrow: 'Fase 2 — Época Dorada (1919–1950s)',
+    title: 'Tradición y Carnaval',
+    clock: (
+      <span>
+        1919–1950s <span className="text-parchment/35">•</span> Época Dorada • Trinitarias y Carnaval
+      </span>
+    ),
+  },
+  cityIntro: {
+    eyebrow: 'Escena Final — Año 2050',
+    title: 'El Futuro que Construimos',
+    clock: (
+      <span>
+        2050 <span className="text-parchment/35">•</span> Ciudad Futura
+      </span>
+    ),
+  },
 }
 
 /**
@@ -23,7 +63,8 @@ interface HUDProps {
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, isPhase1 = false }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant }: HUDProps) {
+  const copy = VARIANT_COPY[variant]
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.65)_100%)]" />
@@ -37,11 +78,9 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, isP
       <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">
-              {isPhase1 ? 'Fase 1 — Barrio Abajo (1857–1900)' : 'Biblioteca del Futuro — Año 2050'}
-            </div>
+            <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/60">{copy.eyebrow}</div>
             <div className="font-cinzel mt-1.5 text-[22px] tracking-[0.08em] text-parchment drop-shadow-[0_2px_20px_rgba(255,220,120,0.4)]">
-              {isPhase1 ? 'Orígenes • Abajo del Río Magdalena' : 'Penumbra del Futuro Abandonado'}
+              {copy.title}
             </div>
           </div>
 
@@ -85,17 +124,7 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, isP
 
       <div className="pointer-events-none fixed bottom-6 left-6 z-10 flex items-center gap-2 rounded-md border border-white/5 bg-black/30 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/60 backdrop-blur-md">
         <FiClock className="h-3.5 w-3.5 opacity-70 text-gold" />
-        {wormholeActive ? (
-          <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span>
-        ) : isPhase1 ? (
-          <span>
-            1857–1900 <span className="text-parchment/35">•</span> Barrio Abajo • Bahareque y Andenes Altos
-          </span>
-        ) : (
-          <span>
-            25 de Septiembre — 2050 <span className="text-parchment/35">•</span> Biblioteca del Futuro
-          </span>
-        )}
+        {wormholeActive ? <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span> : copy.clock}
       </div>
 
       <div
@@ -133,19 +162,19 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
       <div className="max-w-2xl">
         <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena -1 — Año 2050</div>
         <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(120,180,255,0.4)]">
-          Una Noche en la
-          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Ciudad Futura</span>
+          La Biblioteca
+          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Abandonada</span>
         </h1>
         <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-parchment/70">
-          Año 2050. Autos y trenes voladores cruzan el cielo entre rascacielos de neón.
+          Año 2050. Despiertas entre estanterías polvorientas, iluminadas por antorchas que no deberían seguir ardiendo.
           <br />
-          Al final de una calle olvidada espera la sombra de una <span className="text-gold-bright font-semibold">biblioteca abandonada</span>, donde
-          duerme El Libro de Rosa y el Vórtice del Tiempo.
+          En el centro de la sala flota <span className="text-gold-bright font-semibold">El Libro de Rosa</span>, guardián del Vórtice del
+          Tiempo.
           <br />
-          Solo falta caminar hacia ella.
+          Acércate y despiértalo para cruzar hacia el pasado.
         </p>
         <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
-          <FiEye className="h-3.5 w-3.5" /> mouse — mirar alrededor mientras caminas
+          <FiEye className="h-3.5 w-3.5" /> WASD — moverse · mouse — mirar alrededor
         </p>
 
         <button
@@ -156,16 +185,16 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
           {loading ? (
             <>
               <FiLoader className="h-4 w-4 animate-spin" />
-              Despertando la Ciudad…
+              Despertando la Biblioteca…
             </>
           ) : (
             <>
               <FiArrowRight className="h-4 w-4" />
-              Comenzar el Camino
+              Entrar a la Biblioteca
             </>
           )}
         </button>
-        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles — ESC para salir</p>
+        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles y sonido — ESC para salir</p>
       </div>
     </div>
   )

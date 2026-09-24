@@ -1,7 +1,9 @@
 import { memo, useCallback, useEffect, useState } from 'react'
-import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox } from 'react-icons/fi'
+import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap } from 'react-icons/fi'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
-import type { EntityCatalogItem } from '@/engine/config/entityCatalog'
+import type { EntityCatalogItem, SceneId } from '@/engine/config/entityCatalog'
+import type { GamePhase } from '@/shared/types'
+import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import { ModelBrowserModal } from '@/features/editor/components/ModelBrowserModal'
 
 /**
@@ -32,6 +34,12 @@ interface EditorOverlayProps {
   onExport: () => string
   /** Close editor. */
   onClose: () => void
+  /** Current game phase, used to highlight the active jump target. */
+  currentPhase?: GamePhase
+  /** Handles an instant phase jump without linear walk/wormhole sequencing. */
+  onJumpToPhase?: (phase: GamePhase) => void
+  /** Scene currently edited, used to filter the model browser to that phase. */
+  currentScene?: SceneId
 }
 
 /**
@@ -54,10 +62,29 @@ export const EditorOverlay = memo(function EditorOverlay({
   onRemove,
   onExport,
   onClose,
+  currentPhase,
+  onJumpToPhase,
+  currentScene,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
   const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
   const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
+  const jumpTargets = phaseSceneRegistry.listJumpTargets()
+  const hasJump = typeof onJumpToPhase === 'function' && typeof currentPhase === 'string'
+
+  /**
+   * Handles quick-add from the model browser: creates an entity whose `type`
+   * is the model registry key itself, so `entityRegistry.getEntityRenderer`
+   * resolves it via the generic phase2 fallback.
+   * @param modelKey - Registry key, e.g. `phase2/houses/casa-cafe`
+   */
+  const handleModelQuickAdd = useCallback(
+    (modelKey: string) => {
+      onAdd({ id: `${modelKey.replace(/\//g, '-')}-${Date.now()}`, type: modelKey, position: [0, 0, 0], rotationY: 0, scale: 1 })
+      setIsModelBrowserOpen(false)
+    },
+    [onAdd]
+  )
 
   useEffect(() => {
     if (catalog.length && !catalog.some((c) => c.type === addType)) {
@@ -101,6 +128,28 @@ export const EditorOverlay = memo(function EditorOverlay({
           </button>
         </div>
       </div>
+      {hasJump && (
+        <div className="mt-3 rounded-lg border border-gold/20 bg-black/25 p-2.5">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase text-gold/80">
+            <FiZap className="h-3 w-3" /> Salto rápido de fase
+          </div>
+          <div className="mt-2 flex gap-1.5">
+            <select
+              value={jumpTargets.some((t) => t.phase === currentPhase) ? currentPhase : jumpTargets[0]?.phase ?? 'exploring'}
+              onChange={(ev) => onJumpToPhase?.(ev.target.value as GamePhase)}
+              className="flex-1 rounded-md bg-white/10 px-2 py-1.5 text-[11px] text-parchment outline-none focus:bg-white/15"
+            >
+              {jumpTargets.map((target) => (
+                <option key={target.phase} value={target.phase} className="text-black">
+                  {target.label}
+                </option>
+              ))}
+            </select>
+            <span className="inline-flex items-center rounded-md bg-gold/15 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] uppercase text-gold">{currentPhase}</span>
+          </div>
+          <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">Salta sin pasar por cityIntro/wormhole. El editor mantiene la escena elegida.</div>
+        </div>
+      )}
       <div className="mt-3 flex gap-1.5">
         <button onClick={() => onModeChange('translate')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === 'translate' ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}>
           <FiMove className="h-3.5 w-3.5" /> Mover
@@ -208,13 +257,37 @@ export const EditorOverlay = memo(function EditorOverlay({
               className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
             />
           </label>
+          {(selected.type === 'flying-car' || selected.type === 'flying-train') && (
+            <label className="mt-2 flex flex-col gap-1">
+              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Carril de vuelo (opcional)</span>
+              <input
+                type="text"
+                placeholder="ej. carsEast, trainHigh"
+                value={selected.title ?? ''}
+                onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
+                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+              />
+            </label>
+          )}
+          {(selected.type === 'ad-tower' || selected.videoSrc !== undefined) && (
+            <label className="mt-2 flex flex-col gap-1">
+              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Video (URL, opcional)</span>
+              <input
+                type="text"
+                placeholder="/videos/cityIntro/first.mp4"
+                value={selected.videoSrc ?? ''}
+                onChange={(ev) => onUpdate(selected.id, { videoSrc: ev.target.value || undefined })}
+                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
+              />
+            </label>
+          )}
           {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
             <>
               <label className="mt-2 flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-widest text-parchment/50">Imagen (URL)</span>
                 <input
                   type="text"
-                  placeholder="/images/placeholders/mi-foto.jpg"
+                  placeholder="https://... o /images/placeholders/mi-foto.jpg"
                   value={selected.imageSrc ?? ''}
                   onChange={(ev) => onUpdate(selected.id, { imageSrc: ev.target.value || undefined })}
                   className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
@@ -252,12 +325,12 @@ export const EditorOverlay = memo(function EditorOverlay({
         </button>
       </div>
       <div className="mt-2 text-[10px] leading-4 text-parchment/30">
-        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor
+        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • <span className="text-parchment/60">Alt + clic derecho</span> seleccionar
         <br />
         Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
       </div>
 
-      <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} />
+      <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} currentScene={currentScene} onQuickAdd={handleModelQuickAdd} />
     </div>
   )
 })

@@ -121,6 +121,48 @@ export function createPlanetTexture(seed: number, baseColor: string): THREE.Text
 }
 
 /**
+ * Deterministic neon "advertisement" grid — a few saturated color blocks —
+ * used as the fallback screen texture for `ad-tower` entities that don't
+ * reference a video, and as their scrolling ticker band. `texture.offset.x`
+ * can be animated per-frame for a marquee scroll without regenerating the canvas.
+ * @param seed - Deterministic seed, e.g. from `hashSeed(entity.id)`
+ * @param cols - Horizontal segments
+ * @param rows - Vertical segments
+ * @returns Canvas-based, horizontally repeating ad-screen texture
+ */
+export function createAdScreenTexture(seed: number, cols = 6, rows = 4): THREE.Texture {
+  const cellSize = 32
+  const w = cols * cellSize
+  const h = rows * cellSize
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  const rand = createSeededRandom(seed)
+  const palette = ['#ff2a6d', '#2affe0', '#ffcf3d', '#8a5cff', '#ff7a3d']
+
+  ctx.fillStyle = '#05030a'
+  ctx.fillRect(0, 0, w, h)
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (rand() > 0.55) continue
+      ctx.fillStyle = palette[Math.floor(rand() * palette.length)]
+      ctx.globalAlpha = 0.65 + rand() * 0.35
+      const pad = 2
+      ctx.fillRect(c * cellSize + pad, r * cellSize + pad, cellSize - pad * 2, cellSize - pad * 2)
+    }
+  }
+  ctx.globalAlpha = 1
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.needsUpdate = true
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.ClampToEdgeWrapping
+  return texture
+}
+
+/**
  * Deterministic weathered-wall overlay: irregular water-stain streaks and
  * grime patches over a transparent background, meant to sit as an extra
  * layer above a flat-colored wall so it reads as neglected/abandoned.

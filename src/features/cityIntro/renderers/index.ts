@@ -14,6 +14,11 @@ import { MoonRenderer } from '@/features/cityIntro/renderers/MoonRenderer'
 import { PlanetRenderer } from '@/features/cityIntro/renderers/PlanetRenderer'
 import { LibraryFacadeRenderer } from '@/features/cityIntro/renderers/LibraryFacadeRenderer'
 import { PathPointRenderer } from '@/features/cityIntro/renderers/PathPointRenderer'
+import { FlightLanePointRenderer } from '@/features/cityIntro/renderers/FlightLanePointRenderer'
+import { AdTowerRenderer } from '@/features/cityIntro/renderers/AdTowerRenderer'
+import { RiwiBuildingRenderer } from '@/features/cityIntro/renderers/RiwiBuildingRenderer'
+import { MeshTowerRenderer, NeedleTowerRenderer, NeonBenchRenderer, NeonPlanterRenderer } from '@/features/cityIntro/renderers/FuturisticPropRenderers'
+import { ScreenBuildingRenderer } from '@/features/cityIntro/renderers/ScreenBuildingRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -25,4 +30,12 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   planet: PlanetRenderer,
   'library-facade': LibraryFacadeRenderer,
   'path-point': PathPointRenderer,
+  'flight-lane-point': FlightLanePointRenderer,
+  'ad-tower': AdTowerRenderer,
+  'riwi-building': RiwiBuildingRenderer,
+  'screen-building': ScreenBuildingRenderer,
+  'mesh-tower': MeshTowerRenderer,
+  'needle-tower': NeedleTowerRenderer,
+  'neon-bench': NeonBenchRenderer,
+  'neon-planter': NeonPlanterRenderer,
 }

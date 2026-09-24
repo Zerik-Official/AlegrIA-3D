@@ -45,7 +45,7 @@ export const CityIntroHUD = memo(function CityIntroHUD({ arrived, onEnter }: Cit
             <span className="flex h-7 items-center justify-center rounded-md bg-parchment px-2.5 text-[13px] font-bold text-[#1a1205] shadow-[0_2px_0_#b89a4a]">E</span>
             <span className="flex items-center gap-2 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment">
               <FiBookOpen className="h-4 w-4 text-gold-bright" />
-              Entrar a la Biblioteca Abandonada
+              Volver a la Biblioteca
             </span>
           </button>
         </div>

@@ -10,30 +10,22 @@ interface ExclusionZone {
   radius: number
 }
 
-/** Half-extent of the area scatter points are drawn from. */
-const GROUND_HALF = 18.5
+/** Town ground plane center and half-extents scatter points are drawn from (see `Phase1Scene`'s ground meshes). */
+const GROUND_CENTER_X = -12
+const GROUND_HALF_X = 67
+const GROUND_HALF_Z = 95
 
-/** Landmarks not present in `phase1.json` (Aduana, Estación, andenes) — kept clear of scatter. */
-const STATIC_EXCLUSIONS: ExclusionZone[] = [
-  { x: -7.2, z: 4.2, radius: 3.2 },
-  { x: 7.4, z: 5.1, radius: 3.0 },
-  { x: -4.2, z: -3.6, radius: 2.2 },
-  { x: 3.8, z: -3.2, radius: 2.0 },
-  { x: -1.2, z: -6.2, radius: 2.0 },
-  { x: 0, z: 8.2, radius: 5.4 },
-]
+/** West-most X the port cluster/Río Magdalena bluff occupies — scatter stays clear of it. */
+const RIVER_BAND_X = 50
 
 /**
  * @param x - Candidate X
  * @param z - Candidate Z
  * @param dynamicZones - Exclusion zones derived from `phase1.json` entities
- * @returns Whether the point falls inside the river band or an excluded zone
+ * @returns Whether the point falls inside the river/port band or an excluded zone
  */
 function isExcluded(x: number, z: number, dynamicZones: ExclusionZone[]): boolean {
-  if (z > -3.6 && z < 1.4) return true
-  for (const zone of STATIC_EXCLUSIONS) {
-    if ((x - zone.x) ** 2 + (z - zone.z) ** 2 < zone.radius ** 2) return true
-  }
+  if (x > RIVER_BAND_X) return true
   for (const zone of dynamicZones) {
     if ((x - zone.x) ** 2 + (z - zone.z) ** 2 < zone.radius ** 2) return true
   }
@@ -42,9 +34,9 @@ function isExcluded(x: number, z: number, dynamicZones: ExclusionZone[]): boolea
 
 /**
  * Rejection-samples scatter points across the ground, avoiding houses,
- * landmarks and the river band.
+ * landmarks and the river/port band.
  * @param count - Target number of points
- * @param exclusions - Extra exclusion zones (house/photo/portal footprints)
+ * @param exclusions - Extra exclusion zones (house/photo/portal/scene/rail footprints)
  * @returns Array of `[x, z]` points
  */
 function useScatterPoints(count: number, exclusions: ExclusionZone[]): [number, number][] {
@@ -53,8 +45,8 @@ function useScatterPoints(count: number, exclusions: ExclusionZone[]): [number, 
     let attempts = 0
     while (points.length < count && attempts < count * 14) {
       attempts++
-      const x = (Math.random() - 0.5) * GROUND_HALF * 2
-      const z = (Math.random() - 0.5) * GROUND_HALF * 2
+      const x = GROUND_CENTER_X + (Math.random() - 0.5) * GROUND_HALF_X * 2
+      const z = (Math.random() - 0.5) * GROUND_HALF_Z * 2
       if (isExcluded(x, z, exclusions)) continue
       points.push([x, z])
     }
@@ -218,8 +210,8 @@ export const GroundDetail = memo(function GroundDetail() {
         })),
     []
   )
-  const grassPoints = useScatterPoints(190, dynamicZones)
-  const mudPoints = useScatterPoints(15, dynamicZones)
+  const grassPoints = useScatterPoints(1400, dynamicZones)
+  const mudPoints = useScatterPoints(110, dynamicZones)
 
   return (
     <group>

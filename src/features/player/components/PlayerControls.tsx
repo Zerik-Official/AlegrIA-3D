@@ -15,6 +15,24 @@ interface PlayerControlsProps {
   onPositionChange: (pos: THREE.Vector3) => void
   /** Optional movement bounds clamping. */
   bounds?: { minX: number; maxX: number; minZ: number; maxZ: number }
+  /** Extra ground-level collision circles (e.g. landmark footprints) the player can't walk into. */
+  obstacles?: Array<{ x: number; z: number; radius: number }>
+}
+
+/**
+ * Clamps `point` to just outside the circle at `(cx, cz)` when it falls inside it.
+ * @param point - Candidate position, mutated in place
+ * @param cx - Circle center X
+ * @param cz - Circle center Z
+ * @param radius - Circle radius
+ */
+function pushOutOfCircle(point: THREE.Vector3, cx: number, cz: number, radius: number): void {
+  const dx = point.x - cx
+  const dz = point.z - cz
+  if (Math.hypot(dx, dz) >= radius) return
+  const angle = Math.atan2(dz, dx)
+  point.x = cx + Math.cos(angle) * radius
+  point.z = cz + Math.sin(angle) * radius
 }
 
 /** Reusable vectors to avoid per-frame GC. */
@@ -36,7 +54,7 @@ const scratch = {
  * @returns PointerLockControls element
  * @link https://github.com/pmndrs/drei#pointerlockcontrols
  */
-export const PlayerControls = memo(function PlayerControls({ enabled, onPositionChange, bounds }: PlayerControlsProps) {
+export const PlayerControls = memo(function PlayerControls({ enabled, onPositionChange, bounds, obstacles }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
   const audioCtxRef = useRef<AudioContext | null>(null)
@@ -154,12 +172,8 @@ export const PlayerControls = memo(function PlayerControls({ enabled, onPosition
       scratch.next.z = THREE.MathUtils.clamp(scratch.next.z, bounds.minZ, bounds.maxZ)
     }
 
-    const distToPedestal = Math.hypot(scratch.next.x, scratch.next.z)
-    if (distToPedestal < playerConfig.pedestalRadius) {
-      const angle = Math.atan2(scratch.next.z, scratch.next.x)
-      scratch.next.x = Math.cos(angle) * playerConfig.pedestalRadius
-      scratch.next.z = Math.sin(angle) * playerConfig.pedestalRadius
-    }
+    pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
+    if (obstacles) for (const o of obstacles) pushOutOfCircle(scratch.next, o.x, o.z, o.radius)
 
     camera.position.copy(scratch.next)
     camera.position.y = playerConfig.eyeHeight

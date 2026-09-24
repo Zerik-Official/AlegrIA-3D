@@ -10,10 +10,20 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import { useTrailBuffer, createTrailMaterial } from '@/features/cityIntro/renderers/trail'
+import { buildLaneCurve } from '@/features/cityIntro/renderers/flightLane'
 import type { EntityRendererProps } from '@/engine/types'
 
 /** Trail sample count for a single flying car. */
 const CAR_TRAIL_LENGTH = 16
+/** Registry keys of the available car hulls; one is picked per-entity from its id seed for variety. */
+const CAR_MODEL_KEYS = ['cityIntro/flying-car-retro', 'cityIntro/flying-car-star', 'cityIntro/flying-car-classic'] as const
+/**
+ * Largest bounding-box dimension (scene units) a car hull is rescaled to fit,
+ * matching the `ProceduralFlyingCar` fallback's size — the source `.glb` files
+ * are authored at an unrelated unit scale and would otherwise render car-sized
+ * models the size of buildings.
+ */
+const CAR_TARGET_SIZE = 1.15
 
 /**
  * Low, sporty hull built from a flattened capsule + canopy + nose + fins,
@@ -64,31 +74,63 @@ export function ProceduralFlyingCar({ color = '#ff6a3a' }: { color?: string }) {
 }
 
 /**
- * Orbits a flying car around its JSON anchor and trails a fading light behind it.
+ * Follows its assigned flight lane (JSON `title`, looked up in
+ * `context.flightLanes`) at a constant arc-length speed when one exists;
+ * otherwise orbits its JSON anchor like before. Trails a fading light behind
+ * it either way, and picks one of a few car hulls from its id seed for variety.
  * @param props - Entity props
  * @returns Renderer element
  */
-export function FlyingCarRenderer({ entity }: EntityRendererProps) {
+export function FlyingCarRenderer({ entity, context }: EntityRendererProps) {
   const color = entity.variant ?? '#ff6a3a'
   const seed = useMemo(() => hashSeed(entity.id), [entity.id])
+  const modelKey = CAR_MODEL_KEYS[seed % CAR_MODEL_KEYS.length]
   const groupRef = useRef<THREE.Group>(null)
   const trailRef = useRef<THREE.Points>(null)
-  const { radiusX, radiusZ, speed, phase } = useMemo(() => {
+  const laneWaypoints = entity.title ? context?.flightLanes?.[entity.title] : undefined
+  const laneCurve = useMemo(() => buildLaneCurve(laneWaypoints), [laneWaypoints])
+  const { radiusX, radiusZ, speed, phase, laneSpeed, laneStart, laneReverse, bobPhase } = useMemo(() => {
     const rand = createSeededRandom(seed)
-    return { radiusX: 3.5 + rand() * 3.5, radiusZ: 2 + rand() * 2.5, speed: 0.18 + rand() * 0.22, phase: rand() * Math.PI * 2 }
+    return {
+      radiusX: 3.5 + rand() * 3.5,
+      radiusZ: 2 + rand() * 2.5,
+      speed: 0.18 + rand() * 0.22,
+      phase: rand() * Math.PI * 2,
+      laneSpeed: 1.4 + rand() * 1.6,
+      laneStart: rand(),
+      laneReverse: rand() > 0.5,
+      bobPhase: rand() * Math.PI * 2,
+    }
   }, [seed])
   const { positions: trailPositions, push: pushTrail } = useTrailBuffer(CAR_TRAIL_LENGTH)
   const trailIndices = useMemo(() => Float32Array.from({ length: CAR_TRAIL_LENGTH }, (_, i) => i), [])
   const trailMaterial = useMemo(() => createTrailMaterial(color, CAR_TRAIL_LENGTH), [color])
 
   useFrame(({ clock }) => {
-    const t = clock.elapsedTime * speed + phase
-    const x = Math.cos(t) * radiusX
-    const y = Math.sin(t * 1.7) * 0.7
-    const z = Math.sin(t) * radiusZ
+    let x: number
+    let y: number
+    let z: number
+    let heading: number
+    if (laneCurve) {
+      const length = laneCurve.getLength()
+      const dir = laneReverse ? -1 : 1
+      const u = THREE.MathUtils.euclideanModulo(laneStart + (clock.elapsedTime * laneSpeed * dir) / length, 1)
+      const point = laneCurve.getPointAt(u)
+      const tangent = laneCurve.getTangentAt(u)
+      x = point.x
+      y = point.y + Math.sin(clock.elapsedTime * 1.6 + bobPhase) * 0.22
+      z = point.z
+      heading = Math.atan2(tangent.x * dir, tangent.z * dir)
+    } else {
+      const t = clock.elapsedTime * speed + phase
+      x = Math.cos(t) * radiusX
+      y = Math.sin(t * 1.7) * 0.7
+      z = Math.sin(t) * radiusZ
+      heading = -t + Math.PI / 2
+    }
     if (groupRef.current) {
       groupRef.current.position.set(x, y, z)
-      groupRef.current.rotation.y = -t + Math.PI / 2
+      groupRef.current.rotation.y = heading
     }
     pushTrail(x, y - 0.05, z)
     const attr = trailRef.current?.geometry.attributes.position as THREE.BufferAttribute | undefined
@@ -98,7 +140,7 @@ export function FlyingCarRenderer({ entity }: EntityRendererProps) {
   return (
     <>
       <group ref={groupRef}>
-        <ModelLoader src={modelRegistry['cityIntro/flying-car'].path} fallback={<ProceduralFlyingCar color={color} />} />
+        <ModelLoader src={modelRegistry[modelKey].path} fallback={<ProceduralFlyingCar color={color} />} targetSize={CAR_TARGET_SIZE} castShadow={false} />
       </group>
       <points ref={trailRef} material={trailMaterial} frustumCulled={false}>
         <bufferGeometry>

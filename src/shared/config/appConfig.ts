@@ -27,10 +27,10 @@ export const playerConfig = {
   libraryBounds: { minX: -9.2, maxX: 9.2, minZ: -9.2, maxZ: 9.2 } as Bounds,
   /** Movement bounds inside the museum hall. */
   museumBounds: { minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 } as Bounds,
-  /** Movement bounds inside Phase 1 barrio (larger, open). */
-  phase1Bounds: { minX: -18, maxX: 18, minZ: -18, maxZ: 18 } as Bounds,
+  /** Movement bounds inside Phase 1 barrio & Río Magdalena waterfront (larger, open; east edge stops short of the water). */
+  phase1Bounds: { minX: -79, maxX: 54, minZ: -93, maxZ: 93 } as Bounds,
   /** Movement bounds inside Phase 2 barrio (colorful facades). */
-  phase2Bounds: { minX: -18, maxX: 18, minZ: -18, maxZ: 18 } as Bounds,
+  phase2Bounds: { minX: -36, maxX: 36, minZ: -36, maxZ: 36 } as Bounds,
 } as const
 
 /**
@@ -43,16 +43,18 @@ export const cityIntroConfig = {
   eyeHeight: 1.75,
   /** Progress in [0,1] along the path at which the player can enter the library. */
   arrivalThreshold: 0.985,
-  /** How long the Start button shows its loading spinner before the city scene reveals, in ms. */
+  /** Minimum time the Start button's loading spinner shows before the city scene reveals, in ms. */
   launchDelayMs: 650,
+  /** Hard cap on how long the spinner waits for city assets to preload before revealing anyway, in ms. */
+  launchMaxWaitMs: 5000,
 } as const
 
 /**
  * Wormhole transition configuration.
  */
 export const wormholeConfig = {
-  /** Duration of the wormhole sequence in milliseconds. */
-  durationMs: 11000,
+  /** Duration of the wormhole sequence in milliseconds — matches `PART-2-VORTEX.mp3`'s length. */
+  durationMs: 17000,
   /** Camera FOV interpolation targets. */
   fov: { from: 74, to: 112, lerp: 0.08 },
   /** Number of torus rings in the tunnel. */

@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from 'react'
-import type { Vector3Tuple } from 'three'
+import type { Vector3, Vector3Tuple } from 'three'
 
 /**
  * Editable entity record — the single JSON-serializable unit the engine renders.
@@ -31,6 +31,8 @@ export interface EditableEntity {
   title?: string
   /** Optional display description, used by entities that show captions or feed the photo modal. */
   description?: string
+  /** Video URL carried by screen-like entities (e.g. `ad-tower`), looped and muted. */
+  videoSrc?: string
 }
 
 /**
@@ -53,6 +55,8 @@ export interface EngineRenderContext {
   highlightedPhotoId?: string | null
   /** Ritual progress for book animation. */
   ritualProgress?: number
+  /** Named `cityIntro` flight-lane waypoints (see `features/cityIntro/renderers/flightLane`), keyed by lane id. */
+  flightLanes?: Record<string, Vector3[]>
 }
 
 /**

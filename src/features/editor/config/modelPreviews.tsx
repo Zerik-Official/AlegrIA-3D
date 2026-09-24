@@ -14,7 +14,8 @@ import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHous
 import { AndenAlto } from '@/features/phase1/components/parts/AndenAlto'
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
-import { ColorfulFacade, GothicTemple } from '@/features/phase2/components/Phase2Scene'
+import { ColorfulFacade } from '@/features/phase2/components/parts/ColorfulFacade'
+import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { ScenePlanet } from '@/shared/components/SceneAtmosphere'
 import { ProceduralSkyscraper } from '@/features/cityIntro/renderers/SkyscraperRenderer'
 import { ProceduralStreetlight } from '@/features/cityIntro/renderers/StreetlightRenderer'
@@ -42,11 +43,14 @@ export const modelPreviews: Record<string, ComponentType> = {
   'phase1/portal': () => <ProceduralPortal position={[0, 0, 0]} />,
   'phase2/facade': () => <ColorfulFacade position={[0, 0, 0]} color="#e85a3a" />,
   'phase2/temple': () => <GothicTemple position={[0, 0, 0]} />,
+  'phase2/parroquia': () => <GothicTemple position={[0, 0, 0]} />,
   'phase2/trinitaria': () => <ProceduralTrinitaria position={[0, 0, 0]} />,
   'phase2/portal': () => <ProceduralPortal position={[0, 0, 0]} />,
   'cityIntro/skyscraper': ProceduralSkyscraper,
   'cityIntro/streetlight': ProceduralStreetlight,
-  'cityIntro/flying-car': ProceduralFlyingCar,
+  'cityIntro/flying-car-retro': ProceduralFlyingCar,
+  'cityIntro/flying-car-star': ProceduralFlyingCar,
+  'cityIntro/flying-car-classic': ProceduralFlyingCar,
   'cityIntro/flying-train': ProceduralFlyingTrain,
   'cityIntro/moon': ProceduralMoon,
   'cityIntro/library-facade': ProceduralLibraryFacade,
