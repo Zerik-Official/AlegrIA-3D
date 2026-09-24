@@ -7,9 +7,6 @@
 
 const base = import.meta.env.BASE_URL
 
-/** Default riwi banner logo, used by `logo-tower` entities that omit `imageSrc`. */
-export const RIWI_LOGO_SRC = `${base}images/riwi-logo.svg`
-
 /**
  * Resolves a JSON-authored media path against the app's base URL.
  * Absolute URLs and paths already under `base` pass through unchanged.
