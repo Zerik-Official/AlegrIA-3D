@@ -7,7 +7,7 @@
  * @module engine/entityRegistry
  */
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
@@ -20,6 +20,8 @@ import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { MusicalJukebox } from '@/features/phase2/components/parts/MusicalJukebox'
 import { ReyMomoPerformer } from '@/features/phase2/components/parts/ReyMomoPerformer'
 import { DancerPerformer } from '@/features/phase2/components/parts/DancerPerformer'
+import { CarrozaRiwiRenderer } from '@/features/phase2/components/parts/CarrozaRiwiRenderer'
+import { useParadeLoopMotion } from '@/features/phase2/renderers/paradeLoop'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
@@ -383,27 +385,57 @@ function FallbackForModel({ normalizedKey }: { normalizedKey: string }) {
   )
 }
 
+/**
+ * Procedural/model fallback shared by every `parade-vehicle` variant.
+ * @returns Fallback vehicle group
+ */
+function ParadeVehicleFallback() {
+  return (
+    <group>
+      <mesh position={[0, 0.7, 0]} castShadow receiveShadow>
+        <boxGeometry args={[3.6, 1.4, 1.7]} />
+        <meshStandardMaterial color="#d8542a" roughness={0.7} />
+      </mesh>
+      {([[-1.3, 0.9], [1.3, 0.9], [-1.3, -0.9], [1.3, -0.9]] as const).map(([x, z]) => (
+        <mesh key={`${x}-${z}`} position={[x, 0.32, z]} rotation-z={Math.PI / 2} castShadow>
+          <cylinderGeometry args={[0.32, 0.32, 0.26, 14]} />
+          <meshStandardMaterial color="#1a1208" roughness={0.9} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/**
+ * Drives `chiva-rumbera`/`carrosa-marimonda` around the shared parade loop
+ * (`useParadeLoopMotion`) — the `carrosa-riwi` variant gets its own renderer
+ * ({@link CarrozaRiwiRenderer}) for its video screen and dance sway, so isn't
+ * routed here (see `getEntityRenderer`'s `parade-vehicle` case below).
+ * @param props - Entity props
+ * @returns Loop-driving vehicle
+ */
 function ParadeVehicleRenderer({ entity }: EntityRendererProps) {
   const key = VEHICLE_MODELS[entity.variant ?? ''] ?? VEHICLE_MODELS['chiva-rumbera']
+  const loopRef = useRef<THREE.Group>(null)
+  useParadeLoopMotion(loopRef, entity.id)
   return (
-    <ModelLoader
-      src={modelRegistry[key].path}
-      fallback={
-        <group>
-          <mesh position={[0, 0.7, 0]} castShadow receiveShadow>
-            <boxGeometry args={[3.6, 1.4, 1.7]} />
-            <meshStandardMaterial color="#d8542a" roughness={0.7} />
-          </mesh>
-          {([[-1.3, 0.9], [1.3, 0.9], [-1.3, -0.9], [1.3, -0.9]] as const).map(([x, z]) => (
-            <mesh key={`${x}-${z}`} position={[x, 0.32, z]} rotation-z={Math.PI / 2} castShadow>
-              <cylinderGeometry args={[0.32, 0.32, 0.26, 14]} />
-              <meshStandardMaterial color="#1a1208" roughness={0.9} />
-            </mesh>
-          ))}
-        </group>
-      }
-    />
+    <group ref={loopRef}>
+      <ModelLoader src={modelRegistry[key].path} fallback={<ParadeVehicleFallback />} />
+    </group>
   )
+}
+
+/**
+ * `parade-vehicle` dispatcher — `carrosa-riwi` gets its own renderer (video
+ * screen + dance sway), every other variant gets the plain loop-driving one.
+ * @param props - Entity props
+ * @returns The variant-appropriate vehicle renderer
+ */
+function ParadeVehicleDispatcher({ entity }: EntityRendererProps) {
+  if (entity.variant === 'carrosa-riwi') {
+    return <CarrozaRiwiRenderer entity={entity} fallback={<ParadeVehicleFallback />} />
+  }
+  return <ParadeVehicleRenderer entity={entity} />
 }
 
 /** Rendered for a `type` with no registry entry, so missing types stay visible instead of silently vanishing. */
@@ -437,7 +469,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   trinitaria: TrinitariaRenderer,
   dancer: DancerRenderer,
   'rey-momo': ReyMomoRenderer,
-  'parade-vehicle': ParadeVehicleRenderer,
+  'parade-vehicle': ParadeVehicleDispatcher,
   'phase2/decorations/el-poderoso': ElPoderosoRenderer,
   'phase2-house': GenericModelRenderer,
   'phase2-floor': GenericModelRenderer,
