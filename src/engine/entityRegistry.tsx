@@ -417,7 +417,7 @@ function ParadeVehicleFallback() {
 function ParadeVehicleRenderer({ entity }: EntityRendererProps) {
   const key = VEHICLE_MODELS[entity.variant ?? ''] ?? VEHICLE_MODELS['chiva-rumbera']
   const loopRef = useRef<THREE.Group>(null)
-  useParadeLoopMotion(loopRef, entity.id)
+  useParadeLoopMotion(loopRef, entity.id, entity.variant)
   return (
     <group ref={loopRef}>
       <ModelLoader src={modelRegistry[key].path} fallback={<ParadeVehicleFallback />} />
