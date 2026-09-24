@@ -1,10 +1,10 @@
 /**
  * Loads a Blender-authored train `.glb` and plays its baked wheel-rotation
- * clips on loop, gliding the whole group back and forth along local X so it
- * reads as running its rail line. Bypasses the generic `ModelLoader` (which
- * has no animation support) the same way `DancerPerformer`/`ReyMomoPerformer`
- * bypass it for procedural motion, except here the motion comes from the
- * asset's own glTF `AnimationClip`s via `useAnimations`.
+ * clips on loop, running it around its rail loop at constant arc-length
+ * speed. Bypasses the generic `ModelLoader` (which has no animation support)
+ * the same way `DancerPerformer`/`ReyMomoPerformer` bypass it for procedural
+ * motion, except here the motion comes from the asset's own glTF
+ * `AnimationClip`s via `useAnimations`.
  * @module features/phase1/components/parts/TrenAnimado
  */
 
@@ -12,6 +12,7 @@ import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from '
 import { useFrame } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
+import { isCollisionMesh } from '@/models/shared/ModelLoader'
 
 /** Props for {@link TrenAnimado}. */
 interface TrenAnimadoProps {
@@ -19,26 +20,31 @@ interface TrenAnimadoProps {
   src: string
   /** Rendered while loading, or when the asset is missing. */
   fallback: ReactNode
-  /** Local-X half-travel distance of the back-and-forth glide; `0` keeps it parked (wheels still spin). */
-  range?: number
-  /** Seconds for one full out-and-back cycle. */
-  periodSeconds?: number
-  /** Uniform rescale so the model's largest bounding-box dimension equals this many scene units. */
-  targetSize?: number
+  /** Closed-loop rail curve to run around — the model's front faces local +X, matching the rail kit's own `+X`-forward convention. */
+  loopCurve: THREE.CatmullRomCurve3
+  /** Constant speed along the loop, in scene units/second. */
+  speed?: number
+  /** `[0, 1)` starting point along the loop. */
+  startU?: number
 }
 
 /**
  * Internal glTF + animation-mixer renderer, isolated so `Suspense` works.
  */
-function TrenGltf({ src, range = 0, periodSeconds = 40, targetSize }: Omit<TrenAnimadoProps, 'fallback'>) {
+function TrenGltf({ src, loopCurve, speed = 7, startU = 0 }: Omit<TrenAnimadoProps, 'fallback'>) {
   const { scene, animations } = useGLTF(src) as unknown as { scene: THREE.Group; animations: THREE.AnimationClip[] }
   const modelRef = useRef<THREE.Group>(null)
-  const glideRef = useRef<THREE.Group>(null)
+  const trackRef = useRef<THREE.Group>(null)
+  const loopLength = useMemo(() => loopCurve.getLength(), [loopCurve])
 
   const cloned = useMemo(() => {
     const c = scene.clone(true)
     c.traverse((obj) => {
       if ((obj as THREE.Mesh).isMesh) {
+        if (isCollisionMesh(obj as THREE.Mesh)) {
+          obj.visible = false
+          return
+        }
         obj.castShadow = true
         obj.receiveShadow = true
       }
@@ -55,21 +61,18 @@ function TrenGltf({ src, range = 0, periodSeconds = 40, targetSize }: Omit<TrenA
     }
   }, [actions])
 
-  const normalizedScale = useMemo(() => {
-    if (!targetSize) return 1
-    const size = new THREE.Box3().setFromObject(cloned).getSize(new THREE.Vector3())
-    const maxDim = Math.max(size.x, size.y, size.z)
-    return maxDim > 0 ? targetSize / maxDim : 1
-  }, [cloned, targetSize])
-
   useFrame(({ clock }) => {
-    if (!glideRef.current || !range) return
-    glideRef.current.position.x = Math.sin((clock.elapsedTime * Math.PI * 2) / periodSeconds) * range
+    if (!trackRef.current) return
+    const u = THREE.MathUtils.euclideanModulo(startU + (clock.elapsedTime * speed) / loopLength, 1)
+    const point = loopCurve.getPointAt(u)
+    const tangent = loopCurve.getTangentAt(u)
+    trackRef.current.position.set(point.x, point.y, point.z)
+    trackRef.current.rotation.y = Math.atan2(tangent.z, tangent.x)
   })
 
   return (
-    <group ref={glideRef}>
-      <group ref={modelRef} scale={normalizedScale}>
+    <group ref={trackRef}>
+      <group ref={modelRef}>
         <primitive object={cloned} />
       </group>
     </group>
@@ -84,7 +87,7 @@ function TrenGltf({ src, range = 0, periodSeconds = 40, targetSize }: Omit<TrenA
  * @param props - Loader properties
  * @returns Either the animated train or the provided fallback
  */
-export function TrenAnimado({ src, fallback, range, periodSeconds, targetSize }: TrenAnimadoProps) {
+export function TrenAnimado({ src, fallback, loopCurve, speed, startU }: TrenAnimadoProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -107,7 +110,7 @@ export function TrenAnimado({ src, fallback, range, periodSeconds, targetSize }:
 
   return (
     <Suspense fallback={fallback}>
-      <TrenGltf src={src} range={range} periodSeconds={periodSeconds} targetSize={targetSize} />
+      <TrenGltf src={src} loopCurve={loopCurve} speed={speed} startU={startU} />
     </Suspense>
   )
 }
