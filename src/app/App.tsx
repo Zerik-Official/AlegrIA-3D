@@ -55,7 +55,6 @@ export default function App() {
   const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
 
   const [isEditorEnabledRaw, setIsEditorEnabledRaw] = useState(false)
-  // Editor only available when VITE_DEBUG=True; otherwise forced off.
   const isEditorEnabled = isDebugEnabled && isEditorEnabledRaw
   const toggleEditor = useCallback(() => {
     if (!isDebugEnabled) return
@@ -65,7 +64,6 @@ export default function App() {
   const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
   const orbitControlsRef = useRef<any>(null)
 
-  // If debug is disabled while editor was open (hot reload), close it.
   useEffect(() => {
     if (!isDebugEnabled && isEditorEnabledRaw) setIsEditorEnabledRaw(false)
   }, [isEditorEnabledRaw])
@@ -79,6 +77,12 @@ export default function App() {
     if (phaseFlow.phase !== 'cityIntro') setCityWalkProgress(0)
   }, [phaseFlow.phase])
 
+  useEffect(() => {
+    if (phaseFlow.bookStage === 'reading' && audioRemainingSec === 0) phaseFlow.finishBookReading()
+  }, [phaseFlow.bookStage, audioRemainingSec, phaseFlow])
+
+  const nearBookInteractable = proximity.nearBook && (phaseFlow.libraryVisitCount < 2 || phaseFlow.bookStage === 'ready')
+
   usePointerLockGuard(
     isEditorEnabled ||
       (phaseFlow.showPhase1Overlay && phaseFlow.isPhase1) ||
@@ -90,6 +94,7 @@ export default function App() {
     phase: phaseFlow.phase,
     nearBook: proximity.nearBook,
     nearPortal: proximity.nearPortal,
+    libraryPortalUnlocked: phaseFlow.libraryPortalUnlocked,
     showPhase1Overlay: phaseFlow.showPhase1Overlay,
     showPhase2Overlay: phaseFlow.showPhase2Overlay,
     isCityIntro: phaseFlow.isCityIntro,
@@ -107,6 +112,7 @@ export default function App() {
     handleBookInteract: phaseFlow.handleBookInteract,
     startWormholeToPhase2: phaseFlow.startWormholeToPhase2,
     startWormholeToLibrary: phaseFlow.startWormholeToLibrary,
+    startWormholeToCityIntro: phaseFlow.startWormholeToCityIntro,
     dismissPhase1Intro: phaseFlow.dismissPhase1Intro,
     dismissPhase2Intro: phaseFlow.dismissPhase2Intro,
     selectPhoto: handlePhotoSelect,
@@ -132,6 +138,8 @@ export default function App() {
           <LibraryScene
             wormholeActive={phaseFlow.phase === 'wormhole'}
             wormholeProgress={phaseFlow.wormholeProgress}
+            bookStage={phaseFlow.bookStage}
+            libraryPortalUnlocked={phaseFlow.libraryPortalUnlocked}
             editableEntities={isEditorEnabled ? editors.libraryEditor.entities : undefined}
           />
         ) : visual.sceneId === 'phase1' ? (
@@ -189,7 +197,15 @@ export default function App() {
 
       {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startExperience} />}
       {phaseFlow.isCityIntro && <CityIntroHUD arrived={arrivedAtLibrary} onEnter={phaseFlow.enterLibrary} audioRemainingSec={audioRemainingSec} />}
-      {phaseFlow.phase === 'exploring' && <HUD nearBook={proximity.nearBook} wormholeActive={false} onInteract={phaseFlow.handleBookInteract} variant="library" audioRemainingSec={audioRemainingSec} />}
+      {phaseFlow.phase === 'exploring' && <HUD nearBook={nearBookInteractable} wormholeActive={false} onInteract={phaseFlow.handleBookInteract} variant="library" audioRemainingSec={audioRemainingSec} />}
+      {phaseFlow.phase === 'exploring' && phaseFlow.libraryPortalUnlocked && proximity.nearPortal && (
+        <button
+          onClick={phaseFlow.startWormholeToCityIntro}
+          className="pointer-events-auto fixed bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#5ad8ff]/40 bg-[#0a0f1e]/85 px-6 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment shadow-[0_0_30px_rgba(90,216,255,0.35)] backdrop-blur-xl"
+        >
+          Cruzar el Portal hacia el Futuro
+        </button>
+      )}
       {phaseFlow.phase === 'wormhole' && (
         <HUD
           nearBook={proximity.nearBook}
@@ -268,11 +284,18 @@ export default function App() {
         </button>
       )}
 
-      {phaseFlow.phase === 'exploring' && proximity.nearBook && !isEditorEnabled && (
+      {phaseFlow.phase === 'exploring' && nearBookInteractable && !isEditorEnabled && (
         <div
           onClick={phaseFlow.handleBookInteract}
           style={{ position: 'fixed', inset: 0, zIndex: 9, cursor: 'pointer', pointerEvents: 'auto' }}
           title="Click para atravesar el vórtice"
+        />
+      )}
+      {phaseFlow.phase === 'exploring' && phaseFlow.libraryPortalUnlocked && proximity.nearPortal && !isEditorEnabled && (
+        <div
+          onClick={phaseFlow.startWormholeToCityIntro}
+          style={{ position: 'fixed', inset: 0, zIndex: 9, cursor: 'pointer', pointerEvents: 'auto' }}
+          title="Click para atravesar al portal"
         />
       )}
       {phaseFlow.isPhase1 && !phaseFlow.showPhase1Overlay && proximity.nearPortal && !selectedPhoto && !isEditorEnabled && (
