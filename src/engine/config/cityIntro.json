@@ -20,9 +20,7 @@
   { "id": "streetlight-11", "type": "streetlight", "position": [-3.8, 0, -32], "rotationY": 0, "scale": 1 },
   { "id": "streetlight-12", "type": "streetlight", "position": [4.0, 0, -34], "rotationY": 0, "scale": 1 },
 
-  { "id": "skyscraper-01", "type": "skyscraper", "position": [-13, 0, 20], "rotationY": 0.1, "scale": 1, "variant": "#3a4a6a" },
   { "id": "skyscraper-02", "type": "skyscraper", "position": [13, 0, 16], "rotationY": -0.15, "scale": 1, "variant": "#4a3a6a" },
-  { "id": "skyscraper-03", "type": "skyscraper", "position": [-15, 0, 8], "rotationY": 0.05, "scale": 1, "variant": "#2f4a5a" },
   { "id": "skyscraper-04", "type": "skyscraper", "position": [15, 0, 4], "rotationY": -0.08, "scale": 1, "variant": "#3a5a4a" },
   { "id": "skyscraper-05", "type": "skyscraper", "position": [-14, 0, -4], "rotationY": 0.12, "scale": 1, "variant": "#4a3a5a" },
   { "id": "skyscraper-06", "type": "skyscraper", "position": [14.5, 0, -8], "rotationY": -0.1, "scale": 1, "variant": "#3a4a6a" },
@@ -35,7 +33,6 @@
   { "id": "skyscraper-13", "type": "skyscraper", "position": [-20, 0, -2], "rotationY": 0.2, "scale": 1.3, "variant": "#22304a" },
   { "id": "skyscraper-14", "type": "skyscraper", "position": [21, 0, -12], "rotationY": -0.22, "scale": 1.4, "variant": "#20283f" },
 
-  { "id": "logo-tower-riwi", "type": "logo-tower", "position": [-20, 0, 14], "rotationY": 0.05, "scale": 1 },
 
   { "id": "ad-tower-01", "type": "ad-tower", "position": [20, 0, 10], "rotationY": -0.1, "scale": 1, "variant": "#ff2a6d", "videoSrc": "/videos/cityIntro/first.mp4" },
   { "id": "ad-tower-02", "type": "ad-tower", "position": [-20, 0, -9.5], "rotationY": 0.12, "scale": 1, "variant": "#2affe0", "videoSrc": "/videos/cityIntro/second.mp4" },
@@ -89,5 +86,6 @@
   { "id": "planet-07", "type": "planet", "position": [-40, 72, 95], "rotationY": 0, "scale": 5, "variant": "#c97a7a" },
   { "id": "planet-08", "type": "planet", "position": [90, 30, 30], "rotationY": 0, "scale": 2.2, "variant": "#8aa8ff" },
 
+  { "id": "riwi-building", "type": "riwi-building", "position": [-20.4, 0, 17], "rotationY": 1.5708, "scale": 0.85 },
   { "id": "library-facade", "type": "library-facade", "position": [0, 0, -54], "rotationY": 0, "scale": 1 }
 ]
