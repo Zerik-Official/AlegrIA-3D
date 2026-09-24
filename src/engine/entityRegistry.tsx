@@ -11,6 +11,7 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHouse'
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
+import { TrenAnimado } from '@/features/phase1/components/parts/TrenAnimado'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { MusicalJukebox } from '@/features/phase2/components/parts/MusicalJukebox'
@@ -194,14 +195,17 @@ const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
 }
 
 /**
- * Generic phase2 model renderer — resolves any `phase2/...` model key stored
- * in `entity.variant` or directly in `entity.type`. Allows the editor to
- * spawn new `public/models/phase2/**` assets without adding a dedicated
- * renderer per file, keeping the JSON-driven workflow.
+ * Generic model renderer — resolves any `phase1/...`/`phase2/...` model key
+ * stored in `entity.variant` or directly in `entity.type`. Allows the editor
+ * to spawn new `public/models/phase1/**`/`public/models/phase2/**` assets
+ * without adding a dedicated renderer per file, keeping the JSON-driven
+ * workflow. The `targetSize` bucket is picked from the key's folder so each
+ * asset kit (rail modules, port decor, self-contained building scenes, ...)
+ * normalizes to a size consistent with how it's meant to be placed.
  * @param props - Entity props
  * @returns Model loader or fallback box
  */
-function GenericPhase2ModelRenderer({ entity }: EntityRendererProps) {
+function GenericModelRenderer({ entity }: EntityRendererProps) {
   const rawKey = (entity.variant || entity.type) as string
   const normalizedKey = rawKey as keyof typeof modelRegistry
   const entry = modelRegistry[normalizedKey]
@@ -213,11 +217,58 @@ function GenericPhase2ModelRenderer({ entity }: EntityRendererProps) {
       </mesh>
     )
   }
+  const isRail = normalizedKey.includes('/floors/rieles')
   const isFloor = normalizedKey.includes('/floors/')
-  const isDecoration = normalizedKey.includes('/decorations/')
+  const isDecoration = normalizedKey.includes('/decorations/') || normalizedKey.includes('/decorators/')
   const isScene = normalizedKey.includes('/scenes/')
-  const targetSize = isFloor ? 4 : isDecoration ? 1.6 : isScene ? 22 : 6
+  const isVehicle = normalizedKey.includes('/vehicles/')
+  const targetSize = isRail ? 8 : isFloor ? 4 : isDecoration ? 1.6 : isScene ? 20 : isVehicle ? 7 : 6
   return <ModelLoader src={entry.path} targetSize={targetSize} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
+}
+
+/** Registry key of the animated train `.glb` an `entity.variant` should resolve to, when it names a train key directly. */
+const TRAIN_KEYS = new Set<string>([
+  'phase1/vehicles/tren-completo',
+  'phase1/vehicles/tren-locomotora',
+  'phase1/vehicles/tren-coche',
+  'phase1/vehicles/tren-vagon',
+])
+
+/**
+ * The train — its `.glb` carries baked wheel-rotation clips (see
+ * `TrenAnimado`), so it gets its own renderer instead of the generic
+ * `ModelLoader`-based one. Glides gently along local X, so lay it out with
+ * `rotationY` matching the rail line's direction at that point.
+ * @param props - Entity props
+ * @returns Animated train or fallback
+ */
+function TrenRenderer({ entity }: EntityRendererProps) {
+  const rawKey = entity.variant && TRAIN_KEYS.has(entity.variant) ? entity.variant : 'phase1/vehicles/tren-completo'
+  const entry = modelRegistry[rawKey as keyof typeof modelRegistry]
+  return (
+    <TrenAnimado
+      src={entry.path}
+      targetSize={7}
+      range={6.5}
+      periodSeconds={46}
+      fallback={
+        <group position={[0, 0.55, 0]}>
+          <mesh position={[-1.6, 0, 0]} castShadow receiveShadow>
+            <boxGeometry args={[2.6, 1.05, 1]} />
+            <meshStandardMaterial color="#2a2118" roughness={0.85} />
+          </mesh>
+          <mesh position={[-2.6, 0.55, 0]} castShadow>
+            <cylinderGeometry args={[0.32, 0.36, 1.3, 12]} />
+            <meshStandardMaterial color="#1a1410" roughness={0.8} />
+          </mesh>
+          <mesh position={[0.6, 0, 0]} castShadow receiveShadow>
+            <boxGeometry args={[2.2, 0.95, 0.95]} />
+            <meshStandardMaterial color="#6a5240" roughness={0.85} />
+          </mesh>
+        </group>
+      }
+    />
+  )
 }
 
 /**
@@ -228,7 +279,7 @@ function GenericPhase2ModelRenderer({ entity }: EntityRendererProps) {
 function ElPoderosoRenderer(props: EntityRendererProps) {
   return (
     <MusicalJukebox>
-      <GenericPhase2ModelRenderer {...props} />
+      <GenericModelRenderer {...props} />
     </MusicalJukebox>
   )
 }
@@ -327,24 +378,31 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'rey-momo': ReyMomoRenderer,
   'parade-vehicle': ParadeVehicleRenderer,
   'phase2/decorations/el-poderoso': ElPoderosoRenderer,
-  'phase2-house': GenericPhase2ModelRenderer,
-  'phase2-floor': GenericPhase2ModelRenderer,
-  'phase2-decoration': GenericPhase2ModelRenderer,
-  'phase2-scene': GenericPhase2ModelRenderer,
-  'phase2-model': GenericPhase2ModelRenderer,
+  'phase2-house': GenericModelRenderer,
+  'phase2-floor': GenericModelRenderer,
+  'phase2-decoration': GenericModelRenderer,
+  'phase2-scene': GenericModelRenderer,
+  'phase2-model': GenericModelRenderer,
+  'phase1-train': TrenRenderer,
+  'phase1-floor': GenericModelRenderer,
+  'phase1-decoration': GenericModelRenderer,
+  'phase1-scene': GenericModelRenderer,
+  'phase1-vehicle': GenericModelRenderer,
+  'phase1-model': GenericModelRenderer,
   ...cityIntroRenderers,
 }
 
 /**
  * Looks up the renderer for an entity type. If the type itself is a
- * `modelRegistry` key (e.g. `phase2/houses/casa-cafe`), a generic model
- * renderer is returned so new `public/models/phase2/**` files work
- * without manual registry edits.
+ * `modelRegistry` key (e.g. `phase1/floors/rieles-riel-recta`,
+ * `phase2/houses/casa-cafe`), a generic model renderer is returned so new
+ * `public/models/phase1/**`/`public/models/phase2/**` files work without
+ * manual registry edits.
  * @param type - `EditableEntity.type` value
  * @returns Renderer component
  */
 export function getEntityRenderer(type: string): EntityRenderer {
   if (entityRegistry[type]) return entityRegistry[type]
-  if ((modelRegistry as Record<string, unknown>)[type]) return GenericPhase2ModelRenderer
+  if ((modelRegistry as Record<string, unknown>)[type]) return GenericModelRenderer
   return UnknownEntityRenderer
 }
