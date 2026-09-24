@@ -26,6 +26,7 @@ import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import { usePhaseFlow } from '@/app/hooks/usePhaseFlow'
 import { usePhaseAudio } from '@/app/hooks/usePhaseAudio'
 import { usePicoAudio } from '@/app/hooks/usePicoAudio'
+import { useCongasAudio } from '@/app/hooks/useCongasAudio'
 import { usePlayerProximity } from '@/app/hooks/usePlayerProximity'
 import { useSceneEditors } from '@/app/hooks/useSceneEditors'
 import { usePointerLockGuard } from '@/app/hooks/usePointerLockGuard'
@@ -46,6 +47,7 @@ export default function App() {
   const audioRemainingSec = usePhaseAudio(phaseFlow.phase, phaseFlow.libraryVisitCount)
   const proximity = usePlayerProximity(phaseFlow.phase)
   usePicoAudio(phaseFlow.isPhase2, proximity.picoDistance)
+  useCongasAudio(phaseFlow.isPhase2, proximity.congasDistance)
   const editors = useSceneEditors(phaseFlow.phase)
   const visual = phaseSceneRegistry.resolveVisual(phaseFlow.phase)
 
