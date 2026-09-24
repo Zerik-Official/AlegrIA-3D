@@ -6,6 +6,8 @@
  * @link https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html
  */
 
+import cityIntroJson from '@/engine/config/cityIntro.json'
+import { resolvePublicSrc } from '@/shared/utils/media'
 import type { ModelRegistry } from '@/shared/types'
 
 /**
@@ -163,4 +165,25 @@ export function cityIntroModelUrls(): string[] {
   return Object.entries(modelRegistry)
     .filter(([key]) => key.startsWith('cityIntro/'))
     .map(([, entry]) => entry.path)
+}
+
+/**
+ * Every `videoSrc`/`videoSrcs` URL authored on `cityIntro.json` entities (the
+ * screen-building billboards), resolved against the app base — used to warm
+ * the browser's HTTP cache during the wormhole transition alongside
+ * {@link cityIntroModelUrls}, so playback doesn't stall fetching video bytes
+ * the moment the scene mounts.
+ * @returns Resolved video URLs
+ */
+export function cityIntroVideoUrls(): string[] {
+  const urls = new Set<string>()
+  for (const entity of cityIntroJson as Array<{ videoSrc?: string; videoSrcs?: string[] }>) {
+    const single = resolvePublicSrc(entity.videoSrc)
+    if (single) urls.add(single)
+    for (const src of entity.videoSrcs ?? []) {
+      const resolved = resolvePublicSrc(src)
+      if (resolved) urls.add(resolved)
+    }
+  }
+  return [...urls]
 }
