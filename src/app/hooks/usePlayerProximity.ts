@@ -58,6 +58,16 @@ const PICO_XZ: [number, number] | null = (() => {
   return pico ? [pico.position[0], pico.position[2]] : null
 })()
 
+/**
+ * The congas player parked by the fritos stand, whose `.glb` looked up its
+ * XZ position once from `phase2.json`, so `useCongasAudio` can fade its
+ * drumming loop by distance the same way `usePicoAudio` does for "El Poderoso".
+ */
+const CONGAS_XZ: [number, number] | null = (() => {
+  const congas = initialPhase2Entities.find((e) => e.type === 'congas-personaje')
+  return congas ? [congas.position[0], congas.position[2]] : null
+})()
+
 /** Public state and updater exposed by {@link usePlayerProximity}. */
 export interface PlayerProximity {
   /** Whether the player is within interact range of the central book. */
@@ -68,6 +78,8 @@ export interface PlayerProximity {
   highlightedPhotoId: string | null
   /** Distance from the player to Phase 2's picó ("El Poderoso"), or `Infinity` outside Phase 2 / if it has no entity. */
   picoDistance: number
+  /** Distance from the player to Phase 2's congas character, or `Infinity` outside Phase 2 / if it has no entity. */
+  congasDistance: number
   /** Feeds the latest camera position; call from `PlayerControls.onPositionChange`. */
   handlePosition: (pos: THREE.Vector3) => void
 }
@@ -81,6 +93,7 @@ export function usePlayerProximity(phase: GamePhase): PlayerProximity {
   const [distance, setDistance] = useState(9)
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
   const [picoDistance, setPicoDistance] = useState(Infinity)
+  const [congasDistance, setCongasDistance] = useState(Infinity)
 
   const nearBook = distance < appConfig.player.interactDistance
   const portalXZ = PORTAL_XZ_BY_PHASE[phase]
@@ -96,9 +109,10 @@ export function usePlayerProximity(phase: GamePhase): PlayerProximity {
         setHighlightedPhotoId(null)
       }
       setPicoDistance(phase === 'phase2' && PICO_XZ ? Math.hypot(pos.x - PICO_XZ[0], pos.z - PICO_XZ[1]) : Infinity)
+      setCongasDistance(phase === 'phase2' && CONGAS_XZ ? Math.hypot(pos.x - CONGAS_XZ[0], pos.z - CONGAS_XZ[1]) : Infinity)
     },
     [phase]
   )
 
-  return { nearBook, nearPortal, highlightedPhotoId, picoDistance, handlePosition }
+  return { nearBook, nearPortal, highlightedPhotoId, picoDistance, congasDistance, handlePosition }
 }
