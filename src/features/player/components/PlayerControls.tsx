@@ -4,6 +4,7 @@ import { PointerLockControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useKeyboard } from '@/features/player/hooks/useKeyboard'
 import { playerConfig } from '@/shared/config/appConfig'
+import { getCollisionSolids, resolveAgainstSolids } from '@/features/player/collision'
 
 /**
  * Props for {@link PlayerControls}.
@@ -17,6 +18,13 @@ interface PlayerControlsProps {
   bounds?: { minX: number; maxX: number; minZ: number; maxZ: number }
   /** Extra ground-level collision circles (e.g. landmark footprints) the player can't walk into. */
   obstacles?: Array<{ x: number; z: number; radius: number }>
+  /**
+   * Whether to resolve movement against the shared `COL_*`-driven collision
+   * world (see `features/player/collision`), making authored decks, platforms
+   * and stairs solid and walkable. Off by default so scenes that publish no
+   * colliders keep the original flat-ground behavior.
+   */
+  useCollisionWorld?: boolean
 }
 
 /**
@@ -54,12 +62,20 @@ const scratch = {
  * @returns PointerLockControls element
  * @link https://github.com/pmndrs/drei#pointerlockcontrols
  */
-export const PlayerControls = memo(function PlayerControls({ enabled, onPositionChange, bounds, obstacles }: PlayerControlsProps) {
+export const PlayerControls = memo(function PlayerControls({
+  enabled,
+  onPositionChange,
+  bounds,
+  obstacles,
+  useCollisionWorld = false,
+}: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
   const audioCtxRef = useRef<AudioContext | null>(null)
   const lastStepRef = useRef(0)
   const stepIdxRef = useRef(0)
+  /** Height of the surface currently underfoot — damped toward the resolver's answer so steps and ramps read smoothly. */
+  const floorRef = useRef(0)
 
   /**
    * Lazily creates and resumes the AudioContext.
@@ -175,8 +191,19 @@ export const PlayerControls = memo(function PlayerControls({ enabled, onPosition
     pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
     if (obstacles) for (const o of obstacles) pushOutOfCircle(scratch.next, o.x, o.z, o.radius)
 
+    if (useCollisionWorld) {
+      const floor = resolveAgainstSolids(scratch.next, getCollisionSolids(), floorRef.current, {
+        stepUp: playerConfig.stepUpHeight,
+        bodyHeight: playerConfig.bodyHeight,
+        radius: playerConfig.collisionRadius,
+      })
+      floorRef.current = THREE.MathUtils.damp(floorRef.current, floor, playerConfig.floorDamping, dt)
+    } else {
+      floorRef.current = 0
+    }
+
     camera.position.copy(scratch.next)
-    camera.position.y = playerConfig.eyeHeight
+    camera.position.y = floorRef.current + playerConfig.eyeHeight
 
     const isMoving = scratch.move.lengthSq() > 0.00001
     const sprinting = keys.current.shift && isMoving
