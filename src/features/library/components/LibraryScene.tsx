@@ -1,4 +1,4 @@
-import { memo, useMemo, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
@@ -8,8 +8,22 @@ import { Wormhole } from '@/features/wormhole/components/Wormhole'
 import { TimeVortexParticles } from '@/features/wormhole/components/TimeVortexParticles'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { ScatteredBooks } from '@/features/library/components/ScatteredBooks'
+import { PendantLamp } from '@/features/library/components/PendantLamp'
+import { ReadingTable, SectionSign, ToppledShelf } from '@/features/library/components/LibraryFurnishings'
 import { TimeVortexSequence } from '@/features/cinematics/components/TimeVortexSequence'
 import { ProceduralPortal } from '@/shared/components/ReusableModels'
+import { registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
+import {
+  AISLE_SHELVES,
+  CEILING_Y,
+  LAMPS,
+  READING_TABLES,
+  SECTION_SIGNS,
+  SHELF_HEIGHT,
+  TOPPLED_SHELVES,
+  WALL_SHELVES,
+  libraryCollisionSolids,
+} from '@/features/library/config/libraryLayout'
 
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
@@ -136,18 +150,24 @@ export const LibraryScene = memo(function LibraryScene({
     })
   })
 
+  useEffect(() => {
+    registerCollisionSolids('library-furnishings', libraryCollisionSolids)
+    return () => unregisterCollisionSolids('library-furnishings')
+  }, [])
+
+  /**
+   * Emergency wall lighting, thinned out now that the pendant lamps carry the
+   * room — the fixtures on the walls still all glow (`torchMeshes`), but only
+   * these few contribute a real light, keeping the hall's total light count
+   * within what forward rendering handles comfortably.
+   */
   const torchLights = useMemo(
     () =>
       [
         [-10.6, 2.2, -6],
-        [-10.6, 2.2, 0],
         [-10.6, 2.2, 6],
         [10.6, 2.2, -6],
-        [10.6, 2.2, 0],
         [10.6, 2.2, 6],
-        [-5, 2.2, -10.6],
-        [0, 2.2, -10.6],
-        [5, 2.2, -10.6],
       ] as const,
     [],
   )
@@ -207,22 +227,48 @@ export const LibraryScene = memo(function LibraryScene({
           <CyberWall position={[-11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={Math.PI / 2} missingIndex={2} />
           <CyberWall position={[11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={-Math.PI / 2} missingIndex={7} />
 
-          <Bookshelf position={[-7.2, 1.6, -10.05]} width={5.2} />
-          <Bookshelf position={[0, 1.6, -10.05]} width={5.2} />
-          <Bookshelf position={[7.2, 1.6, -10.05]} width={5.2} />
+          {[...WALL_SHELVES, ...AISLE_SHELVES].map((shelf) => (
+            <Bookshelf
+              key={`shelf-${shelf.position[0]}-${shelf.position[1]}`}
+              position={[shelf.position[0], SHELF_HEIGHT / 2, shelf.position[1]]}
+              rotationY={shelf.rotationY}
+              width={shelf.width}
+            />
+          ))}
 
-          <Bookshelf position={[-10.05, 1.6, -6]} rotationY={Math.PI / 2} width={5} />
-          <Bookshelf position={[-10.05, 1.6, 0]} rotationY={Math.PI / 2} width={5} />
-          <Bookshelf position={[-10.05, 1.6, 6]} rotationY={Math.PI / 2} width={5} />
+          {TOPPLED_SHELVES.map((shelf) => (
+            <ToppledShelf
+              key={`toppled-${shelf.position[0]}-${shelf.position[1]}`}
+              position={shelf.position}
+              rotationY={shelf.rotationY}
+              tilt={shelf.tilt}
+              width={shelf.width}
+            />
+          ))}
 
-          <Bookshelf position={[10.05, 1.6, -6]} rotationY={-Math.PI / 2} width={5} />
-          <Bookshelf position={[10.05, 1.6, 0]} rotationY={-Math.PI / 2} width={5} />
-          <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
+          {READING_TABLES.map((table) => (
+            <ReadingTable key={`table-${table.position[0]}-${table.position[1]}`} position={table.position} rotationY={table.rotationY} />
+          ))}
+
+          {SECTION_SIGNS.map((sign) => (
+            <SectionSign key={sign.label} position={sign.position} rotationY={sign.rotationY} label={sign.label} ceilingY={CEILING_Y} />
+          ))}
 
           <ScatteredBooks />
           <Pedestal />
         </>
       )}
+
+      {LAMPS.map((lamp, i) => (
+        <PendantLamp
+          key={`lamp-${lamp.position[0]}-${lamp.position[1]}`}
+          position={lamp.position}
+          ceilingY={CEILING_Y}
+          drop={lamp.drop}
+          flicker={lamp.flicker}
+          phase={i * 2.37}
+        />
+      ))}
 
       {torchLights.map((p) => (
         <FlickeringTorch key={`torch-light-${p[0]}-${p[1]}-${p[2]}`} position={p} />
