@@ -22,6 +22,16 @@ export interface PhaseVisual {
   background: string
 }
 
+/** Target selectable from the editor's quick phase-jump control. */
+export interface PhaseJumpTarget {
+  /** Destination game phase. */
+  phase: GamePhase
+  /** Scene rendered for that phase. */
+  sceneId: SceneId
+  /** Human label shown in the editor UI. */
+  label: string
+}
+
 class PhaseSceneRegistry {
   private readonly visuals: Record<SceneId, PhaseVisual> = {
     cityIntro: { sceneId: 'cityIntro', fog: { color: '#0a0a16', near: 20, far: 240 }, background: '#05050d' },
@@ -29,6 +39,15 @@ class PhaseSceneRegistry {
     phase1: { sceneId: 'phase1', fog: { color: '#8a6a3a', near: 24, far: 160 }, background: '#6b4a2a' },
     phase2: { sceneId: 'phase2', fog: { color: '#a9d8f5', near: 24, far: 84 }, background: '#8ec9f0' },
   }
+
+  /** Jump targets exposed to the editor — single source for the quick phase-switcher. */
+  private readonly jumpTargets: PhaseJumpTarget[] = [
+    { phase: 'idle', sceneId: 'cityIntro', label: 'Inicio — Pantalla inicial' },
+    { phase: 'cityIntro', sceneId: 'cityIntro', label: 'Ciudad Futurista (cityIntro)' },
+    { phase: 'exploring', sceneId: 'library', label: 'Biblioteca (library)' },
+    { phase: 'phase1', sceneId: 'phase1', label: 'Fase 1 — Barrio Abajo' },
+    { phase: 'phase2', sceneId: 'phase2', label: 'Fase 2 — Época Dorada' },
+  ]
 
   /**
    * Maps a game phase to the scene it renders.
@@ -53,6 +72,14 @@ class PhaseSceneRegistry {
    */
   resolveVisual(phase: GamePhase): PhaseVisual {
     return this.visuals[this.resolveScene(phase)]
+  }
+
+  /**
+   * Returns the editor's quick phase-jump targets.
+   * @returns Jump targets in display order
+   */
+  listJumpTargets(): PhaseJumpTarget[] {
+    return this.jumpTargets
   }
 }
 
