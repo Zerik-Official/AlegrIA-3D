@@ -1,7 +1,9 @@
 import { memo, useCallback, useEffect, useState } from 'react'
-import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox } from 'react-icons/fi'
+import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap } from 'react-icons/fi'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import type { EntityCatalogItem } from '@/engine/config/entityCatalog'
+import type { GamePhase } from '@/shared/types'
+import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import { ModelBrowserModal } from '@/features/editor/components/ModelBrowserModal'
 
 /**
@@ -32,6 +34,10 @@ interface EditorOverlayProps {
   onExport: () => string
   /** Close editor. */
   onClose: () => void
+  /** Current game phase, used to highlight the active jump target. */
+  currentPhase?: GamePhase
+  /** Handles an instant phase jump without linear walk/wormhole sequencing. */
+  onJumpToPhase?: (phase: GamePhase) => void
 }
 
 /**
@@ -54,10 +60,14 @@ export const EditorOverlay = memo(function EditorOverlay({
   onRemove,
   onExport,
   onClose,
+  currentPhase,
+  onJumpToPhase,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
   const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
   const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
+  const jumpTargets = phaseSceneRegistry.listJumpTargets()
+  const hasJump = typeof onJumpToPhase === 'function' && typeof currentPhase === 'string'
 
   useEffect(() => {
     if (catalog.length && !catalog.some((c) => c.type === addType)) {
@@ -101,6 +111,28 @@ export const EditorOverlay = memo(function EditorOverlay({
           </button>
         </div>
       </div>
+      {hasJump && (
+        <div className="mt-3 rounded-lg border border-gold/20 bg-black/25 p-2.5">
+          <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase text-gold/80">
+            <FiZap className="h-3 w-3" /> Salto rápido de fase
+          </div>
+          <div className="mt-2 flex gap-1.5">
+            <select
+              value={jumpTargets.some((t) => t.phase === currentPhase) ? currentPhase : jumpTargets[0]?.phase ?? 'exploring'}
+              onChange={(ev) => onJumpToPhase?.(ev.target.value as GamePhase)}
+              className="flex-1 rounded-md bg-white/10 px-2 py-1.5 text-[11px] text-parchment outline-none focus:bg-white/15"
+            >
+              {jumpTargets.map((target) => (
+                <option key={target.phase} value={target.phase} className="text-black">
+                  {target.label}
+                </option>
+              ))}
+            </select>
+            <span className="inline-flex items-center rounded-md bg-gold/15 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] uppercase text-gold">{currentPhase}</span>
+          </div>
+          <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">Salta sin pasar por cityIntro/wormhole. El editor mantiene la escena elegida.</div>
+        </div>
+      )}
       <div className="mt-3 flex gap-1.5">
         <button onClick={() => onModeChange('translate')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === 'translate' ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}>
           <FiMove className="h-3.5 w-3.5" /> Mover
@@ -238,7 +270,7 @@ export const EditorOverlay = memo(function EditorOverlay({
                 <span className="text-[10px] uppercase tracking-widest text-parchment/50">Imagen (URL)</span>
                 <input
                   type="text"
-                  placeholder="/images/placeholders/mi-foto.jpg"
+                  placeholder="https://... o /images/placeholders/mi-foto.jpg"
                   value={selected.imageSrc ?? ''}
                   onChange={(ev) => onUpdate(selected.id, { imageSrc: ev.target.value || undefined })}
                   className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
