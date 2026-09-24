@@ -68,8 +68,8 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 8, 0], rotationY: 0, scale: 1, variant: 'nuevo-carril:0' },
   },
   {
-    type: 'logo-tower',
-    label: 'Torre con Logo riwi',
+    type: 'riwi-building',
+    label: 'Edificio riwi 2050',
     scenes: ['cityIntro'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
