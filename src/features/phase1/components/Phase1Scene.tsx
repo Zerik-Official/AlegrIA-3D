@@ -12,6 +12,9 @@ import { PhaseEngine } from '@/engine/PhaseEngine'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
+/** Entities farther than this from the camera don't cast shadows (see `PhaseEngine`). */
+const SHADOW_DISTANCE = 30
+
 /**
  * Props for {@link Phase1Scene}.
  */
@@ -100,7 +103,7 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
       <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<AndenAlto position={[-1.2, 0, -6.2]} length={2.8} />} scale={0.9} />
       <ModelLoader src={modelRegistry['phase1/anden-alto'].path} fallback={<AndenAlto position={[0, 0, 8.2]} length={9.2} />} scale={0.9} />
 
-      <PhaseEngine entities={entities} context={{ highlightedPhotoId }} />
+      <PhaseEngine entities={entities} context={{ highlightedPhotoId }} shadowDistance={SHADOW_DISTANCE} />
 
       <ProceduralTree position={[-6.8, 0, -2.2]} scale={1.15} foliageColor="#2a5a1e" />
       <ProceduralTree position={[6.2, 0, -1.4]} scale={1.28} foliageColor="#1e4a14" trunkColor="#2e1f14" />
