@@ -80,6 +80,19 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
       <ProceduralTrinitaria position={[-64, 0, -10]} bloomColor="#d82a3a" scale={0.9} />
       <ProceduralTrinitaria position={[-6, 0, -60]} bloomColor="#7a2ad8" scale={1.02} />
 
+      <ProceduralTree position={[6, 0, -20]} scale={1.08} foliageColor="#2a5a1e" />
+      <ProceduralTree position={[15, 0, 40]} scale={0.96} foliageColor="#3a6a1e" />
+      <ProceduralTree position={[-8, 0, 22]} scale={1.1} foliageColor="#1e4a14" />
+      <ProceduralTree position={[10, 0, 85]} scale={1.02} foliageColor="#2a4a1e" />
+      <ProceduralTree position={[18, 0, -85]} scale={1.14} foliageColor="#2a5a1e" trunkColor="#2e1f14" />
+      <ProceduralTree position={[0, 0, -30]} scale={0.9} foliageColor="#3a5a1e" />
+      <ProceduralTree position={[8, 0, 55]} scale={1.04} foliageColor="#1e3a0f" />
+      <ProceduralTree position={[-4, 0, 90]} scale={1.06} foliageColor="#2a4a14" />
+      <ProceduralTrinitaria position={[5, 0, 30]} bloomColor="#d82a7a" scale={1} />
+      <ProceduralTrinitaria position={[12, 0, -25]} bloomColor="#ff6a1a" scale={0.94} />
+      <ProceduralTrinitaria position={[2, 0, 65]} bloomColor="#a52ad8" scale={1.03} />
+      <ProceduralTrinitaria position={[16, 0, 90]} bloomColor="#d82a3a" scale={0.96} />
+
       <ambientLight intensity={0.62} color="#ffe9c4" />
       <hemisphereLight args={['#ffecd0', '#6b4a2a', 0.52]} />
       <directionalLight position={[40, 34, -24]} intensity={1.05} color="#fff4d0" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-90} shadow-camera-right={90} shadow-camera-top={90} shadow-camera-bottom={-90} shadow-camera-far={220} />
