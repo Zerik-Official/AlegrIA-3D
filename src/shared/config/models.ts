@@ -106,7 +106,7 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/moon': { path: `${base}models/cityIntro/moon.glb`, fallback: 'procedural-moon' },
   'cityIntro/library-facade': { path: `${base}models/cityIntro/aduana-barranquilla.glb`, fallback: 'procedural-library-facade' },
   'cityIntro/planet': { path: `${base}models/cityIntro/planet.glb`, fallback: 'procedural-planet' },
-  'cityIntro/logo-tower': { path: `${base}models/cityIntro/logo-tower.glb`, fallback: 'procedural-logo-tower' },
+  'cityIntro/riwi-building': { path: `${base}models/cityIntro/riwi-edificio-2050.glb`, fallback: 'procedural-riwi-building' },
   'cityIntro/ad-tower': { path: `${base}models/cityIntro/ad-tower.glb`, fallback: 'procedural-ad-tower' },
 }
 
