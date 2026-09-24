@@ -35,6 +35,23 @@ export interface ModelLoaderProps {
 }
 
 /**
+ * Whether a mesh is a Blender-authored collision proxy, not meant to be
+ * rendered: the Python export scripts (`.vscode/scripts/*.py`) name these
+ * `COL_*` and paint them with a "Colision" placeholder material (flat
+ * magenta, `[1, 0, 1, 0.25]`), for a future physics pass rather than display.
+ * Filtered out here at load time — the same `.glb` a physics system would
+ * later read the `COL_*` nodes from stays visually correct without a re-export.
+ * @param mesh - Candidate mesh from a loaded glTF scene graph
+ * @returns Whether this mesh should stay hidden
+ */
+export function isCollisionMesh(mesh: THREE.Mesh): boolean {
+  if (mesh.name.startsWith('COL_')) return true
+  const material = mesh.material as THREE.Material | THREE.Material[] | undefined
+  const materials = Array.isArray(material) ? material : material ? [material] : []
+  return materials.some((mat) => mat.name === 'Colision')
+}
+
+/**
  * Internal glTF scene renderer.
  * Isolated to allow Suspense to work correctly.
  */
@@ -45,6 +62,10 @@ function GltfScene({ src, scale, position, rotation, targetSize, castShadow = tr
     const c = scene.clone(true)
     c.traverse((obj) => {
       if ((obj as THREE.Mesh).isMesh) {
+        if (isCollisionMesh(obj as THREE.Mesh)) {
+          obj.visible = false
+          return
+        }
         obj.castShadow = castShadow
         obj.receiveShadow = castShadow
       }
