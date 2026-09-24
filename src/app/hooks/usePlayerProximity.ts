@@ -36,6 +36,17 @@ const PORTAL_RANGE = 2.8
 /** Interact range around a sepia photo. */
 const PHOTO_RANGE = 2.4
 
+/**
+ * "El Poderoso" — the picó/sound system on Phase 2's platform, whose
+ * `.glb` looked up its XZ position once from `phase2.json`, so `usePicoAudio`
+ * can fade its volume by distance without a position hardcoded here going
+ * stale on the next redesign.
+ */
+const PICO_XZ: [number, number] | null = (() => {
+  const pico = initialPhase2Entities.find((e) => e.type === 'phase2/decorations/el-poderoso')
+  return pico ? [pico.position[0], pico.position[2]] : null
+})()
+
 /** Public state and updater exposed by {@link usePlayerProximity}. */
 export interface PlayerProximity {
   /** Whether the player is within interact range of the central book. */
@@ -44,6 +55,8 @@ export interface PlayerProximity {
   nearPortal: boolean
   /** Id of the sepia photo currently highlighted by proximity, if any. */
   highlightedPhotoId: string | null
+  /** Distance from the player to Phase 2's picó ("El Poderoso"), or `Infinity` outside Phase 2 / if it has no entity. */
+  picoDistance: number
   /** Feeds the latest camera position; call from `PlayerControls.onPositionChange`. */
   handlePosition: (pos: THREE.Vector3) => void
 }
@@ -56,6 +69,7 @@ export function usePlayerProximity(phase: GamePhase): PlayerProximity {
   const playerPos = useRef(new THREE.Vector3(0, appConfig.player.eyeHeight, 9))
   const [distance, setDistance] = useState(9)
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
+  const [picoDistance, setPicoDistance] = useState(Infinity)
 
   const nearBook = distance < appConfig.player.interactDistance
   const portalXZ = PORTAL_XZ_BY_PHASE[phase]
@@ -70,9 +84,10 @@ export function usePlayerProximity(phase: GamePhase): PlayerProximity {
       } else {
         setHighlightedPhotoId(null)
       }
+      setPicoDistance(phase === 'phase2' && PICO_XZ ? Math.hypot(pos.x - PICO_XZ[0], pos.z - PICO_XZ[1]) : Infinity)
     },
     [phase]
   )
 
-  return { nearBook, nearPortal, highlightedPhotoId, handlePosition }
+  return { nearBook, nearPortal, highlightedPhotoId, picoDistance, handlePosition }
 }
