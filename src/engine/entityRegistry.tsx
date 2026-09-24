@@ -7,11 +7,14 @@
  * @module engine/entityRegistry
  */
 
+import { useMemo } from 'react'
+import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHouse'
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
 import { TrenAnimado } from '@/features/phase1/components/parts/TrenAnimado'
+import { PuertoBoat } from '@/features/phase1/components/parts/PuertoBoat'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
 import { MusicalJukebox } from '@/features/phase2/components/parts/MusicalJukebox'
@@ -199,9 +202,15 @@ const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
  * stored in `entity.variant` or directly in `entity.type`. Allows the editor
  * to spawn new `public/models/phase1/**`/`public/models/phase2/**` assets
  * without adding a dedicated renderer per file, keeping the JSON-driven
- * workflow. The `targetSize` bucket is picked from the key's folder so each
- * asset kit (rail modules, port decor, self-contained building scenes, ...)
- * normalizes to a size consistent with how it's meant to be placed.
+ * workflow.
+ *
+ * `phase1/**` assets (rail kit, port scenes, decorators) are authored in
+ * consistent real-world meters — the rail modules' 8m length, the train's
+ * 0.36m wheel-rest height and the port buildings' tens-of-meters footprints
+ * were all co-designed to that same scale — so they render at native size
+ * (`entity.scale` only, no normalization). `phase2/**` assets don't share
+ * that guarantee (each `.glb` was authored at its own unrelated scale), so
+ * they keep the `targetSize` bucket picked from the key's folder.
  * @param props - Entity props
  * @returns Model loader or fallback box
  */
@@ -217,12 +226,13 @@ function GenericModelRenderer({ entity }: EntityRendererProps) {
       </mesh>
     )
   }
-  const isRail = normalizedKey.includes('/floors/rieles')
+  if (normalizedKey.startsWith('phase1/')) {
+    return <ModelLoader src={entry.path} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
+  }
   const isFloor = normalizedKey.includes('/floors/')
-  const isDecoration = normalizedKey.includes('/decorations/') || normalizedKey.includes('/decorators/')
+  const isDecoration = normalizedKey.includes('/decorations/')
   const isScene = normalizedKey.includes('/scenes/')
-  const isVehicle = normalizedKey.includes('/vehicles/')
-  const targetSize = isRail ? 8 : isFloor ? 4 : isDecoration ? 1.6 : isScene ? 20 : isVehicle ? 7 : 6
+  const targetSize = isFloor ? 4 : isDecoration ? 1.6 : isScene ? 22 : 6
   return <ModelLoader src={entry.path} targetSize={targetSize} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
 }
 
@@ -235,22 +245,43 @@ const TRAIN_KEYS = new Set<string>([
 ])
 
 /**
+ * `[x, z]` waypoints of the rail loop laid out around Estación Montoya in
+ * `phase1.json` (the `rail-*` entities) — corners plus one midpoint per side,
+ * so the closed Catmull-Rom curve tracks that rectangle closely. The train
+ * entity itself sits at the identity transform (`position: [0,0,0]`) since
+ * this curve already carries it in world space.
+ */
+const TRAIN_LOOP_POINTS: Array<[number, number]> = [
+  [-4, -76],
+  [28, -76],
+  [60, -76],
+  [60, -60],
+  [60, -44],
+  [28, -44],
+  [-4, -44],
+  [-4, -60],
+]
+
+/**
  * The train — its `.glb` carries baked wheel-rotation clips (see
  * `TrenAnimado`), so it gets its own renderer instead of the generic
- * `ModelLoader`-based one. Glides gently along local X, so lay it out with
- * `rotationY` matching the rail line's direction at that point.
+ * `ModelLoader`-based one. Runs around {@link TRAIN_LOOP_POINTS} at constant
+ * speed regardless of its own JSON `position`/`rotationY`.
  * @param props - Entity props
  * @returns Animated train or fallback
  */
 function TrenRenderer({ entity }: EntityRendererProps) {
   const rawKey = entity.variant && TRAIN_KEYS.has(entity.variant) ? entity.variant : 'phase1/vehicles/tren-completo'
   const entry = modelRegistry[rawKey as keyof typeof modelRegistry]
+  const loopCurve = useMemo(
+    () => new THREE.CatmullRomCurve3(TRAIN_LOOP_POINTS.map(([x, z]) => new THREE.Vector3(x, 0, z)), true, 'catmullrom', 0.3),
+    []
+  )
   return (
     <TrenAnimado
       src={entry.path}
-      targetSize={7}
-      range={6.5}
-      periodSeconds={46}
+      loopCurve={loopCurve}
+      speed={9}
       fallback={
         <group position={[0, 0.55, 0]}>
           <mesh position={[-1.6, 0, 0]} castShadow receiveShadow>
@@ -266,6 +297,36 @@ function TrenRenderer({ entity }: EntityRendererProps) {
             <meshStandardMaterial color="#6a5240" roughness={0.85} />
           </mesh>
         </group>
+      }
+    />
+  )
+}
+
+/** Boat registry keys that patrol the Río Magdalena instead of staying moored, and their lane offset/speed. */
+const PATROL_BOATS: Record<string, { offset: number; speed: number }> = {
+  'phase1/decorators/decorativos-vapor-fluvial': { offset: 3, speed: 3.2 },
+}
+
+/**
+ * Port/river boats — canoe, chalupa and the steamboat all bob gently in
+ * place; the steamboat additionally patrols the river (see `PuertoBoat`).
+ * @param props - Entity props
+ * @returns Bobbing boat or fallback
+ */
+function PuertoBoatRenderer({ entity }: EntityRendererProps) {
+  const key = (entity.variant || entity.type) as keyof typeof modelRegistry
+  const entry = modelRegistry[key]
+  const seed = createSeededRandom(hashSeed(entity.id))()
+  return (
+    <PuertoBoat
+      src={entry.path}
+      seed={seed}
+      patrol={PATROL_BOATS[key as string]}
+      fallback={
+        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+          <boxGeometry args={[2.4, 0.5, 0.9]} />
+          <meshStandardMaterial color="#5a3d24" roughness={0.85} />
+        </mesh>
       }
     />
   )
@@ -384,6 +445,9 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'phase2-scene': GenericModelRenderer,
   'phase2-model': GenericModelRenderer,
   'phase1-train': TrenRenderer,
+  'phase1/decorators/decorativos-bote-canoa': PuertoBoatRenderer,
+  'phase1/decorators/decorativos-bote-chalupa': PuertoBoatRenderer,
+  'phase1/decorators/decorativos-vapor-fluvial': PuertoBoatRenderer,
   'phase1-floor': GenericModelRenderer,
   'phase1-decoration': GenericModelRenderer,
   'phase1-scene': GenericModelRenderer,
