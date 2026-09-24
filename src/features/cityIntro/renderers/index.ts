@@ -16,7 +16,7 @@ import { LibraryFacadeRenderer } from '@/features/cityIntro/renderers/LibraryFac
 import { PathPointRenderer } from '@/features/cityIntro/renderers/PathPointRenderer'
 import { FlightLanePointRenderer } from '@/features/cityIntro/renderers/FlightLanePointRenderer'
 import { AdTowerRenderer } from '@/features/cityIntro/renderers/AdTowerRenderer'
-import { LogoTowerRenderer } from '@/features/cityIntro/renderers/LogoTowerRenderer'
+import { RiwiBuildingRenderer } from '@/features/cityIntro/renderers/RiwiBuildingRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -30,5 +30,5 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   'path-point': PathPointRenderer,
   'flight-lane-point': FlightLanePointRenderer,
   'ad-tower': AdTowerRenderer,
-  'logo-tower': LogoTowerRenderer,
+  'riwi-building': RiwiBuildingRenderer,
 }
