@@ -20,6 +20,7 @@ import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
 import { cityIntroRenderers } from '@/features/cityIntro/renderers'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
+import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import type { EntityRenderer, EntityRendererProps } from '@/engine/types'
 
 export type { EntityRenderer, EntityRendererProps } from '@/engine/types'
@@ -31,7 +32,21 @@ function BahareqHouseRenderer({ entity }: EntityRendererProps) {
   return <ModelLoader src={path} fallback={<BaharequeHouse position={[0, 0, 0]} rotationY={0} variant={variant} scale={1} />} />
 }
 
+/**
+ * Resolves the image source for a sepia-photo entity, falling back to
+ * `sepiaPhotos` when the JSON-driven `imageSrc` is missing (e.g. after a
+ * manual `phase1.json` edit that omits the field).
+ * @param entity - Entity being rendered
+ * @returns Resolved image URL or undefined
+ */
+function resolveSepiaImageSrc(entity: EntityRendererProps['entity']): string | undefined {
+  if (entity.imageSrc) return entity.imageSrc
+  const photo = sepiaPhotos.find((p) => p.id === entity.id)
+  return photo?.src
+}
+
 function SepiaPhotoRenderer({ entity, context }: EntityRendererProps) {
+  const imageSrc = resolveSepiaImageSrc(entity)
   return (
     <ModelLoader
       src={modelRegistry['phase1/sepia-photo'].path}
@@ -40,7 +55,7 @@ function SepiaPhotoRenderer({ entity, context }: EntityRendererProps) {
           position={[0, 0, 0]}
           rotationY={0}
           imageIndex={0}
-          imageSrc={entity.imageSrc}
+          imageSrc={imageSrc}
           highlighted={context?.highlightedPhotoId === entity.id}
         />
       }
