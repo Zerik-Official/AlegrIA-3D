@@ -28,7 +28,7 @@ export const playerConfig = {
   /** Movement bounds inside the museum hall. */
   museumBounds: { minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 } as Bounds,
   /** Movement bounds inside Phase 1 barrio & Río Magdalena waterfront (larger, open; east edge stops short of the water). */
-  phase1Bounds: { minX: -46, maxX: 13, minZ: -58, maxZ: 58 } as Bounds,
+  phase1Bounds: { minX: -79, maxX: 54, minZ: -93, maxZ: 93 } as Bounds,
   /** Movement bounds inside Phase 2 barrio (colorful facades). */
   phase2Bounds: { minX: -36, maxX: 36, minZ: -36, maxZ: 36 } as Bounds,
 } as const
