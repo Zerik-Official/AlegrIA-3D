@@ -7,20 +7,19 @@
  * @module features/cityIntro/renderers/AdTowerRenderer
  */
 
-import { Suspense, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useVideoTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createAdScreenTexture, createWindowGridTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
-import { resolvePublicSrc } from '@/shared/utils/media'
+import { resolvePublicSrc, resolvePublicSrcs } from '@/shared/utils/media'
+import { useVideoPlaylistTexture, resolvePlaylist } from '@/shared/hooks/useVideoPlaylistTexture'
 import type { EntityRendererProps } from '@/engine/types'
 
-/** Loads and plays the entity's video as a screen texture; isolated so `Suspense` guards only this. */
-function VideoScreen({ src, width, height }: { src: string; width: number; height: number }) {
-  const texture = useVideoTexture(src, { muted: true, loop: true, start: true })
+/** Plays the entity's video playlist as a screen texture. */
+function VideoScreen({ texture, width, height }: { texture: THREE.VideoTexture; width: number; height: number }) {
   return (
     <mesh position={[0, 0, 0.02]}>
       <planeGeometry args={[width, height]} />
@@ -72,13 +71,16 @@ export function AdTowerRenderer({ entity }: EntityRendererProps) {
     const rand = createSeededRandom(seed)
     return { width: 5 + rand() * 2.4, depth: 4 + rand() * 2, height: 16 + rand() * 14 }
   }, [seed])
-  /** +1/-1 X direction from the tower's center toward the road, based on which side of the street it sits on. */
   const roadSign = entity.position[0] > 0 ? -1 : 1
   const screenY = height * 0.58
   const screenHeight = height * 0.5
   const screenSpan = depth * 0.82
   const windowTexture = useMemo(() => createWindowGridTexture(seed, 5, Math.round(height * 1.4)), [seed, height])
-  const videoSrc = useMemo(() => resolvePublicSrc(entity.videoSrc), [entity.videoSrc])
+  const playlist = useMemo(
+    () => resolvePlaylist(resolvePublicSrc(entity.videoSrc), resolvePublicSrcs(entity.videoSrcs)),
+    [entity.videoSrc, entity.videoSrcs]
+  )
+  const videoTexture = useVideoPlaylistTexture(playlist)
   const rimRef = useRef<THREE.PointLight>(null)
 
   useFrame(({ clock }) => {
@@ -108,10 +110,8 @@ export function AdTowerRenderer({ entity }: EntityRendererProps) {
           </mesh>
 
           <group position={[roadSign * (width / 2 + 0.03), screenY, 0]} rotation-y={roadSign * (Math.PI / 2)}>
-            {videoSrc ? (
-              <Suspense fallback={<ProceduralScreen width={screenSpan} height={screenHeight} seed={seed} />}>
-                <VideoScreen src={videoSrc} width={screenSpan} height={screenHeight} />
-              </Suspense>
+            {videoTexture ? (
+              <VideoScreen texture={videoTexture} width={screenSpan} height={screenHeight} />
             ) : (
               <ProceduralScreen width={screenSpan} height={screenHeight} seed={seed} />
             )}
