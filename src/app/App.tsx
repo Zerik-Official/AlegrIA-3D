@@ -31,6 +31,7 @@ import { useSceneEditors } from '@/app/hooks/useSceneEditors'
 import { usePointerLockGuard } from '@/app/hooks/usePointerLockGuard'
 import { useHotkeys } from '@/app/hooks/useHotkeys'
 import type { HotkeyContext } from '@/app/engine/HotkeyRouter'
+import { isDebugEnabled } from '@/shared/config/debug'
 
 /**
  * Root application orchestrating scene phases, wormhole timing and player distance.
@@ -42,7 +43,7 @@ import type { HotkeyContext } from '@/app/engine/HotkeyRouter'
  */
 export default function App() {
   const phaseFlow = usePhaseFlow()
-  usePhaseAudio(phaseFlow.phase, phaseFlow.libraryVisitCount)
+  const audioRemainingSec = usePhaseAudio(phaseFlow.phase, phaseFlow.libraryVisitCount)
   const proximity = usePlayerProximity(phaseFlow.phase)
   usePicoAudio(phaseFlow.isPhase2, proximity.picoDistance)
   const editors = useSceneEditors(phaseFlow.phase)
@@ -53,11 +54,21 @@ export default function App() {
   const handlePhotoSelect = useCallback((id: string) => setSelectedPhotoId(id), [])
   const handlePhotoClose = useCallback(() => setSelectedPhotoId(null), [])
 
-  const [isEditorEnabled, setIsEditorEnabled] = useState(false)
-  const toggleEditor = useCallback(() => setIsEditorEnabled((v) => !v), [])
-  const closeEditor = useCallback(() => setIsEditorEnabled(false), [])
+  const [isEditorEnabledRaw, setIsEditorEnabledRaw] = useState(false)
+  // Editor only available when VITE_DEBUG=True; otherwise forced off.
+  const isEditorEnabled = isDebugEnabled && isEditorEnabledRaw
+  const toggleEditor = useCallback(() => {
+    if (!isDebugEnabled) return
+    setIsEditorEnabledRaw((v) => !v)
+  }, [])
+  const closeEditor = useCallback(() => setIsEditorEnabledRaw(false), [])
   const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
   const orbitControlsRef = useRef<any>(null)
+
+  // If debug is disabled while editor was open (hot reload), close it.
+  useEffect(() => {
+    if (!isDebugEnabled && isEditorEnabledRaw) setIsEditorEnabledRaw(false)
+  }, [isEditorEnabledRaw])
 
   const [cityWalkProgress, setCityWalkProgress] = useState(0)
   const arrivedAtLibrary = cityWalkProgress >= appConfig.cityIntro.arrivalThreshold
@@ -177,13 +188,14 @@ export default function App() {
       </Canvas>
 
       {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startExperience} />}
-      {phaseFlow.isCityIntro && <CityIntroHUD arrived={arrivedAtLibrary} onEnter={phaseFlow.enterLibrary} />}
-      {phaseFlow.phase === 'exploring' && <HUD nearBook={proximity.nearBook} wormholeActive={false} onInteract={phaseFlow.handleBookInteract} variant="library" />}
+      {phaseFlow.isCityIntro && <CityIntroHUD arrived={arrivedAtLibrary} onEnter={phaseFlow.enterLibrary} audioRemainingSec={audioRemainingSec} />}
+      {phaseFlow.phase === 'exploring' && <HUD nearBook={proximity.nearBook} wormholeActive={false} onInteract={phaseFlow.handleBookInteract} variant="library" audioRemainingSec={audioRemainingSec} />}
       {phaseFlow.phase === 'wormhole' && (
         <HUD
           nearBook={proximity.nearBook}
           wormholeActive
           onInteract={() => {}}
+          audioRemainingSec={audioRemainingSec}
           variant={
             phaseFlow.wormholeTarget === 'phase1'
               ? 'phase1'
@@ -197,7 +209,7 @@ export default function App() {
       )}
       {phaseFlow.isPhase1 && !phaseFlow.showPhase1Overlay && (
         <>
-          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} variant="phase1" />
+          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} variant="phase1" audioRemainingSec={audioRemainingSec} />
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
             Explora • Aduana • Estación Montoya
           </div>
@@ -222,7 +234,7 @@ export default function App() {
       )}
       {phaseFlow.isPhase2 && !phaseFlow.showPhase2Overlay && (
         <>
-          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} variant="phase2" />
+          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} variant="phase2" audioRemainingSec={audioRemainingSec} />
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1a1208]/10 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1a1208]/80 shadow backdrop-blur">
             Fase 2 — Época Dorada • Carnaval y Béisbol • Trinitarias
           </div>
@@ -304,7 +316,7 @@ export default function App() {
         currentScene={editors.currentScene}
       />
 
-      {!isEditorEnabled && (
+      {isDebugEnabled && !isEditorEnabled && (
         <div className="pointer-events-none fixed bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-[10px] tracking-[0.12em] uppercase text-parchment/40 backdrop-blur">
           F2 — Editor de Posiciones
         </div>
