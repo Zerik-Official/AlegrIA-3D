@@ -5,6 +5,9 @@ import { Phase2Streets } from '@/features/phase2/components/parts/Phase2Streets'
 import { initialPhase2Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
+/** Entities farther than this from the camera don't cast shadows (see `PhaseEngine`). */
+const SHADOW_DISTANCE = 30
+
 /**
  * Props for {@link Phase2Scene}.
  */
@@ -36,7 +39,7 @@ export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase
       </mesh>
       <Phase2Streets />
 
-      <PhaseEngine entities={entities} />
+      <PhaseEngine entities={entities} shadowDistance={SHADOW_DISTANCE} />
 
       <SceneClouds count={10} spreadX={70} rangeZ={[-36, -14]} rangeY={[18, 24]} color="#fff4e0" underColor="#f0c88a" />
       <ambientLight intensity={0.72} color="#ffe9c4" />
