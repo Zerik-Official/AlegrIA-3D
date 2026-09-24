@@ -74,6 +74,36 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
   {
+    type: 'mesh-tower',
+    label: 'Torre de malla futurista',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'needle-tower',
+    label: 'Torre aguja futurista',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'neon-bench',
+    label: 'Banca neón',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'neon-planter',
+    label: 'Maceta neón',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'screen-building',
+    label: 'Edificio pantalla neón (video)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 0.35, videoSrc: '/videos/cityIntro/first.mp4' },
+  },
+  {
     type: 'ad-tower',
     label: 'Torre de Pantallas',
     scenes: ['cityIntro'],
