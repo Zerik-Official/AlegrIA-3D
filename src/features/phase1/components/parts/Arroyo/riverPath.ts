@@ -1,33 +1,25 @@
 /**
- * Curved centerline for the arroyo — a gentle meander instead of a straight
- * strip — plus a cross-section "loft" builder (sweep a profile of
- * `{offset, y}` points along the curve) so the banks slope continuously
- * down to the surrounding ground with no gap/floating-platform seam, and a
- * helper to sample offset points along the curve for scattering bank detail
- * (rocks, reeds).
+ * Generic curved-river geometry helpers, shared by every water feature in
+ * Phase 1 (the small arroyo, and the big Río Magdalena): a centerline-curve
+ * builder from `[x, z]` control points, a cross-section "loft" builder (sweep
+ * a profile of `{offset, y}` points along the curve) so banks slope
+ * continuously down to the surrounding ground with no gap/floating-platform
+ * seam, and a helper to sample offset points along the curve for scattering
+ * bank detail (rocks, reeds).
  * @module features/phase1/components/parts/Arroyo/riverPath
  */
 
 import * as THREE from 'three'
 
-/** `[x, z]` control points the river curve interpolates through. */
-const CONTROL_POINTS: Array<[number, number]> = [
-  [-19, -1.0],
-  [-11.5, -0.35],
-  [-4, -1.75],
-  [3.5, -0.5],
-  [11, -1.85],
-  [19, -1.15],
-]
-
 /**
- * Builds the river's centerline curve. Y is unused here — height comes from
- * whichever loft profile samples this curve.
+ * Builds a river/stream centerline curve from `[x, z]` control points. Y is
+ * unused here — height comes from whichever loft profile samples this curve.
+ * @param points - `[x, z]` control points the curve interpolates through
  * @returns Centerline curve
  */
-export function createRiverCurve(): THREE.CatmullRomCurve3 {
+export function buildRiverCurve(points: Array<[number, number]>): THREE.CatmullRomCurve3 {
   return new THREE.CatmullRomCurve3(
-    CONTROL_POINTS.map(([x, z]) => new THREE.Vector3(x, 0, z)),
+    points.map(([x, z]) => new THREE.Vector3(x, 0, z)),
     false,
     'catmullrom',
     0.4
