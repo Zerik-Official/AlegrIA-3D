@@ -265,42 +265,74 @@ const TRAIN_LOOP_POINTS: Array<[number, number]> = [
 ]
 
 /**
- * The train — its `.glb` carries baked wheel-rotation clips (see
+ * Arc-length distance each car trails behind the locomotive, matching the
+ * coupler-to-coupler gaps baked into `tren_animado.py` (front coupler +
+ * ~0.4m slack + the next car's front-to-center distance). Used to run the
+ * consist as independently-oriented pieces instead of one long rigid body
+ * pivoting around a single curve sample — which is what made turns at the
+ * rail loop's corners look wrong.
+ */
+const TRAIN_CAR_OFFSETS = [
+  { key: 'phase1/vehicles/tren-locomotora', trailDistance: 0 },
+  { key: 'phase1/vehicles/tren-coche', trailDistance: 15.5 },
+  { key: 'phase1/vehicles/tren-vagon', trailDistance: 25.6 },
+] as const
+
+/**
+ * The train — its `.glb`s carry baked wheel-rotation clips (see
  * `TrenAnimado`), so it gets its own renderer instead of the generic
  * `ModelLoader`-based one. Runs around {@link TRAIN_LOOP_POINTS} at constant
  * speed regardless of its own JSON `position`/`rotationY`.
+ *
+ * The default "full train" variant is assembled from the three separately
+ * exported car `.glb`s (locomotive, coche, vagón), each independently
+ * positioned/oriented along the loop via its own {@link TRAIN_CAR_OFFSETS}
+ * trail distance — rather than the single `tren-completo.glb` moved as one
+ * rigid body — so each car's heading follows the curve at its own point
+ * instead of the whole consist swinging around one pivot on turns.
  * @param props - Entity props
  * @returns Animated train or fallback
  */
 function TrenRenderer({ entity }: EntityRendererProps) {
-  const rawKey = entity.variant && TRAIN_KEYS.has(entity.variant) ? entity.variant : 'phase1/vehicles/tren-completo'
-  const entry = modelRegistry[rawKey as keyof typeof modelRegistry]
   const loopCurve = useMemo(
     () => new THREE.CatmullRomCurve3(TRAIN_LOOP_POINTS.map(([x, z]) => new THREE.Vector3(x, 0, z)), true, 'catmullrom', 0.3),
     []
   )
+  const fallback = (
+    <group position={[0, 0.55, 0]}>
+      <mesh position={[-1.6, 0, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2.6, 1.05, 1]} />
+        <meshStandardMaterial color="#2a2118" roughness={0.85} />
+      </mesh>
+      <mesh position={[-2.6, 0.55, 0]} castShadow>
+        <cylinderGeometry args={[0.32, 0.36, 1.3, 12]} />
+        <meshStandardMaterial color="#1a1410" roughness={0.8} />
+      </mesh>
+      <mesh position={[0.6, 0, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2.2, 0.95, 0.95]} />
+        <meshStandardMaterial color="#6a5240" roughness={0.85} />
+      </mesh>
+    </group>
+  )
+
+  if (entity.variant && TRAIN_KEYS.has(entity.variant) && entity.variant !== 'phase1/vehicles/tren-completo') {
+    const entry = modelRegistry[entity.variant as keyof typeof modelRegistry]
+    return <TrenAnimado src={entry.path} loopCurve={loopCurve} speed={9} fallback={fallback} />
+  }
+
   return (
-    <TrenAnimado
-      src={entry.path}
-      loopCurve={loopCurve}
-      speed={9}
-      fallback={
-        <group position={[0, 0.55, 0]}>
-          <mesh position={[-1.6, 0, 0]} castShadow receiveShadow>
-            <boxGeometry args={[2.6, 1.05, 1]} />
-            <meshStandardMaterial color="#2a2118" roughness={0.85} />
-          </mesh>
-          <mesh position={[-2.6, 0.55, 0]} castShadow>
-            <cylinderGeometry args={[0.32, 0.36, 1.3, 12]} />
-            <meshStandardMaterial color="#1a1410" roughness={0.8} />
-          </mesh>
-          <mesh position={[0.6, 0, 0]} castShadow receiveShadow>
-            <boxGeometry args={[2.2, 0.95, 0.95]} />
-            <meshStandardMaterial color="#6a5240" roughness={0.85} />
-          </mesh>
-        </group>
-      }
-    />
+    <>
+      {TRAIN_CAR_OFFSETS.map(({ key, trailDistance }) => (
+        <TrenAnimado
+          key={key}
+          src={modelRegistry[key as keyof typeof modelRegistry].path}
+          loopCurve={loopCurve}
+          speed={9}
+          trailDistance={trailDistance}
+          fallback={trailDistance === 0 ? fallback : <></>}
+        />
+      ))}
+    </>
   )
 }
 
