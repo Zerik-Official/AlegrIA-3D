@@ -22,6 +22,7 @@ import { catalogForScene } from '@/engine/config/entityCatalog'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import { WormholeCamera } from '@/app/components/WormholeCamera'
 import { EditorTargetFinder } from '@/app/components/EditorTargetFinder'
+import { EditorSelectionPicker } from '@/app/components/EditorSelectionPicker'
 import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import { usePhaseFlow } from '@/app/hooks/usePhaseFlow'
 import { usePlayerProximity } from '@/app/hooks/usePlayerProximity'
@@ -153,6 +154,7 @@ export default function App() {
         )}
         {isEditorEnabled && <OrbitControls ref={orbitControlsRef} enableDamping={false} />}
         {isEditorEnabled && <EditorFlyControls controlsRef={orbitControlsRef} enabled={isEditorEnabled} />}
+        {isEditorEnabled && <EditorSelectionPicker enabled={isEditorEnabled} entities={editors.currentEditor.entities} onSelect={editors.currentEditor.setSelectedId} />}
         {isEditorEnabled && <EditorTargetFinder selectedId={editors.currentEditor.selectedId} onFound={setEditorTarget} />}
         {isEditorEnabled && (
           <EditorGizmo
