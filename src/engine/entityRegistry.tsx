@@ -251,17 +251,20 @@ const TRAIN_KEYS = new Set<string>([
  * `phase1.json` (the `rail-*` entities) — corners plus one midpoint per side,
  * so the closed Catmull-Rom curve tracks that rectangle closely. The train
  * entity itself sits at the identity transform (`position: [0,0,0]`) since
- * this curve already carries it in world space.
+ * this curve already carries it in world space. Kept 10 units west of the
+ * rail JSON's original placement so the loop's east side clears the Río
+ * Magdalena's town-side bank (`MAGDALENA_TOWN_EDGE_X`), which used to swallow
+ * the track and train on that side.
  */
 const TRAIN_LOOP_POINTS: Array<[number, number]> = [
-  [-4, -76],
-  [28, -76],
-  [60, -76],
-  [60, -60],
-  [60, -44],
-  [28, -44],
-  [-4, -44],
-  [-4, -60],
+  [-14, -76],
+  [18, -76],
+  [50, -76],
+  [50, -60],
+  [50, -44],
+  [18, -44],
+  [-14, -44],
+  [-14, -60],
 ]
 
 /**
