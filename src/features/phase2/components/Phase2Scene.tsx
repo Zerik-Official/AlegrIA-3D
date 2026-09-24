@@ -27,7 +27,7 @@ export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase
   return (
     <group>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[84, 84]} />
+        <planeGeometry args={[240, 240]} />
         <meshStandardMaterial color="#bfa86a" roughness={1} />
       </mesh>
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.001, 0]} receiveShadow>
