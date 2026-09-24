@@ -13,6 +13,7 @@ import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHous
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
+import { MusicalJukebox } from '@/features/phase2/components/parts/MusicalJukebox'
 import { DancerPerformer } from '@/features/phase2/components/parts/DancerPerformer'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
@@ -205,6 +206,19 @@ function GenericPhase2ModelRenderer({ entity }: EntityRendererProps) {
 }
 
 /**
+ * "El Poderoso" jukebox — the generic model wrapped with beat vibration and floating notes.
+ * @param props - Entity props
+ * @returns Animated jukebox
+ */
+function ElPoderosoRenderer(props: EntityRendererProps) {
+  return (
+    <MusicalJukebox>
+      <GenericPhase2ModelRenderer {...props} />
+    </MusicalJukebox>
+  )
+}
+
+/**
  * Procedural fallback for the generic phase2 renderer.
  * @param props - Key hint to pick a plausible primitive
  * @returns Placeholder mesh
@@ -296,6 +310,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   trinitaria: TrinitariaRenderer,
   dancer: DancerRenderer,
   'parade-vehicle': ParadeVehicleRenderer,
+  'phase2/decorations/el-poderoso': ElPoderosoRenderer,
   'phase2-house': GenericPhase2ModelRenderer,
   'phase2-floor': GenericPhase2ModelRenderer,
   'phase2-decoration': GenericPhase2ModelRenderer,
