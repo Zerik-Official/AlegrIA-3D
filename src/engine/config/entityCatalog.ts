@@ -9,7 +9,7 @@
 import type { EditableEntity } from '@/engine/types'
 
 /** Scenes that own an editor instance (see `App.tsx`'s `useEditor` calls). */
-export type SceneId = 'cityIntro' | 'library' | 'phase1' | 'phase2'
+export type SceneId = 'cityIntro' | 'library' | 'phase1' | 'phase2' | 'credits'
 
 /**
  * One addable element: its renderer `type`, a human label for the editor UI,
@@ -114,6 +114,18 @@ export const entityCatalog: EntityCatalogItem[] = [
     label: 'Bus flotante con pantalla (video con sonido)',
     scenes: ['cityIntro'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, videoSrc: '/videos/future/barrio-abajo-tour.mp4' },
+  },
+  {
+    type: 'street-jukebox-car',
+    label: 'Carro-picó riwi (avenida)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'poderoso-premium',
+    label: 'El Poderoso Premium (picó)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
   {
     type: 'mesh-tower',
