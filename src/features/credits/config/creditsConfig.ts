@@ -9,11 +9,12 @@ import { initialCityIntroEntities } from '@/features/editor/config/editableEntit
 
 /**
  * How far in front of the RIWI Barranquilla building (along its facing
- * direction) the door trigger sits — close to the entrance itself, since the
- * street party ("El Poderoso Premium" and its dancers) moved down to the
- * street's actual dead end instead of camping right at the door.
+ * direction) the door trigger — and its visible portal — sit. Out in the open
+ * forecourt rather than tucked against the door, so the portal reads clearly
+ * from a distance; the street party ("El Poderoso Premium" and its dancers)
+ * moved down to the street's actual dead end instead of camping here.
  */
-const DOOR_OFFSET = 3
+const DOOR_OFFSET = 5.5
 
 /**
  * World XZ of the credits door prompt — looked up once from the
@@ -30,6 +31,15 @@ export const CREDITS_DOOR_XZ: [number, number] = (() => {
 
 /** Distance within which the door prompt shows. */
 export const CREDITS_DOOR_RANGE = 3.2
+
+/** Height above the ground the visible credits portal is centered at. */
+export const CREDITS_PORTAL_Y = 1.35
+/** Visible credits portal's ring radius. */
+export const CREDITS_PORTAL_RADIUS = 1.3
+/** Visible credits portal's warm accent color (outer ring, halo, embers). */
+export const CREDITS_PORTAL_ACCENT = '#ffd27a'
+/** Visible credits portal's cool glow color (inner ring, vortex, ground light). */
+export const CREDITS_PORTAL_GLOW = '#a855ff'
 
 /** World point the credits scene's room is built around — between its two columns, where Omar dances. */
 export const CREDITS_CENTER: [number, number, number] = [0, 0, 0]
