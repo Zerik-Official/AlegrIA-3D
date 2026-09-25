@@ -104,6 +104,18 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
   {
+    type: 'riwi-barranquilla',
+    label: 'Sede RIWI Barranquilla',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'ad-bus',
+    label: 'Bus flotante con pantalla (video con sonido)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, videoSrc: '/videos/future/barrio-abajo-tour.mp4' },
+  },
+  {
     type: 'mesh-tower',
     label: 'Torre de malla futurista',
     scenes: ['cityIntro'],
