@@ -19,6 +19,7 @@ import { cityIntroModelUrls, cityIntroVideoUrls, phase2ModelUrls, phase2VideoUrl
 import { audioTracks } from '@/shared/config/audio'
 import type { GamePhase } from '@/shared/types'
 import { WormholeTimeline } from '@/app/engine/WormholeTimeline'
+import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 
 /**
  * Choreography of the central book in the library.
@@ -130,11 +131,16 @@ export interface PhaseFlow {
   dismissPhase1Intro: () => void
   /** Dismisses the Phase 2 intro overlay. */
   dismissPhase2Intro: () => void
+  /** Editor checkpoint (see `PhaseSceneRegistry.listJumpTargets`) describing where the story currently stands. */
+  checkpointId: string
   /**
-   * Instantly jumps to any phase without the linear walk/wormhole sequence.
-   * Intended for editor/dev use: cancels any in-flight wormhole timeline and clears overlays.
+   * Instantly jumps to a story checkpoint without the walk/wormhole sequence,
+   * setting up everything that checkpoint implies (library visits so far,
+   * whether the hall is restored) so the story carries on correctly from
+   * there. Intended for editor/dev use: cancels any in-flight wormhole
+   * timeline and clears overlays.
    */
-  jumpToPhase: (target: GamePhase) => void
+  jumpToCheckpoint: (id: string) => void
 }
 
 /**
@@ -151,6 +157,8 @@ export function usePhaseFlow(): PhaseFlow {
   const [bookStage, setBookStage] = useState<LibraryBookStage>('dormant')
   const [libraryRestored, setLibraryRestored] = useState(false)
   const [libraryPortalUnlocked, setLibraryPortalUnlocked] = useState(false)
+  /** Bumped to re-run the library's entry choreography when jumping into the library while already in it. */
+  const [libraryEntry, setLibraryEntry] = useState(0)
   const timeline = useRef(new WormholeTimeline()).current
   /** Pending `setTimeout` ids from the book/portal choreography, cleared on unmount or when a new visit restarts it. */
   const bookTimers = useRef<number[]>([])
@@ -185,7 +193,7 @@ export function usePhaseFlow(): PhaseFlow {
       }
       return next
     })
-  }, [phase, clearBookTimers])
+  }, [phase, libraryEntry, clearBookTimers])
 
   useEffect(() => clearBookTimers, [clearBookTimers])
 
@@ -271,23 +279,28 @@ export function usePhaseFlow(): PhaseFlow {
   const dismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
 
   /**
-   * Instantly jumps to `target`, bypassing walk/wormhole sequencing.
-   * @param target - Destination game phase
+   * Jumps to a story checkpoint. Entering the library goes through its usual
+   * entry choreography (the visit count is set one short, and the entry
+   * effect counts the visit), so the book behaves as on a real visit.
+   * @param id - Checkpoint id
    */
-  const jumpToPhase = useCallback(
-    (target: GamePhase) => {
+  const jumpToCheckpoint = useCallback(
+    (id: string) => {
+      const checkpoint = phaseSceneRegistry.findJumpTarget(id)
+      if (!checkpoint) return
       timeline.cancel()
       clearBookTimers()
       setWormholeProgress(0)
       setShowPhase1Overlay(false)
       setShowPhase2Overlay(false)
-      setBookStage('ready')
-      setLibraryRestored(false)
+      setLibraryVisitCount(checkpoint.priorLibraryVisits)
+      setBookStage(checkpoint.phase === 'idle' ? 'dormant' : 'ready')
+      setLibraryRestored(checkpoint.phase === 'cityIntro')
       setLibraryPortalUnlocked(false)
-      setPhase(target)
-      if (target === 'phase1' || target === 'phase2') {
-        setWormholeTarget(target)
-      }
+      setWormholeSource(checkpoint.phase)
+      setWormholeTarget(checkpoint.phase)
+      setPhase(checkpoint.phase)
+      if (checkpoint.phase === 'exploring') setLibraryEntry((n) => n + 1)
     },
     [timeline, clearBookTimers]
   )
@@ -321,6 +334,7 @@ export function usePhaseFlow(): PhaseFlow {
     startWormholeToCityIntro,
     dismissPhase1Intro,
     dismissPhase2Intro,
-    jumpToPhase,
+    checkpointId: phaseSceneRegistry.checkpointFor(scenePhase, libraryVisitCount),
+    jumpToCheckpoint,
   }
 }
