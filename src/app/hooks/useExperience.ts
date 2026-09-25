@@ -103,7 +103,7 @@ export function useExperience(): Experience {
   const storyBookVisible = inOpenPhase && !phaseFlow.introOverlayOpen && !photo.selectedPhoto && !editor.isEditorEnabled
   const portalFocus = scenePhase === 'exploring' ? LIBRARY_PORTAL : isOpenPhase(scenePhase) ? storyBook.portal : null
 
-  usePointerLockGuard(editor.isEditorEnabled || phaseFlow.introOverlayOpen || phase === 'idle')
+  usePointerLockGuard(editor.isEditorEnabled || phaseFlow.introOverlayOpen || phase === 'idle' || phaseFlow.isCredits)
 
   const hotkeyContext: HotkeyContext = {
     phase,
@@ -116,6 +116,10 @@ export function useExperience(): Experience {
     cityFreeRoam: city.freeRoam,
     isPhase1: phaseFlow.isPhase1,
     isPhase2: phaseFlow.isPhase2,
+    isCredits: phaseFlow.isCredits,
+    nearCreditsDoor: proximity.nearCreditsDoor,
+    enterCredits: phaseFlow.enterCredits,
+    exitCredits: phaseFlow.exitCredits,
     highlightedPhotoId: proximity.highlightedPhotoId,
     hasSelectedPhoto: !!photo.selectedPhoto,
     isEditorEnabled: editor.isEditorEnabled,
