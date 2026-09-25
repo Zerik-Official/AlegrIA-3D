@@ -27,10 +27,15 @@ export const CARNIVAL_NEON = ['#FFD60A', '#39FF88', '#2E9BFF', '#FF007F', '#FF7A
 /** Stretch of the avenue the party fills, as `[minX, maxX, minZ, maxZ]` — sidewalk to sidewalk, from the walk's start to the aduana. */
 export const PARTY_AREA: [number, number, number, number] = [-5.5, 5.5, -38.5, 27]
 
-/** How many dancers fill the avenue. */
-export const CROWD_COUNT = 520
+/** How many dancers fill the avenue — kept modest since only the ones in the camera's view get animated (see `CarnivalCrowd`), but all of them still draw. */
+export const CROWD_COUNT = 260
 /** Half-width of the corridor kept free along the walk's path, so the camera never goes through anyone. */
 export const WALK_CLEARANCE = 1.3
+
+/** Clothes in carnival colors, shared by every instanced crowd (the avenue and the local knots around the sound systems). */
+export const CARNIVAL_CLOTHES = ['#FF007F', '#FFB703', '#00B4D8', '#39FF88', '#E63946', '#8A2BE2', '#FF7A00', '#1E8C86', '#F2C14E', '#FFFFFF']
+/** Skin tones, shared the same way. */
+export const CARNIVAL_SKIN = ['#8d5524', '#c68642', '#e0ac69', '#f1c27d', '#5c3317', '#a0522d']
 
 /** A food stall on the sidewalk, facing the avenue. */
 export interface CarnivalStall {
@@ -102,3 +107,34 @@ export const CROWD_BLOCKING_BOXES: Footprint[] = [
 export const CROWD_BLOCKING_CIRCLES: Array<{ x: number; z: number; radius: number }> = initialCityIntroEntities
   .filter((e) => e.type === 'roble-amarillo')
   .map((e) => ({ x: e.position[0], z: e.position[2], radius: 1.1 }))
+
+/**
+ * World XZ of the parked "street jukebox" carrosa (`street-jukebox-car`
+ * entity) — looked up once from `cityIntro.json` so `CarnivalMusicSystem` and
+ * the crowd layout can react to wherever it's actually placed instead of a
+ * position hardcoded here going stale on the next redesign. Falls back to a
+ * reasonable spot on the avenue if the entity is missing.
+ */
+export const STREET_JUKEBOX_CAR_XZ: [number, number] = (() => {
+  const car = initialCityIntroEntities.find((e) => e.type === 'street-jukebox-car')
+  return car ? [car.position[0], car.position[2]] : [-3.3, 7]
+})()
+
+/**
+ * World XZ of "El Poderoso Premium" rig (`poderoso-premium` entity), parked
+ * in front of RIWI's building on the side street by the aduana — looked up
+ * the same way as {@link STREET_JUKEBOX_CAR_XZ}.
+ */
+export const PODEROSO_PREMIUM_XZ: [number, number] = (() => {
+  const rig = initialCityIntroEntities.find((e) => e.type === 'poderoso-premium')
+  return rig ? [rig.position[0], rig.position[2]] : [24, -27]
+})()
+
+/** Half-footprint of the parked street jukebox car, so the avenue crowd dances around it instead of through it. */
+const CAR_HALF_FOOTPRINT: [number, number] = [2.2, 4.3]
+CROWD_BLOCKING_BOXES.push([
+  STREET_JUKEBOX_CAR_XZ[0] - CAR_HALF_FOOTPRINT[0],
+  STREET_JUKEBOX_CAR_XZ[0] + CAR_HALF_FOOTPRINT[0],
+  STREET_JUKEBOX_CAR_XZ[1] - CAR_HALF_FOOTPRINT[1],
+  STREET_JUKEBOX_CAR_XZ[1] + CAR_HALF_FOOTPRINT[1],
+])
