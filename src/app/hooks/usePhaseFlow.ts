@@ -98,6 +98,8 @@ export interface PhaseFlow {
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
   isPhase2: boolean
+  /** Whether `phase` currently resolves to the team credits scene. */
+  isCredits: boolean
   /** How many times `exploring` (the library) has been entered so far — 0 before the first visit. */
   libraryVisitCount: number
   /** Stage of the book/portal choreography on the library's second (return) visit — see {@link LibraryBookStage}. */
@@ -131,6 +133,13 @@ export interface PhaseFlow {
   dismissPhase1Intro: () => void
   /** Dismisses the Phase 2 intro overlay. */
   dismissPhase2Intro: () => void
+  /**
+   * Enters the team credits scene from `cityIntro`'s door prompt at RIWI
+   * Barranquilla. Remembers `cityIntro` as the phase to return to.
+   */
+  enterCredits: () => void
+  /** Leaves the credits scene, back to `cityIntro` where it was entered from. */
+  exitCredits: () => void
   /** Editor checkpoint (see `PhaseSceneRegistry.listJumpTargets`) describing where the story currently stands. */
   checkpointId: string
   /**
@@ -166,6 +175,7 @@ export function usePhaseFlow(): PhaseFlow {
   const isCityIntro = phase === 'cityIntro'
   const isPhase1 = phase === 'phase1' || phase === 'museum'
   const isPhase2 = phase === 'phase2'
+  const isCredits = phase === 'credits'
   const scenePhase = phase === 'wormhole' ? wormholeSource : phase
   const crossingMode = wormholeSource === 'exploring' && wormholeTarget === 'phase1' ? 'book' : 'portal'
   const introOverlayOpen = (isPhase1 && showPhase1Overlay) || (isPhase2 && showPhase2Overlay)
@@ -278,6 +288,15 @@ export function usePhaseFlow(): PhaseFlow {
   const dismissPhase1Intro = useCallback(() => setShowPhase1Overlay(false), [])
   const dismissPhase2Intro = useCallback(() => setShowPhase2Overlay(false), [])
 
+  /** No wormhole for this one — it's a quick side trip, not a story beat. */
+  const enterCredits = useCallback(() => {
+    if (phase !== 'cityIntro') return
+    setPhase('credits')
+  }, [phase])
+  const exitCredits = useCallback(() => {
+    setPhase((current) => (current === 'credits' ? 'cityIntro' : current))
+  }, [])
+
   /**
    * Jumps to a story checkpoint. Entering the library goes through its usual
    * entry choreography (the visit count is set one short, and the entry
@@ -320,6 +339,7 @@ export function usePhaseFlow(): PhaseFlow {
     isCityIntro,
     isPhase1,
     isPhase2,
+    isCredits,
     libraryVisitCount,
     bookStage,
     libraryRestored,
@@ -334,6 +354,8 @@ export function usePhaseFlow(): PhaseFlow {
     startWormholeToCityIntro,
     dismissPhase1Intro,
     dismissPhase2Intro,
+    enterCredits,
+    exitCredits,
     checkpointId: phaseSceneRegistry.checkpointFor(scenePhase, libraryVisitCount),
     jumpToCheckpoint,
   }
