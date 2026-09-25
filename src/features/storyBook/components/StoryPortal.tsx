@@ -6,6 +6,7 @@ import { PortalOpening } from '@/shared/components/PortalOpening'
 import { getCollisionSolids } from '@/features/player/collision'
 import { playerConfig } from '@/shared/config/appConfig'
 import type { Bounds } from '@/shared/types'
+import type { PortalPlacement } from '@/app/hooks/useStoryBookFlow'
 
 /**
  * Props for {@link StoryPortal}.
@@ -13,8 +14,8 @@ import type { Bounds } from '@/shared/types'
 interface StoryPortalProps {
   /** Whether the portal should open; it is placed once, the first frame this turns true. */
   active: boolean
-  /** Reports the portal's world XZ once placed, so proximity can find it. */
-  onPlaced: (xz: [number, number]) => void
+  /** Reports where the portal was placed, so proximity can find it and the crossing cinematic can dive into it. */
+  onPlaced: (placement: PortalPlacement) => void
   /** Movement bounds of the current phase — the portal never opens outside them. */
   bounds?: Bounds
   /** Ground-level circles the player can't enter (e.g. Phase 2's landmark footprints). */
@@ -59,7 +60,7 @@ function isBlocked(x: number, z: number, floorY: number, obstacles: StoryPortalP
  */
 export const StoryPortal = memo(function StoryPortal({ active, onPlaced, bounds, obstacles, accentColor = '#ffcc33', glowColor = '#5ad8ff' }: StoryPortalProps) {
   const { camera } = useThree()
-  const [placement, setPlacement] = useState<{ position: [number, number, number]; yaw: number } | null>(null)
+  const [placement, setPlacement] = useState<PortalPlacement | null>(null)
   useFrame(() => {
     if (!active) {
       if (placement) setPlacement(null)
@@ -87,8 +88,9 @@ export const StoryPortal = memo(function StoryPortal({ active, onPlaced, bounds,
       const last = CANDIDATE_DISTANCES[CANDIDATE_DISTANCES.length - 1]
       const [x, z] = chosen ?? [camera.position.x + forward.x * last, camera.position.z + forward.z * last]
       const yaw = Math.atan2(camera.position.x - x, camera.position.z - z)
-      setPlacement({ position: [x, floorY + PORTAL_CENTER_Y, z], yaw })
-      onPlaced([x, z])
+      const next: PortalPlacement = { position: [x, floorY + PORTAL_CENTER_Y, z], yaw }
+      setPlacement(next)
+      onPlaced(next)
     }
   })
 
