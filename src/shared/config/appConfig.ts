@@ -82,6 +82,24 @@ export const storyBookConfig = {
 } as const
 
 /**
+ * Phase 1's rain, which sets in towards the end of its narration.
+ */
+export const rainConfig = {
+  /** Seconds left in Phase 1's narration at which the rain starts. */
+  startAtRemainingSec: 25,
+  /** How long the rain takes to build from a drizzle to full strength, in seconds. */
+  buildUpSec: 7,
+  /** Falling drops drawn around the player. */
+  dropCount: 3200,
+  /** Splash ripples drawn on the ground around the player. */
+  splashCount: 240,
+  /** Whether puddles reflect the scene (a second render of the scene every frame) — turn off on weak hardware. */
+  puddleReflections: true,
+  /** Loudness of the rain loop at full strength. */
+  volume: 0.5,
+} as const
+
+/**
  * Wormhole transition configuration.
  */
 export const wormholeConfig = {
@@ -116,6 +134,7 @@ export const appConfig = {
   player: playerConfig,
   cityIntro: cityIntroConfig,
   storyBook: storyBookConfig,
+  rain: rainConfig,
   wormhole: wormholeConfig,
   render: renderConfig,
 } as const
