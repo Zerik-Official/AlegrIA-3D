@@ -5,6 +5,7 @@ import { CarnivalCrowd } from '@/features/cityIntro/components/carnival/Carnival
 import { CarnivalPennants } from '@/features/cityIntro/components/carnival/CarnivalPennants'
 import { CarnivalHolograms } from '@/features/cityIntro/components/carnival/CarnivalHolograms'
 import { CarnivalStalls } from '@/features/cityIntro/components/carnival/CarnivalStalls'
+import { CarnivalMusicSystem } from '@/features/cityIntro/components/carnival/CarnivalMusicSystem'
 import { canvasTexture } from '@/features/cityIntro/components/carnival/neonCanvas'
 import { beatAt, PARTY_AREA } from '@/features/cityIntro/config/carnivalLayout'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
@@ -118,6 +119,7 @@ export const StreetCarnival = memo(function StreetCarnival({ pathEntities }: Str
       <CarnivalStalls />
       <BeatLights />
       <PavementGlow />
+      <CarnivalMusicSystem />
     </group>
   )
 })
