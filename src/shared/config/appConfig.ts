@@ -73,6 +73,10 @@ export const storyBookConfig = {
   restlessMs: 4200,
   /** Summoning beat: the book glides to the center of the screen and spins up, in ms. */
   summonMs: 2600,
+  /** How long the "the book is channeling energy" title stays up once the narration ends, in ms. */
+  channelingTitleMs: 6500,
+  /** How long the "explore this era meanwhile" title that follows it stays up, in ms. */
+  exploreTitleMs: 6000,
   /** How long the "portal opened" title stays up once the portal appears, in ms. */
   portalTitleMs: 6000,
 } as const
