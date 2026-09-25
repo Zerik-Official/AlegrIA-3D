@@ -127,7 +127,7 @@ export const STREET_JUKEBOX_CAR_XZ: [number, number] = (() => {
  */
 export const PODEROSO_PREMIUM_XZ: [number, number] = (() => {
   const rig = initialCityIntroEntities.find((e) => e.type === 'poderoso-premium')
-  return rig ? [rig.position[0], rig.position[2]] : [24, -27]
+  return rig ? [rig.position[0], rig.position[2]] : [29, -36.5]
 })()
 
 /** Half-footprint of the parked street jukebox car, so the avenue crowd dances around it instead of through it. */
