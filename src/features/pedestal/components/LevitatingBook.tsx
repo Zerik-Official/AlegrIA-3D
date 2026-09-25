@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
+import { BOOK_SHELF_SLOT } from '@/features/library/config/libraryLayout'
 
 /**
  * Props for {@link LevitatingBook}.
@@ -18,8 +19,8 @@ interface LevitatingBookProps {
   shelved?: number
 }
 
-/** World-space delta from the pedestal to the first bookshelf slot the returning book settles into, once read. */
-const SHELF_OFFSET = new THREE.Vector3(-7.2, -0.18, -10.05)
+/** World-space delta from the book's pedestal hover height to the shelf slot it returns to (see `BOOK_SHELF_SLOT`). */
+const SHELF_OFFSET = new THREE.Vector3(BOOK_SHELF_SLOT[0], BOOK_SHELF_SLOT[1] - 1.78, BOOK_SHELF_SLOT[2])
 
 /**
  * Procedural levitating book with hover, rotation and particle aura.
@@ -214,7 +215,6 @@ export const LevitatingBook = memo(function LevitatingBook({ appear = 1, shelved
     group.position.set(SHELF_OFFSET.x * current.current.shelved, SHELF_OFFSET.y * current.current.shelved, SHELF_OFFSET.z * current.current.shelved)
   })
 
-  // Fully hidden (empty pedestal) once both the target and the damped current scale have settled at 0 — skip mounting the (heavier) model/fallback subtree.
   if (appear <= 0.001 && current.current.appear <= 0.001) return <group ref={wrapRef} />
 
   return (
