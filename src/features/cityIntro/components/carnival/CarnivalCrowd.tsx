@@ -1,0 +1,207 @@
+import { memo, useLayoutEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+import {
+  beatAt,
+  CROWD_BLOCKING_BOXES,
+  CROWD_BLOCKING_CIRCLES,
+  CROWD_COUNT,
+  PARTY_AREA,
+  WALK_CLEARANCE,
+} from '@/features/cityIntro/config/carnivalLayout'
+import type { EditableEntity } from '@/features/editor/config/editableEntities'
+
+/**
+ * Props for {@link CarnivalCrowd}.
+ */
+interface CarnivalCrowdProps {
+  /** The walk's `path-point` entities — the crowd leaves a corridor along the path they trace. */
+  pathEntities: EditableEntity[]
+}
+
+/** One dancer. */
+interface Dancer {
+  x: number
+  z: number
+  scale: number
+  phase: number
+  hasArm: boolean
+  armSide: number
+  sway: number
+  rotation: number
+}
+
+/** Clothes in carnival colors. */
+const CLOTHES = ['#FF007F', '#FFB703', '#00B4D8', '#39FF88', '#E63946', '#8A2BE2', '#FF7A00', '#1E8C86', '#F2C14E', '#FFFFFF']
+/** Skin tones. */
+const SKIN = ['#8d5524', '#c68642', '#e0ac69', '#f1c27d', '#5c3317', '#a0522d']
+/** Radius within which dancers step aside for the player. */
+const MAKE_WAY_RADIUS = 1.5
+
+/**
+ * @param entities - `path-point` entities
+ * @returns The walk's X at a given Z (sampled from the same Catmull-Rom curve `CityWalkControls` follows), or `null` beyond the path
+ */
+function pathXAt(entities: EditableEntity[]): (z: number) => number | null {
+  const sorted = [...entities].sort((a, b) => (parseFloat(a.variant ?? '0') || 0) - (parseFloat(b.variant ?? '0') || 0))
+  if (sorted.length < 2) return () => null
+  const curve = new THREE.CatmullRomCurve3(
+    sorted.map((e) => new THREE.Vector3(e.position[0], 0, e.position[2])),
+    false,
+    'catmullrom',
+    0.3
+  )
+  const samples = curve.getSpacedPoints(240)
+  return (z) => {
+    let best: THREE.Vector3 | null = null
+    for (const p of samples) if (!best || Math.abs(p.z - z) < Math.abs(best.z - z)) best = p
+    return best && Math.abs(best.z - z) < 1.5 ? best.x : null
+  }
+}
+
+/**
+ * @param x - Candidate X
+ * @param z - Candidate Z
+ * @param walkX - Walk path's X at `z`, if it passes there
+ * @returns Whether a dancer may stand at `(x, z)`
+ */
+function isFreeSpot(x: number, z: number, walkX: number | null): boolean {
+  if (walkX !== null && Math.abs(x - walkX) < WALK_CLEARANCE) return false
+  for (const [minX, maxX, minZ, maxZ] of CROWD_BLOCKING_BOXES) if (x > minX && x < maxX && z > minZ && z < maxZ) return false
+  for (const c of CROWD_BLOCKING_CIRCLES) if (Math.hypot(x - c.x, z - c.z) < c.radius) return false
+  return true
+}
+
+/** Reused transform scratch so the dance allocates nothing per frame. */
+const scratch = {
+  matrix: new THREE.Matrix4(),
+  quat: new THREE.Quaternion(),
+  euler: new THREE.Euler(),
+  scale: new THREE.Vector3(),
+  pos: new THREE.Vector3(),
+  color: new THREE.Color(),
+}
+
+/**
+ * The street party's crowd: hundreds of dancers in carnival colors filling
+ * the avenue, hopping and swaying on the beat, some with an arm up. They
+ * leave a corridor along the walk's path, keep off the trees, slabs, bus and
+ * stalls, and step aside when the player walks among them.
+ *
+ * @param props - Walk path
+ * @returns Instanced crowd
+ */
+export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: CarnivalCrowdProps) {
+  const bodyRef = useRef<THREE.InstancedMesh>(null)
+  const headRef = useRef<THREE.InstancedMesh>(null)
+  const armRef = useRef<THREE.InstancedMesh>(null)
+  const geometries = useMemo(
+    () => ({
+      body: new THREE.CapsuleGeometry(0.21, 0.78, 4, 8),
+      head: new THREE.SphereGeometry(0.15, 10, 8),
+      arm: new THREE.CapsuleGeometry(0.05, 0.55, 2, 6),
+    }),
+    []
+  )
+  const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05 }), [])
+
+  const dancers = useMemo(() => {
+    const walkX = pathXAt(pathEntities)
+    const [minX, maxX, minZ, maxZ] = PARTY_AREA
+    const list: Dancer[] = []
+    let attempts = 0
+    while (list.length < CROWD_COUNT && attempts < CROWD_COUNT * 12) {
+      attempts++
+      const x = minX + Math.random() * (maxX - minX)
+      const z = minZ + Math.random() * (maxZ - minZ)
+      if (!isFreeSpot(x, z, walkX(z))) continue
+      list.push({
+        x,
+        z,
+        scale: 0.88 + Math.random() * 0.24,
+        phase: Math.random() * Math.PI * 2,
+        hasArm: Math.random() < 0.35,
+        armSide: Math.random() < 0.5 ? -1 : 1,
+        sway: 0.04 + Math.random() * 0.1,
+        rotation: Math.random() * Math.PI * 2,
+      })
+    }
+    return list
+  }, [pathEntities])
+
+  useLayoutEffect(() => {
+    const body = bodyRef.current
+    const head = headRef.current
+    const arm = armRef.current
+    if (!body || !head || !arm) return
+    dancers.forEach((_, i) => {
+      const clothes = scratch.color.set(CLOTHES[Math.floor(Math.random() * CLOTHES.length)])
+      body.setColorAt(i, clothes)
+      arm.setColorAt(i, clothes)
+      head.setColorAt(i, scratch.color.set(SKIN[Math.floor(Math.random() * SKIN.length)]))
+    })
+    for (const mesh of [body, head, arm]) {
+      mesh.count = dancers.length
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
+    }
+    material.needsUpdate = true
+  }, [dancers, material])
+
+  useFrame(({ clock, camera }) => {
+    const body = bodyRef.current
+    const head = headRef.current
+    const arm = armRef.current
+    if (!body || !head || !arm) return
+    const { beat } = beatAt(clock.elapsedTime)
+    for (let i = 0; i < dancers.length; i++) {
+      const d = dancers[i]
+      let x = d.x
+      let z = d.z
+      const dx = x - camera.position.x
+      const dz = z - camera.position.z
+      const dist = Math.hypot(dx, dz)
+      if (dist < MAKE_WAY_RADIUS && dist > 0.001) {
+        const push = (MAKE_WAY_RADIUS - dist) * 0.9
+        x += (dx / dist) * push
+        z += (dz / dist) * push
+      }
+      const hop = Math.abs(Math.sin(beat * Math.PI + d.phase)) * 0.13 * d.scale
+      const sway = Math.sin(beat * Math.PI * 0.5 + d.phase) * d.sway
+
+      scratch.euler.set(0, d.rotation, sway)
+      scratch.quat.setFromEuler(scratch.euler)
+      scratch.scale.setScalar(d.scale)
+      scratch.pos.set(x, 0.6 * d.scale + hop + 0.18, z)
+      scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
+      body.setMatrixAt(i, scratch.matrix)
+
+      scratch.pos.set(x - Math.sin(sway) * 0.18 * d.scale, 1.28 * d.scale + hop + 0.18, z)
+      scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
+      head.setMatrixAt(i, scratch.matrix)
+
+      if (d.hasArm) {
+        const wave = Math.sin(beat * Math.PI + d.phase) * 0.35
+        scratch.euler.set(0, d.rotation, d.armSide * (0.35 + wave))
+        scratch.quat.setFromEuler(scratch.euler)
+        const ox = Math.cos(d.rotation) * 0.24 * d.armSide
+        const oz = -Math.sin(d.rotation) * 0.24 * d.armSide
+        scratch.pos.set(x + ox, 1.35 * d.scale + hop + 0.18, z + oz)
+        scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
+      } else {
+        scratch.matrix.makeScale(0, 0, 0)
+      }
+      arm.setMatrixAt(i, scratch.matrix)
+    }
+    body.instanceMatrix.needsUpdate = true
+    head.instanceMatrix.needsUpdate = true
+    arm.instanceMatrix.needsUpdate = true
+  })
+
+  return (
+    <group>
+      <instancedMesh ref={bodyRef} args={[geometries.body, material, CROWD_COUNT]} castShadow frustumCulled={false} />
+      <instancedMesh ref={headRef} args={[geometries.head, material, CROWD_COUNT]} frustumCulled={false} />
+      <instancedMesh ref={armRef} args={[geometries.arm, material, CROWD_COUNT]} frustumCulled={false} />
+    </group>
+  )
+})
