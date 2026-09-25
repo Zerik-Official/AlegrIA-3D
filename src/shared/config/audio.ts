@@ -21,6 +21,8 @@ export const audioTracks = {
   present: `${base}sounds/PART-5-PRESENT.mp3`,
   /** City intro, reached as the finale via the book's second use. */
   finalFuture: `${base}sounds/PART-6-FINAL-FUTURE.mp3`,
+  /** The team credits scene. */
+  credits: `${base}sounds/credits/CREDITS-MUSIC.mp3`,
 } as const
 
 /** A key into {@link audioTracks}. */
@@ -34,3 +36,16 @@ export const ambienceTracks = {
   /** Phase 1's rain. */
   rain: `${base}sounds/atmosphere/SOUND-RAIN.mp3`,
 } as const
+
+/**
+ * The future avenue's sound system playlist — shuffled with no immediate
+ * repeats by `CarnivalMusicSystem`, one track playing at a time from the
+ * street jukebox car and "El Poderoso Premium" rig alike.
+ */
+export const carnivalPlaylist = [
+  `${base}sounds/music/MUSIC-ANIMALS-MARTIN.mp3`,
+  `${base}sounds/music/MUSIC-PROFESSIONAL.mp3`,
+  `${base}sounds/music/MUSIC-ROCKSTADY.mp3`,
+  `${base}sounds/music/MUSIC-STAMINA.mp3`,
+  `${base}sounds/music/MUSIS-CRYSTAL.mp3`,
+] as const
