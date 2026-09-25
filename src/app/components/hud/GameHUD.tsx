@@ -1,0 +1,96 @@
+import { memo } from 'react'
+import { HUD, StartOverlay } from '@/features/ui/components/HUD'
+import { CityIntroHUD } from '@/features/cityIntro/components/CityIntroHUD'
+import { PhotoModal } from '@/shared/components/PhotoModal'
+import { StoryTitle } from '@/shared/components/StoryTitle'
+import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
+import { catalogForScene } from '@/engine/config/entityCatalog'
+import { LibraryHUD } from '@/app/components/hud/LibraryHUD'
+import { OpenPhaseHUD } from '@/app/components/hud/OpenPhaseHUD'
+import { isDebugEnabled } from '@/shared/config/debug'
+import type { Experience } from '@/app/hooks/useExperience'
+import type { GamePhase } from '@/shared/types'
+
+/**
+ * Props for {@link GameHUD}.
+ */
+interface GameHUDProps {
+  /** Composed experience state. */
+  experience: Experience
+}
+
+/**
+ * @param target - Phase a wormhole leads to
+ * @returns The HUD variant whose labels describe that destination
+ */
+function variantForTarget(target: GamePhase): 'library' | 'phase1' | 'phase2' | 'cityIntro' {
+  if (target === 'phase1' || target === 'museum') return 'phase1'
+  if (target === 'phase2') return 'phase2'
+  if (target === 'cityIntro') return 'cityIntro'
+  return 'library'
+}
+
+/**
+ * Every DOM layer over the canvas: the start screen, each phase's overlay
+ * (city, library, wormhole, open phases), the photo modal and the editor.
+ *
+ * @param props - Experience state
+ * @returns HUD layers
+ */
+export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
+  const { phaseFlow, city, photo, editor, editors, inOpenPhase, audioRemainingSec } = experience
+  const { phase } = phaseFlow
+  const current = editors.currentEditor
+
+  return (
+    <>
+      {phase === 'idle' && <StartOverlay onStart={phaseFlow.startExperience} />}
+
+      {phaseFlow.isCityIntro && <CityIntroHUD freeRoam={city.freeRoam} audioRemainingSec={audioRemainingSec} />}
+      <StoryTitle
+        visible={city.showFarewell}
+        eyebrow="El Libro de Rosa"
+        title="El libro agradece que lo hayas devuelto"
+        subtitle="Ahora puedes explorar libremente el futuro, en donde persisten nuestra cultura y costumbres."
+      />
+
+      {phase === 'exploring' && <LibraryHUD experience={experience} />}
+      {phase === 'wormhole' && (
+        <HUD nearBook={false} wormholeActive onInteract={() => {}} audioRemainingSec={audioRemainingSec} variant={variantForTarget(phaseFlow.wormholeTarget)} />
+      )}
+      {inOpenPhase && <OpenPhaseHUD experience={experience} />}
+
+      <PhotoModal
+        open={!!photo.selectedPhoto}
+        src={photo.selectedPhoto?.src ?? ''}
+        title={photo.selectedPhoto?.title ?? ''}
+        description={photo.selectedPhoto?.description ?? ''}
+        onClose={photo.closePhoto}
+      />
+
+      <EditorOverlay
+        enabled={editor.isEditorEnabled}
+        catalog={catalogForScene(editors.currentScene)}
+        entities={current.entities}
+        selectedId={current.selectedId}
+        mode={current.mode}
+        onModeChange={current.setMode}
+        onSelect={current.setSelectedId}
+        onUpdate={current.updateEntity}
+        onAdd={current.addEntity}
+        onRemove={current.removeEntity}
+        onExport={current.exportJson}
+        onClose={editor.closeEditor}
+        currentPhase={phase}
+        onJumpToPhase={phaseFlow.jumpToPhase}
+        currentScene={editors.currentScene}
+      />
+
+      {isDebugEnabled && !editor.isEditorEnabled && (
+        <div className="pointer-events-none fixed bottom-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/45 px-3 py-1 text-[10px] tracking-[0.12em] uppercase text-parchment/40 backdrop-blur">
+          F2 — Editor de Posiciones
+        </div>
+      )}
+    </>
+  )
+})
