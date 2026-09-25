@@ -12,7 +12,6 @@ import { ScatteredBooks } from '@/features/library/components/ScatteredBooks'
 import { PendantLamp } from '@/features/library/components/PendantLamp'
 import { ReadingTable, SectionSign, ToppledShelf } from '@/features/library/components/LibraryFurnishings'
 import { TimeVortexSequence } from '@/features/cinematics/components/TimeVortexSequence'
-import { PortalCrossingSequence } from '@/features/cinematics/components/PortalCrossingSequence'
 import { RestoredLibrary } from '@/features/library/components/RestoredLibrary'
 import { LightBurst } from '@/features/library/components/LightBurst'
 import { ProceduralPortal } from '@/shared/components/ReusableModels'
@@ -151,7 +150,7 @@ interface LibrarySceneProps {
   libraryRestored?: boolean
   /** Whether the `cityIntro` portal has appeared and can be used. */
   libraryPortalUnlocked?: boolean
-  /** Which cinematic the running wormhole plays: the book's ritual over the pedestal, or diving through the restored hall's portal. */
+  /** Which cinematic the running wormhole plays: the book's ritual over the pedestal is drawn here; a portal crossing is drawn by the stage (see `PortalCrossing`). */
   crossingMode?: 'book' | 'portal'
   /** Optional engine-driven entities for editor. */
   editableEntities?: EditableEntity[]
@@ -349,13 +348,7 @@ export const LibraryScene = memo(function LibraryScene({
         </group>
       )}
 
-      {crossingMode === 'portal' ? (
-        <>
-          <PortalCrossingSequence active={wormholeActive} progress={wormholeProgress} center={LIBRARY_PORTAL_POSITION} />
-          <Wormhole active={wormholeActive} progress={wormholeProgress} center={LIBRARY_PORTAL_POSITION} />
-          <TimeVortexParticles active={wormholeActive} progress={wormholeProgress} center={LIBRARY_PORTAL_POSITION} />
-        </>
-      ) : (
+      {crossingMode === 'book' && (
         <>
           <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
           <Wormhole active={wormholeActive} progress={wormholeProgress} />
