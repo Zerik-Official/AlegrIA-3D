@@ -3,6 +3,9 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { wormholeConfig } from '@/shared/config/appConfig'
 
+/** Where the effect sits unless told otherwise: over the pedestal's levitating book. */
+const DEFAULT_CENTER: [number, number, number] = [0, 1.65, 0]
+
 /**
  * Props for {@link Wormhole}.
  */
@@ -11,6 +14,8 @@ interface WormholeProps {
   active: boolean
   /** Normalized progress in [0,1]. */
   progress: number
+  /** World position the effect is centered on — the pedestal's book by default, the portal when crossing it. */
+  center?: [number, number, number]
 }
 
 /** Reused quaternion instances to avoid per-frame allocations. */
@@ -24,7 +29,7 @@ const targetQuat = new THREE.Quaternion()
  * @param props - Wormhole state
  * @returns Wormhole group or null when inactive
  */
-export const Wormhole = memo(function Wormhole({ active, progress }: WormholeProps) {
+export const Wormhole = memo(function Wormhole({ active, progress, center = DEFAULT_CENTER }: WormholeProps) {
   const groupRef = useRef<THREE.Group>(null)
   const starsRef = useRef<THREE.Points>(null)
   const ringRefs = useRef<THREE.Mesh[]>([])
@@ -113,7 +118,7 @@ export const Wormhole = memo(function Wormhole({ active, progress }: WormholePro
   if (!active && progress === 0) return null
 
   return (
-    <group ref={groupRef} position={[0, 1.65, 0]}>
+    <group ref={groupRef} position={center}>
       <mesh position={[0, 0, -count * 0.58]}>
         <sphereGeometry args={[0.85 + progress * 3.1, 32, 32]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0.92} depthWrite={false} />
