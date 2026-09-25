@@ -7,6 +7,7 @@
  */
 
 import cityIntroJson from '@/engine/config/cityIntro.json'
+import phase2Json from '@/engine/config/phase2.json'
 import { resolvePublicSrc } from '@/shared/utils/media'
 import type { ModelRegistry } from '@/shared/types'
 
@@ -186,8 +187,37 @@ export function cityIntroModelUrls(): string[] {
  * @returns Resolved video URLs
  */
 export function cityIntroVideoUrls(): string[] {
+  return videoUrlsOf(cityIntroJson as Array<{ videoSrc?: string; videoSrcs?: string[] }>)
+}
+
+/**
+ * Every `phase2/*` model URL in the registry — preloaded while the player
+ * crosses Phase 1's portal, so Phase 2 doesn't stall parsing them on arrival.
+ * @returns Model URLs
+ */
+export function phase2ModelUrls(): string[] {
+  return Object.entries(modelRegistry)
+    .filter(([key]) => key.startsWith('phase2/'))
+    .map(([, entry]) => entry.path)
+}
+
+/**
+ * Every `videoSrc`/`videoSrcs` URL authored on `phase2.json` entities (the
+ * parade floats' screens), resolved against the app base — warmed alongside
+ * {@link phase2ModelUrls}.
+ * @returns Resolved video URLs
+ */
+export function phase2VideoUrls(): string[] {
+  return videoUrlsOf(phase2Json as Array<{ videoSrc?: string; videoSrcs?: string[] }>)
+}
+
+/**
+ * @param entities - Authored entities that may carry videos
+ * @returns Their resolved, de-duplicated video URLs
+ */
+function videoUrlsOf(entities: Array<{ videoSrc?: string; videoSrcs?: string[] }>): string[] {
   const urls = new Set<string>()
-  for (const entity of cityIntroJson as Array<{ videoSrc?: string; videoSrcs?: string[] }>) {
+  for (const entity of entities) {
     const single = resolvePublicSrc(entity.videoSrc)
     if (single) urls.add(single)
     for (const src of entity.videoSrcs ?? []) {
