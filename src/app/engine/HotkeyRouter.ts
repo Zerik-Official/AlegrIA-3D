@@ -77,6 +77,8 @@ export interface HotkeyContext {
   closeBookPage: () => void
   /** Closes the photo modal (`Escape` or re-pressing interact). */
   closePhoto: () => void
+  /** Skips the Libro de Rosa's ~1-minute wait straight to summoning the portal (`T`), in the open phases. */
+  skipBookWait: () => void
 }
 
 /**
@@ -94,6 +96,16 @@ export class HotkeyRouter {
 
     if (key === 'q') {
       this.togglePointerLock(ctx)
+      return
+    }
+
+    if (key === 't' && (ctx.isPhase1 || ctx.isPhase2) && !ctx.showPhase1Overlay && !ctx.showPhase2Overlay && !ctx.isEditorEnabled) {
+      ctx.skipBookWait()
+      return
+    }
+
+    if (key === 'c' && ctx.isCityIntro && ctx.cityFreeRoam && !ctx.isEditorEnabled) {
+      ctx.enterCredits()
       return
     }
 
