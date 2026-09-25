@@ -41,3 +41,22 @@ canvas { display: block; }
   45% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+/* Credits roll: leaders' names shimmer in gold while written, instead of plain parchment. */
+@keyframes credits-leader-shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Credits roll: a blinking caret at the end of the line currently being typed. */
+@keyframes credits-caret-blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* The book dedication panel's entrance, on the credits scene's right side. */
+@keyframes credits-dedication-in {
+  0% { opacity: 0; transform: translateX(18px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
