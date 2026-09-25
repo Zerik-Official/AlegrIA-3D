@@ -48,6 +48,7 @@ class PhaseSceneRegistry {
     library: { sceneId: 'library', fog: { color: '#0a0806', near: 9, far: 26 }, background: '#08060a' },
     phase1: { sceneId: 'phase1', fog: { color: '#8a6a3a', near: 24, far: 160 }, background: '#6b4a2a' },
     phase2: { sceneId: 'phase2', fog: { color: '#a9d8f5', near: 24, far: 84 }, background: '#8ec9f0' },
+    credits: { sceneId: 'credits', fog: { color: '#05040a', near: 14, far: 40 }, background: '#050308' },
   }
 
   /** The library once the returned book has restored it: warm, lit and far clearer than the abandoned hall's gloom. */
@@ -89,6 +90,7 @@ class PhaseSceneRegistry {
     if (phase === 'cityIntro') return 'cityIntro'
     if (phase === 'phase1' || phase === 'museum') return 'phase1'
     if (phase === 'phase2') return 'phase2'
+    if (phase === 'credits') return 'credits'
     return 'library'
   }
 
