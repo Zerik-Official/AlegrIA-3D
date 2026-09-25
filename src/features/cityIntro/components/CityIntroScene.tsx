@@ -68,7 +68,7 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
 
       <PhaseEngine entities={entities} context={{ flightLanes }} />
 
-      <Sparkles count={70} scale={[46, 10, 110]} position={[0, 5, 0]} size={2.4} speed={0.18} color={SOLAR_YELLOW} opacity={0.4} />
+      <Sparkles count={45} scale={[46, 10, 110]} position={[0, 5, 0]} size={2.4} speed={0.18} color={SOLAR_YELLOW} opacity={0.4} />
 
       <ambientLight intensity={0.5} color={SUNSET_ORANGE} />
       <hemisphereLight args={[NEON_MAGENTA, '#4a2a1a', 0.75]} />
