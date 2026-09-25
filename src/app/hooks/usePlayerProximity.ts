@@ -9,6 +9,7 @@ import * as THREE from 'three'
 import { appConfig } from '@/shared/config/appConfig'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import { findNearestSepiaPhoto } from '@/app/engine/proximity'
+import { LIBRARY_PORTAL_POSITION } from '@/features/library/config/libraryLayout'
 import { initialPhase1Entities, initialPhase2Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import type { GamePhase } from '@/shared/types'
@@ -33,7 +34,7 @@ function portalXZFrom(entities: EditableEntity[]): [number, number] | null {
  * `usePhaseFlow`'s `libraryPortalUnlocked`); its position stays fixed here so
  * proximity is correct even while it's hidden.
  */
-const LIBRARY_PORTAL_XZ: [number, number] = [0, -9.8]
+const LIBRARY_PORTAL_XZ: [number, number] = [LIBRARY_PORTAL_POSITION[0], LIBRARY_PORTAL_POSITION[2]]
 
 /** Phase 1's portal (to Phase 2) and Phase 2's portal (back to the library), read once from their JSON. */
 const PORTAL_XZ_BY_PHASE: Partial<Record<GamePhase, [number, number]>> = {
@@ -86,9 +87,10 @@ export interface PlayerProximity {
 
 /**
  * @param phase - Current game phase, used to gate sepia-photo highlighting to Phase 1
+ * @param portalXZOverride - Where the current phase's portal actually is when it's placed at runtime (the Libro de Rosa's summoned portal in the open phases); `null` while it hasn't opened yet, `undefined` to use the phase's authored portal
  * @returns Proximity flags and the position feed callback
  */
-export function usePlayerProximity(phase: GamePhase): PlayerProximity {
+export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number, number] | null): PlayerProximity {
   const playerPos = useRef(new THREE.Vector3(0, appConfig.player.eyeHeight, 9))
   const [distance, setDistance] = useState(9)
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
@@ -96,7 +98,7 @@ export function usePlayerProximity(phase: GamePhase): PlayerProximity {
   const [congasDistance, setCongasDistance] = useState(Infinity)
 
   const nearBook = distance < appConfig.player.interactDistance
-  const portalXZ = PORTAL_XZ_BY_PHASE[phase]
+  const portalXZ = portalXZOverride === undefined ? PORTAL_XZ_BY_PHASE[phase] : portalXZOverride
   const nearPortal = !!portalXZ && Math.hypot(playerPos.current.x - portalXZ[0], playerPos.current.z - portalXZ[1]) < PORTAL_RANGE
 
   const handlePosition = useCallback(
