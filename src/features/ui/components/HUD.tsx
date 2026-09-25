@@ -1,6 +1,7 @@
 import { memo, type ReactNode } from 'react'
 import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
+import { NarrationIndicator } from '@/features/ui/components/NarrationIndicator'
 
 /**
  * Props for {@link HUD}.
@@ -20,6 +21,8 @@ interface HUDProps {
   interactLabel?: string
   /** Seconds left until the Libro de Rosa opens the portal, shown where the dialogue countdown sits once the narration is over; `null` to hide. */
   portalCountdownSec?: number | null
+  /** Whether the HUD draws the countdown pill itself; off where it's docked under the Libro de Rosa instead (see `StoryBookOverlay`). */
+  showIndicator?: boolean
 }
 
 /** Title-area copy per {@link HUDProps.variant}. */
@@ -69,10 +72,8 @@ const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec, interactLabel = 'Despertar el Libro de Rosa', portalCountdownSec }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec, interactLabel = 'Despertar el Libro de Rosa', portalCountdownSec, showIndicator = true }: HUDProps) {
   const copy = VARIANT_COPY[variant]
-  const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
-  const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
   return (
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.65)_100%)]" />
@@ -135,21 +136,9 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
         {wormholeActive ? <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span> : copy.clock}
       </div>
 
-      {!showCountdown && typeof portalCountdownSec === 'number' && (
-        <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-[#78b4ff]/30 bg-black/55 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/75 shadow-[0_0_18px_rgba(90,160,255,0.25)] backdrop-blur-md">
-          <LuOrbit className="h-3.5 w-3.5 animate-spin text-[#a8c8ff] [animation-duration:3s]" />
-          <span>
-            Portal en: <span className="font-semibold tabular-nums text-[#cfe0ff]">{portalCountdownSec}s</span>
-          </span>
-        </div>
-      )}
-
-      {showCountdown && (
-        <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-gold/20 bg-black/45 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/70 backdrop-blur-md">
-          <FiClock className="h-3.5 w-3.5 opacity-80 text-gold" />
-          <span>
-            Diálogo: <span className="text-gold-bright font-semibold tabular-nums">{countdownSec}s</span>
-          </span>
+      {showIndicator && (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-10">
+          <NarrationIndicator audioRemainingSec={audioRemainingSec} portalCountdownSec={portalCountdownSec} />
         </div>
       )}
 
