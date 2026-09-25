@@ -1,9 +1,9 @@
 /**
  * Drives the Libro de Rosa's HUD companion in the open phases (Phase 1 and
  * Phase 2), where the player roams freely and used to have to hunt for the
- * portal: the book floats calmly while the narration plays, and once it has
- * been over for a while it grows restless, glides to the center of the screen
- * and opens the portal right in front of the player.
+ * portal: the book floats calmly while the narration plays, channels energy
+ * for a while once it's over, then grows restless, glides to the center of
+ * the screen and opens the portal right in front of the player.
  * @module app/hooks/useStoryBookFlow
  */
 
@@ -21,6 +21,12 @@ import { appConfig } from '@/shared/config/appConfig'
  */
 export type StoryBookStage = 'hidden' | 'calm' | 'restless' | 'summoning' | 'portal'
 
+/** Where the summoned portal stands: its center, and the Y rotation turning its face (local `+Z`) towards the player. */
+export interface PortalPlacement {
+  position: [number, number, number]
+  yaw: number
+}
+
 /** Public state exposed by {@link useStoryBookFlow}. */
 export interface StoryBookFlow {
   /** Current beat of the choreography. */
@@ -33,64 +39,50 @@ export interface StoryBookFlow {
   waitTitle: 'channeling' | 'explore' | null
   /** Whole seconds left until the book grows restless and summons the portal, or `null` outside that wait. */
   portalCountdownSec: number | null
-  /** World XZ where the summoned portal was placed, or `null` before it exists. */
-  portalXZ: [number, number] | null
+  /** Where the summoned portal was placed, or `null` before it exists. */
+  portal: PortalPlacement | null
   /** Records where the summoned portal landed; called once by the in-scene portal. */
-  handlePortalPlaced: (xz: [number, number]) => void
+  handlePortalPlaced: (placement: PortalPlacement) => void
 }
 
 /**
- * @param active - Whether the player is in an open phase (Phase 1 or Phase 2)
- * @param phaseKey - Identifies the current open phase, so the choreography restarts on every new one
- * @param audioRemainingSec - Seconds remaining in the phase narration; `0` once it has ended, `null` while unknown
+ * @param active - Whether an open phase's scene is on screen (including while its portal is being crossed)
+ * @param phaseKey - Identifies that open phase, so the choreography restarts on every new one
+ * @param dialogEnded - Whether that phase's narration has played through (see `useNarration`)
+ * @param dialogHeard - Whether that phase's narration has been heard at all — without it, the missing-audio fallback ends the wait
  * @returns Choreography state and the portal placement callback
  */
-export function useStoryBookFlow(active: boolean, phaseKey: string, audioRemainingSec: number | null): StoryBookFlow {
+export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded: boolean, dialogHeard: boolean): StoryBookFlow {
   const [stage, setStage] = useState<StoryBookStage>('hidden')
-  const [dialogEnded, setDialogEnded] = useState(false)
+  const [fallbackEnded, setFallbackEnded] = useState(false)
   const [showPortalTitle, setShowPortalTitle] = useState(false)
-  const [portalXZ, setPortalXZ] = useState<[number, number] | null>(null)
+  const [portal, setPortal] = useState<PortalPlacement | null>(null)
   const [waitTitle, setWaitTitle] = useState<'channeling' | 'explore' | null>(null)
   const [portalCountdownSec, setPortalCountdownSec] = useState<number | null>(null)
-  const timers = useRef<number[]>([])
-  /** Whether this phase's narration has been seen playing — gates both its end and the missing-audio fallback. */
-  const sawAudio = useRef(false)
-
-  const clearTimers = useCallback(() => {
-    timers.current.forEach((id) => window.clearTimeout(id))
-    timers.current = []
-  }, [])
+  const heardRef = useRef(dialogHeard)
 
   useEffect(() => {
-    clearTimers()
-    setDialogEnded(false)
+    heardRef.current = dialogHeard
+  }, [dialogHeard])
+
+  useEffect(() => {
+    setFallbackEnded(false)
     setShowPortalTitle(false)
-    setPortalXZ(null)
+    setPortal(null)
     setWaitTitle(null)
     setPortalCountdownSec(null)
-    sawAudio.current = false
     setStage(active ? 'calm' : 'hidden')
     if (!active) return
-    timers.current.push(
-      window.setTimeout(() => {
-        if (!sawAudio.current) setDialogEnded(true)
-      }, appConfig.storyBook.dialogFallbackMs)
-    )
-  }, [active, phaseKey, clearTimers])
+    const id = window.setTimeout(() => {
+      if (!heardRef.current) setFallbackEnded(true)
+    }, appConfig.storyBook.dialogFallbackMs)
+    return () => window.clearTimeout(id)
+  }, [active, phaseKey])
 
-  /**
-   * Only a narration seen actually playing in this phase can end: right after
-   * a wormhole the previous track's final `0` lingers for a moment, and must
-   * not be mistaken for this phase's dialogue having finished.
-   */
-  useEffect(() => {
-    if (!active || typeof audioRemainingSec !== 'number') return
-    if (audioRemainingSec > 0) sawAudio.current = true
-    else if (sawAudio.current) setDialogEnded(true)
-  }, [active, audioRemainingSec])
+  const waitStarted = active && (dialogEnded || fallbackEnded)
 
   useEffect(() => {
-    if (!active || !dialogEnded) return
+    if (!waitStarted) return
     const { waitAfterDialogMs, restlessMs, summonMs, portalTitleMs, channelingTitleMs, exploreTitleMs } = appConfig.storyBook
     const restlessAt = performance.now() + waitAfterDialogMs
     const tick = (): void => {
@@ -115,16 +107,13 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, audioRemaini
       }, waitAfterDialogMs + restlessMs + summonMs),
       window.setTimeout(() => setShowPortalTitle(false), waitAfterDialogMs + restlessMs + summonMs + portalTitleMs),
     ]
-    timers.current.push(...ids)
     return () => {
       ids.forEach((id) => window.clearTimeout(id))
       window.clearInterval(intervalId)
     }
-  }, [active, dialogEnded])
+  }, [waitStarted])
 
-  useEffect(() => clearTimers, [clearTimers])
+  const handlePortalPlaced = useCallback((placement: PortalPlacement) => setPortal(placement), [])
 
-  const handlePortalPlaced = useCallback((xz: [number, number]) => setPortalXZ(xz), [])
-
-  return { stage, portalOpen: stage === 'portal', showPortalTitle, waitTitle, portalCountdownSec, portalXZ, handlePortalPlaced }
+  return { stage, portalOpen: stage === 'portal', showPortalTitle, waitTitle, portalCountdownSec, portal, handlePortalPlaced }
 }
