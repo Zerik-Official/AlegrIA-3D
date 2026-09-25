@@ -12,6 +12,7 @@ import { findNearestSepiaPhoto } from '@/app/engine/proximity'
 import { LIBRARY_PORTAL_POSITION } from '@/features/library/config/libraryLayout'
 import { initialPhase1Entities, initialPhase2Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import { CREDITS_DOOR_RANGE, CREDITS_DOOR_XZ } from '@/features/credits/config/creditsConfig'
 import type { GamePhase } from '@/shared/types'
 
 /**
@@ -81,6 +82,8 @@ export interface PlayerProximity {
   picoDistance: number
   /** Distance from the player to Phase 2's congas character, or `Infinity` outside Phase 2 / if it has no entity. */
   congasDistance: number
+  /** Whether the player is within interact range of the credits door at RIWI Barranquilla (`cityIntro` only). */
+  nearCreditsDoor: boolean
   /** Feeds the latest camera position; call from `PlayerControls.onPositionChange`. */
   handlePosition: (pos: THREE.Vector3) => void
 }
@@ -96,6 +99,7 @@ export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number,
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
   const [picoDistance, setPicoDistance] = useState(Infinity)
   const [congasDistance, setCongasDistance] = useState(Infinity)
+  const [nearCreditsDoor, setNearCreditsDoor] = useState(false)
 
   const nearBook = distance < appConfig.player.interactDistance
   const portalXZ = portalXZOverride === undefined ? PORTAL_XZ_BY_PHASE[phase] : portalXZOverride
@@ -112,9 +116,10 @@ export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number,
       }
       setPicoDistance(phase === 'phase2' && PICO_XZ ? Math.hypot(pos.x - PICO_XZ[0], pos.z - PICO_XZ[1]) : Infinity)
       setCongasDistance(phase === 'phase2' && CONGAS_XZ ? Math.hypot(pos.x - CONGAS_XZ[0], pos.z - CONGAS_XZ[1]) : Infinity)
+      setNearCreditsDoor(phase === 'cityIntro' && Math.hypot(pos.x - CREDITS_DOOR_XZ[0], pos.z - CREDITS_DOOR_XZ[1]) < CREDITS_DOOR_RANGE)
     },
     [phase]
   )
 
-  return { nearBook, nearPortal, highlightedPhotoId, picoDistance, congasDistance, handlePosition }
+  return { nearBook, nearPortal, highlightedPhotoId, picoDistance, congasDistance, nearCreditsDoor, handlePosition }
 }
