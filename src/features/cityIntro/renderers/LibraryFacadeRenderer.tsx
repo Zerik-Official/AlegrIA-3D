@@ -11,7 +11,6 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createWeatheredWallTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
-import { Reflector } from '@/features/cityIntro/renderers/Reflector'
 import { ProceduralStreetlight } from '@/features/cityIntro/renderers/StreetlightRenderer'
 
 /** Generates (once) a weathered "BIBLIOTECA" sign texture with a few dead/flickering letters. */
@@ -309,28 +308,17 @@ export function ProceduralLibraryFacade() {
   )
 }
 
-/** Ground-level yellow floodlights (x offsets in front of the facade) — wide enough to reach both ends of the real `.glb`, which is broader than the procedural fallback's 16-unit width. */
-const FACADE_SPOT_XS = [-20, -12, -4, 4, 12, 20]
-const FACADE_SPOT_COLOR = '#ffd23a'
-
 /**
- * Futuristic lighting rig framing the landmark facade — a pair of the city's
- * streetlight fixtures flanking it, warm floodlights washing the colonnade,
- * a second row aimed higher to reach the upper floor and roofline, and side
- * fill so the building's flanks don't fall into darkness — kept outside the
- * procedural fallback so it lights the real `.glb` too, which has no light
- * sources of its own (its neon sign is emissive-only, it doesn't cast light).
+ * Lighting rig framing the landmark facade — a pair of the city's streetlight
+ * fixtures flanking it, plus warm and cool point lights washing the colonnade
+ * and roofline — kept outside the procedural fallback so it lights the real
+ * `.glb` too, which has no light sources of its own (its neon sign is
+ * emissive-only, it doesn't cast light).
  * @returns Light rig elements
  */
 function FacadeLightRig() {
   return (
     <>
-      {FACADE_SPOT_XS.map((x) => (
-        <Reflector key={`low-${x}`} position={[x, 0.45, 15]} aimAt={[x * 0.7, 3, 0]} color={FACADE_SPOT_COLOR} />
-      ))}
-      {FACADE_SPOT_XS.map((x) => (
-        <Reflector key={`high-${x}`} position={[x, 0.45, 15]} aimAt={[x * 0.7, 9.5, 0]} color={FACADE_SPOT_COLOR} intensity={70} />
-      ))}
       <group position={[-24, 0, 9]}>
         <ProceduralStreetlight />
       </group>
