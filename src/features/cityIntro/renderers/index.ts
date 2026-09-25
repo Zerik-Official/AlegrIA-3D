@@ -28,6 +28,8 @@ import { NeoHeritageHouseRenderer } from '@/features/cityIntro/renderers/NeoHeri
 import { CultureMuralRenderer } from '@/features/cityIntro/renderers/CultureMuralRenderer'
 import { FloatingFaroleRenderer } from '@/features/cityIntro/renderers/FloatingFaroleRenderer'
 import { CurbRenderer, YellowTreeRenderer } from '@/features/cityIntro/renderers/AbajeroStreetProps'
+import { RiwiBarranquillaRenderer } from '@/features/cityIntro/renderers/RiwiBarranquillaRenderer'
+import { AdBusRenderer } from '@/features/cityIntro/renderers/AdBusRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -52,4 +54,6 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   'floating-farol': FloatingFaroleRenderer,
   'anden-bordillo': CurbRenderer,
   'roble-amarillo': YellowTreeRenderer,
+  'riwi-barranquilla': RiwiBarranquillaRenderer,
+  'ad-bus': AdBusRenderer,
 }
