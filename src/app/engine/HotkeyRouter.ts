@@ -59,6 +59,14 @@ export interface HotkeyContext {
   dismissPhase2Intro: () => void
   /** Opens the photo modal for the given photo id. */
   selectPhoto: (id: string) => void
+  /** Restored library page under the crosshair, if any. */
+  focusedBookPageId: string | null
+  /** Whether a restored library page is open in the page modal. */
+  hasOpenBookPage: boolean
+  /** Opens the page under the crosshair in the page modal. */
+  openBookPage: () => void
+  /** Closes the page modal. */
+  closeBookPage: () => void
   /** Closes the photo modal (`Escape` or re-pressing interact). */
   closePhoto: () => void
 }
@@ -94,6 +102,15 @@ export class HotkeyRouter {
 
     const isInteractKey = key === 'e' || event.key === 'Enter'
     const isConfirmKey = isInteractKey || event.key === ' '
+
+    if (ctx.hasOpenBookPage && (isConfirmKey || event.key === 'Escape')) {
+      ctx.closeBookPage()
+      return
+    }
+    if (isInteractKey && ctx.focusedBookPageId && ctx.phase === 'exploring' && !ctx.isEditorEnabled) {
+      ctx.openBookPage()
+      return
+    }
 
     if (isInteractKey && ctx.nearBook && ctx.phase === 'exploring') {
       ctx.handleBookInteract()
