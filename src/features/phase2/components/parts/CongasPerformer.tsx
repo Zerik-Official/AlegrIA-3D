@@ -18,12 +18,19 @@ interface CongasPerformerProps {
   src: string
   /** Rendered while loading, or when the asset is missing. */
   fallback: ReactNode
+  /**
+   * When set, the loaded model is uniformly rescaled so its largest
+   * bounding-box dimension equals this many scene units — same normalization
+   * `ModelLoader`'s `targetSize` does, for third-party `.glb`s (e.g. a
+   * Sketchfab export) authored at an unknown/inconsistent unit scale.
+   */
+  targetSize?: number
 }
 
 /**
  * Internal glTF + animation-mixer renderer, isolated so `Suspense` works.
  */
-function CongasGltf({ src }: Omit<CongasPerformerProps, 'fallback'>) {
+function CongasGltf({ src, targetSize }: Omit<CongasPerformerProps, 'fallback'>) {
   const { scene, animations } = useGLTF(src) as unknown as { scene: THREE.Group; animations: THREE.AnimationClip[] }
   const modelRef = useRef<THREE.Group>(null)
 
@@ -42,6 +49,13 @@ function CongasGltf({ src }: Omit<CongasPerformerProps, 'fallback'>) {
     return c
   }, [scene])
 
+  const normalizedScale = useMemo(() => {
+    if (!targetSize) return 1
+    const size = new THREE.Box3().setFromObject(cloned).getSize(new THREE.Vector3())
+    const maxDim = Math.max(size.x, size.y, size.z)
+    return maxDim > 0 ? targetSize / maxDim : 1
+  }, [cloned, targetSize])
+
   const { actions } = useAnimations(animations, modelRef)
 
   useEffect(() => {
@@ -52,7 +66,7 @@ function CongasGltf({ src }: Omit<CongasPerformerProps, 'fallback'>) {
   }, [actions])
 
   return (
-    <group ref={modelRef}>
+    <group ref={modelRef} scale={normalizedScale}>
       <primitive object={cloned} />
     </group>
   )
@@ -66,7 +80,7 @@ function CongasGltf({ src }: Omit<CongasPerformerProps, 'fallback'>) {
  * @param props - Loader properties
  * @returns Either the animated character or the provided fallback
  */
-export function CongasPerformer({ src, fallback }: CongasPerformerProps) {
+export function CongasPerformer({ src, fallback, targetSize }: CongasPerformerProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -89,7 +103,7 @@ export function CongasPerformer({ src, fallback }: CongasPerformerProps) {
 
   return (
     <Suspense fallback={fallback}>
-      <CongasGltf src={src} />
+      <CongasGltf src={src} targetSize={targetSize} />
     </Suspense>
   )
 }
