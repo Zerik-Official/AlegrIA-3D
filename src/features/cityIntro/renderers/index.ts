@@ -30,6 +30,8 @@ import { FloatingFaroleRenderer } from '@/features/cityIntro/renderers/FloatingF
 import { CurbRenderer, YellowTreeRenderer } from '@/features/cityIntro/renderers/AbajeroStreetProps'
 import { RiwiBarranquillaRenderer } from '@/features/cityIntro/renderers/RiwiBarranquillaRenderer'
 import { AdBusRenderer } from '@/features/cityIntro/renderers/AdBusRenderer'
+import { StreetJukeboxCarRenderer } from '@/features/cityIntro/renderers/StreetJukeboxCarRenderer'
+import { PoderosoPremiumRenderer } from '@/features/cityIntro/renderers/PoderosoPremiumRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -56,4 +58,6 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   'roble-amarillo': YellowTreeRenderer,
   'riwi-barranquilla': RiwiBarranquillaRenderer,
   'ad-bus': AdBusRenderer,
+  'street-jukebox-car': StreetJukeboxCarRenderer,
+  'poderoso-premium': PoderosoPremiumRenderer,
 }
