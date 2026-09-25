@@ -46,7 +46,6 @@ export function FloatingFaroleRenderer({ entity }: EntityRendererProps) {
 
   return (
     <group ref={groupRef} position={[0, HOVER_Y, 0]}>
-      {/* Cuerpo de papel: el farol propiamente dicho. */}
       <mesh>
         <cylinderGeometry args={[0.42, 0.34, 0.72, 8, 1, true]} />
         <meshStandardMaterial
@@ -60,7 +59,6 @@ export function FloatingFaroleRenderer({ entity }: EntityRendererProps) {
         />
       </mesh>
 
-      {/* Tapas de madera arriba y abajo. */}
       {[0.4, -0.4].map((y) => (
         <mesh key={y} position={[0, y, 0]}>
           <cylinderGeometry args={[y > 0 ? 0.44 : 0.36, y > 0 ? 0.44 : 0.36, 0.07, 8]} />
@@ -68,7 +66,6 @@ export function FloatingFaroleRenderer({ entity }: EntityRendererProps) {
         </mesh>
       ))}
 
-      {/* Núcleo encendido + halo aditivo (bloom barato, como el resto de la escena). */}
       <mesh>
         <sphereGeometry args={[0.18, 10, 10]} />
         <meshBasicMaterial color="#FFF3D0" />
@@ -78,7 +75,6 @@ export function FloatingFaroleRenderer({ entity }: EntityRendererProps) {
         <meshBasicMaterial color={color} transparent opacity={0.13} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
 
-      {/* Fleco de papel colgante, el detalle que lo delata como de comparsa. */}
       {[0, 1, 2, 3].map((i) => (
         <mesh key={i} position={[Math.cos((i / 4) * Math.PI * 2) * 0.26, -0.62, Math.sin((i / 4) * Math.PI * 2) * 0.26]}>
           <boxGeometry args={[0.05, 0.36, 0.05]} />

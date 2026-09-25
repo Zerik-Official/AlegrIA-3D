@@ -52,13 +52,11 @@ export function NeoHeritageHouseRenderer({ entity }: EntityRendererProps) {
 
   return (
     <group>
-      {/* Cuerpo de la casa. */}
       <mesh position={[0, WALL_H / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[width, WALL_H, depth]} />
         <meshStandardMaterial color={facade} roughness={0.82} metalness={0.05} />
       </mesh>
 
-      {/* Zócalo pintado + su filo solar. */}
       <mesh position={[0, PLINTH_H / 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[width + 0.12, PLINTH_H, depth + 0.12]} />
         <meshStandardMaterial color="#3a2430" roughness={0.94} />
@@ -68,19 +66,16 @@ export function NeoHeritageHouseRenderer({ entity }: EntityRendererProps) {
         <meshStandardMaterial color="#120a14" emissive={trim} emissiveIntensity={1.6} roughness={0.4} />
       </mesh>
 
-      {/* Cornisa superior: la moldura republicana hecha tira solar. */}
       <mesh position={[0, WALL_H - 0.18, 0]}>
         <boxGeometry args={[width + 0.24, 0.16, depth + 0.24]} />
         <meshStandardMaterial color="#120a14" emissive={trim} emissiveIntensity={1.9} roughness={0.35} />
       </mesh>
 
-      {/* Techo a cuatro aguas en teja de barro (pirámide de 4 lados). */}
       <mesh position={[0, WALL_H + 0.9, 0]} rotation-y={Math.PI / 4} castShadow>
         <coneGeometry args={[Math.max(width, depth) * 0.72, 1.8, 4]} />
         <meshStandardMaterial color={TEJA_BARRO} roughness={0.88} />
       </mesh>
 
-      {/* Alero volado sobre el andén, con su canto iluminado. */}
       {hasEave && (
         <>
           <mesh position={[0, WALL_H - 0.5, front + 0.75]} castShadow>
@@ -100,7 +95,6 @@ export function NeoHeritageHouseRenderer({ entity }: EntityRendererProps) {
         </>
       )}
 
-      {/* Puerta central de doble hoja con marco emisivo. */}
       <mesh position={[0, 1.25, front + 0.03]}>
         <planeGeometry args={[1.5, 2.5]} />
         <meshStandardMaterial color="#1c1018" roughness={0.8} emissive={trim} emissiveIntensity={0.18} />
@@ -114,7 +108,6 @@ export function NeoHeritageHouseRenderer({ entity }: EntityRendererProps) {
         <meshStandardMaterial color="#0d0710" roughness={0.9} />
       </mesh>
 
-      {/* Ventanas altas de madera: vidrio cálido tras marco solar. */}
       {windowXs.map((x) => (
         <group key={x} position={[x, 1.85, front + 0.04]}>
           <mesh>

@@ -55,7 +55,6 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
       <CaribbeanSky />
       <CityFillerSkyline />
 
-      {/* Tierra del barrio: arena caliente, no asfalto azulado. */}
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, GROUND_CENTER_Z]} receiveShadow>
         <planeGeometry args={GROUND_SIZE} />
         <meshStandardMaterial color="#3a2420" roughness={0.95} metalness={0.05} />
@@ -66,7 +65,6 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
         <meshStandardMaterial color="#3a2a2e" roughness={0.8} metalness={0.1} />
       </mesh>
 
-      {/* Andenes: cemento gastado con polvo de ladrillo. */}
       {[-4.6, 4.6].map((x) => (
         <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.01, (ROAD_FROM_Z + ROAD_TO_Z) / 2]} receiveShadow>
           <planeGeometry args={[2.4, ROAD_FROM_Z - ROAD_TO_Z]} />
@@ -74,7 +72,6 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
         </mesh>
       ))}
 
-      {/* El filo del bordillo, pintado de amarillo solar a lo largo de la cuadra. */}
       {[-3.55, 3.55].map((x) => (
         <mesh key={x} position={[x, 0.03, (ROAD_FROM_Z + ROAD_TO_Z) / 2]}>
           <boxGeometry args={[0.1, 0.06, ROAD_FROM_Z - ROAD_TO_Z]} />
@@ -91,7 +88,6 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
 
       <PhaseEngine entities={entities} context={{ flightLanes }} />
 
-      {/* Polvo y polen en suspensión: el aire espeso del Caribe a esa hora. */}
       <Sparkles count={70} scale={[46, 10, 110]} position={[0, 5, 0]} size={2.4} speed={0.18} color={SOLAR_YELLOW} opacity={0.4} />
 
       <ambientLight intensity={0.5} color={SUNSET_ORANGE} />

@@ -38,13 +38,11 @@ export function CurbRenderer({ entity }: EntityRendererProps) {
 
   return (
     <group>
-      {/* Losa del andén. */}
       <mesh position={[0, CURB_H / 2, 0]} receiveShadow>
         <boxGeometry args={[CURB_DEPTH, CURB_H, length]} />
         <meshStandardMaterial color="#8a7a6a" roughness={0.95} />
       </mesh>
 
-      {/* Cara del bordillo, pintada de amarillo solar. */}
       <mesh position={[CURB_DEPTH / 2 + 0.03, CURB_H / 2, 0]}>
         <boxGeometry args={[0.06, CURB_H, length]} />
         <meshStandardMaterial color={SOLAR_YELLOW} emissive={SOLAR_YELLOW} emissiveIntensity={0.35} roughness={0.85} />
@@ -54,7 +52,6 @@ export function CurbRenderer({ entity }: EntityRendererProps) {
         <meshStandardMaterial color={SOLAR_YELLOW} emissive={SOLAR_YELLOW} emissiveIntensity={0.28} roughness={0.9} />
       </mesh>
 
-      {/* Desgaste: parches de pintura saltada y de mugre sobre el amarillo. */}
       {wear.map((w, i) => (
         <mesh key={i} position={[CURB_DEPTH / 2 + 0.065, CURB_H * (w.dark ? 0.35 : 0.68), w.z]}>
           <boxGeometry args={[0.02, CURB_H * 0.4, w.w]} />
@@ -103,7 +100,6 @@ export function YellowTreeRenderer({ entity }: EntityRendererProps) {
         </mesh>
       ))}
 
-      {/* Un poco de follaje verde bajo la floración, para que no sea una bola plana. */}
       <mesh position={[0, canopy.height - 0.5, 0]} castShadow>
         <icosahedronGeometry args={[0.85, 0]} />
         <meshStandardMaterial color={FLORA_GREEN} roughness={0.95} flatShading />

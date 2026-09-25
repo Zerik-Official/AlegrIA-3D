@@ -72,7 +72,6 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
           float n = hash(uv * 5.0 + uTime * 0.4) * 0.14;
           float flick = 0.84 + 0.16 * sin(uTime * 10.0);
           float alpha = (ring * 1.1 + core + n) * flick * smoothstep(0.45, 0.72, uProgress + 0.18);
-          // portal opens only in last third
           float portalGate = smoothstep(0.58, 0.78, uProgress);
           alpha *= portalGate;
           float edge = smoothstep(0.95, 0.88, r) * portalGate;

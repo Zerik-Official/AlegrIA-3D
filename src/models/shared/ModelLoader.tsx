@@ -196,6 +196,5 @@ export function preloadModel(src: string): void {
   try {
     useGLTF.preload(src)
   } catch {
-    // ignore missing asset
   }
 }

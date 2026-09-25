@@ -120,10 +120,6 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
       const point = laneCurve.getPointAt(u)
       const tangent = laneCurve.getTangentAt(u)
       const y = point.y + Math.sin(clock.elapsedTime * 0.8 + seed) * 0.15
-      // `flying-train.glb`'s cockpit is the tapered/finned end, pointing along local -X (its
-      // rounded end is the rear thruster housing the trail streams from), not +Z like
-      // `flying-car`'s hull, so heading uses the atan2 form for a -X-forward object instead of
-      // the Z-forward one `FlyingCarRenderer` uses.
       const heading = Math.atan2(tangent.z * dir, -tangent.x * dir)
       if (groupRef.current) {
         groupRef.current.position.set(point.x, y, point.z)

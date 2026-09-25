@@ -63,7 +63,6 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
       return
     }
     const src = audioTracks[key]
-    // Ensure PART* narrations never loop, even when reusing the same element.
     el.loop = false
     if (!el.src.endsWith(src)) {
       el.src = src
@@ -107,7 +106,6 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
     el.addEventListener('play', onPlay)
     el.addEventListener('pause', onPause)
 
-    // Fallback interval for smoother 1s countdown when `timeupdate` fires sparsely (~4Hz).
     const id = window.setInterval(update, 250)
 
     return () => {

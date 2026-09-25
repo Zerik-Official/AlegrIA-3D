@@ -153,7 +153,6 @@ export function ProceduralLibraryFacade() {
 
   return (
     <group>
-      {/* ground floor body */}
           <mesh position={[0, GROUND_HEIGHT / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[FACADE_WIDTH, GROUND_HEIGHT, FACADE_DEPTH]} />
             <meshStandardMaterial color="#8a7238" roughness={0.94} />
@@ -163,7 +162,6 @@ export function ProceduralLibraryFacade() {
             <meshBasicMaterial map={wallWeather} transparent />
           </mesh>
 
-          {/* colonnade */}
           {Array.from({ length: BAY_COUNT + 1 }).map((_, i) => (
             <mesh key={i} position={[-FACADE_WIDTH / 2 + i * BAY_WIDTH, COLUMN_HEIGHT / 2, FRONT_Z + 0.18]} castShadow>
               <cylinderGeometry args={[0.2, 0.24, COLUMN_HEIGHT, 10]} />
@@ -215,13 +213,11 @@ export function ProceduralLibraryFacade() {
             )
           })}
 
-          {/* cornice band */}
           <mesh position={[0, GROUND_HEIGHT + CORNICE_HEIGHT / 2, 0.1]}>
             <boxGeometry args={[FACADE_WIDTH + 0.4, CORNICE_HEIGHT, FACADE_DEPTH + 0.4]} />
             <meshStandardMaterial color="#d8cca8" roughness={0.8} />
           </mesh>
 
-          {/* upper floor body */}
           <mesh position={[0, upperY + UPPER_HEIGHT / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[FACADE_WIDTH, UPPER_HEIGHT, FACADE_DEPTH]} />
             <meshStandardMaterial color="#8a7238" roughness={0.94} />
@@ -264,7 +260,6 @@ export function ProceduralLibraryFacade() {
             </group>
           ))}
 
-          {/* roof cornice + pediment */}
           <mesh position={[0, roofY + ROOF_CORNICE_HEIGHT / 2, 0.1]}>
             <boxGeometry args={[FACADE_WIDTH + 0.4, ROOF_CORNICE_HEIGHT, FACADE_DEPTH + 0.4]} />
             <meshStandardMaterial color="#d8cca8" roughness={0.8} />
@@ -301,7 +296,6 @@ export function ProceduralLibraryFacade() {
             </group>
           ))}
 
-          {/* rubble at the base */}
           {Array.from({ length: 5 }).map((_, i) => (
             <mesh key={i} position={[-5 + i * 2.5 + (i % 2) * 0.4, 0.04, FRONT_Z + 1.5 + (i % 3) * 0.3]} rotation-y={i}>
               <boxGeometry args={[0.4 + (i % 2) * 0.2, 0.08, 0.35]} />

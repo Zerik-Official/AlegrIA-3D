@@ -96,7 +96,6 @@ export const CaribbeanSky = memo(function CaribbeanSky() {
         />
       </mesh>
 
-      {/* Sol bajo: la clave cálida que tumba las sombras largas por la calle. */}
       <directionalLight position={[-70, 22, -160]} intensity={1.25} color={SUNSET_ORANGE} castShadow={false} />
       <directionalLight position={[40, 30, 60]} intensity={0.35} color={NEON_MAGENTA} castShadow={false} />
     </group>

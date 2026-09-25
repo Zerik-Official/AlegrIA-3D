@@ -94,13 +94,11 @@ export function CultureMuralRenderer({ entity }: EntityRendererProps) {
 
   return (
     <group>
-      {/* Muro de soporte: pared baja del barrio, no un tótem publicitario. */}
       <mesh position={[0, PANEL_H / 2 + 0.6, -0.22]} castShadow receiveShadow>
         <boxGeometry args={[PANEL_W + 0.9, PANEL_H + 1.4, 0.4]} />
         <meshStandardMaterial color="#2a1a2e" roughness={0.9} metalness={0.05} />
       </mesh>
 
-      {/* Marco emisivo, el "riel" de luz que enmarca la proyección. */}
       <mesh position={[0, PANEL_H / 2 + 0.6, -0.01]}>
         <boxGeometry args={[PANEL_W + 0.34, PANEL_H + 0.34, 0.08]} />
         <meshStandardMaterial color="#120a18" emissive={NEON_MAGENTA} emissiveIntensity={1.1} roughness={0.4} />
@@ -120,7 +118,6 @@ export function CultureMuralRenderer({ entity }: EntityRendererProps) {
         />
       </mesh>
 
-      {/* Derrame de color sobre la calle, para que el mural ilumine y no solo brille. */}
       <pointLight position={[0, PANEL_H / 2 + 0.6, 2.4]} intensity={3.2} distance={16} decay={2} color={NEON_MAGENTA} />
       <pointLight position={[0, 1.2, 1.8]} intensity={1.4} distance={9} decay={2} color={spark} />
     </group>
