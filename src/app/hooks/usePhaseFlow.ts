@@ -15,7 +15,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { appConfig } from '@/shared/config/appConfig'
 import { easeCubicInOut } from '@/shared/utils/perf'
-import { cityIntroModelUrls, cityIntroVideoUrls } from '@/shared/config/models'
+import { cityIntroModelUrls, cityIntroVideoUrls, phase2ModelUrls, phase2VideoUrls } from '@/shared/config/models'
+import { audioTracks } from '@/shared/config/audio'
 import type { GamePhase } from '@/shared/types'
 import { WormholeTimeline } from '@/app/engine/WormholeTimeline'
 
@@ -189,17 +190,21 @@ export function usePhaseFlow(): PhaseFlow {
   useEffect(() => clearBookTimers, [clearBookTimers])
 
   /**
-   * The `cityIntro` finale's assets aren't preloaded until they're actually
-   * needed — the 17s wormhole transition into it gives plenty of time to warm
-   * the fetch/glTF-parse cache in the background, so the walk doesn't freeze
-   * mid-reveal loading them.
+   * Warms the fetch/glTF-parse cache for a destination's assets in the
+   * background while the 17s wormhole into it plays, so it doesn't freeze on
+   * arrival: the finale's models and billboard videos, or Phase 2's models,
+   * parade videos and narration (Phase 2 is heavy, and its intro overlay
+   * should open onto a scene that's already there).
+   * @param target - Phase the wormhole leads to
    */
-  const preloadCityIntroAssets = useCallback(() => {
-    cityIntroModelUrls().forEach((url) => {
+  const preloadAssetsFor = useCallback((target: GamePhase) => {
+    const models = target === 'cityIntro' ? cityIntroModelUrls() : target === 'phase2' ? phase2ModelUrls() : []
+    const media = target === 'cityIntro' ? cityIntroVideoUrls() : target === 'phase2' ? [...phase2VideoUrls(), audioTracks.dorade] : []
+    models.forEach((url) => {
       useGLTF.preload(url)
       fetch(url, { method: 'HEAD' }).catch(() => {})
     })
-    cityIntroVideoUrls().forEach((url) => {
+    media.forEach((url) => {
       fetch(url).catch(() => {})
     })
   }, [])
@@ -207,7 +212,7 @@ export function usePhaseFlow(): PhaseFlow {
   const startWormhole = useCallback(
     (target: GamePhase) => {
       if (phase === 'wormhole' || phase === target) return
-      if (target === 'cityIntro') preloadCityIntroAssets()
+      preloadAssetsFor(target)
       setWormholeTarget(target)
       setWormholeSource(phase)
       setPhase('wormhole')
@@ -218,7 +223,7 @@ export function usePhaseFlow(): PhaseFlow {
         if (target === 'phase2') setShowPhase2Overlay(true)
       })
     },
-    [phase, timeline, preloadCityIntroAssets]
+    [phase, timeline, preloadAssetsFor]
   )
 
   const startExperience = useCallback(() => {
