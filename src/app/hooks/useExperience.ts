@@ -7,7 +7,7 @@
  * @module app/hooks/useExperience
  */
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { usePhaseFlow, type PhaseFlow } from '@/app/hooks/usePhaseFlow'
 import { usePhaseAudio } from '@/app/hooks/usePhaseAudio'
 import { useNarration, type Narration } from '@/app/hooks/useNarration'
@@ -27,6 +27,7 @@ import { useHotkeys } from '@/app/hooks/useHotkeys'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import { LIBRARY_PORTAL_POSITION } from '@/features/library/config/libraryLayout'
 import type { HotkeyContext } from '@/app/engine/HotkeyRouter'
+import { narrationState } from '@/shared/audio/narrationState'
 import type { GamePhase } from '@/shared/types'
 
 /** The restored library's portal, which faces straight into the hall. */
@@ -77,6 +78,11 @@ export function useExperience(): Experience {
   const photo = usePhotoSelection()
   const audioRemainingSec = usePhaseAudio(phase, libraryVisitCount)
   const narration = useNarration(phase !== 'idle', `${scenePhase}-${libraryVisitCount}`, audioRemainingSec)
+  const narratorSpeaking = typeof audioRemainingSec === 'number' && audioRemainingSec > 0.35
+
+  useEffect(() => {
+    narrationState.speaking = narratorSpeaking
+  }, [narratorSpeaking])
 
   const inOpenPhase = isOpenPhase(phase)
   const storyBook = useStoryBookFlow(isOpenPhase(scenePhase), scenePhase, narration.ended, narration.heard)
