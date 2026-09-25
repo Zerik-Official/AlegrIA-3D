@@ -107,7 +107,7 @@ export class HotkeyRouter {
       ctx.dismissPhase2Intro()
       return
     }
-    if (isConfirmKey && ctx.phase === 'idle') {
+    if (key === 'e' && ctx.phase === 'idle') {
       ctx.startExperience()
       return
     }
