@@ -27,6 +27,33 @@ const STAGE_TARGETS: Record<StoryBookStage, { open: number; spin: number; jitter
   portal: { open: 3.0, spin: 14, jitter: 0, glow: 3.2, flip: 1 },
 }
 
+/**
+ * Soft radial glow for the halo sprite: fully transparent well before the
+ * texture's edge, so however large the halo grows it fades out instead of
+ * being clipped into a square by the small canvas it lives in.
+ * @returns Canvas texture of a warm radial falloff
+ */
+function createHaloTexture(): THREE.Texture {
+  const size = 128
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
+  gradient.addColorStop(0, 'rgba(255,236,170,0.9)')
+  gradient.addColorStop(0.35, 'rgba(255,190,80,0.35)')
+  gradient.addColorStop(0.75, 'rgba(255,150,40,0.06)')
+  gradient.addColorStop(1, 'rgba(255,150,40,0)')
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, size, size)
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.SRGBColorSpace
+  return texture
+}
+
+/** Largest the halo may grow — keeps it inside the canvas' visible frame. */
+const HALO_MAX_SCALE = 2
+
 /** Shared materials so the page stack doesn't allocate one per page. */
 const materials = {
   cover: new THREE.MeshStandardMaterial({ color: '#8b1a3a', roughness: 0.42, metalness: 0.18 }),
@@ -50,7 +77,8 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
   const rootRef = useRef<THREE.Group>(null)
   const coverRef = useRef<THREE.Group>(null)
   const pageRefs = useRef<THREE.Group[]>([])
-  const glowRef = useRef<THREE.Mesh>(null)
+  const glowRef = useRef<THREE.Sprite>(null)
+  const haloTexture = useMemo(() => createHaloTexture(), [])
   const lightRef = useRef<THREE.PointLight>(null)
   const sparksRef = useRef<THREE.Points>(null)
   const state = useRef({ open: 0.25, spin: 0.6, jitter: 0, glow: 0.4, flip: 0, angle: 0, kick: 0, kickTimer: 0 })
@@ -58,10 +86,10 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
   const sparkPositions = useMemo(() => {
     const arr = new Float32Array(60 * 3)
     for (let i = 0; i < 60; i++) {
-      const r = 0.7 + Math.random() * 0.6
+      const r = 0.55 + Math.random() * 0.35
       const theta = Math.random() * Math.PI * 2
       arr[i * 3] = Math.cos(theta) * r
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 1.4
+      arr[i * 3 + 1] = (Math.random() - 0.5) * 1.2
       arr[i * 3 + 2] = Math.sin(theta) * r
     }
     return arr
@@ -105,17 +133,16 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
       page.visible = s.flip > 0.02
     }
     if (glowRef.current) {
-      const g = 1 + s.glow * 0.35 + Math.sin(t * 2.2) * 0.06
-      glowRef.current.scale.set(g, g, g)
-      const mat = glowRef.current.material as THREE.MeshBasicMaterial
-      mat.opacity = 0.1 + s.glow * 0.07
+      const g = Math.min(HALO_MAX_SCALE, 1.5 + s.glow * 0.18 + Math.sin(t * 2.2) * 0.05)
+      glowRef.current.scale.set(g, g, 1)
+      glowRef.current.material.opacity = Math.min(1, 0.45 + s.glow * 0.18)
     }
     if (lightRef.current) lightRef.current.intensity = 1.6 + s.glow * 2.2
     if (sparksRef.current) {
       sparksRef.current.rotation.y = -t * (0.3 + s.spin * 0.08)
       const mat = sparksRef.current.material as THREE.PointsMaterial
       mat.opacity = 0.45 + Math.min(s.glow, 2.5) * 0.2
-      mat.size = 0.035 + s.glow * 0.012
+      mat.size = 0.03 + Math.min(s.glow, 2.5) * 0.01
     }
   })
 
@@ -125,10 +152,9 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
       <directionalLight position={[2, 3, 4]} intensity={1.4} color="#fff4d0" />
       <pointLight ref={lightRef} position={[0, 0, 1.2]} intensity={2} distance={6} color="#ffcc66" decay={2} />
 
-      <mesh ref={glowRef}>
-        <sphereGeometry args={[0.95, 32, 32]} />
-        <meshBasicMaterial color="#ffcc55" transparent opacity={0.12} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
+      <sprite ref={glowRef} position={[0, 0, -0.4]}>
+        <spriteMaterial map={haloTexture} transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </sprite>
 
       <points ref={sparksRef}>
         <bufferGeometry>
