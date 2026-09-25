@@ -18,6 +18,8 @@ interface HUDProps {
   audioRemainingSec?: number | null
   /** Label of the book interaction prompt — waking the book on the first visit, returning it on the second. */
   interactLabel?: string
+  /** Seconds left until the Libro de Rosa opens the portal, shown where the dialogue countdown sits once the narration is over; `null` to hide. */
+  portalCountdownSec?: number | null
 }
 
 /** Title-area copy per {@link HUDProps.variant}. */
@@ -67,7 +69,7 @@ const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec, interactLabel = 'Despertar el Libro de Rosa' }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec, interactLabel = 'Despertar el Libro de Rosa', portalCountdownSec }: HUDProps) {
   const copy = VARIANT_COPY[variant]
   const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
   const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
@@ -133,6 +135,15 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
         {wormholeActive ? <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span> : copy.clock}
       </div>
 
+      {!showCountdown && typeof portalCountdownSec === 'number' && (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-[#78b4ff]/30 bg-black/55 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/75 shadow-[0_0_18px_rgba(90,160,255,0.25)] backdrop-blur-md">
+          <LuOrbit className="h-3.5 w-3.5 animate-spin text-[#a8c8ff] [animation-duration:3s]" />
+          <span>
+            Portal en: <span className="font-semibold tabular-nums text-[#cfe0ff]">{portalCountdownSec}s</span>
+          </span>
+        </div>
+      )}
+
       {showCountdown && (
         <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-gold/20 bg-black/45 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/70 backdrop-blur-md">
           <FiClock className="h-3.5 w-3.5 opacity-80 text-gold" />
@@ -153,14 +164,15 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
  * Props for {@link StartOverlay}.
  */
 interface StartOverlayProps {
-  /** Starts the city walk. */
+  /** Starts the experience, entering the library. */
   onStart: () => void
   /** Whether the city scene is warming up before reveal — disables the button and shows a spinner. */
   loading?: boolean
 }
 
 /**
- * Full-screen start screen prompting the user to begin the city walk.
+ * Full-screen start screen. Only its button (or the `E` key, see
+ * `HotkeyRouter`) starts the experience — stray clicks elsewhere do nothing.
  *
  * @param props - Overlay actions and loading state
  * @returns Start overlay
@@ -171,8 +183,7 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
   }
   return (
     <div
-      onClick={handleStart}
-      className={`fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(10,10,22,0.94)_0%,rgba(4,4,10,0.98)_70%)] p-8 text-center backdrop-blur-xs ${loading ? 'cursor-progress' : 'cursor-pointer'}`}
+      className={`fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(10,10,22,0.94)_0%,rgba(4,4,10,0.98)_70%)] p-8 text-center backdrop-blur-xs ${loading ? 'cursor-progress' : ''}`}
     >
       <div className="max-w-2xl">
         <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena -1 — Año 2050</div>
@@ -195,7 +206,7 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
         <button
           onClick={handleStart}
           disabled={loading}
-          className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)] disabled:cursor-progress disabled:opacity-80 disabled:hover:translate-y-0 disabled:hover:scale-100"
+          className="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)] disabled:cursor-progress disabled:opacity-80 disabled:hover:translate-y-0 disabled:hover:scale-100"
         >
           {loading ? (
             <>
@@ -209,7 +220,7 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
             </>
           )}
         </button>
-        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles y sonido — ESC para salir</p>
+        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Presiona E o el botón para entrar — ESC para salir</p>
       </div>
     </div>
   )
