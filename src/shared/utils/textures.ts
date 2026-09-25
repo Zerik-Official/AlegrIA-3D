@@ -189,3 +189,52 @@ export function createWeatheredWallTexture(seed: number, size = 256): THREE.Text
   texture.needsUpdate = true
   return texture
 }
+
+/**
+ * Deterministic warm-wood parquet: staggered planks in a few honey/walnut
+ * tones with faint grain and dark seams, tiling seamlessly so a large floor
+ * can repeat it (`wrapS/wrapT` are already set to repeat).
+ * @param seed - Deterministic seed
+ * @param size - Canvas edge length in px
+ * @returns Canvas-based, repeating parquet texture
+ */
+export function createParquetTexture(seed: number, size = 512): THREE.Texture {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const rand = createSeededRandom(seed)
+  const tones = ['#8a5428', '#9c6232', '#7a4620', '#a86c38', '#6e3e1c']
+  const rows = 8
+  const rowH = size / rows
+  const plankW = size / 2
+
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2) * (plankW / 2)
+    for (let x = -plankW; x < size + plankW; x += plankW) {
+      const px = x + offset
+      ctx.fillStyle = tones[Math.floor(rand() * tones.length)]
+      ctx.fillRect(px, r * rowH, plankW, rowH)
+      for (let g = 0; g < 6; g++) {
+        const gy = r * rowH + rand() * rowH
+        ctx.strokeStyle = `rgba(40,20,8,${0.06 + rand() * 0.08})`
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(px, gy)
+        ctx.lineTo(px + plankW, gy + (rand() - 0.5) * 4)
+        ctx.stroke()
+      }
+      ctx.fillStyle = 'rgba(30,14,4,0.55)'
+      ctx.fillRect(px, r * rowH, 2, rowH)
+    }
+    ctx.fillStyle = 'rgba(30,14,4,0.55)'
+    ctx.fillRect(0, r * rowH, size, 2)
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
+  texture.colorSpace = THREE.SRGBColorSpace
+  texture.needsUpdate = true
+  return texture
+}
