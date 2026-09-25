@@ -34,6 +34,8 @@ function trackKeyForPhase(phase: GamePhase, libraryVisitCount: number): AudioTra
       return 'dorade'
     case 'cityIntro':
       return 'finalFuture'
+    case 'credits':
+      return 'credits'
     default:
       return null
   }
