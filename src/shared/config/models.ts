@@ -167,7 +167,6 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/ad-tower': { path: `${base}models/cityIntro/ad-tower.glb`, fallback: 'procedural-ad-tower' },
   'cityIntro/street-jukebox-car': { path: `${base}models/future/vehicles/riwi-carrosa-future.glb`, fallback: 'procedural-parade-vehicle' },
   'cityIntro/poderoso-premium': { path: `${base}models/future/decorators/poderoso-premium.glb`, fallback: 'procedural-decoration' },
-  'credits/omar-dancing': { path: `${base}models/credits/scenes/omar-dancing.glb`, fallback: 'procedural-decoration' },
 }
 
 /**
