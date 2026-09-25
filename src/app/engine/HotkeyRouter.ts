@@ -25,8 +25,8 @@ export interface HotkeyContext {
   showPhase2Overlay: boolean
   /** Whether `phase` currently resolves to the city intro walk. */
   isCityIntro: boolean
-  /** Whether the scripted city walk has reached the library door. */
-  arrivedAtLibrary: boolean
+  /** Whether the finale's scripted walk has handed over to free roaming. */
+  cityFreeRoam: boolean
   /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
@@ -45,9 +45,7 @@ export interface HotkeyContext {
   setEditorMode: (mode: 'translate' | 'rotate' | 'scale') => void
   /** Transitions from `idle` straight into `exploring` (the library), where the experience now starts. */
   startExperience: () => void
-  /** Transitions from `cityIntro` into `exploring`, once the player has reached the library door. */
-  enterLibrary: () => void
-  /** Book interaction in the library: first visit heads to Phase 1, the second (and later) heads to the `cityIntro` finale. */
+  /** Book interaction in the library: first visit heads to Phase 1, the second (and later) returns the book to its shelf once its narration has ended. */
   handleBookInteract: () => void
   /** Starts the wormhole transition into Phase 2 (triggered near the Phase 1 portal). */
   startWormholeToPhase2: () => void
@@ -113,10 +111,6 @@ export class HotkeyRouter {
       ctx.startExperience()
       return
     }
-    if (isConfirmKey && ctx.isCityIntro && ctx.arrivedAtLibrary) {
-      ctx.enterLibrary()
-      return
-    }
     if (isConfirmKey && ctx.hasSelectedPhoto) {
       ctx.closePhoto()
       return
@@ -149,7 +143,7 @@ export class HotkeyRouter {
    * @param ctx - Context snapshot
    */
   private togglePointerLock(ctx: HotkeyContext): void {
-    if (ctx.isEditorEnabled || ctx.showPhase1Overlay || ctx.showPhase2Overlay || ctx.phase === 'idle' || ctx.phase === 'wormhole' || ctx.isCityIntro) return
+    if (ctx.isEditorEnabled || ctx.showPhase1Overlay || ctx.showPhase2Overlay || ctx.phase === 'idle' || ctx.phase === 'wormhole' || (ctx.isCityIntro && !ctx.cityFreeRoam)) return
     if (document.pointerLockElement) document.exitPointerLock()
     else document.body.requestPointerLock?.()
   }
