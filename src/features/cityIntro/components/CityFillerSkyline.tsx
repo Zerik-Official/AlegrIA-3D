@@ -1,6 +1,7 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
+import { FILLER_CLEAR_ZONES } from '@/features/cityIntro/config/cityStreets'
 
 /** Instance count for the hazy background skyline. */
 const COUNT = 220
@@ -43,6 +44,7 @@ export const CityFillerSkyline = memo(function CityFillerSkyline() {
       const x = (rand() > 0.5 ? 1 : -1) * (18 + rand() * 95)
       const z = 80 - rand() * 230
       if (Math.abs(x) < CLEAR_CORRIDOR_X && z > CLEAR_CORRIDOR_MIN_Z) continue
+      if (FILLER_CLEAR_ZONES.some(([minX, maxX, minZ, maxZ]) => x > minX - 4 && x < maxX + 4 && z > minZ - 4 && z < maxZ + 4)) continue
 
       const width = 3 + rand() * 5
       const depth = 3 + rand() * 5
