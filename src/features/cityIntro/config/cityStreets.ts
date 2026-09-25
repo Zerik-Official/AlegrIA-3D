@@ -49,6 +49,7 @@ export const PLAZAS: Plaza[] = [
   { id: 'plaza-riwi', area: [-12.8, -AVENUE_SIDEWALK_OUTER_X, 9.4, 20.6], side: -1, accent: '#a855ff' },
   { id: 'plaza-pantalla-oeste', area: [-13, -AVENUE_SIDEWALK_OUTER_X, -25, -1.2], side: -1, accent: '#00B4D8' },
   { id: 'plaza-pantalla-este', area: [AVENUE_SIDEWALK_OUTER_X, 13, 2.4, 14.6], side: 1, accent: '#FF007F' },
+  { id: 'plaza-riwi-barranquilla', area: [19.5, 28.5, -30, -19.5], side: 1, accent: '#a855ff' },
 ]
 
 /** Player body radius kept clear of every walkable edge. */
