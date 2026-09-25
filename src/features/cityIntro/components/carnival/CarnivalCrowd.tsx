@@ -3,6 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import {
   beatAt,
+  CARNIVAL_CLOTHES,
+  CARNIVAL_SKIN,
   CROWD_BLOCKING_BOXES,
   CROWD_BLOCKING_CIRCLES,
   CROWD_COUNT,
@@ -31,12 +33,14 @@ interface Dancer {
   rotation: number
 }
 
-/** Clothes in carnival colors. */
-const CLOTHES = ['#FF007F', '#FFB703', '#00B4D8', '#39FF88', '#E63946', '#8A2BE2', '#FF7A00', '#1E8C86', '#F2C14E', '#FFFFFF']
-/** Skin tones. */
-const SKIN = ['#8d5524', '#c68642', '#e0ac69', '#f1c27d', '#5c3317', '#a0522d']
 /** Radius within which dancers step aside for the player. */
 const MAKE_WAY_RADIUS = 1.5
+/**
+ * Frustum margin (world units) added around the camera's view before a
+ * dancer is considered "on screen" — keeps hop/sway animation from visibly
+ * starting/stopping right at the screen edge.
+ */
+const FRUSTUM_MARGIN = 6
 
 /**
  * @param entities - `path-point` entities
@@ -83,6 +87,67 @@ const scratch = {
 }
 
 /**
+ * Writes one dancer's body/head/arm matrices for a given beat — factored out
+ * so both the initial (resting-pose) layout and the per-frame animation of
+ * on-screen dancers share the exact same pose math.
+ * @param i - Instance index
+ * @param d - Dancer
+ * @param beat - Beats elapsed (0 for the initial static pose)
+ * @param px - Player/camera X, for the step-aside push
+ * @param pz - Player/camera Z, for the step-aside push
+ * @param body - Body instanced mesh
+ * @param head - Head instanced mesh
+ * @param arm - Arm instanced mesh
+ */
+function poseDancer(
+  i: number,
+  d: Dancer,
+  beat: number,
+  px: number,
+  pz: number,
+  body: THREE.InstancedMesh,
+  head: THREE.InstancedMesh,
+  arm: THREE.InstancedMesh
+): void {
+  let x = d.x
+  let z = d.z
+  const dx = x - px
+  const dz = z - pz
+  const dist = Math.hypot(dx, dz)
+  if (dist < MAKE_WAY_RADIUS && dist > 0.001) {
+    const push = (MAKE_WAY_RADIUS - dist) * 0.9
+    x += (dx / dist) * push
+    z += (dz / dist) * push
+  }
+  const hop = Math.abs(Math.sin(beat * Math.PI + d.phase)) * 0.13 * d.scale
+  const sway = Math.sin(beat * Math.PI * 0.5 + d.phase) * d.sway
+
+  scratch.euler.set(0, d.rotation, sway)
+  scratch.quat.setFromEuler(scratch.euler)
+  scratch.scale.setScalar(d.scale)
+  scratch.pos.set(x, 0.6 * d.scale + hop + 0.18, z)
+  scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
+  body.setMatrixAt(i, scratch.matrix)
+
+  scratch.pos.set(x - Math.sin(sway) * 0.18 * d.scale, 1.28 * d.scale + hop + 0.18, z)
+  scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
+  head.setMatrixAt(i, scratch.matrix)
+
+  if (d.hasArm) {
+    const wave = Math.sin(beat * Math.PI + d.phase) * 0.35
+    scratch.euler.set(0, d.rotation, d.armSide * (0.35 + wave))
+    scratch.quat.setFromEuler(scratch.euler)
+    const ox = Math.cos(d.rotation) * 0.24 * d.armSide
+    const oz = -Math.sin(d.rotation) * 0.24 * d.armSide
+    scratch.pos.set(x + ox, 1.35 * d.scale + hop + 0.18, z + oz)
+    scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
+  } else {
+    scratch.matrix.makeScale(0, 0, 0)
+  }
+  arm.setMatrixAt(i, scratch.matrix)
+}
+
+/**
  * The street party's crowd: hundreds of dancers in carnival colors filling
  * the avenue, hopping and swaying on the beat, some with an arm up. They
  * leave a corridor along the walk's path, keep off the trees, slabs, bus and
@@ -104,6 +169,9 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     []
   )
   const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05 }), [])
+  const frustum = useMemo(() => new THREE.Frustum(), [])
+  const frustumMatrix = useMemo(() => new THREE.Matrix4(), [])
+  const testSphere = useMemo(() => new THREE.Sphere(new THREE.Vector3(), FRUSTUM_MARGIN), [])
 
   const dancers = useMemo(() => {
     const walkX = pathXAt(pathEntities)
@@ -134,15 +202,20 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     const head = headRef.current
     const arm = armRef.current
     if (!body || !head || !arm) return
-    dancers.forEach((_, i) => {
-      const clothes = scratch.color.set(CLOTHES[Math.floor(Math.random() * CLOTHES.length)])
+    dancers.forEach((d, i) => {
+      const clothes = scratch.color.set(CARNIVAL_CLOTHES[Math.floor(Math.random() * CARNIVAL_CLOTHES.length)])
       body.setColorAt(i, clothes)
       arm.setColorAt(i, clothes)
-      head.setColorAt(i, scratch.color.set(SKIN[Math.floor(Math.random() * SKIN.length)]))
+      head.setColorAt(i, scratch.color.set(CARNIVAL_SKIN[Math.floor(Math.random() * CARNIVAL_SKIN.length)]))
+      // Resting pose for everyone up front, so dancers outside the camera's
+      // view on the very first frame (see the frustum check below) still
+      // stand in the right spot instead of defaulting to an identity matrix.
+      poseDancer(i, d, 0, 0, 0, body, head, arm)
     })
     for (const mesh of [body, head, arm]) {
       mesh.count = dancers.length
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
+      mesh.instanceMatrix.needsUpdate = true
     }
     material.needsUpdate = true
   }, [dancers, material])
@@ -153,48 +226,27 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     const arm = armRef.current
     if (!body || !head || !arm) return
     const { beat } = beatAt(clock.elapsedTime)
+
+    // Only pay the per-dancer trig + matrix-write cost for dancers the
+    // camera can actually see — the rest keep whatever pose they were last
+    // drawn in, which is imperceptible off-screen and keeps the frame cheap
+    // even with hundreds of dancers filling the avenue.
+    frustumMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+    frustum.setFromProjectionMatrix(frustumMatrix)
+
+    let touched = false
     for (let i = 0; i < dancers.length; i++) {
       const d = dancers[i]
-      let x = d.x
-      let z = d.z
-      const dx = x - camera.position.x
-      const dz = z - camera.position.z
-      const dist = Math.hypot(dx, dz)
-      if (dist < MAKE_WAY_RADIUS && dist > 0.001) {
-        const push = (MAKE_WAY_RADIUS - dist) * 0.9
-        x += (dx / dist) * push
-        z += (dz / dist) * push
-      }
-      const hop = Math.abs(Math.sin(beat * Math.PI + d.phase)) * 0.13 * d.scale
-      const sway = Math.sin(beat * Math.PI * 0.5 + d.phase) * d.sway
-
-      scratch.euler.set(0, d.rotation, sway)
-      scratch.quat.setFromEuler(scratch.euler)
-      scratch.scale.setScalar(d.scale)
-      scratch.pos.set(x, 0.6 * d.scale + hop + 0.18, z)
-      scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
-      body.setMatrixAt(i, scratch.matrix)
-
-      scratch.pos.set(x - Math.sin(sway) * 0.18 * d.scale, 1.28 * d.scale + hop + 0.18, z)
-      scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
-      head.setMatrixAt(i, scratch.matrix)
-
-      if (d.hasArm) {
-        const wave = Math.sin(beat * Math.PI + d.phase) * 0.35
-        scratch.euler.set(0, d.rotation, d.armSide * (0.35 + wave))
-        scratch.quat.setFromEuler(scratch.euler)
-        const ox = Math.cos(d.rotation) * 0.24 * d.armSide
-        const oz = -Math.sin(d.rotation) * 0.24 * d.armSide
-        scratch.pos.set(x + ox, 1.35 * d.scale + hop + 0.18, z + oz)
-        scratch.matrix.compose(scratch.pos, scratch.quat, scratch.scale)
-      } else {
-        scratch.matrix.makeScale(0, 0, 0)
-      }
-      arm.setMatrixAt(i, scratch.matrix)
+      testSphere.center.set(d.x, 1, d.z)
+      if (!frustum.intersectsSphere(testSphere)) continue
+      poseDancer(i, d, beat, camera.position.x, camera.position.z, body, head, arm)
+      touched = true
     }
-    body.instanceMatrix.needsUpdate = true
-    head.instanceMatrix.needsUpdate = true
-    arm.instanceMatrix.needsUpdate = true
+    if (touched) {
+      body.instanceMatrix.needsUpdate = true
+      head.instanceMatrix.needsUpdate = true
+      arm.instanceMatrix.needsUpdate = true
+    }
   })
 
   return (
