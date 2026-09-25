@@ -15,11 +15,11 @@ import { carnivalPlaylist } from '@/shared/config/audio'
 import { PODEROSO_PREMIUM_XZ, STREET_JUKEBOX_CAR_XZ } from '@/features/cityIntro/config/carnivalLayout'
 
 /** Distance within which the music plays at its full (capped) volume. */
-const NEAR_RADIUS = 6
+const NEAR_RADIUS = 9
 /** Distance beyond which neither rig can be heard. */
-const FAR_RADIUS = 26
+const FAR_RADIUS = 30
 /** Loudest the street music ever gets — under `usePhaseAudio`'s narration volume so it stays a background layer. */
-const MAX_VOLUME = 0.34
+const MAX_VOLUME = 0.5
 
 /**
  * @returns A freshly shuffled playlist (Fisher-Yates)
