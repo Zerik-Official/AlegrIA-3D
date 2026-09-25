@@ -16,6 +16,8 @@ interface HUDProps {
   variant: 'library' | 'phase1' | 'phase2' | 'cityIntro'
   /** Seconds remaining in the current narration/dialogue; `null` to hide the countdown. */
   audioRemainingSec?: number | null
+  /** Label of the book interaction prompt — waking the book on the first visit, returning it on the second. */
+  interactLabel?: string
 }
 
 /** Title-area copy per {@link HUDProps.variant}. */
@@ -65,7 +67,7 @@ const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec, interactLabel = 'Despertar el Libro de Rosa' }: HUDProps) {
   const copy = VARIANT_COPY[variant]
   const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
   const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
@@ -113,7 +115,7 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
               <span className="flex h-7 items-center justify-center rounded-md bg-parchment px-2.5 text-[13px] font-bold text-[#1a1205] shadow-[0_2px_0_#b89a4a]">E</span>
               <span className="flex items-center gap-2 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment">
                 <FiBookOpen className="h-4 w-4 text-gold-bright" />
-                Despertar el Libro de Rosa
+                {interactLabel}
               </span>
             </button>
           )}
