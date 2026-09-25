@@ -1,6 +1,5 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Outlines } from '@react-three/drei'
 import * as THREE from 'three'
 import { useImagePreviewTexture } from '@/shared/hooks/useImagePreviewTexture'
 import { BOOK_PAGES, PAGE_FLOAT_Y, PAGE_TABLE_TOP_Y, type BookPage } from '@/features/library/config/bookPages'
@@ -10,6 +9,9 @@ const SHEET_W = 0.64
 const SHEET_H = 0.86
 /** Margin kept around the scan on the sheet. */
 const SHEET_MARGIN = 0.04
+/** How far the outline shell reaches past the sheet's edges. */
+const OUTLINE_MARGIN = 0.035
+
 /** How close the player must be to a page to pick it up. */
 const FOCUS_RANGE = 3
 /** How closely the crosshair must point at a page (angle from the view direction) to focus it. */
@@ -60,7 +62,10 @@ interface BookPageDisplayProps {
 /**
  * One display table: a round gilded table with a page of the Libro de Rosa
  * floating and turning over it, its scan on both faces. When focused it
- * stops to face the player, grows a little, brightens and is outlined.
+ * stops to face the player, grows a little, brightens and is outlined — by
+ * a slightly larger gold shell drawn from its back faces, so only a rim shows
+ * around the sheet from any angle (drei's `Outlines` crashes the canvas on
+ * unmount in this drei version, so it isn't used).
  *
  * @param props - Page, stagger, focus and halo
  * @returns Table group
@@ -69,6 +74,11 @@ const BookPageDisplay = memo(function BookPageDisplay({ page, index, focused, gl
   const preview = useImagePreviewTexture(page.src)
   const sheetRef = useRef<THREE.Group>(null)
   const haloRef = useRef<THREE.Sprite>(null)
+  const outlineRef = useRef<THREE.Mesh>(null)
+  const outlineMaterial = useMemo(
+    () => new THREE.MeshBasicMaterial({ color: '#ffd98a', side: THREE.BackSide, transparent: true, opacity: 0, depthWrite: false, toneMapped: false }),
+    []
+  )
   const state = useRef({ yaw: index * 1.1, scale: 1, glow: 0 })
 
   const image = useMemo(() => {
@@ -96,6 +106,10 @@ const BookPageDisplay = memo(function BookPageDisplay({ page, index, focused, gl
     sheet.position.y = PAGE_FLOAT_Y + Math.sin(t * 1.2 + index) * 0.06
     sheet.rotation.set(Math.sin(t * 0.7 + index) * 0.05, s.yaw, Math.sin(t * 0.9 + index * 2) * 0.04)
     sheet.scale.setScalar(s.scale)
+    if (outlineRef.current) {
+      outlineMaterial.opacity = s.glow * (0.85 + Math.sin(t * 6) * 0.15)
+      outlineRef.current.visible = s.glow > 0.02
+    }
     if (haloRef.current) {
       const h = 1.5 + s.glow * 0.6 + Math.sin(t * 2 + index) * 0.05
       haloRef.current.scale.set(h, h * 1.25, 1)
@@ -134,7 +148,9 @@ const BookPageDisplay = memo(function BookPageDisplay({ page, index, focused, gl
       <group ref={sheetRef} position={[0, PAGE_FLOAT_Y, 0]}>
         <mesh material={mats.paper} castShadow>
           <boxGeometry args={[SHEET_W, SHEET_H, 0.012]} />
-          {focused && <Outlines thickness={4} screenspace color="#ffd98a" opacity={1} transparent={false} angle={Math.PI} />}
+        </mesh>
+        <mesh ref={outlineRef} material={outlineMaterial} visible={false}>
+          <boxGeometry args={[SHEET_W + OUTLINE_MARGIN * 2, SHEET_H + OUTLINE_MARGIN * 2, 0.03]} />
         </mesh>
         {preview && (
           <>
