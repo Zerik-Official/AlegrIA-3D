@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { HUD, StartOverlay } from '@/features/ui/components/HUD'
 import { CityIntroHUD } from '@/features/cityIntro/components/CityIntroHUD'
 import { PhotoModal } from '@/shared/components/PhotoModal'
+import { BookPageModal } from '@/features/library/components/BookPageModal'
 import { StoryTitle } from '@/shared/components/StoryTitle'
 import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { catalogForScene } from '@/engine/config/entityCatalog'
@@ -32,13 +33,14 @@ function variantForTarget(target: GamePhase): 'library' | 'phase1' | 'phase2' | 
 
 /**
  * Every DOM layer over the canvas: the start screen, each phase's overlay
- * (city, library, wormhole, open phases), the photo modal and the editor.
+ * (city, library, wormhole, open phases), the photo and book page modals and
+ * the editor.
  *
  * @param props - Experience state
  * @returns HUD layers
  */
 export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
-  const { phaseFlow, city, photo, editor, editors, inOpenPhase, audioRemainingSec } = experience
+  const { phaseFlow, city, photo, editor, editors, inOpenPhase, bookPages, audioRemainingSec } = experience
   const { phase } = phaseFlow
   const current = editors.currentEditor
 
@@ -67,6 +69,8 @@ export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
         description={photo.selectedPhoto?.description ?? ''}
         onClose={photo.closePhoto}
       />
+
+      <BookPageModal page={bookPages.openPage} onClose={bookPages.closePage} />
 
       <EditorOverlay
         enabled={editor.isEditorEnabled}
