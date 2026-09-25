@@ -34,10 +34,12 @@ interface EditorOverlayProps {
   onExport: () => string
   /** Close editor. */
   onClose: () => void
-  /** Current game phase, used to highlight the active jump target. */
+  /** Current game phase, shown next to the jump control. */
   currentPhase?: GamePhase
-  /** Handles an instant phase jump without linear walk/wormhole sequencing. */
-  onJumpToPhase?: (phase: GamePhase) => void
+  /** Story checkpoint the experience is at, selected in the jump control. */
+  currentCheckpointId?: string
+  /** Jumps to a story checkpoint without the walk/wormhole sequence. */
+  onJumpToCheckpoint?: (id: string) => void
   /** Scene currently edited, used to filter the model browser to that phase. */
   currentScene?: SceneId
 }
@@ -63,14 +65,15 @@ export const EditorOverlay = memo(function EditorOverlay({
   onExport,
   onClose,
   currentPhase,
-  onJumpToPhase,
+  currentCheckpointId,
+  onJumpToCheckpoint,
   currentScene,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
   const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
   const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
   const jumpTargets = phaseSceneRegistry.listJumpTargets()
-  const hasJump = typeof onJumpToPhase === 'function' && typeof currentPhase === 'string'
+  const hasJump = typeof onJumpToCheckpoint === 'function' && typeof currentPhase === 'string'
 
   /**
    * Handles quick-add from the model browser: creates an entity whose `type`
@@ -135,19 +138,19 @@ export const EditorOverlay = memo(function EditorOverlay({
           </div>
           <div className="mt-2 flex gap-1.5">
             <select
-              value={jumpTargets.some((t) => t.phase === currentPhase) ? currentPhase : jumpTargets[0]?.phase ?? 'exploring'}
-              onChange={(ev) => onJumpToPhase?.(ev.target.value as GamePhase)}
+              value={jumpTargets.some((t) => t.id === currentCheckpointId) ? currentCheckpointId : jumpTargets[0]?.id}
+              onChange={(ev) => onJumpToCheckpoint?.(ev.target.value)}
               className="flex-1 rounded-md bg-white/10 px-2 py-1.5 text-[11px] text-parchment outline-none focus:bg-white/15"
             >
               {jumpTargets.map((target) => (
-                <option key={target.phase} value={target.phase} className="text-black">
+                <option key={target.id} value={target.id} className="text-black">
                   {target.label}
                 </option>
               ))}
             </select>
             <span className="inline-flex items-center rounded-md bg-gold/15 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] uppercase text-gold">{currentPhase}</span>
           </div>
-          <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">Salta sin pasar por cityIntro/wormhole. El editor mantiene la escena elegida.</div>
+          <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">Salta a ese punto de la historia sin pasar por el vórtice; el libro y los portales siguen desde ahí.</div>
         </div>
       )}
       <div className="mt-3 flex gap-1.5">
