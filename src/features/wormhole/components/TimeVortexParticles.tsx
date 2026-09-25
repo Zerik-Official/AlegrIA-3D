@@ -2,6 +2,9 @@ import { memo, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
+/** Where the effect sits unless told otherwise: over the pedestal's levitating book. */
+const DEFAULT_CENTER: [number, number, number] = [0, 1.68, 0]
+
 /**
  * Props for {@link TimeVortexParticles}.
  */
@@ -10,6 +13,8 @@ interface TimeVortexParticlesProps {
   active: boolean
   /** Normalized progress in [0,1]. */
   progress: number
+  /** World position the effect is centered on — the pedestal's book by default, the portal when crossing it. */
+  center?: [number, number, number]
 }
 
 /**
@@ -20,7 +25,7 @@ interface TimeVortexParticlesProps {
  * @param props - Portal state
  * @returns Vortex group
  */
-export const TimeVortexParticles = memo(function TimeVortexParticles({ active, progress }: TimeVortexParticlesProps) {
+export const TimeVortexParticles = memo(function TimeVortexParticles({ active, progress, center = DEFAULT_CENTER }: TimeVortexParticlesProps) {
   const groupRef = useRef<THREE.Group>(null)
   const pointsRef = useRef<THREE.Points>(null)
   const discRef = useRef<THREE.Mesh>(null)
@@ -148,7 +153,7 @@ export const TimeVortexParticles = memo(function TimeVortexParticles({ active, p
   if (!active && progress === 0) return null
 
   return (
-    <group ref={groupRef} position={[0, 1.68, 0]}>
+    <group ref={groupRef} position={center}>
       <points ref={pointsRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />
