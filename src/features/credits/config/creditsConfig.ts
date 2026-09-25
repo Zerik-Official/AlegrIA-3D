@@ -7,8 +7,13 @@
 
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 
-/** How far in front of the RIWI Barranquilla building (along its facing direction) the door trigger sits. */
-const DOOR_OFFSET = 4.5
+/**
+ * How far in front of the RIWI Barranquilla building (along its facing
+ * direction) the door trigger sits — close to the entrance itself, since the
+ * street party ("El Poderoso Premium" and its dancers) moved down to the
+ * street's actual dead end instead of camping right at the door.
+ */
+const DOOR_OFFSET = 3
 
 /**
  * World XZ of the credits door prompt — looked up once from the
