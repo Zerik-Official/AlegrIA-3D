@@ -12,7 +12,7 @@
   { "id": "riwi-barranquilla", "type": "riwi-barranquilla", "position": [24, 0, -21.56], "rotationY": 3.1416, "scale": 1 },
   { "id": "bus-anuncio", "type": "ad-bus", "position": [4.4, 0, -14.2], "rotationY": 3.1416, "scale": 1, "videoSrc": "/videos/future/barrio-abajo-tour.mp4" },
   { "id": "street-jukebox-car", "type": "street-jukebox-car", "position": [-3.3, 0, 7], "rotationY": 0, "scale": 1 },
-  { "id": "poderoso-premium", "type": "poderoso-premium", "position": [24, 0, -27], "rotationY": 3.1416, "scale": 1 },
+  { "id": "poderoso-premium", "type": "poderoso-premium", "position": [29, 0, -36.5], "rotationY": -1.5708, "scale": 1 },
   { "id": "casa-este-01", "type": "neo-heritage-house", "position": [11.5, 0, 20], "rotationY": -1.5708, "scale": 1, "variant": "#FFB703", "title": "#FF007F" },
   { "id": "casa-este-03", "type": "neo-heritage-house", "position": [11.5, 0, -3], "rotationY": -1.5708, "scale": 1, "variant": "#E63946", "title": "#5AD8FF" },
   { "id": "casa-este-04", "type": "neo-heritage-house", "position": [11.5, 0, -15], "rotationY": -1.5708, "scale": 1, "variant": "#D98E3C", "title": "#FF007F" },
