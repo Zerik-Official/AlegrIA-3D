@@ -40,6 +40,13 @@ class PhaseSceneRegistry {
     phase2: { sceneId: 'phase2', fog: { color: '#a9d8f5', near: 24, far: 84 }, background: '#8ec9f0' },
   }
 
+  /** The library once the returned book has restored it: warm, lit and far clearer than the abandoned hall's gloom. */
+  private readonly restoredLibraryVisual: PhaseVisual = {
+    sceneId: 'library',
+    fog: { color: '#3a2616', near: 16, far: 46 },
+    background: '#1a0f08',
+  }
+
   /** Jump targets exposed to the editor — single source for the quick phase-switcher. */
   private readonly jumpTargets: PhaseJumpTarget[] = [
     { phase: 'idle', sceneId: 'cityIntro', label: 'Inicio — Pantalla inicial' },
@@ -68,10 +75,13 @@ class PhaseSceneRegistry {
   /**
    * Resolves the fog/background pair for a game phase.
    * @param phase - Current game phase
+   * @param libraryRestored - Whether the library has been restored by the returned book, which lifts its gloom
    * @returns Visual configuration for that phase's scene
    */
-  resolveVisual(phase: GamePhase): PhaseVisual {
-    return this.visuals[this.resolveScene(phase)]
+  resolveVisual(phase: GamePhase, libraryRestored = false): PhaseVisual {
+    const sceneId = this.resolveScene(phase)
+    if (sceneId === 'library' && libraryRestored) return this.restoredLibraryVisual
+    return this.visuals[sceneId]
   }
 
   /**
