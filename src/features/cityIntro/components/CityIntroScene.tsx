@@ -1,8 +1,10 @@
 import { memo, useMemo } from 'react'
+import { Sparkles } from '@react-three/drei'
 import { PhaseEngine } from '@/engine/PhaseEngine'
-import { SceneStars } from '@/shared/components/SceneAtmosphere'
 import { CityFillerSkyline } from '@/features/cityIntro/components/CityFillerSkyline'
+import { CaribbeanSky } from '@/features/cityIntro/components/CaribbeanSky'
 import { buildFlightLanes } from '@/features/cityIntro/renderers/flightLane'
+import { CARIBBEAN_BLUE, NEON_MAGENTA, SOLAR_YELLOW, SUNSET_ORANGE } from '@/features/cityIntro/config/colorPalette'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
@@ -21,16 +23,20 @@ interface CityIntroSceneProps {
  */
 const ROAD_FROM_Z = 75
 const ROAD_TO_Z = -60
-/** Center/size of the plain dark ground plane, sized to clear the road strip and skyline filler on every side. */
+/** Center/size of the plain ground plane, sized to clear the road strip and skyline filler on every side. */
 const GROUND_CENTER_Z = 7
 const GROUND_SIZE: [number, number] = [280, 180]
 
 /**
- * Escena -1 — a futuristic city street the player walks (camera on rails,
- * look-only) from the city toward an abandoned library glimpsed at the end
- * of the road. Static street/sidewalk geometry lives here; every skyscraper,
- * streetlight, flying vehicle, the moon and the library facade are JSON-driven
- * through `PhaseEngine` (`engine/config/cityIntro.json`), fully editable via `F2`.
+ * Escena -1 — "Futurismo Abajero 2050": la calle que el jugador recorre
+ * (cámara sobre rieles, solo mirar) desde el barrio hacia la biblioteca que
+ * se asoma al final. No es la ciudad cyberpunk genérica: es Barrio Abajo
+ * tecnificado, de un piso, en un atardecer caribeño neón.
+ *
+ * La geometría estática de calzada y andenes vive aquí; las casas, murales,
+ * faroles flotantes, robles, vehículos, la luna y la fachada de la biblioteca
+ * son JSON (`engine/config/cityIntro.json`) a través de `PhaseEngine`, todas
+ * editables con `F2`.
  *
  * @param props - Scene props
  * @returns City intro group
@@ -46,44 +52,50 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
 
   return (
     <group>
-      <SceneStars count={1400} radius={260} color="#eaf2ff" />
+      <CaribbeanSky />
       <CityFillerSkyline />
 
+      {/* Tierra del barrio: arena caliente, no asfalto azulado. */}
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, GROUND_CENTER_Z]} receiveShadow>
         <planeGeometry args={GROUND_SIZE} />
-        <meshStandardMaterial color="#0d0e14" roughness={0.85} metalness={0.15} />
+        <meshStandardMaterial color="#3a2420" roughness={0.95} metalness={0.05} />
       </mesh>
 
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.006, (ROAD_FROM_Z + ROAD_TO_Z) / 2]} receiveShadow>
         <planeGeometry args={[8.6, ROAD_FROM_Z - ROAD_TO_Z]} />
-        <meshStandardMaterial color="#15161c" roughness={0.7} metalness={0.2} />
+        <meshStandardMaterial color="#3a2a2e" roughness={0.8} metalness={0.1} />
       </mesh>
 
+      {/* Andenes: cemento gastado con polvo de ladrillo. */}
       {[-4.6, 4.6].map((x) => (
         <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.01, (ROAD_FROM_Z + ROAD_TO_Z) / 2]} receiveShadow>
           <planeGeometry args={[2.4, ROAD_FROM_Z - ROAD_TO_Z]} />
-          <meshStandardMaterial color="#232530" roughness={0.9} />
+          <meshStandardMaterial color="#6b4a3a" roughness={0.95} />
         </mesh>
       ))}
 
+      {/* El filo del bordillo, pintado de amarillo solar a lo largo de la cuadra. */}
       {[-3.55, 3.55].map((x) => (
         <mesh key={x} position={[x, 0.03, (ROAD_FROM_Z + ROAD_TO_Z) / 2]}>
-          <boxGeometry args={[0.06, 0.04, ROAD_FROM_Z - ROAD_TO_Z]} />
-          <meshStandardMaterial color="#5ad8ff" emissive="#5ad8ff" emissiveIntensity={0.9} />
+          <boxGeometry args={[0.1, 0.06, ROAD_FROM_Z - ROAD_TO_Z]} />
+          <meshStandardMaterial color={SOLAR_YELLOW} emissive={SOLAR_YELLOW} emissiveIntensity={0.7} roughness={0.8} />
         </mesh>
       ))}
 
       {laneDashes.map((z) => (
         <mesh key={z} rotation-x={-Math.PI / 2} position={[0, 0.008, z]}>
           <planeGeometry args={[0.22, 1.4]} />
-          <meshStandardMaterial color="#ffcf6b" emissive="#ffcf6b" emissiveIntensity={0.5} />
+          <meshStandardMaterial color={CARIBBEAN_BLUE} emissive={CARIBBEAN_BLUE} emissiveIntensity={0.55} />
         </mesh>
       ))}
 
       <PhaseEngine entities={entities} context={{ flightLanes }} />
 
-      <ambientLight intensity={0.22} color="#8fa8ff" />
-      <hemisphereLight args={['#3a2a5a', '#0a0a16', 0.4]} />
+      {/* Polvo y polen en suspensión: el aire espeso del Caribe a esa hora. */}
+      <Sparkles count={70} scale={[46, 10, 110]} position={[0, 5, 0]} size={2.4} speed={0.18} color={SOLAR_YELLOW} opacity={0.4} />
+
+      <ambientLight intensity={0.5} color={SUNSET_ORANGE} />
+      <hemisphereLight args={[NEON_MAGENTA, '#4a2a1a', 0.75]} />
     </group>
   )
 })

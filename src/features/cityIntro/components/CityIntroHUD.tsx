@@ -28,9 +28,9 @@ export const CityIntroHUD = memo(function CityIntroHUD({ arrived, onEnter, audio
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(0,0,0,0.55)_100%)]" />
 
       <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 text-center">
-        <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/50">Escena -1 — Año 2050</div>
+        <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/50">Escena -1 — Barrio Abajo 2050</div>
         <div className="font-cinzel mt-1.5 text-[20px] tracking-[0.06em] text-parchment drop-shadow-[0_2px_20px_rgba(120,180,255,0.4)]">
-          Calle de la Ciudad Futura
+          Futurismo Abajero
         </div>
       </div>
 

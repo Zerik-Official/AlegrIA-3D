@@ -38,6 +38,36 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '0' },
   },
   {
+    type: 'neo-heritage-house',
+    label: 'Casa neopatrimonial (abajera 2050)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#FFB703', title: '#FF007F' },
+  },
+  {
+    type: 'culture-mural',
+    label: 'Mural cultural holográfico',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'marimonda', title: '#FFB703' },
+  },
+  {
+    type: 'floating-farol',
+    label: 'Farol flotante (La Guacherna)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#FFD08A' },
+  },
+  {
+    type: 'anden-bordillo',
+    label: 'Andén con bordillo amarillo',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '6' },
+  },
+  {
+    type: 'roble-amarillo',
+    label: 'Roble amarillo en flor',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#F2C14E' },
+  },
+  {
     type: 'skyscraper',
     label: 'Rascacielos',
     scenes: ['cityIntro'],

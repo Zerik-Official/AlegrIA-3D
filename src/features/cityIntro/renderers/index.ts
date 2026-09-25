@@ -3,6 +3,11 @@
  * `engine/entityRegistry`'s `entityRegistry` export. Each renderer lives in
  * its own file here (not in `engine/`) because it's entirely specific to this
  * scene's content — the engine itself only needs the map, not the geometry.
+ *
+ * El bloque "Futurismo Abajero 2050" (casa neopatrimonial, mural cultural,
+ * farol flotante, andén y roble) es el que da la identidad caribeña de la
+ * fase; los tipos cyberpunk originales (rascacielos, torres, banca/maceta de
+ * neón) siguen registrados para no romper escenas ya exportadas del editor.
  * @module features/cityIntro/renderers
  */
 
@@ -19,6 +24,10 @@ import { AdTowerRenderer } from '@/features/cityIntro/renderers/AdTowerRenderer'
 import { RiwiBuildingRenderer } from '@/features/cityIntro/renderers/RiwiBuildingRenderer'
 import { MeshTowerRenderer, NeedleTowerRenderer, NeonBenchRenderer, NeonPlanterRenderer } from '@/features/cityIntro/renderers/FuturisticPropRenderers'
 import { ScreenBuildingRenderer } from '@/features/cityIntro/renderers/ScreenBuildingRenderer'
+import { NeoHeritageHouseRenderer } from '@/features/cityIntro/renderers/NeoHeritageHouseRenderer'
+import { CultureMuralRenderer } from '@/features/cityIntro/renderers/CultureMuralRenderer'
+import { FloatingFaroleRenderer } from '@/features/cityIntro/renderers/FloatingFaroleRenderer'
+import { CurbRenderer, YellowTreeRenderer } from '@/features/cityIntro/renderers/AbajeroStreetProps'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
@@ -38,4 +47,9 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   'needle-tower': NeedleTowerRenderer,
   'neon-bench': NeonBenchRenderer,
   'neon-planter': NeonPlanterRenderer,
+  'neo-heritage-house': NeoHeritageHouseRenderer,
+  'culture-mural': CultureMuralRenderer,
+  'floating-farol': FloatingFaroleRenderer,
+  'anden-bordillo': CurbRenderer,
+  'roble-amarillo': YellowTreeRenderer,
 }

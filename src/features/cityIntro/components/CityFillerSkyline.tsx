@@ -18,12 +18,17 @@ const SEED = 9182731
  * JSON/editor-driven on purpose — hundreds of individually-editable background
  * silhouettes would defeat the point; only the near "hero" buildings are authored.
  *
+ * Rediseño "Futurismo Abajero 2050": la mayoría de las siluetas quedaron
+ * bajas (el barrio es horizontal, de uno o dos pisos) y solo ~1 de cada 6
+ * sube como torre lejana; el tinte pasó de azul noche a magenta/ladrillo
+ * para que el relleno se funda con el atardecer caribeño en vez de recortarse.
+ *
  * @returns Instanced filler-building mesh
  */
 export const CityFillerSkyline = memo(function CityFillerSkyline() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), [])
-  const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0.2, emissive: '#0a0a1e', emissiveIntensity: 0.5 }), [])
+  const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0.05, emissive: '#3a0f2a', emissiveIntensity: 0.45 }), [])
 
   useLayoutEffect(() => {
     const mesh = meshRef.current
@@ -41,15 +46,15 @@ export const CityFillerSkyline = memo(function CityFillerSkyline() {
 
       const width = 3 + rand() * 5
       const depth = 3 + rand() * 5
-      const height = 10 + rand() * 50
+      const height = rand() > 0.82 ? 22 + rand() * 34 : 4 + rand() * 7
       dummy.position.set(x, height / 2, z)
       dummy.scale.set(width, height, depth)
       dummy.rotation.y = rand() * Math.PI
       dummy.updateMatrix()
       mesh.setMatrixAt(placed, dummy.matrix)
 
-      const tone = 0.14 + rand() * 0.2
-      color.setRGB(tone * 0.55, tone * 0.6, tone * 0.95)
+      const tone = 0.16 + rand() * 0.24
+      color.setRGB(tone * 1.05, tone * 0.5, tone * 0.72)
       mesh.setColorAt(placed, color)
       placed++
     }
