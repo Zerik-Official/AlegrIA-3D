@@ -10,6 +10,7 @@
  */
 
 import { createBoxSolid, type CollisionSolid } from '@/features/player/collision'
+import { BOOK_PAGES, PAGE_TABLE_FOOTPRINT, PAGE_TABLE_TOP_Y } from '@/features/library/config/bookPages'
 
 /** Shared shelf dimensions — `Bookshelf`'s own defaults for height/depth. */
 export const SHELF_HEIGHT = 3.2
@@ -237,10 +238,13 @@ export const libraryCollisionSolids: CollisionSolid[] = [
   ...READING_TABLES.map(solidForTable),
 ]
 
-/** The restored hall's colliders: the same shelving, no toppled row, and the extra reading table. */
+/** The restored hall's colliders: the same shelving, no toppled row, the extra reading table, the planters and the page display tables. */
 export const restoredLibraryCollisionSolids: CollisionSolid[] = [
   ...WALL_SHELVES.map(solidForShelf),
   ...AISLE_SHELVES.map(solidForShelf),
   ...RESTORED_READING_TABLES.map(solidForTable),
   ...RESTORED_PLANTERS.map(([x, z]) => createBoxSolid({ x, y: 0.5, z, sizeX: PLANTER_SIZE, sizeY: 1, sizeZ: PLANTER_SIZE, rotationY: 0 })),
+  ...BOOK_PAGES.map(({ table: [x, z] }) =>
+    createBoxSolid({ x, y: PAGE_TABLE_TOP_Y / 2, z, sizeX: PAGE_TABLE_FOOTPRINT, sizeY: PAGE_TABLE_TOP_Y, sizeZ: PAGE_TABLE_FOOTPRINT, rotationY: 0 })
+  ),
 ]
