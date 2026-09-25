@@ -136,6 +136,9 @@ const BookGlowLights = memo(function BookGlowLights({ power }: BookGlowLightsPro
   )
 })
 
+/** Default page-focus handler for when nobody listens (the editor, the first visit). */
+const NO_PAGE_FOCUS = (): void => {}
+
 /**
  * Props for {@link LibraryScene}.
  */
@@ -154,6 +157,12 @@ interface LibrarySceneProps {
   crossingMode?: 'book' | 'portal'
   /** Optional engine-driven entities for editor. */
   editableEntities?: EditableEntity[]
+  /** Whether the restored hall's displayed pages can be picked up with the crosshair. */
+  pagesInteractive?: boolean
+  /** Page under the crosshair, if any. */
+  focusedPageId?: string | null
+  /** Reports the page under the crosshair as it changes. */
+  onPageFocus?: (id: string | null) => void
 }
 
 /**
@@ -172,6 +181,9 @@ export const LibraryScene = memo(function LibraryScene({
   libraryPortalUnlocked = false,
   crossingMode = 'book',
   editableEntities,
+  pagesInteractive = false,
+  focusedPageId = null,
+  onPageFocus = NO_PAGE_FOCUS,
 }: LibrarySceneProps) {
   const libraryRef = useRef<THREE.Group>(null)
   const bookGone = bookStage === 'dormant' || bookStage === 'igniting' || bookStage === 'hidden' || bookStage === 'transforming' || bookStage === 'restored'
@@ -238,7 +250,7 @@ export const LibraryScene = memo(function LibraryScene({
     <group>
       <group ref={libraryRef}>
         {showRestored ? (
-          <RestoredLibrary />
+          <RestoredLibrary pagesInteractive={pagesInteractive} focusedPageId={focusedPageId} onPageFocus={onPageFocus} />
         ) : (
           <>
         <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
