@@ -39,8 +39,6 @@ export const playerConfig = {
   phase1Bounds: { minX: -79, maxX: 54, minZ: -93, maxZ: 93 } as Bounds,
   /** Movement bounds inside Phase 2 barrio (colorful facades). */
   phase2Bounds: { minX: -36, maxX: 36, minZ: -36, maxZ: 36 } as Bounds,
-  /** Movement bounds for the finale's free roam: the street between the house fronts, from the walk's start up to the library steps. */
-  cityBounds: { minX: -6.2, maxX: 6.2, minZ: -49, maxZ: 30 } as Bounds,
 } as const
 
 /**
