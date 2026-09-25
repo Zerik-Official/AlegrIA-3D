@@ -1,5 +1,5 @@
 import { memo, type ReactNode } from 'react'
-import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
+import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiCompass, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
 import { NarrationIndicator } from '@/features/ui/components/NarrationIndicator'
 
@@ -219,7 +219,7 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
  * Props for {@link PastOverlay}.
  */
 interface PastOverlayProps {
-  /** Dismisses the museum intro. */
+  /** Dismisses the Phase 1 intro and starts exploring Barrio Abajo. */
   onReturn: () => void
 }
 
@@ -243,10 +243,10 @@ export const PastOverlay = memo(function PastOverlay({ onReturn }: PastOverlayPr
       </p>
       <button
         onClick={onReturn}
-        className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-[#a8c8ff] to-[#5b8def] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#0a1020] shadow-[0_8px_30px_rgba(90,140,255,0.35)] transition hover:-translate-y-0.5 hover:scale-[1.02]"
+        className="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-linear-to-b from-[#a8c8ff] to-[#5b8def] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#0a1020] shadow-[0_8px_30px_rgba(90,140,255,0.35)] transition hover:-translate-y-0.5 hover:scale-[1.02]"
       >
-        <FiRotateCcw className="h-4 w-4" />
-        Volver a la biblioteca
+        <FiCompass className="h-4 w-4" />
+        Explorar Barrio Abajo
       </button>
     </div>
   )
