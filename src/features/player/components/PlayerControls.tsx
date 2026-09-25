@@ -29,6 +29,8 @@ interface PlayerControlsProps {
   spawnAtStart?: boolean
   /** Whether the central pedestal at the origin blocks the player; off where there is no pedestal (the restored library, the city). */
   avoidPedestal?: boolean
+  /** Holds the player in place (mouse-look still works) while a cinematic plays. */
+  movementLocked?: boolean
 }
 
 /**
@@ -74,6 +76,7 @@ export const PlayerControls = memo(function PlayerControls({
   useCollisionWorld = false,
   spawnAtStart = true,
   avoidPedestal = true,
+  movementLocked = false,
 }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
@@ -162,6 +165,10 @@ export const PlayerControls = memo(function PlayerControls({
 
   useFrame((_, delta) => {
     if (!enabled) return
+    if (movementLocked) {
+      onPositionChange(camera.position)
+      return
+    }
 
     const speed = keys.current.shift ? playerConfig.sprintSpeed : playerConfig.walkSpeed
     const dt = Math.min(delta, 0.05)
