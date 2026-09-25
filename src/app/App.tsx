@@ -40,11 +40,20 @@ import { StoryTitle } from '@/shared/components/StoryTitle'
 import { useTransientFlag } from '@/shared/hooks/useTransientFlag'
 import { LIBRARY_PORTAL_POSITION } from '@/features/library/config/libraryLayout'
 import { cityObstacles } from '@/features/cityIntro/config/cityCollision'
+import { CinematicLookAt } from '@/app/components/CinematicLookAt'
 
 /** How long the library's "portal to the future" title stays up once the portal opens, in ms. */
 const LIBRARY_PORTAL_TITLE_MS = 9000
 /** How long the finale's farewell title stays up once free roaming begins, in ms. */
 const CITY_FAREWELL_TITLE_MS = 11000
+/** Seconds left in the library's opening narration at which the pedestal lights up and the book appears. */
+const BOOK_AWAKEN_AT_REMAINING_SEC = 30
+/** If the opening narration never reports a duration (missing/blocked audio), awaken the book after this long anyway, in ms. */
+const BOOK_AWAKEN_FALLBACK_MS = 15000
+/** How long the "the book is calling you" title stays up once the book has awakened, in ms. */
+const BOOK_CALLING_TITLE_MS = 10000
+/** Where the book hovers over the pedestal — what the awakening cinematic turns the camera towards. */
+const BOOK_FOCUS: [number, number, number] = [0, 1.78, 0]
 
 /**
  * Root application orchestrating scene phases, wormhole timing and player distance.
@@ -106,8 +115,29 @@ export default function App() {
     if (phaseFlow.bookStage === 'waiting' && audioRemainingSec === 0) phaseFlow.finishLibraryDialog()
   }, [phaseFlow.bookStage, audioRemainingSec, phaseFlow])
 
+  useEffect(() => {
+    if (phaseFlow.bookStage === 'dormant' && typeof audioRemainingSec === 'number' && audioRemainingSec <= BOOK_AWAKEN_AT_REMAINING_SEC) {
+      phaseFlow.awakenLibraryBook()
+    }
+  }, [phaseFlow.bookStage, audioRemainingSec, phaseFlow])
+
+  const audioRemainingRef = useRef(audioRemainingSec)
+  useEffect(() => {
+    audioRemainingRef.current = audioRemainingSec
+  }, [audioRemainingSec])
+  const { bookStage, awakenLibraryBook } = phaseFlow
+  useEffect(() => {
+    if (bookStage !== 'dormant') return
+    const id = window.setTimeout(() => {
+      if (audioRemainingRef.current === null) awakenLibraryBook()
+    }, BOOK_AWAKEN_FALLBACK_MS)
+    return () => window.clearTimeout(id)
+  }, [bookStage, awakenLibraryBook])
+
   const isReturnVisit = phaseFlow.libraryVisitCount >= 2
-  const nearBookInteractable = proximity.nearBook && (!isReturnVisit || phaseFlow.bookStage === 'ready')
+  const nearBookInteractable = proximity.nearBook && phaseFlow.bookStage === 'ready'
+  const bookCinematicPlaying = phaseFlow.phase === 'exploring' && (phaseFlow.bookStage === 'igniting' || phaseFlow.bookStage === 'awakening')
+  const showBookCalling = useTransientFlag(phaseFlow.phase === 'exploring' && !isReturnVisit && phaseFlow.bookStage === 'ready', BOOK_CALLING_TITLE_MS)
   const showLibraryPortalTitle = useTransientFlag(phaseFlow.phase === 'exploring' && phaseFlow.libraryPortalUnlocked, LIBRARY_PORTAL_TITLE_MS)
   const showCityFarewell = useTransientFlag(cityFreeRoam, CITY_FAREWELL_TITLE_MS)
   const storyBookVisible = isOpenPhase && !phaseFlow.showPhase1Overlay && !phaseFlow.showPhase2Overlay && !selectedPhoto && !isEditorEnabled
@@ -206,8 +236,10 @@ export default function App() {
             bounds={appConfig.player.libraryBounds}
             useCollisionWorld
             avoidPedestal={!phaseFlow.libraryRestored}
+            movementLocked={bookCinematicPlaying}
           />
         )}
+        <CinematicLookAt active={bookCinematicPlaying && !isEditorEnabled} target={BOOK_FOCUS} />
         {phaseFlow.isPhase1 && !isEditorEnabled && (
           <PlayerControls
             enabled={!phaseFlow.showPhase1Overlay && !selectedPhoto}
@@ -281,6 +313,7 @@ export default function App() {
           interactLabel={isReturnVisit ? 'Devolver el Libro de Rosa' : undefined}
         />
       )}
+      <StoryTitle visible={showBookCalling} eyebrow="El Libro de Rosa" title="El libro te llama..." subtitle="Ve e interactúa con él." />
       <StoryTitle
         visible={phaseFlow.phase === 'exploring' && isReturnVisit && phaseFlow.bookStage === 'ready'}
         eyebrow="El Libro de Rosa"
@@ -297,6 +330,17 @@ export default function App() {
         <div className="pointer-events-none fixed inset-0 z-30 bg-[#fffaf0] opacity-0 animate-[library-burst_3.2s_ease-in-out_forwards]" />
       )}
       <StoryBookOverlay stage={storyBookVisible && !storyBookDone ? storyBook.stage : 'hidden'} />
+      <StoryTitle
+        visible={storyBookVisible && storyBook.waitTitle === 'channeling'}
+        eyebrow="El Libro de Rosa"
+        title="El libro está canalizando energía"
+        subtitle="Para poder transportarte a la siguiente línea de tiempo..."
+      />
+      <StoryTitle
+        visible={storyBookVisible && storyBook.waitTitle === 'explore'}
+        eyebrow="El Libro de Rosa"
+        title="Puedes explorar esta época mientras tanto"
+      />
       <StoryTitle
         visible={storyBookVisible && (storyBook.stage === 'restless' || storyBook.stage === 'summoning')}
         eyebrow="El Libro de Rosa"
@@ -335,7 +379,14 @@ export default function App() {
       )}
       {phaseFlow.isPhase1 && !phaseFlow.showPhase1Overlay && (
         <>
-          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} variant="phase1" audioRemainingSec={audioRemainingSec} />
+          <HUD
+            nearBook={false}
+            wormholeActive={false}
+            onInteract={() => {}}
+            variant="phase1"
+            audioRemainingSec={audioRemainingSec}
+            portalCountdownSec={storyBook.portalCountdownSec}
+          />
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#3d2b1f]/15 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#3d2b1f]/80 shadow backdrop-blur">
             Explora • Aduana • Estación Montoya
           </div>
@@ -360,7 +411,14 @@ export default function App() {
       )}
       {phaseFlow.isPhase2 && !phaseFlow.showPhase2Overlay && (
         <>
-          <HUD nearBook={false} wormholeActive={false} onInteract={() => {}} variant="phase2" audioRemainingSec={audioRemainingSec} />
+          <HUD
+            nearBook={false}
+            wormholeActive={false}
+            onInteract={() => {}}
+            variant="phase2"
+            audioRemainingSec={audioRemainingSec}
+            portalCountdownSec={storyBook.portalCountdownSec}
+          />
           <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-[#1a1208]/10 bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1a1208]/80 shadow backdrop-blur">
             Fase 2 — Época Dorada • Carnaval y Béisbol • Trinitarias
           </div>
