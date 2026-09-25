@@ -25,6 +25,10 @@ interface PlayerControlsProps {
    * colliders keep the original flat-ground behavior.
    */
   useCollisionWorld?: boolean
+  /** Whether to move the camera to the library's start position on mount; off to keep walking from wherever the camera already is (the finale's free roam). */
+  spawnAtStart?: boolean
+  /** Whether the central pedestal at the origin blocks the player; off where there is no pedestal (the restored library, the city). */
+  avoidPedestal?: boolean
 }
 
 /**
@@ -68,6 +72,8 @@ export const PlayerControls = memo(function PlayerControls({
   bounds,
   obstacles,
   useCollisionWorld = false,
+  spawnAtStart = true,
+  avoidPedestal = true,
 }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
@@ -149,9 +155,10 @@ export const PlayerControls = memo(function PlayerControls({
   }, [])
 
   useEffect(() => {
+    if (!spawnAtStart) return
     camera.position.set(playerConfig.startPosition.x, playerConfig.startPosition.y, playerConfig.startPosition.z)
     camera.lookAt(playerConfig.startLookAt.x, playerConfig.startLookAt.y, playerConfig.startLookAt.z)
-  }, [camera])
+  }, [camera, spawnAtStart])
 
   useFrame((_, delta) => {
     if (!enabled) return
@@ -188,7 +195,7 @@ export const PlayerControls = memo(function PlayerControls({
       scratch.next.z = THREE.MathUtils.clamp(scratch.next.z, bounds.minZ, bounds.maxZ)
     }
 
-    pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
+    if (avoidPedestal) pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
     if (obstacles) for (const o of obstacles) pushOutOfCircle(scratch.next, o.x, o.z, o.radius)
 
     if (useCollisionWorld) {
