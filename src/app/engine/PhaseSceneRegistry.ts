@@ -73,6 +73,7 @@ class PhaseSceneRegistry {
     { id: 'phase2', phase: 'phase2', sceneId: 'phase2', label: 'Fase 2 — Época Dorada', priorLibraryVisits: 1 },
     { id: 'library-return', phase: 'exploring', sceneId: 'library', label: 'Biblioteca — Regreso del libro', priorLibraryVisits: 1 },
     { id: 'future', phase: 'cityIntro', sceneId: 'cityIntro', label: 'Futuro Abajero 2050 — Final', priorLibraryVisits: 2 },
+    { id: 'credits', phase: 'credits', sceneId: 'credits', label: 'Créditos — Equipo', priorLibraryVisits: 2 },
   ]
 
   /**
@@ -134,6 +135,7 @@ class PhaseSceneRegistry {
     if (phase === 'exploring') return libraryVisitCount >= 2 ? 'library-return' : 'library-first'
     if (phase === 'phase1' || phase === 'museum') return 'phase1'
     if (phase === 'phase2') return 'phase2'
+    if (phase === 'credits') return 'credits'
     return 'future'
   }
 
