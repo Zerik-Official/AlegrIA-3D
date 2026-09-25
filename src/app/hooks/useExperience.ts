@@ -21,6 +21,7 @@ import { usePhotoSelection, type PhotoSelection } from '@/app/hooks/usePhotoSele
 import { useLibraryDirector, type LibraryDirection } from '@/app/hooks/useLibraryDirector'
 import { useCityFinale, type CityFinale } from '@/app/hooks/useCityFinale'
 import { usePhase1Rain } from '@/app/hooks/usePhase1Rain'
+import { useBookPages, type BookPages } from '@/app/hooks/useBookPages'
 import { usePointerLockGuard } from '@/app/hooks/usePointerLockGuard'
 import { useHotkeys } from '@/app/hooks/useHotkeys'
 import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
@@ -48,6 +49,8 @@ export interface Experience {
   city: CityFinale
   /** Whether it's raining over Phase 1. */
   raining: boolean
+  /** The restored library's Libro de Rosa pages. */
+  bookPages: BookPages
   /** Whether the player is in an open phase (Phase 1 or Phase 2), outside a wormhole. */
   inOpenPhase: boolean
   /** Whether the open phases' book companion and its titles are on screen. */
@@ -88,6 +91,7 @@ export function useExperience(): Experience {
   const editors = useSceneEditors(scenePhase)
   const library = useLibraryDirector(phaseFlow, narration)
   const city = useCityFinale(phaseFlow.isCityIntro, editor.isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities, narration)
+  const bookPages = useBookPages(phaseFlow.libraryRestored)
   const raining = usePhase1Rain(scenePhase === 'phase1' || scenePhase === 'museum', narration)
 
   const storyBookVisible = inOpenPhase && !phaseFlow.introOverlayOpen && !photo.selectedPhoto && !editor.isEditorEnabled
@@ -121,6 +125,10 @@ export function useExperience(): Experience {
     dismissPhase2Intro: phaseFlow.dismissPhase2Intro,
     selectPhoto: photo.selectPhoto,
     closePhoto: photo.closePhoto,
+    focusedBookPageId: bookPages.focusedPageId,
+    hasOpenBookPage: !!bookPages.openPage,
+    openBookPage: bookPages.openFocusedPage,
+    closeBookPage: bookPages.closePage,
   }
   useHotkeys(hotkeyContext)
 
@@ -136,6 +144,7 @@ export function useExperience(): Experience {
     library,
     city,
     raining,
+    bookPages,
     inOpenPhase,
     storyBookVisible,
     portalFocus,
