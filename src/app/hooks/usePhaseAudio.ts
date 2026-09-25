@@ -42,7 +42,8 @@ function trackKeyForPhase(phase: GamePhase, libraryVisitCount: number): AudioTra
 /**
  * @param phase - Current game phase
  * @param libraryVisitCount - How many times `exploring` has been entered so far
- * @returns Seconds remaining in the current narration/dialogue, or `null` when no track is active
+ * @returns Seconds remaining in the current phase's narration/dialogue, or `null` when no track is active —
+ * never the previous track's leftover countdown in the moment right after a switch
  */
 export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): number | null {
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -52,11 +53,15 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
   }
 
   const [remaining, setRemaining] = useState<number | null>(null)
+  /** Track whose countdown `remaining` currently describes — lags a render behind `phase` whenever the track switches. */
+  const [playingKey, setPlayingKey] = useState<AudioTrackKey | null>(null)
+  const expectedKey = trackKeyForPhase(phase, libraryVisitCount)
 
   useEffect(() => {
     const el = audioRef.current
     if (!el) return
     const key = trackKeyForPhase(phase, libraryVisitCount)
+    setPlayingKey(key)
     if (!key) {
       el.pause()
       setRemaining(null)
@@ -65,6 +70,7 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
     const src = audioTracks[key]
     el.loop = false
     if (!el.src.endsWith(src)) {
+      setRemaining(null)
       el.src = src
       el.currentTime = 0
       el.play().catch(() => {})
@@ -125,5 +131,5 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
     []
   )
 
-  return remaining
+  return expectedKey !== null && expectedKey === playingKey ? remaining : null
 }
