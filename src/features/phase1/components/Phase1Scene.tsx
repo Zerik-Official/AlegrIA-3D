@@ -55,6 +55,13 @@ const FAR_GROUND_PANELS: Array<{ position: [number, number, number]; size: [numb
 ]
 
 /**
+ * The phase's authored entities minus its fixed `portal`: outside the editor
+ * the way forward is the portal the Libro de Rosa summons in front of the
+ * player (see `StoryPortal`), so the authored one stays editable but hidden.
+ */
+const PLAY_ENTITIES = initialPhase1Entities.filter((e) => e.type !== 'portal')
+
+/**
  * Props for {@link Phase1Scene}.
  */
 interface Phase1SceneProps {
@@ -76,7 +83,7 @@ interface Phase1SceneProps {
  * @returns Phase 1 group
  */
 export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, editableEntities }: Phase1SceneProps) {
-  const entities = editableEntities ?? initialPhase1Entities
+  const entities = editableEntities ?? PLAY_ENTITIES
 
   return (
     <group>
