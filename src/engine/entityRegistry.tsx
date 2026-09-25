@@ -244,7 +244,14 @@ const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
  * consistent real-world meters — the rail modules' 8m length, the train's
  * 0.36m wheel-rest height and the port buildings' tens-of-meters footprints
  * were all co-designed to that same scale — so they render at native size
- * (`entity.scale` only, no normalization). `phase2/**` assets don't share
+ * (`entity.scale` only, no normalization). `phase2/**
+ * Phase 1 set pieces that ship no `COL_*` proxies but are solid, box-shaped
+ * buildings, so their whole bounding box becomes their collider — the Aduana
+ * (`puerto-fluvial`) could otherwise be walked straight through.
+ */
+const BOUNDS_COLLISION_MODELS = new Set<string>(['phase1/scenes/puerto-fluvial'])
+
+/**` assets don't share
  * that guarantee (each `.glb` was authored at its own unrelated scale), so
  * they keep the `targetSize` bucket picked from the key's folder.
  * @param props - Entity props
@@ -263,7 +270,14 @@ function GenericModelRenderer({ entity }: EntityRendererProps) {
     )
   }
   if (normalizedKey.startsWith('phase1/')) {
-    return <ModelLoader src={entry.path} collisionId={entity.id} fallback={<FallbackForModel normalizedKey={normalizedKey} />} />
+    return (
+      <ModelLoader
+        src={entry.path}
+        collisionId={entity.id}
+        collisionFallback={BOUNDS_COLLISION_MODELS.has(normalizedKey) ? 'bounds' : 'none'}
+        fallback={<FallbackForModel normalizedKey={normalizedKey} />}
+      />
+    )
   }
   const isFloor = normalizedKey.includes('/floors/')
   const isDecoration = normalizedKey.includes('/decorations/')
