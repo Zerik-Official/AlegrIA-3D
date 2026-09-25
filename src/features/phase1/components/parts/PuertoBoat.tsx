@@ -12,7 +12,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
-import { buildMagdalenaCurve } from '@/features/phase1/components/parts/MagdalenaRiver'
+import { buildMagdalenaCurve, MAGDALENA_WATER_Y } from '@/features/phase1/components/parts/MagdalenaRiver'
 
 /**
  * The steamboat `.glb` is authored bow-toward local `-X` rather than `+X`,
@@ -58,7 +58,7 @@ export function PuertoBoat({ src, fallback, seed, patrol }: PuertoBoatProps) {
       const tangent = curve.getTangentAt(THREE.MathUtils.clamp(u, 0, 1))
       const forward = rawU % 2 < 1 ? 1 : -1
       const normal = new THREE.Vector3(-tangent.z, 0, tangent.x)
-      group.position.set(point.x + normal.x * patrol.offset, bob, point.z + normal.z * patrol.offset)
+      group.position.set(point.x + normal.x * patrol.offset, MAGDALENA_WATER_Y + bob, point.z + normal.z * patrol.offset)
       group.rotation.y = Math.atan2(tangent.z * forward, tangent.x * forward) + HULL_FACING_OFFSET
     } else {
       group.position.y = bob

@@ -3,13 +3,56 @@ import { ProceduralTree, ProceduralTrinitaria } from '@/shared/components/Reusab
 import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
 import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
 import { Phase1Backdrop } from '@/features/phase1/components/parts/Phase1Backdrop'
-import { MagdalenaRiver } from '@/features/phase1/components/parts/MagdalenaRiver'
+import { MagdalenaRiver, MAGDALENA_CORRIDOR } from '@/features/phase1/components/parts/MagdalenaRiver'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
 /** Entities farther than this from the camera don't cast shadows (see `PhaseEngine`). */
 const SHADOW_DISTANCE = 34
+
+/** How far the distant ground reaches before the backdrop takes over. */
+const FAR_GROUND_REACH = 500
+/**
+ * Y of the distant ground. Just under the town floor so the two never
+ * z-fight where they overlap, and — the point of the split below — never
+ * above the sunken river, which a single world-spanning plane would cap like
+ * a lid and hide completely.
+ */
+const FAR_GROUND_Y = -0.06
+
+/**
+ * The distant ground, as four planes leaving a gap for the river's corridor
+ * instead of one plane spanning the world. The bank loft fills that gap: the
+ * corridor's edges are where the meandering bank always reaches, so the seams
+ * stay covered wherever the river bends.
+ */
+const FAR_GROUND_PANELS: Array<{ position: [number, number, number]; size: [number, number] }> = [
+  {
+    position: [(MAGDALENA_CORRIDOR.westX - FAR_GROUND_REACH) / 2, FAR_GROUND_Y, 0],
+    size: [MAGDALENA_CORRIDOR.westX + FAR_GROUND_REACH, FAR_GROUND_REACH * 2],
+  },
+  {
+    position: [(MAGDALENA_CORRIDOR.eastX + FAR_GROUND_REACH) / 2, FAR_GROUND_Y, 0],
+    size: [FAR_GROUND_REACH - MAGDALENA_CORRIDOR.eastX, FAR_GROUND_REACH * 2],
+  },
+  {
+    position: [
+      (MAGDALENA_CORRIDOR.westX + MAGDALENA_CORRIDOR.eastX) / 2,
+      FAR_GROUND_Y,
+      (MAGDALENA_CORRIDOR.maxZ + FAR_GROUND_REACH) / 2,
+    ],
+    size: [MAGDALENA_CORRIDOR.eastX - MAGDALENA_CORRIDOR.westX, FAR_GROUND_REACH - MAGDALENA_CORRIDOR.maxZ],
+  },
+  {
+    position: [
+      (MAGDALENA_CORRIDOR.westX + MAGDALENA_CORRIDOR.eastX) / 2,
+      FAR_GROUND_Y,
+      (MAGDALENA_CORRIDOR.minZ - FAR_GROUND_REACH) / 2,
+    ],
+    size: [MAGDALENA_CORRIDOR.eastX - MAGDALENA_CORRIDOR.westX, FAR_GROUND_REACH + MAGDALENA_CORRIDOR.minZ],
+  },
+]
 
 /**
  * Props for {@link Phase1Scene}.
@@ -37,10 +80,12 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
 
   return (
     <group>
-      <mesh rotation-x={-Math.PI / 2} position={[0, -0.02, 0]} receiveShadow>
-        <planeGeometry args={[600, 600]} />
-        <meshStandardMaterial color="#5a4022" roughness={1} metalness={0} />
-      </mesh>
+      {FAR_GROUND_PANELS.map((panel) => (
+        <mesh key={`${panel.position[0]}-${panel.position[2]}`} rotation-x={-Math.PI / 2} position={panel.position} receiveShadow>
+          <planeGeometry args={panel.size} />
+          <meshStandardMaterial color="#5a4022" roughness={1} metalness={0} />
+        </mesh>
+      ))}
       <mesh rotation-x={-Math.PI / 2} position={[-12, 0, 0]} receiveShadow>
         <planeGeometry args={[137, 192]} />
         <meshStandardMaterial color="#6b4a2a" roughness={1} metalness={0} />

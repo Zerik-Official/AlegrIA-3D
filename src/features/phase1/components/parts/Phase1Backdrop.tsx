@@ -1,6 +1,7 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
+import { MAGDALENA_CORRIDOR } from '@/features/phase1/components/parts/MagdalenaRiver'
 
 /** Instance counts for the two instanced backdrop layers. */
 const HILL_COUNT = 28
@@ -12,14 +13,34 @@ const OUTER_RADIUS = 200
 const SEED = 4471
 
 /**
- * Picks a random point in the backdrop annulus.
+ * Keep-out band around the river. The annulus starts at a radius the river
+ * runs straight through, so without this the hills — half-buried domes tens of
+ * units across — land in the channel and read as slabs floating over the water.
+ */
+const RIVER_KEEP_OUT = 16
+const RIVER_MIN_X = MAGDALENA_CORRIDOR.westX - RIVER_KEEP_OUT
+const RIVER_MAX_X = MAGDALENA_CORRIDOR.eastX + RIVER_KEEP_OUT
+
+/** Rejection-sampling attempts before a point is placed anyway, so a bad seed can't loop forever. */
+const MAX_TRIES = 12
+
+/**
+ * Picks a random point in the backdrop annulus, clear of the river corridor.
  * @param rand - Seeded [0,1) generator
  * @returns XZ point
  */
 function ringPoint(rand: () => number): { x: number; z: number } {
-  const angle = rand() * Math.PI * 2
-  const r = INNER_RADIUS + rand() * (OUTER_RADIUS - INNER_RADIUS)
-  return { x: Math.cos(angle) * r, z: Math.sin(angle) * r }
+  let x = 0
+  let z = 0
+  for (let attempt = 0; attempt < MAX_TRIES; attempt++) {
+    const angle = rand() * Math.PI * 2
+    const r = INNER_RADIUS + rand() * (OUTER_RADIUS - INNER_RADIUS)
+    x = Math.cos(angle) * r
+    z = Math.sin(angle) * r
+    const overRiver = x > RIVER_MIN_X && x < RIVER_MAX_X && z > MAGDALENA_CORRIDOR.minZ - RIVER_KEEP_OUT && z < MAGDALENA_CORRIDOR.maxZ + RIVER_KEEP_OUT
+    if (!overRiver) break
+  }
+  return { x, z }
 }
 
 /**

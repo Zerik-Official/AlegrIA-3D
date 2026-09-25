@@ -4,11 +4,13 @@
  * continuous sloped-bank surface per side swept along a curve
  * (`buildLoftGeometry`) so there's no gap where it blends into the ground,
  * animated water in the channel (`ArroyoWater`, same stylized shader,
- * untouched), and rocks/reeds along the curved edge (`ArroyoBanks`). Unlike
- * the arroyo, the two banks are asymmetric: the town (west) side rises
- * steeply from the water — the bluff the port/station/boardwalk scenes sit
- * on top of — while the far (east) side is a low, gentle sandbar fading into
- * the backdrop, since nothing is built over there.
+ * untouched), and rocks/reeds along the curved edge (`ArroyoBanks`).
+ *
+ * The channel is cut down into the terrain rather than being fenced in by
+ * raised banks: the surrounding ground stays flat at `y = 0` and the water sits
+ * {@link MAGDALENA_WATER_Y} below it, so the river is visible from anywhere
+ * near it instead of being hidden behind its own bluff. Ground layout around
+ * the channel keys off {@link MAGDALENA_CORRIDOR}.
  * @module features/phase1/components/parts/MagdalenaRiver
  */
 
@@ -38,18 +40,49 @@ export const MAGDALENA_CONTROL_POINTS: Array<[number, number]> = [
 const WATER_HALF = 10
 const WATER_WIDTH = WATER_HALF * 2
 
-/** Town (west) side — the steep bluff the port/station/boardwalk sit on top of. */
-const TOWN_CREST_HALF = WATER_HALF + 3
-const TOWN_OUTER_HALF = TOWN_CREST_HALF + 3.5
-const TOWN_CREST_Y = 2.0
+/**
+ * Water surface height. The channel is cut *below* the surrounding terrain
+ * rather than being walled in by raised banks: a bluff tall enough to read as
+ * a riverbank also hides the water from anyone walking the town, and putting
+ * the water a metre and a half down means the player looks into the river from
+ * anywhere near it. It also leaves nothing coplanar with the ground planes,
+ * which is what made the surface flicker in and out.
+ */
+export const MAGDALENA_WATER_Y = -1.55
 
-/** Far (east) side — a low sandbar, nothing built there. */
-const FAR_CREST_HALF = WATER_HALF + 3.5
-const FAR_OUTER_HALF = FAR_CREST_HALF + 3.5
-const FAR_CREST_Y = 0.5
+/** Cross-section stations, from the surrounding ground down to the channel bed. */
+const BANK_OUTER_HALF = 20
+const BANK_LIP_HALF = 15
+const BED_HALF = 4.5
+const BANK_OUTER_Y = -0.03
+const BANK_LIP_Y = -0.35
+const BED_Y = -2.15
+const CENTER_Y = -2.35
 
-/** West-most X the town bluff blends into flat ground at, for laying out plaza/port content clear of the slope. */
-export const MAGDALENA_TOWN_EDGE_X = Math.min(...MAGDALENA_CONTROL_POINTS.map(([x]) => x)) - TOWN_OUTER_HALF
+/** Slack for the Catmull-Rom curve overshooting its control points on the bends. */
+const CURVE_MARGIN = 2
+
+const CONTROL_X = MAGDALENA_CONTROL_POINTS.map(([x]) => x)
+const CONTROL_Z = MAGDALENA_CONTROL_POINTS.map(([, z]) => z)
+const CURVE_MIN_X = Math.min(...CONTROL_X) - CURVE_MARGIN
+const CURVE_MAX_X = Math.max(...CONTROL_X) + CURVE_MARGIN
+
+/**
+ * The band of ground the river owns, for whoever lays out the terrain around
+ * it (`Phase1Scene`'s ground planes, `Phase1Backdrop`'s hills).
+ *
+ * Its edges are pulled in to where the meandering bank is guaranteed to reach
+ * at *every* point along the curve — `westX` is the furthest east the west
+ * bank's outer edge ever gets, and vice versa — so a straight-edged ground
+ * plane stopping there is always met by the bank loft, and never leaves a hole
+ * where the river bends away from it.
+ */
+export const MAGDALENA_CORRIDOR = {
+  westX: CURVE_MAX_X - BANK_OUTER_HALF,
+  eastX: CURVE_MIN_X + BANK_OUTER_HALF,
+  minZ: Math.min(...CONTROL_Z),
+  maxZ: Math.max(...CONTROL_Z),
+}
 
 /**
  * @returns Reusable Magdalena centerline curve, for anything that needs to
@@ -60,15 +93,20 @@ export function buildMagdalenaCurve(): THREE.CatmullRomCurve3 {
 }
 
 /**
+ * One side's cross-section, from the flat ground it blends into, over the lip,
+ * down past the waterline and on to the channel bed. Both sides run all the
+ * way to the centerline (`offset: 0`), so together the two lofts close the bed
+ * with no seam down the middle for the translucent water to show a hole through.
  * @param side - Which side of the centerline (`1` = west/town, `-1` = east/far, given the curve's heading)
- * @returns Ordered cross-section stations: ground → bank crest → water's edge
+ * @returns Ordered cross-section stations: ground → lip → waterline → bed
  */
 function bankProfile(side: 1 | -1): CrossSectionPoint[] {
-  const [crestHalf, outerHalf, crestY] = side === 1 ? [TOWN_CREST_HALF, TOWN_OUTER_HALF, TOWN_CREST_Y] : [FAR_CREST_HALF, FAR_OUTER_HALF, FAR_CREST_Y]
   return [
-    { offset: side * outerHalf, y: 0 },
-    { offset: side * crestHalf, y: crestY },
-    { offset: side * WATER_HALF, y: 0.02 },
+    { offset: side * BANK_OUTER_HALF, y: BANK_OUTER_Y },
+    { offset: side * BANK_LIP_HALF, y: BANK_LIP_Y },
+    { offset: side * WATER_HALF, y: MAGDALENA_WATER_Y },
+    { offset: side * BED_HALF, y: BED_Y },
+    { offset: 0, y: CENTER_Y },
   ]
 }
 
@@ -85,8 +123,8 @@ export const MagdalenaRiver = memo(function MagdalenaRiver() {
     () => [...sampleBankEdge(curve, WATER_HALF, 1, 46), ...sampleBankEdge(curve, WATER_HALF, -1, 46)],
     [curve]
   )
-  const reedEdgePoints = useMemo(() => sampleBankEdge(curve, WATER_HALF + 0.6, -1, 36), [curve])
-  const midStreamRocks = useMemo(() => sampleBankEdge(curve, WATER_HALF * 0.55, 1, 14), [curve])
+  const reedEdgePoints = useMemo(() => sampleBankEdge(curve, WATER_HALF + 0.9, -1, 36), [curve])
+  const midStreamRocks = useMemo(() => sampleBankEdge(curve, WATER_HALF * 0.62, 1, 14), [curve])
 
   return (
     <group>
@@ -97,11 +135,11 @@ export const MagdalenaRiver = memo(function MagdalenaRiver() {
         <meshStandardMaterial color="#4a3a22" roughness={1} side={THREE.DoubleSide} />
       </mesh>
 
-      <BankRocks points={rockEdgePoints} y={0.02} />
-      <ReedLine points={reedEdgePoints} y={0.02} />
-      <BankRocks points={midStreamRocks} y={0} />
+      <BankRocks points={rockEdgePoints} y={MAGDALENA_WATER_Y} />
+      <ReedLine points={reedEdgePoints} y={MAGDALENA_WATER_Y + 0.2} />
+      <BankRocks points={midStreamRocks} y={MAGDALENA_WATER_Y - 0.45} />
 
-      <ArroyoWater curve={curve} width={WATER_WIDTH} y={0} />
+      <ArroyoWater curve={curve} width={WATER_WIDTH} y={MAGDALENA_WATER_Y} />
     </group>
   )
 })
