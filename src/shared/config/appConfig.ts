@@ -55,6 +55,13 @@ export const cityIntroConfig = {
   launchDelayMs: 650,
   /** Hard cap on how long the spinner waits for city assets to preload before revealing anyway, in ms. */
   launchMaxWaitMs: 5000,
+  /**
+   * If the finale's narration is never heard playing at all (missing audio, or
+   * the browser blocking autoplay) within this long of the walk starting, free
+   * roaming unlocks on arrival anyway instead of waiting forever on a
+   * narration that will never end, in ms.
+   */
+  narrationFallbackMs: 16000,
 } as const
 
 /**
