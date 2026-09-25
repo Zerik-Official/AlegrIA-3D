@@ -8,6 +8,7 @@ import { EditorOverlay } from '@/features/editor/components/EditorOverlay'
 import { catalogForScene } from '@/engine/config/entityCatalog'
 import { LibraryHUD } from '@/app/components/hud/LibraryHUD'
 import { OpenPhaseHUD } from '@/app/components/hud/OpenPhaseHUD'
+import { CreditsHUD } from '@/app/components/hud/CreditsHUD'
 import { isDebugEnabled } from '@/shared/config/debug'
 import type { Experience } from '@/app/hooks/useExperience'
 import type { GamePhase } from '@/shared/types'
@@ -40,7 +41,7 @@ function variantForTarget(target: GamePhase): 'library' | 'phase1' | 'phase2' | 
  * @returns HUD layers
  */
 export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
-  const { phaseFlow, city, photo, editor, editors, inOpenPhase, bookPages, audioRemainingSec } = experience
+  const { phaseFlow, city, photo, editor, editors, inOpenPhase, bookPages, audioRemainingSec, proximity } = experience
   const { phase } = phaseFlow
   const current = editors.currentEditor
 
@@ -48,7 +49,15 @@ export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
     <>
       {phase === 'idle' && <StartOverlay onStart={phaseFlow.startExperience} />}
 
-      {phaseFlow.isCityIntro && <CityIntroHUD freeRoam={city.freeRoam} audioRemainingSec={audioRemainingSec} />}
+      {phaseFlow.isCityIntro && (
+        <CityIntroHUD
+          freeRoam={city.freeRoam}
+          audioRemainingSec={audioRemainingSec}
+          nearCreditsDoor={proximity.nearCreditsDoor}
+          onEnterCredits={phaseFlow.enterCredits}
+        />
+      )}
+      {phaseFlow.isCredits && <CreditsHUD audioRemainingSec={audioRemainingSec} onExit={phaseFlow.exitCredits} />}
       <StoryTitle
         visible={city.showFarewell}
         eyebrow="El Libro de Rosa"
