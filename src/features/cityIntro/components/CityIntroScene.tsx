@@ -4,6 +4,7 @@ import { PhaseEngine } from '@/engine/PhaseEngine'
 import { CityFillerSkyline } from '@/features/cityIntro/components/CityFillerSkyline'
 import { CityStreets } from '@/features/cityIntro/components/CityStreets'
 import { StreetCarnival } from '@/features/cityIntro/components/carnival/StreetCarnival'
+import { CreditsDoorPortal } from '@/features/cityIntro/renderers/CreditsDoorPortal'
 import { cityCollisionSolids } from '@/features/cityIntro/config/cityCollision'
 import { registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 import { CaribbeanSky } from '@/features/cityIntro/components/CaribbeanSky'
@@ -63,6 +64,7 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
 
       <CityStreets />
       <StreetCarnival pathEntities={walkPath} />
+      <CreditsDoorPortal />
 
       <PhaseEngine entities={entities} context={{ flightLanes }} />
 
