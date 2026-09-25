@@ -15,13 +15,15 @@ interface LibraryHUDProps {
 /**
  * The library's overlay on either visit: the HUD with the book prompt (only
  * once the book is usable), the story titles for each beat, the white burst
- * that restores the hall, and the prompt for its portal to the future.
+ * that restores the hall, and the prompts for the restored hall's displayed
+ * pages and its portal to the future.
  *
  * @param props - Experience state
  * @returns Library overlay
  */
 export const LibraryHUD = memo(function LibraryHUD({ experience }: LibraryHUDProps) {
-  const { phaseFlow, proximity, library, editor, audioRemainingSec } = experience
+  const { phaseFlow, proximity, library, editor, bookPages, audioRemainingSec } = experience
+  const pageInReach = !!bookPages.focusedPageId && !bookPages.openPage
   const bookUsable = proximity.nearBook && phaseFlow.bookStage === 'ready'
 
   return (
@@ -48,7 +50,16 @@ export const LibraryHUD = memo(function LibraryHUD({ experience }: LibraryHUDPro
         />
       )}
       <PortalPrompt
-        visible={phaseFlow.libraryPortalUnlocked && proximity.nearPortal}
+        visible={pageInReach}
+        onActivate={bookPages.openFocusedPage}
+        glowRgb="255, 204, 102"
+        catchClicks={!editor.isEditorEnabled}
+        catcherTitle="Click para ver la página"
+      >
+        E — Ver página del Libro de Rosa
+      </PortalPrompt>
+      <PortalPrompt
+        visible={phaseFlow.libraryPortalUnlocked && proximity.nearPortal && !pageInReach}
         onActivate={phaseFlow.startWormholeToCityIntro}
         glowRgb="90, 216, 255"
         catchClicks={!editor.isEditorEnabled}
