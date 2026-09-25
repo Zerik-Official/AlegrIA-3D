@@ -22,9 +22,14 @@ interface WormholeCameraProps {
    * and dives through it (the restored library's crossing into the future).
    */
   mode?: 'book' | 'portal'
-  /** World position of the portal the camera dives into in `portal` mode (it faces `+Z`). */
+  /** World position of the portal the camera dives into in `portal` mode. */
   focus?: [number, number, number]
+  /** Y rotation turning that portal's face (its local `+Z`) towards the player. */
+  focusYaw?: number
 }
+
+/** The camera's everyday field of view (the canvas default), eased back to once a wormhole ends. */
+const REST_FOV = 72
 
 /** Distance in front of the portal the camera settles at before diving in. */
 const PORTAL_APPROACH_DIST = 3.2
@@ -35,6 +40,7 @@ const PORTAL_DIVE_DEPTH = 1.6
 const scratch = {
   target: new THREE.Vector3(),
   look: new THREE.Vector3(),
+  normal: new THREE.Vector3(),
   quat: new THREE.Quaternion(),
   matrix: new THREE.Matrix4(),
   up: new THREE.Vector3(0, 1, 0),
@@ -46,13 +52,18 @@ const scratch = {
  * @param props - Camera animation state
  * @returns Null (side-effect only)
  */
-export const WormholeCamera = memo(function WormholeCamera({ active, progress, mode = 'book', focus = [0, 1.55, -9.8] }: WormholeCameraProps) {
+export const WormholeCamera = memo(function WormholeCamera({ active, progress, mode = 'book', focus = [0, 1.55, -9.8], focusYaw = 0 }: WormholeCameraProps) {
   const initialPos = useRef<THREE.Vector3 | null>(null)
   const initialQuat = useRef<THREE.Quaternion | null>(null)
   useFrame(({ camera }) => {
     if (!active) {
       initialPos.current = null
       initialQuat.current = null
+      const cam = camera as THREE.PerspectiveCamera
+      if (cam.fov !== undefined && Math.abs(cam.fov - REST_FOV) > 0.05) {
+        cam.fov = THREE.MathUtils.lerp(cam.fov, REST_FOV, 0.08)
+        cam.updateProjectionMatrix()
+      }
       return
     }
     if (!initialPos.current) {
@@ -68,9 +79,10 @@ export const WormholeCamera = memo(function WormholeCamera({ active, progress, m
     if (mode === 'portal') {
       const dive = THREE.MathUtils.smoothstep(progress, 0.3, 0.6)
       const dist = PORTAL_APPROACH_DIST - dive * (PORTAL_APPROACH_DIST + PORTAL_DIVE_DEPTH)
-      scratch.target.set(focus[0], focus[1] + 0.1, focus[2] + dist)
+      scratch.normal.set(Math.sin(focusYaw), 0, Math.cos(focusYaw))
+      scratch.target.set(focus[0], focus[1] + 0.1, focus[2]).addScaledVector(scratch.normal, dist)
       camera.position.lerp(scratch.target, progress < 0.3 ? 0.035 : 0.07)
-      scratch.look.set(focus[0], focus[1], focus[2] - 8)
+      scratch.look.set(focus[0], focus[1], focus[2]).addScaledVector(scratch.normal, -8)
       scratch.matrix.lookAt(camera.position, scratch.look, scratch.up)
       scratch.quat.setFromRotationMatrix(scratch.matrix)
       camera.quaternion.slerp(scratch.quat, 0.05)
