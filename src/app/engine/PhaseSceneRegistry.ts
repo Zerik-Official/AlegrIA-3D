@@ -47,9 +47,16 @@ class PhaseSceneRegistry {
     background: '#1a0f08',
   }
 
+  /** Inside the time tunnel, once a portal has been crossed and the scene left behind is no longer drawn. */
+  private readonly tunnelVisual: PhaseVisual = {
+    sceneId: 'library',
+    fog: { color: '#0a0806', near: 9, far: 26 },
+    background: '#08060a',
+  }
+
   /** Jump targets exposed to the editor — single source for the quick phase-switcher. */
   private readonly jumpTargets: PhaseJumpTarget[] = [
-    { phase: 'idle', sceneId: 'cityIntro', label: 'Inicio — Pantalla inicial' },
+    { phase: 'idle', sceneId: 'library', label: 'Inicio — Pantalla inicial' },
     { phase: 'cityIntro', sceneId: 'cityIntro', label: 'Ciudad Futurista (cityIntro)' },
     { phase: 'exploring', sceneId: 'library', label: 'Biblioteca (library)' },
     { phase: 'phase1', sceneId: 'phase1', label: 'Fase 1 — Barrio Abajo' },
@@ -58,15 +65,17 @@ class PhaseSceneRegistry {
 
   /**
    * Maps a game phase to the scene it renders.
-   * `idle` resolves to the city intro's visuals (fog/background) since that's
-   * the scene about to load; `exploring` and `wormhole` render the library
-   * scene underneath; `museum` is the deprecated alias for `phase1`.
+   * `idle` resolves to the library, which is mounted (and so preloaded)
+   * behind the start screen since that's where the experience opens;
+   * `wormhole` falls back to the library, but callers should resolve the
+   * crossing's source phase instead (see `usePhaseFlow`'s `scenePhase`);
+   * `museum` is the deprecated alias for `phase1`.
    *
    * @param phase - Current game phase
    * @returns Scene id
    */
   resolveScene(phase: GamePhase): SceneId {
-    if (phase === 'cityIntro' || phase === 'idle') return 'cityIntro'
+    if (phase === 'cityIntro') return 'cityIntro'
     if (phase === 'phase1' || phase === 'museum') return 'phase1'
     if (phase === 'phase2') return 'phase2'
     return 'library'
@@ -82,6 +91,15 @@ class PhaseSceneRegistry {
     const sceneId = this.resolveScene(phase)
     if (sceneId === 'library' && libraryRestored) return this.restoredLibraryVisual
     return this.visuals[sceneId]
+  }
+
+  /**
+   * The fog/background pair inside the time tunnel, once a portal crossing has
+   * left its scene behind.
+   * @returns Tunnel visual configuration
+   */
+  resolveTunnelVisual(): PhaseVisual {
+    return this.tunnelVisual
   }
 
   /**
