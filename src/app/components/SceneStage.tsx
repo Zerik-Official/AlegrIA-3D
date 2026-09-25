@@ -7,6 +7,7 @@
 
 import { memo } from 'react'
 import { CityIntroScene } from '@/features/cityIntro/components/CityIntroScene'
+import { CreditsScene } from '@/features/credits/components/CreditsScene'
 import { LibraryScene } from '@/features/library/components/LibraryScene'
 import { Phase1Scene } from '@/features/phase1/components/Phase1Scene'
 import { Phase2Scene } from '@/features/phase2/components/Phase2Scene'
@@ -55,6 +56,7 @@ export const SceneStage = memo(function SceneStage({ experience }: SceneStagePro
       <color attach="background" args={[visual.background]} />
 
       {!crossedPortal && sceneId === 'cityIntro' && <CityIntroScene editableEntities={editing ? editors.cityIntroEditor.entities : undefined} />}
+      {!crossedPortal && sceneId === 'credits' && <CreditsScene />}
       {!crossedPortal && sceneId === 'library' && (
         <LibraryScene
           wormholeActive={inWormhole}
