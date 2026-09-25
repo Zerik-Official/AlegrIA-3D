@@ -39,6 +39,8 @@ export const playerConfig = {
   phase1Bounds: { minX: -79, maxX: 54, minZ: -93, maxZ: 93 } as Bounds,
   /** Movement bounds inside Phase 2 barrio (colorful facades). */
   phase2Bounds: { minX: -36, maxX: 36, minZ: -36, maxZ: 36 } as Bounds,
+  /** Movement bounds for the finale's free roam: the street between the house fronts, from the walk's start up to the library steps. */
+  cityBounds: { minX: -6.2, maxX: 6.2, minZ: -49, maxZ: 30 } as Bounds,
 } as const
 
 /**
@@ -55,6 +57,24 @@ export const cityIntroConfig = {
   launchDelayMs: 650,
   /** Hard cap on how long the spinner waits for city assets to preload before revealing anyway, in ms. */
   launchMaxWaitMs: 5000,
+} as const
+
+/**
+ * The Libro de Rosa's HUD companion in the open phases (Phase 1 and Phase 2):
+ * how long it waits once the narration ends before asking the player to move
+ * on, and how long each beat of its portal-summoning choreography lasts.
+ */
+export const storyBookConfig = {
+  /** Idle time after the phase narration ends before the book grows restless, in ms. */
+  waitAfterDialogMs: 60000,
+  /** If the narration never reports a duration (missing/blocked audio), treat it as finished after this long in the phase, in ms. */
+  dialogFallbackMs: 15000,
+  /** Restless beat: brusque spin, cover bursting open, pages flipping, in ms. */
+  restlessMs: 4200,
+  /** Summoning beat: the book glides to the center of the screen and spins up, in ms. */
+  summonMs: 2600,
+  /** How long the "portal opened" title stays up once the portal appears, in ms. */
+  portalTitleMs: 6000,
 } as const
 
 /**
@@ -91,6 +111,7 @@ export const renderConfig = {
 export const appConfig = {
   player: playerConfig,
   cityIntro: cityIntroConfig,
+  storyBook: storyBookConfig,
   wormhole: wormholeConfig,
   render: renderConfig,
 } as const
