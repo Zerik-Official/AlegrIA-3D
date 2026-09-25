@@ -13,7 +13,7 @@
  * - `phase2` Época Dorada, Tradición y Carnaval with trinitaria and temple
  * - `museum` deprecated alias for `phase1`
  */
-export type GamePhase = 'idle' | 'cityIntro' | 'exploring' | 'wormhole' | 'phase1' | 'phase2' | 'museum'
+export type GamePhase = 'idle' | 'cityIntro' | 'exploring' | 'wormhole' | 'phase1' | 'phase2' | 'museum' | 'credits'
 
 /** @deprecated Use {@link GamePhase} */
 export type Phase = GamePhase
