@@ -22,14 +22,24 @@ export interface PhaseVisual {
   background: string
 }
 
-/** Target selectable from the editor's quick phase-jump control. */
+/**
+ * A story checkpoint selectable from the editor's quick-jump control. Each
+ * one carries what the story state must look like on arrival — notably how
+ * many times the library has already been visited, which decides what the
+ * book does there and where the next portal leads — so jumping never breaks
+ * the story's continuity.
+ */
 export interface PhaseJumpTarget {
+  /** Stable id. */
+  id: string
   /** Destination game phase. */
   phase: GamePhase
   /** Scene rendered for that phase. */
   sceneId: SceneId
   /** Human label shown in the editor UI. */
   label: string
+  /** Library visits already behind the player at this point of the story. */
+  priorLibraryVisits: number
 }
 
 class PhaseSceneRegistry {
@@ -56,11 +66,12 @@ class PhaseSceneRegistry {
 
   /** Jump targets exposed to the editor — single source for the quick phase-switcher. */
   private readonly jumpTargets: PhaseJumpTarget[] = [
-    { phase: 'idle', sceneId: 'library', label: 'Inicio — Pantalla inicial' },
-    { phase: 'cityIntro', sceneId: 'cityIntro', label: 'Ciudad Futurista (cityIntro)' },
-    { phase: 'exploring', sceneId: 'library', label: 'Biblioteca (library)' },
-    { phase: 'phase1', sceneId: 'phase1', label: 'Fase 1 — Barrio Abajo' },
-    { phase: 'phase2', sceneId: 'phase2', label: 'Fase 2 — Época Dorada' },
+    { id: 'start', phase: 'idle', sceneId: 'library', label: 'Inicio — Pantalla inicial', priorLibraryVisits: 0 },
+    { id: 'library-first', phase: 'exploring', sceneId: 'library', label: 'Biblioteca — Primera visita', priorLibraryVisits: 0 },
+    { id: 'phase1', phase: 'phase1', sceneId: 'phase1', label: 'Fase 1 — Barrio Abajo', priorLibraryVisits: 1 },
+    { id: 'phase2', phase: 'phase2', sceneId: 'phase2', label: 'Fase 2 — Época Dorada', priorLibraryVisits: 1 },
+    { id: 'library-return', phase: 'exploring', sceneId: 'library', label: 'Biblioteca — Regreso del libro', priorLibraryVisits: 1 },
+    { id: 'future', phase: 'cityIntro', sceneId: 'cityIntro', label: 'Futuro Abajero 2050 — Final', priorLibraryVisits: 2 },
   ]
 
   /**
@@ -100,6 +111,28 @@ class PhaseSceneRegistry {
    */
   resolveTunnelVisual(): PhaseVisual {
     return this.tunnelVisual
+  }
+
+  /**
+   * @param id - Checkpoint id
+   * @returns That checkpoint, if it exists
+   */
+  findJumpTarget(id: string): PhaseJumpTarget | undefined {
+    return this.jumpTargets.find((t) => t.id === id)
+  }
+
+  /**
+   * The checkpoint describing where the story currently stands.
+   * @param phase - Phase whose scene is on screen
+   * @param libraryVisitCount - Library visits so far, including the current one
+   * @returns Checkpoint id
+   */
+  checkpointFor(phase: GamePhase, libraryVisitCount: number): string {
+    if (phase === 'idle') return 'start'
+    if (phase === 'exploring') return libraryVisitCount >= 2 ? 'library-return' : 'library-first'
+    if (phase === 'phase1' || phase === 'museum') return 'phase1'
+    if (phase === 'phase2') return 'phase2'
+    return 'future'
   }
 
   /**
