@@ -33,6 +33,18 @@ import { usePointerLockGuard } from '@/app/hooks/usePointerLockGuard'
 import { useHotkeys } from '@/app/hooks/useHotkeys'
 import type { HotkeyContext } from '@/app/engine/HotkeyRouter'
 import { isDebugEnabled } from '@/shared/config/debug'
+import { useStoryBookFlow } from '@/app/hooks/useStoryBookFlow'
+import { StoryBookOverlay } from '@/features/storyBook/components/StoryBookOverlay'
+import { StoryPortal } from '@/features/storyBook/components/StoryPortal'
+import { StoryTitle } from '@/shared/components/StoryTitle'
+import { useTransientFlag } from '@/shared/hooks/useTransientFlag'
+import { LIBRARY_PORTAL_POSITION } from '@/features/library/config/libraryLayout'
+import { cityObstacles } from '@/features/cityIntro/config/cityCollision'
+
+/** How long the library's "portal to the future" title stays up once the portal opens, in ms. */
+const LIBRARY_PORTAL_TITLE_MS = 9000
+/** How long the finale's farewell title stays up once free roaming begins, in ms. */
+const CITY_FAREWELL_TITLE_MS = 11000
 
 /**
  * Root application orchestrating scene phases, wormhole timing and player distance.
@@ -45,11 +57,13 @@ import { isDebugEnabled } from '@/shared/config/debug'
 export default function App() {
   const phaseFlow = usePhaseFlow()
   const audioRemainingSec = usePhaseAudio(phaseFlow.phase, phaseFlow.libraryVisitCount)
-  const proximity = usePlayerProximity(phaseFlow.phase)
+  const isOpenPhase = phaseFlow.isPhase1 || phaseFlow.isPhase2
+  const storyBook = useStoryBookFlow(isOpenPhase, phaseFlow.phase, audioRemainingSec)
+  const proximity = usePlayerProximity(phaseFlow.phase, isOpenPhase ? storyBook.portalXZ : undefined)
   usePicoAudio(phaseFlow.isPhase2, proximity.picoDistance)
   useCongasAudio(phaseFlow.isPhase2, proximity.congasDistance)
   const editors = useSceneEditors(phaseFlow.phase)
-  const visual = phaseSceneRegistry.resolveVisual(phaseFlow.phase)
+  const visual = phaseSceneRegistry.resolveVisual(phaseFlow.phase, phaseFlow.libraryRestored)
 
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null)
   const selectedPhoto = sepiaPhotos.find((p) => p.id === selectedPhotoId) ?? null
@@ -75,15 +89,30 @@ export default function App() {
   const cityIntroEntities = isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities
   const cityIntroPath = useMemo(() => cityIntroEntities.filter((e) => e.type === 'path-point'), [cityIntroEntities])
 
+  const [cityFreeRoam, setCityFreeRoam] = useState(false)
+
   useEffect(() => {
-    if (phaseFlow.phase !== 'cityIntro') setCityWalkProgress(0)
+    if (phaseFlow.phase !== 'cityIntro') {
+      setCityWalkProgress(0)
+      setCityFreeRoam(false)
+    }
   }, [phaseFlow.phase])
 
   useEffect(() => {
-    if (phaseFlow.bookStage === 'reading' && audioRemainingSec === 0) phaseFlow.finishBookReading()
+    if (phaseFlow.isCityIntro && arrivedAtLibrary && audioRemainingSec === 0) setCityFreeRoam(true)
+  }, [phaseFlow.isCityIntro, arrivedAtLibrary, audioRemainingSec])
+
+  useEffect(() => {
+    if (phaseFlow.bookStage === 'waiting' && audioRemainingSec === 0) phaseFlow.finishLibraryDialog()
   }, [phaseFlow.bookStage, audioRemainingSec, phaseFlow])
 
-  const nearBookInteractable = proximity.nearBook && (phaseFlow.libraryVisitCount < 2 || phaseFlow.bookStage === 'ready')
+  const isReturnVisit = phaseFlow.libraryVisitCount >= 2
+  const nearBookInteractable = proximity.nearBook && (!isReturnVisit || phaseFlow.bookStage === 'ready')
+  const showLibraryPortalTitle = useTransientFlag(phaseFlow.phase === 'exploring' && phaseFlow.libraryPortalUnlocked, LIBRARY_PORTAL_TITLE_MS)
+  const showCityFarewell = useTransientFlag(cityFreeRoam, CITY_FAREWELL_TITLE_MS)
+  const storyBookVisible = isOpenPhase && !phaseFlow.showPhase1Overlay && !phaseFlow.showPhase2Overlay && !selectedPhoto && !isEditorEnabled
+  const storyBookDone = storyBook.stage === 'portal' && !storyBook.showPortalTitle
+  const crossingMode = phaseFlow.wormholeTarget === 'cityIntro' ? 'portal' : 'book'
 
   usePointerLockGuard(
     isEditorEnabled ||
@@ -100,7 +129,7 @@ export default function App() {
     showPhase1Overlay: phaseFlow.showPhase1Overlay,
     showPhase2Overlay: phaseFlow.showPhase2Overlay,
     isCityIntro: phaseFlow.isCityIntro,
-    arrivedAtLibrary,
+    cityFreeRoam,
     isPhase1: phaseFlow.isPhase1,
     isPhase2: phaseFlow.isPhase2,
     highlightedPhotoId: proximity.highlightedPhotoId,
@@ -110,7 +139,6 @@ export default function App() {
     closeEditor,
     setEditorMode: editors.currentEditor.setMode,
     startExperience: phaseFlow.startExperience,
-    enterLibrary: phaseFlow.enterLibrary,
     handleBookInteract: phaseFlow.handleBookInteract,
     startWormholeToPhase2: phaseFlow.startWormholeToPhase2,
     startWormholeToLibrary: phaseFlow.startWormholeToLibrary,
@@ -141,7 +169,9 @@ export default function App() {
             wormholeActive={phaseFlow.phase === 'wormhole'}
             wormholeProgress={phaseFlow.wormholeProgress}
             bookStage={phaseFlow.bookStage}
+            libraryRestored={phaseFlow.libraryRestored}
             libraryPortalUnlocked={phaseFlow.libraryPortalUnlocked}
+            crossingMode={crossingMode}
             editableEntities={isEditorEnabled ? editors.libraryEditor.entities : undefined}
           />
         ) : visual.sceneId === 'phase1' ? (
@@ -150,7 +180,7 @@ export default function App() {
           <Phase2Scene editableEntities={isEditorEnabled ? editors.phase2Editor.entities : undefined} />
         )}
 
-        {phaseFlow.isCityIntro && !isEditorEnabled && (
+        {phaseFlow.isCityIntro && !cityFreeRoam && !isEditorEnabled && (
           <CityWalkControls
             enabled
             pathEntities={cityIntroPath}
@@ -159,8 +189,24 @@ export default function App() {
             onProgress={setCityWalkProgress}
           />
         )}
+        {phaseFlow.isCityIntro && cityFreeRoam && !isEditorEnabled && (
+          <PlayerControls
+            enabled
+            onPositionChange={proximity.handlePosition}
+            bounds={appConfig.player.cityBounds}
+            obstacles={cityObstacles}
+            spawnAtStart={false}
+            avoidPedestal={false}
+          />
+        )}
         {phaseFlow.phase === 'exploring' && !isEditorEnabled && (
-          <PlayerControls enabled onPositionChange={proximity.handlePosition} bounds={appConfig.player.libraryBounds} useCollisionWorld />
+          <PlayerControls
+            enabled
+            onPositionChange={proximity.handlePosition}
+            bounds={appConfig.player.libraryBounds}
+            useCollisionWorld
+            avoidPedestal={!phaseFlow.libraryRestored}
+          />
         )}
         {phaseFlow.isPhase1 && !isEditorEnabled && (
           <PlayerControls
@@ -176,6 +222,25 @@ export default function App() {
             onPositionChange={proximity.handlePosition}
             bounds={appConfig.player.phase2Bounds}
             obstacles={phase2Obstacles}
+          />
+        )}
+        {phaseFlow.isPhase1 && !isEditorEnabled && (
+          <StoryPortal
+            active={storyBook.portalOpen}
+            onPlaced={storyBook.handlePortalPlaced}
+            bounds={appConfig.player.phase1Bounds}
+            accentColor="#ff8a1a"
+            glowColor="#5ad8ff"
+          />
+        )}
+        {phaseFlow.isPhase2 && !isEditorEnabled && (
+          <StoryPortal
+            active={storyBook.portalOpen}
+            onPlaced={storyBook.handlePortalPlaced}
+            bounds={appConfig.player.phase2Bounds}
+            obstacles={phase2Obstacles}
+            accentColor="#ff8ad2"
+            glowColor="#78b4ff"
           />
         )}
         {isEditorEnabled && <OrbitControls ref={orbitControlsRef} enableDamping={false} />}
@@ -195,12 +260,54 @@ export default function App() {
           />
         )}
 
-        <WormholeCamera active={phaseFlow.phase === 'wormhole'} progress={phaseFlow.wormholeProgress} />
+        <WormholeCamera active={phaseFlow.phase === 'wormhole'} progress={phaseFlow.wormholeProgress} mode={crossingMode} focus={LIBRARY_PORTAL_POSITION} />
       </Canvas>
 
       {phaseFlow.phase === 'idle' && <StartOverlay onStart={phaseFlow.startExperience} />}
-      {phaseFlow.isCityIntro && <CityIntroHUD arrived={arrivedAtLibrary} onEnter={phaseFlow.enterLibrary} audioRemainingSec={audioRemainingSec} />}
-      {phaseFlow.phase === 'exploring' && <HUD nearBook={nearBookInteractable} wormholeActive={false} onInteract={phaseFlow.handleBookInteract} variant="library" audioRemainingSec={audioRemainingSec} />}
+      {phaseFlow.isCityIntro && <CityIntroHUD freeRoam={cityFreeRoam} audioRemainingSec={audioRemainingSec} />}
+      <StoryTitle
+        visible={showCityFarewell}
+        eyebrow="El Libro de Rosa"
+        title="El libro agradece que lo hayas devuelto"
+        subtitle="Ahora puedes explorar libremente el futuro, en donde persisten nuestra cultura y costumbres."
+      />
+      {phaseFlow.phase === 'exploring' && (
+        <HUD
+          nearBook={nearBookInteractable}
+          wormholeActive={false}
+          onInteract={phaseFlow.handleBookInteract}
+          variant="library"
+          audioRemainingSec={audioRemainingSec}
+          interactLabel={isReturnVisit ? 'Devolver el Libro de Rosa' : undefined}
+        />
+      )}
+      <StoryTitle
+        visible={phaseFlow.phase === 'exploring' && isReturnVisit && phaseFlow.bookStage === 'ready'}
+        eyebrow="El Libro de Rosa"
+        title="Devuelve el Libro de Rosa"
+        subtitle="Acércate al libro y devuélvelo a su estantería."
+      />
+      <StoryTitle
+        visible={showLibraryPortalTitle}
+        eyebrow="El Libro de Rosa"
+        title="El libro ha abierto un portal al futuro"
+        subtitle="Crúzalo cuando estés listo."
+      />
+      {phaseFlow.phase === 'exploring' && phaseFlow.bookStage === 'transforming' && (
+        <div className="pointer-events-none fixed inset-0 z-30 bg-[#fffaf0] opacity-0 animate-[library-burst_3.2s_ease-in-out_forwards]" />
+      )}
+      <StoryBookOverlay stage={storyBookVisible && !storyBookDone ? storyBook.stage : 'hidden'} />
+      <StoryTitle
+        visible={storyBookVisible && (storyBook.stage === 'restless' || storyBook.stage === 'summoning')}
+        eyebrow="El Libro de Rosa"
+        title="El libro te pide que continúes con la historia"
+      />
+      <StoryTitle
+        visible={storyBookVisible && storyBook.showPortalTitle}
+        eyebrow="El Libro de Rosa"
+        title="Un portal se ha abierto frente a ti"
+        subtitle="Crúzalo cuando estés listo para continuar la historia."
+      />
       {phaseFlow.phase === 'exploring' && phaseFlow.libraryPortalUnlocked && proximity.nearPortal && (
         <button
           onClick={phaseFlow.startWormholeToCityIntro}
