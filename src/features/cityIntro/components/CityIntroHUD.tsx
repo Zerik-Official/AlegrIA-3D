@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { FiEye, FiMove, FiClock } from 'react-icons/fi'
+import { PortalPrompt } from '@/app/components/hud/PortalPrompt'
 
 /**
  * Props for {@link CityIntroHUD}.
@@ -9,6 +10,10 @@ interface CityIntroHUDProps {
   freeRoam: boolean
   /** Seconds remaining in the current narration/dialogue; `null` to hide. */
   audioRemainingSec?: number | null
+  /** Whether the player is in range of RIWI Barranquilla's credits door. */
+  nearCreditsDoor?: boolean
+  /** Enters the credits scene. */
+  onEnterCredits?: () => void
 }
 
 /**
@@ -18,7 +23,7 @@ interface CityIntroHUDProps {
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const CityIntroHUD = memo(function CityIntroHUD({ freeRoam, audioRemainingSec }: CityIntroHUDProps) {
+export const CityIntroHUD = memo(function CityIntroHUD({ freeRoam, audioRemainingSec, nearCreditsDoor = false, onEnterCredits = () => {} }: CityIntroHUDProps) {
   const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
   const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
   return (
@@ -43,6 +48,10 @@ export const CityIntroHUD = memo(function CityIntroHUD({ freeRoam, audioRemainin
           </>
         )}
       </div>
+
+      <PortalPrompt visible={freeRoam && nearCreditsDoor} onActivate={onEnterCredits} glowRgb="168, 85, 255" catcherTitle="Click para ver la escena de créditos">
+        Ver escena de créditos
+      </PortalPrompt>
 
       {showCountdown && (
         <div className="pointer-events-none fixed bottom-6 right-6 z-10 flex items-center gap-2 rounded-md border border-gold/20 bg-black/45 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/70 backdrop-blur-md">
