@@ -9,6 +9,7 @@ import { memo } from 'react'
 import { CityWalkControls } from '@/features/cityIntro/components/CityWalkControls'
 import { PlayerControls } from '@/features/player/components/PlayerControls'
 import { CinematicLookAt } from '@/app/components/CinematicLookAt'
+import { CreditsCamera } from '@/app/components/CreditsCamera'
 import { cityObstacles } from '@/features/cityIntro/config/cityCollision'
 import { CITY_WALKABLE_AREAS } from '@/features/cityIntro/config/cityStreets'
 import { phase2Obstacles } from '@/features/phase2/config/phase2Collision'
@@ -86,6 +87,7 @@ export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps)
           obstacles={phase2Obstacles}
         />
       )}
+      <CreditsCamera active={phaseFlow.isCredits} />
     </>
   )
 })
