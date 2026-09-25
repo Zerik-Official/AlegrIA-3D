@@ -81,6 +81,12 @@ export const OpenPhaseHUD = memo(function OpenPhaseHUD({ experience }: OpenPhase
       />
       <StoryTitle visible={storyBookVisible && storyBook.waitTitle === 'explore'} eyebrow="El Libro de Rosa" title="Puedes explorar esta época mientras tanto" />
       <StoryTitle
+        visible={storyBookVisible && storyBook.showOverloadTitle}
+        eyebrow="El Libro de Rosa"
+        title="Se ha sobrecargado el libro"
+        subtitle="El portal se abre antes de tiempo..."
+      />
+      <StoryTitle
         visible={storyBookVisible && (storyBook.stage === 'restless' || storyBook.stage === 'summoning')}
         eyebrow="El Libro de Rosa"
         title="El libro te pide que continúes con la historia"
