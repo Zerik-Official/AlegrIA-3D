@@ -18,6 +18,15 @@ export const SHELF_DEPTH = 0.45
 /** Y the ceiling sits at, where every lamp cable and hanging sign is anchored. */
 export const CEILING_Y = 5.2
 
+/** Center of the portal to the `cityIntro` finale, standing in the back wall's alcove (it faces `+Z`, into the hall). */
+export const LIBRARY_PORTAL_POSITION: [number, number, number] = [0, 1.55, -9.8]
+
+/** Radius of the portal to the `cityIntro` finale. */
+export const LIBRARY_PORTAL_RADIUS = 1.4
+
+/** World position of the shelf slot the returned Libro de Rosa flies into — where its light burst erupts. */
+export const BOOK_SHELF_SLOT: [number, number, number] = [-7.2, 1.6, -9.9]
+
 /** One upright shelving unit. */
 export interface ShelfPlacement {
   /** `[x, z]` floor position of the unit's center. */
@@ -94,6 +103,23 @@ export const READING_TABLES: ReadingTablePlacement[] = [
   { position: [-3.2, -6.6], rotationY: 0.12 },
   { position: [3.6, 6.4], rotationY: -0.28 },
 ]
+
+/**
+ * The restored library's reading tables: the originals, plus one set where the
+ * toppled row used to lie, now a quiet reading corner.
+ */
+export const RESTORED_READING_TABLES: ReadingTablePlacement[] = [...READING_TABLES, { position: [-4.6, 7.4], rotationY: 0 }]
+
+/** `[x, z]` floor positions of the restored library's flowering planters: flanking the portal's arch and the entrance. */
+export const RESTORED_PLANTERS: Array<[number, number]> = [
+  [-2.9, -9.9],
+  [2.9, -9.9],
+  [-2.9, 10.1],
+  [2.9, 10.1],
+]
+
+/** Planter footprint (a square box collider around its round pot). */
+export const PLANTER_SIZE = 0.8
 
 /** Table top surface height, and the footprint its collider covers. */
 export const TABLE_TOP_Y = 0.78
@@ -184,6 +210,22 @@ function solidForToppledShelf(shelf: ToppledShelfPlacement): CollisionSolid {
 }
 
 /**
+ * @param table - Reading table
+ * @returns Collider matching the table's top footprint
+ */
+function solidForTable(table: ReadingTablePlacement): CollisionSolid {
+  return createBoxSolid({
+    x: table.position[0],
+    y: TABLE_TOP_Y / 2,
+    z: table.position[1],
+    sizeX: TABLE_SIZE[0],
+    sizeY: TABLE_TOP_Y,
+    sizeZ: TABLE_SIZE[1],
+    rotationY: table.rotationY,
+  })
+}
+
+/**
  * Every collider the library publishes to the shared collision world, so the
  * shelving is solid, the aisles actually route the player, and the flattened
  * end of the toppled row can be walked over.
@@ -192,15 +234,13 @@ export const libraryCollisionSolids: CollisionSolid[] = [
   ...WALL_SHELVES.map(solidForShelf),
   ...AISLE_SHELVES.map(solidForShelf),
   ...TOPPLED_SHELVES.map(solidForToppledShelf),
-  ...READING_TABLES.map((table) =>
-    createBoxSolid({
-      x: table.position[0],
-      y: TABLE_TOP_Y / 2,
-      z: table.position[1],
-      sizeX: TABLE_SIZE[0],
-      sizeY: TABLE_TOP_Y,
-      sizeZ: TABLE_SIZE[1],
-      rotationY: table.rotationY,
-    })
-  ),
+  ...READING_TABLES.map(solidForTable),
+]
+
+/** The restored hall's colliders: the same shelving, no toppled row, and the extra reading table. */
+export const restoredLibraryCollisionSolids: CollisionSolid[] = [
+  ...WALL_SHELVES.map(solidForShelf),
+  ...AISLE_SHELVES.map(solidForShelf),
+  ...RESTORED_READING_TABLES.map(solidForTable),
+  ...RESTORED_PLANTERS.map(([x, z]) => createBoxSolid({ x, y: 0.5, z, sizeX: PLANTER_SIZE, sizeY: 1, sizeZ: PLANTER_SIZE, rotationY: 0 })),
 ]
