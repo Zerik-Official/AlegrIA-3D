@@ -6,6 +6,7 @@ import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { ReadingTable, SectionSign } from '@/features/library/components/LibraryFurnishings'
 import { ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { createParquetTexture } from '@/shared/utils/textures'
+import { BookPageDisplays } from '@/features/library/components/BookPageDisplays'
 import {
   AISLE_SHELVES,
   CEILING_Y,
@@ -204,16 +205,31 @@ const Planter = memo(function Planter({ position, bloomColor }: { position: [num
 const PLANTER_BLOOMS = ['#d82a7a', '#ff6a1a', '#a52ad8', '#d82a3a'] as const
 
 /**
+ * Props for {@link RestoredLibrary}.
+ */
+interface RestoredLibraryProps {
+  /** Whether the displayed pages can be picked up with the crosshair. */
+  pagesInteractive: boolean
+  /** Page under the crosshair, if any. */
+  focusedPageId: string | null
+  /** Reports the page under the crosshair as it changes. */
+  onPageFocus: (id: string | null) => void
+}
+
+/**
  * The library as the returned Libro de Rosa leaves it: the same hall and the
  * same floor plan, but cared for — warm plaster and wood paneling instead of
  * cracked cyber panels, polished shelving stocked end to end, the toppled row
  * cleared into a reading corner, a parquet floor under rugs, chandeliers and a
  * skylight pouring down where the pedestal used to stand, and an arch on the
- * back wall framing the alcove where the portal to the future opens.
+ * back wall framing the alcove where the portal to the future opens. Six
+ * display tables ring the skylight, each with a page of the Libro de Rosa
+ * floating over it (see `BookPageDisplays`).
  *
+ * @param props - Page display interaction
  * @returns Restored hall group (geometry and its own lighting)
  */
-export const RestoredLibrary = memo(function RestoredLibrary() {
+export const RestoredLibrary = memo(function RestoredLibrary({ pagesInteractive, focusedPageId, onPageFocus }: RestoredLibraryProps) {
   const parquet = useMemo(() => {
     const tex = createParquetTexture(2050)
     tex.repeat.set(5, 5)
@@ -321,6 +337,8 @@ export const RestoredLibrary = memo(function RestoredLibrary() {
       {SECTION_SIGNS.map((sign) => (
         <SectionSign key={sign.label} position={sign.position} rotationY={sign.rotationY} label={sign.label} ceilingY={CEILING_Y} />
       ))}
+
+      <BookPageDisplays interactive={pagesInteractive} focusedPageId={focusedPageId} onFocusChange={onPageFocus} />
 
       <Chandelier position={[0, 5.2]} radius={0.7} intensity={3.4} />
       <Chandelier position={[0, -5.2]} radius={0.7} intensity={3.4} />
