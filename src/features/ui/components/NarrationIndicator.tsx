@@ -35,11 +35,16 @@ export const NarrationIndicator = memo(function NarrationIndicator({ audioRemain
   }
   if (typeof portalCountdownSec === 'number') {
     return (
-      <div className="pointer-events-none flex items-center gap-2 rounded-md border border-[#78b4ff]/30 bg-black/55 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/75 shadow-[0_0_18px_rgba(90,160,255,0.25)] backdrop-blur-md">
-        <LuOrbit className="h-3.5 w-3.5 animate-spin text-[#a8c8ff] [animation-duration:3s]" />
-        <span>
-          Portal en: <span className="font-semibold tabular-nums text-[#cfe0ff]">{portalCountdownSec}s</span>
-        </span>
+      <div className="flex flex-col items-end gap-1">
+        <div className="pointer-events-none flex items-center gap-2 rounded-md border border-[#78b4ff]/30 bg-black/55 px-3 py-2 text-[11px] tracking-[0.14em] uppercase text-parchment/75 shadow-[0_0_18px_rgba(90,160,255,0.25)] backdrop-blur-md">
+          <LuOrbit className="h-3.5 w-3.5 animate-spin text-[#a8c8ff] [animation-duration:3s]" />
+          <span>
+            Portal en: <span className="font-semibold tabular-nums text-[#cfe0ff]">{portalCountdownSec}s</span>
+          </span>
+        </div>
+        <div className="pointer-events-none rounded-md bg-black/40 px-2.5 py-1 text-[10px] tracking-[0.12em] uppercase text-parchment/55 backdrop-blur-md">
+          Presiona <span className="font-semibold text-[#cfe0ff]">T</span> para saltar la espera
+        </div>
       </div>
     )
   }
