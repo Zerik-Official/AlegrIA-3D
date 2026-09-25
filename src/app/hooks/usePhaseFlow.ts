@@ -20,18 +20,27 @@ import { WormholeTimeline } from '@/app/engine/WormholeTimeline'
 /**
  * Choreography of the central book on the library's *second* visit (the
  * return from Phase 2): the pedestal starts empty (`hidden`), the book
- * materializes on its own (`appearing` → `ready`), interacting starts the
- * return narration (`reading`), and once that narration ends the book flies
- * off to a shelf (`stored`) before the `cityIntro` portal unlocks. The first
- * visit skips all of this and stays `ready` throughout.
+ * materializes on its own (`appearing`) and floats untouchable while the
+ * return narration plays (`waiting`). Once the narration ends it can be
+ * returned (`ready`); interacting sends it flying to its shelf (`returning`),
+ * where it bursts into white light that remakes the whole hall
+ * (`transforming`) before settling into the restored library (`restored`)
+ * and opening the portal to the `cityIntro` finale. The first visit skips all
+ * of this and stays `ready` throughout.
  */
-export type LibraryBookStage = 'hidden' | 'appearing' | 'ready' | 'reading' | 'stored'
+export type LibraryBookStage = 'hidden' | 'appearing' | 'waiting' | 'ready' | 'returning' | 'transforming' | 'restored'
 
 /** How long after entering the library the book takes to start materializing/fully appear, in ms — gives the "empty pedestal" beat room to read before the book shows up "out of nowhere". */
 const BOOK_APPEAR_DELAY_MS = 1400
 const BOOK_APPEAR_DONE_MS = 2400
-/** How long after the book finishes flying to its shelf before the portal unlocks, in ms. */
-const PORTAL_UNLOCK_DELAY_MS = 1600
+/** How long the book takes to fly from the pedestal to its shelf before it bursts, in ms. */
+const BOOK_RETURN_FLIGHT_MS = 2600
+/** Time into the light burst at which the screen is fully white and the hall swaps to its restored look, in ms. */
+const BURST_PEAK_MS = 1100
+/** Total length of the light burst, from the book exploding to the restored hall fully revealed, in ms. */
+const BURST_DONE_MS = 3200
+/** How long after the hall is restored before the portal to the future opens, in ms. */
+const PORTAL_UNLOCK_DELAY_MS = 1400
 
 /** Public state and actions exposed by {@link usePhaseFlow}. */
 export interface PhaseFlow {
@@ -55,7 +64,9 @@ export interface PhaseFlow {
   libraryVisitCount: number
   /** Stage of the book/portal choreography on the library's second (return) visit — see {@link LibraryBookStage}. */
   bookStage: LibraryBookStage
-  /** Whether the `cityIntro` portal has appeared and can be used — only true after the returning book has been read and shelved. */
+  /** Whether the library has been remade by the returned book's light burst — swaps the abandoned hall for the restored one and removes the pedestal. */
+  libraryRestored: boolean
+  /** Whether the `cityIntro` portal has appeared and can be used — only true once the returned book has restored the hall. */
   libraryPortalUnlocked: boolean
   /** Transitions from `idle` straight into `exploring` (the library), where the experience now starts. */
   startExperience: () => void
@@ -63,13 +74,13 @@ export interface PhaseFlow {
   enterLibrary: () => void
   /**
    * Book interaction in the library: first visit heads to Phase 1 immediately.
-   * On the second (and later) visit it instead starts the return narration —
-   * see {@link LibraryBookStage} — and the `cityIntro` wormhole is triggered
-   * separately, at the portal, once it unlocks.
+   * On the second (and later) visit it returns the book to its shelf, which
+   * restores the hall and opens the `cityIntro` portal — see
+   * {@link LibraryBookStage}. Ignored until the return narration has ended.
    */
   handleBookInteract: () => void
-  /** Called once the return narration playing during `reading` finishes, advancing the book to `stored` and, shortly after, unlocking the portal. */
-  finishBookReading: () => void
+  /** Called once the return narration ends, letting the player return the book (`waiting` → `ready`). */
+  finishLibraryDialog: () => void
   /** Starts the wormhole transition into Phase 2 (triggered near the Phase 1 portal). */
   startWormholeToPhase2: () => void
   /** Starts the wormhole transition back to the library (triggered near the Phase 2 portal). */
@@ -98,6 +109,7 @@ export function usePhaseFlow(): PhaseFlow {
   const [showPhase2Overlay, setShowPhase2Overlay] = useState(true)
   const [libraryVisitCount, setLibraryVisitCount] = useState(0)
   const [bookStage, setBookStage] = useState<LibraryBookStage>('ready')
+  const [libraryRestored, setLibraryRestored] = useState(false)
   const [libraryPortalUnlocked, setLibraryPortalUnlocked] = useState(false)
   const timeline = useRef(new WormholeTimeline()).current
   /** Pending `setTimeout` ids from the book/portal choreography, cleared on unmount or when a new visit restarts it. */
@@ -118,12 +130,11 @@ export function usePhaseFlow(): PhaseFlow {
       const next = count + 1
       clearBookTimers()
       if (next >= 2) {
-        // Second (and later) visit: pedestal starts empty, then the book
-        // materializes on its own — see `LibraryBookStage`.
         setLibraryPortalUnlocked(false)
+        setLibraryRestored(false)
         setBookStage('hidden')
         bookTimers.current.push(window.setTimeout(() => setBookStage('appearing'), BOOK_APPEAR_DELAY_MS))
-        bookTimers.current.push(window.setTimeout(() => setBookStage('ready'), BOOK_APPEAR_DONE_MS))
+        bookTimers.current.push(window.setTimeout(() => setBookStage('waiting'), BOOK_APPEAR_DONE_MS))
       } else {
         setBookStage('ready')
       }
@@ -173,24 +184,27 @@ export function usePhaseFlow(): PhaseFlow {
 
   /**
    * First visit: interacting heads straight to Phase 1, as before. Second
-   * (and later) visit: interacting only starts the return narration
-   * (`reading`) — the `cityIntro` wormhole itself now happens at the portal,
-   * once {@link finishBookReading} unlocks it.
+   * (and later) visit: once `ready`, interacting returns the book to its
+   * shelf and schedules the rest of the choreography — the burst, the
+   * restored hall and the portal — the `cityIntro` wormhole itself happens
+   * at that portal.
    */
   const handleBookInteract = useCallback(() => {
-    if (libraryVisitCount >= 2) {
-      setBookStage((stage) => (stage === 'ready' ? 'reading' : stage))
+    if (libraryVisitCount < 2) {
+      startWormhole('phase1')
       return
     }
-    startWormhole('phase1')
-  }, [startWormhole, libraryVisitCount])
+    if (bookStage !== 'ready') return
+    setBookStage('returning')
+    const burstAt = BOOK_RETURN_FLIGHT_MS
+    bookTimers.current.push(window.setTimeout(() => setBookStage('transforming'), burstAt))
+    bookTimers.current.push(window.setTimeout(() => setLibraryRestored(true), burstAt + BURST_PEAK_MS))
+    bookTimers.current.push(window.setTimeout(() => setBookStage('restored'), burstAt + BURST_DONE_MS))
+    bookTimers.current.push(window.setTimeout(() => setLibraryPortalUnlocked(true), burstAt + BURST_DONE_MS + PORTAL_UNLOCK_DELAY_MS))
+  }, [startWormhole, libraryVisitCount, bookStage])
 
-  const finishBookReading = useCallback(() => {
-    setBookStage((stage) => {
-      if (stage !== 'reading') return stage
-      bookTimers.current.push(window.setTimeout(() => setLibraryPortalUnlocked(true), PORTAL_UNLOCK_DELAY_MS))
-      return 'stored'
-    })
+  const finishLibraryDialog = useCallback(() => {
+    setBookStage((stage) => (stage === 'waiting' ? 'ready' : stage))
   }, [])
 
   const startWormholeToPhase2 = useCallback(() => startWormhole('phase2'), [startWormhole])
@@ -211,6 +225,7 @@ export function usePhaseFlow(): PhaseFlow {
       setShowPhase1Overlay(false)
       setShowPhase2Overlay(false)
       setBookStage('ready')
+      setLibraryRestored(false)
       setLibraryPortalUnlocked(false)
       setPhase(target)
       if (target === 'phase1' || target === 'phase2') {
@@ -233,11 +248,12 @@ export function usePhaseFlow(): PhaseFlow {
     isPhase2,
     libraryVisitCount,
     bookStage,
+    libraryRestored,
     libraryPortalUnlocked,
     startExperience,
     enterLibrary,
     handleBookInteract,
-    finishBookReading,
+    finishLibraryDialog,
     startWormholeToPhase2,
     startWormholeToLibrary,
     startWormholeToCityIntro,
