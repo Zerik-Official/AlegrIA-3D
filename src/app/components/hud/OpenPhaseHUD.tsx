@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { HUD, PastOverlay } from '@/features/ui/components/HUD'
 import { Phase2Overlay } from '@/features/ui/components/Phase2Overlay'
 import { StoryBookOverlay } from '@/features/storyBook/components/StoryBookOverlay'
+import { RainOnLens } from '@/features/phase1/components/RainOnLens'
 import { StoryTitle } from '@/shared/components/StoryTitle'
 import { PortalPrompt } from '@/app/components/hud/PortalPrompt'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
@@ -34,13 +35,14 @@ const PHASE_COPY = {
 /**
  * The overlay for Phase 1 and Phase 2: the intro card on arrival, then the
  * HUD with the Libro de Rosa docked over the narration/portal countdown, the
- * book's story titles, Phase 1's photo prompt and the summoned portal's prompt.
+ * book's story titles, Phase 1's photo prompt and the summoned portal's
+ * prompt — and, while it rains over Phase 1, drops running down the lens.
  *
  * @param props - Experience state
  * @returns Open phase overlay
  */
 export const OpenPhaseHUD = memo(function OpenPhaseHUD({ experience }: OpenPhaseHUDProps) {
-  const { phaseFlow, proximity, storyBook, storyBookVisible, photo, editor, audioRemainingSec } = experience
+  const { phaseFlow, proximity, storyBook, storyBookVisible, photo, editor, raining, audioRemainingSec } = experience
   const isPhase1 = phaseFlow.isPhase1
   const copy = isPhase1 ? PHASE_COPY.phase1 : PHASE_COPY.phase2
 
@@ -61,6 +63,7 @@ export const OpenPhaseHUD = memo(function OpenPhaseHUD({ experience }: OpenPhase
         audioRemainingSec={audioRemainingSec}
         showIndicator={false}
       />
+      {raining && !editor.isEditorEnabled && <RainOnLens active={raining} />}
       <div className={`pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 rounded-full border bg-parchment/90 px-5 py-2 text-[11px] font-semibold tracking-[0.18em] uppercase shadow backdrop-blur ${copy.pillClass}`}>
         {copy.pill}
       </div>
