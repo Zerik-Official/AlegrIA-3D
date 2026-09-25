@@ -9,6 +9,13 @@ import type { EditableEntity } from '@/features/editor/config/editableEntities'
 const SHADOW_DISTANCE = 30
 
 /**
+ * The phase's authored entities minus its fixed `portal`: outside the editor
+ * the way forward is the portal the Libro de Rosa summons in front of the
+ * player (see `StoryPortal`), so the authored one stays editable but hidden.
+ */
+const PLAY_ENTITIES = initialPhase2Entities.filter((e) => e.type !== 'portal')
+
+/**
  * Props for {@link Phase2Scene}.
  */
 interface Phase2SceneProps {
@@ -25,7 +32,7 @@ interface Phase2SceneProps {
  * @returns Phase 2 group
  */
 export const Phase2Scene = memo(function Phase2Scene({ editableEntities }: Phase2SceneProps) {
-  const entities = editableEntities ?? initialPhase2Entities
+  const entities = editableEntities ?? PLAY_ENTITIES
 
   return (
     <group>
