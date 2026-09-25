@@ -86,7 +86,8 @@ export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
         onExport={current.exportJson}
         onClose={editor.closeEditor}
         currentPhase={phase}
-        onJumpToPhase={phaseFlow.jumpToPhase}
+        currentCheckpointId={phaseFlow.checkpointId}
+        onJumpToCheckpoint={phaseFlow.jumpToCheckpoint}
         currentScene={editors.currentScene}
       />
 
