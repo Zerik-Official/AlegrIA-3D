@@ -41,7 +41,7 @@ interface SceneStageProps {
  * @returns Stage elements
  */
 export const SceneStage = memo(function SceneStage({ experience }: SceneStageProps) {
-  const { phaseFlow, editors, editor, proximity, storyBook, raining, portalFocus } = experience
+  const { phaseFlow, editors, editor, proximity, storyBook, raining, portalFocus, bookPages } = experience
   const { phase, scenePhase, crossingMode, wormholeProgress } = phaseFlow
   const inWormhole = phase === 'wormhole'
   const crossedPortal = inWormhole && crossingMode === 'portal' && wormholeProgress > PORTAL_CROSSED_AT
@@ -64,6 +64,9 @@ export const SceneStage = memo(function SceneStage({ experience }: SceneStagePro
           libraryPortalUnlocked={phaseFlow.libraryPortalUnlocked}
           crossingMode={crossingMode}
           editableEntities={editing ? editors.libraryEditor.entities : undefined}
+          pagesInteractive={phase === 'exploring' && !editing && !bookPages.openPage}
+          focusedPageId={bookPages.focusedPageId}
+          onPageFocus={bookPages.setFocusedPageId}
         />
       )}
       {!crossedPortal && sceneId === 'phase1' && (
