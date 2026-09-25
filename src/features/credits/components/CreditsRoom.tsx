@@ -10,6 +10,7 @@
 
 import { memo, useMemo } from 'react'
 import * as THREE from 'three'
+import { canvasTexture } from '@/features/cityIntro/components/carnival/neonCanvas'
 
 /** Room half-extents on the floor. */
 const HALF_X = 9
@@ -38,6 +39,8 @@ const materials = {
   banner: new THREE.MeshStandardMaterial({ color: '#1a2a6e', roughness: 0.5, emissive: '#1a2a6e', emissiveIntensity: 0.25 }),
   glassFrame: new THREE.MeshStandardMaterial({ color: '#151519', roughness: 0.4, metalness: 0.6 }),
   glass: new THREE.MeshStandardMaterial({ color: '#bcd8ea', roughness: 0.1, metalness: 0.1, transparent: true, opacity: 0.35 }),
+  trim: new THREE.MeshStandardMaterial({ color: '#2a2620', roughness: 0.7 }),
+  columnCap: new THREE.MeshStandardMaterial({ color: '#e2dccb', roughness: 0.6, metalness: 0.1 }),
 }
 
 /** One workstation: desk slice already drawn by the row — this is the chair + monitor + keyboard + optional backpack. */
@@ -166,15 +169,62 @@ function RiwiBanner({ x, z }: { x: number; z: number }) {
   )
 }
 
-/** The two square columns Omar dances between, and the floor glow ringing them. */
+/** The two square columns Omar dances between, with a capital and base for a bit of architectural detail. */
 function CenterColumns() {
   return (
     <group>
       {[-2.4, 2.4].map((x) => (
-        <mesh key={x} position={[x, WALL_H / 2, 0]} castShadow receiveShadow material={materials.column}>
-          <boxGeometry args={[0.62, WALL_H, 0.62]} />
+        <group key={x}>
+          <mesh position={[x, WALL_H / 2, 0]} castShadow receiveShadow material={materials.column}>
+            <boxGeometry args={[0.62, WALL_H, 0.62]} />
+          </mesh>
+          <mesh position={[x, WALL_H - 0.14, 0]} material={materials.columnCap}>
+            <boxGeometry args={[0.78, 0.16, 0.78]} />
+          </mesh>
+          <mesh position={[x, 0.1, 0]} material={materials.columnCap}>
+            <boxGeometry args={[0.78, 0.16, 0.78]} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  )
+}
+
+/** Warm spotlight pool on the floor where Omar dances, between the columns. */
+const StageGlow = memo(function StageGlow() {
+  const texture = useMemo(
+    () =>
+      canvasTexture(128, 128, (c, w, h) => {
+        const gradient = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2)
+        gradient.addColorStop(0, 'rgba(255,210,140,0.85)')
+        gradient.addColorStop(0.55, 'rgba(200,120,255,0.35)')
+        gradient.addColorStop(1, 'rgba(168,85,255,0)')
+        c.fillStyle = gradient
+        c.fillRect(0, 0, w, h)
+      }),
+    []
+  )
+  return (
+    <mesh rotation-x={-Math.PI / 2} position={[0, 0.015, 0]}>
+      <planeGeometry args={[5.5, 5.5]} />
+      <meshBasicMaterial map={texture} transparent opacity={0.55} blending={THREE.AdditiveBlending} depthWrite={false} />
+    </mesh>
+  )
+})
+
+/** Thin baseboard trim running along the room's walls, for a finished, less flat look. */
+function BaseTrim() {
+  const h = 0.12
+  return (
+    <group position={[0, h / 2, 0]}>
+      {[-HALF_Z, HALF_Z].map((z) => (
+        <mesh key={z} position={[0, 0, z]} material={materials.trim}>
+          <boxGeometry args={[HALF_X * 2, h, 0.04]} />
         </mesh>
       ))}
+      <mesh position={[-HALF_X, 0, 0]} material={materials.trim}>
+        <boxGeometry args={[0.04, h, HALF_Z * 2]} />
+      </mesh>
     </group>
   )
 }
@@ -236,7 +286,9 @@ export const CreditsRoom = memo(function CreditsRoom() {
   return (
     <group>
       <RoomShell />
+      <BaseTrim />
       <CenterColumns />
+      <StageGlow />
       <CeilingServices />
       <RollUpBlind x={-5.5} z={-HALF_Z + WALL_T / 2} rotationY={0} />
       <RollUpBlind x={-2.8} z={-HALF_Z + WALL_T / 2} rotationY={0} />
@@ -246,9 +298,15 @@ export const CreditsRoom = memo(function CreditsRoom() {
       <DeskRow z={4.6} facing={Math.PI} count={5} spacing={1.55} xStart={-6.5} />
       <DeskRow z={-4.6} facing={0} count={5} spacing={1.55} xStart={-6.5} />
 
-      <pointLight position={[0, WALL_H - 0.4, 0]} intensity={1.1} distance={16} decay={2} color="#fff6e4" />
-      <pointLight position={[-4.5, WALL_H - 0.4, 3]} intensity={0.7} distance={12} decay={2} color="#fff6e4" />
-      <pointLight position={[4.5, WALL_H - 0.4, -3]} intensity={0.7} distance={12} decay={2} color="#fff6e4" />
+      {/* Warm overhead key light, softer than a flat office wash. */}
+      <pointLight position={[0, WALL_H - 0.4, 0]} intensity={0.9} distance={16} decay={2} color="#fff2dc" />
+      <pointLight position={[-4.5, WALL_H - 0.4, 3]} intensity={0.55} distance={12} decay={2} color="#fff2dc" />
+      <pointLight position={[4.5, WALL_H - 0.4, -3]} intensity={0.55} distance={12} decay={2} color="#fff2dc" />
+
+      {/* Gold/magenta stage accents flanking the columns, echoing the credits overlay's palette. */}
+      <pointLight position={[-2.4, 1.6, 1.6]} intensity={1.3} distance={7} decay={2} color="#ffcc33" />
+      <pointLight position={[2.4, 1.6, -1.6]} intensity={1.3} distance={7} decay={2} color="#a855ff" />
+      <spotLight position={[0, WALL_H - 0.2, 0]} intensity={2.4} distance={9} angle={0.55} penumbra={0.7} decay={2} color="#ffd9a0" />
     </group>
   )
 })
