@@ -36,13 +36,15 @@ interface Bead {
 }
 
 /** Most drops on the lens at once. */
-const MAX_DROPS = 48
+const MAX_DROPS = 70
 /** Drops landing per second at full strength. */
-const LAND_RATE = 5
+const LAND_RATE = 8
 /** Seconds a trail bead takes to dry. */
-const BEAD_LIFE = 1.8
-/** Overall opacity — present, never in the way. */
-const STRENGTH = 0.55
+const BEAD_LIFE = 2.4
+/** Overall opacity — clearly there, still never in the way. */
+const STRENGTH = 0.85
+/** Size multiplier over the base drop sizes. */
+const SIZE = 1.35
 
 /**
  * Raindrops on the camera's lens while it rains over Phase 1: small beads
@@ -87,7 +89,7 @@ export const RainOnLens = memo(function RainOnLens({ active }: RainOnLensProps) 
       drops.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height * 0.85,
-        r: (big ? 4.5 + Math.random() * 3.5 : 1.6 + Math.random() * 2.4) * unit,
+        r: (big ? 4.5 + Math.random() * 3.5 : 1.6 + Math.random() * 2.4) * unit * SIZE,
         vy: 0,
         cling: big ? 0.6 + Math.random() * 2.2 : 3 + Math.random() * 4,
         age: 0,
@@ -99,14 +101,14 @@ export const RainOnLens = memo(function RainOnLens({ active }: RainOnLensProps) 
 
     const drawDrop = (x: number, y: number, r: number, alpha: number): void => {
       const body = ctx.createRadialGradient(x - r * 0.25, y - r * 0.3, r * 0.1, x, y, r)
-      body.addColorStop(0, `rgba(255,255,255,${0.18 * alpha})`)
-      body.addColorStop(0.7, `rgba(200,215,230,${0.08 * alpha})`)
-      body.addColorStop(1, `rgba(20,28,36,${0.32 * alpha})`)
+      body.addColorStop(0, `rgba(255,255,255,${0.26 * alpha})`)
+      body.addColorStop(0.7, `rgba(200,215,230,${0.14 * alpha})`)
+      body.addColorStop(1, `rgba(20,28,36,${0.5 * alpha})`)
       ctx.fillStyle = body
       ctx.beginPath()
       ctx.ellipse(x, y, r, r * 1.12, 0, 0, Math.PI * 2)
       ctx.fill()
-      ctx.fillStyle = `rgba(255,255,255,${0.7 * alpha})`
+      ctx.fillStyle = `rgba(255,255,255,${0.9 * alpha})`
       ctx.beginPath()
       ctx.ellipse(x - r * 0.32, y - r * 0.38, r * 0.22, r * 0.16, -0.6, 0, Math.PI * 2)
       ctx.fill()
