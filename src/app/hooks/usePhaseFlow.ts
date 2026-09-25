@@ -4,8 +4,10 @@
  *
  * Flow: `idle` → `exploring` (library, 1st visit) → `phase1` → `phase2` →
  * `exploring` (library, 2nd visit, via the Phase 2 return portal) →
- * `cityIntro` (finale, via the book's second use). Every arrow is a wormhole
- * transition; `libraryVisitCount` is what tells the book which one to start.
+ * `cityIntro` (finale, via the restored library's portal). Every arrow after
+ * the first is a wormhole transition, played in the scene it leaves from
+ * (`wormholeSource`); `libraryVisitCount` is what tells the book which
+ * choreography to run.
  * @module app/hooks/usePhaseFlow
  */
 
@@ -23,7 +25,8 @@ import { WormholeTimeline } from '@/app/engine/WormholeTimeline'
  * First visit: the hall opens with the pedestal switched off and no book
  * (`dormant`); near the end of the opening narration the pedestal flickers to
  * life (`igniting`) and the book materializes over it in a column of light
- * (`awakening`), only then becoming usable (`ready`).
+ * (`awakening`), then floats untouchable (`waiting`) until the narration
+ * ends, only then becoming usable (`ready`).
  *
  * Second visit (the
  * return from Phase 2): the pedestal starts empty (`hidden`), the book
@@ -71,6 +74,18 @@ export interface PhaseFlow {
   wormholeProgress: number
   /** Phase the current (or most recent) wormhole transition leads to. */
   wormholeTarget: GamePhase
+  /** Phase the current (or most recent) wormhole transition left from — its scene stays on screen while the crossing plays. */
+  wormholeSource: GamePhase
+  /** Phase whose scene is on screen: `phase` itself, or the phase being left while a wormhole plays. */
+  scenePhase: GamePhase
+  /**
+   * Which crossing cinematic the wormhole plays: `book` for the book's ritual
+   * over the pedestal (the library's first visit, into Phase 1), `portal` for
+   * diving through the portal the player walked into (every other crossing).
+   */
+  crossingMode: 'book' | 'portal'
+  /** Whether the current open phase's intro overlay is covering the screen. */
+  introOverlayOpen: boolean
   /** Whether Phase 1's intro overlay is showing. */
   showPhase1Overlay: boolean
   /** Whether Phase 2's intro overlay is showing. */
@@ -100,9 +115,9 @@ export interface PhaseFlow {
    * {@link LibraryBookStage}. Ignored until the return narration has ended.
    */
   handleBookInteract: () => void
-  /** Called once the return narration ends, letting the player return the book (`waiting` → `ready`). */
+  /** Called once the library's narration ends, making the book usable (`waiting` → `ready`) on either visit. */
   finishLibraryDialog: () => void
-  /** Starts the first visit's awakening cinematic — pedestal ignition, then the book materializing (`dormant` → `igniting` → `awakening` → `ready`). */
+  /** Starts the first visit's awakening cinematic — pedestal ignition, then the book materializing (`dormant` → `igniting` → `awakening` → `waiting`). */
   awakenLibraryBook: () => void
   /** Starts the wormhole transition into Phase 2 (triggered near the Phase 1 portal). */
   startWormholeToPhase2: () => void
@@ -128,10 +143,11 @@ export function usePhaseFlow(): PhaseFlow {
   const [phase, setPhase] = useState<GamePhase>('idle')
   const [wormholeProgress, setWormholeProgress] = useState(0)
   const [wormholeTarget, setWormholeTarget] = useState<GamePhase>('phase1')
+  const [wormholeSource, setWormholeSource] = useState<GamePhase>('exploring')
   const [showPhase1Overlay, setShowPhase1Overlay] = useState(true)
   const [showPhase2Overlay, setShowPhase2Overlay] = useState(true)
   const [libraryVisitCount, setLibraryVisitCount] = useState(0)
-  const [bookStage, setBookStage] = useState<LibraryBookStage>('ready')
+  const [bookStage, setBookStage] = useState<LibraryBookStage>('dormant')
   const [libraryRestored, setLibraryRestored] = useState(false)
   const [libraryPortalUnlocked, setLibraryPortalUnlocked] = useState(false)
   const timeline = useRef(new WormholeTimeline()).current
@@ -141,6 +157,9 @@ export function usePhaseFlow(): PhaseFlow {
   const isCityIntro = phase === 'cityIntro'
   const isPhase1 = phase === 'phase1' || phase === 'museum'
   const isPhase2 = phase === 'phase2'
+  const scenePhase = phase === 'wormhole' ? wormholeSource : phase
+  const crossingMode = wormholeSource === 'exploring' && wormholeTarget === 'phase1' ? 'book' : 'portal'
+  const introOverlayOpen = (isPhase1 && showPhase1Overlay) || (isPhase2 && showPhase2Overlay)
 
   const clearBookTimers = useCallback(() => {
     bookTimers.current.forEach((id) => window.clearTimeout(id))
@@ -190,6 +209,7 @@ export function usePhaseFlow(): PhaseFlow {
       if (phase === 'wormhole' || phase === target) return
       if (target === 'cityIntro') preloadCityIntroAssets()
       setWormholeTarget(target)
+      setWormholeSource(phase)
       setPhase('wormhole')
       timeline.start(appConfig.wormhole.durationMs, easeCubicInOut, setWormholeProgress, () => {
         setPhase(target)
@@ -232,7 +252,7 @@ export function usePhaseFlow(): PhaseFlow {
     if (bookStage !== 'dormant') return
     setBookStage('igniting')
     bookTimers.current.push(window.setTimeout(() => setBookStage('awakening'), PEDESTAL_IGNITE_MS))
-    bookTimers.current.push(window.setTimeout(() => setBookStage('ready'), PEDESTAL_IGNITE_MS + BOOK_AWAKEN_MS))
+    bookTimers.current.push(window.setTimeout(() => setBookStage('waiting'), PEDESTAL_IGNITE_MS + BOOK_AWAKEN_MS))
   }, [bookStage])
 
   const finishLibraryDialog = useCallback(() => {
@@ -273,6 +293,10 @@ export function usePhaseFlow(): PhaseFlow {
     phase,
     wormholeProgress,
     wormholeTarget,
+    wormholeSource,
+    scenePhase,
+    crossingMode,
+    introOverlayOpen,
     showPhase1Overlay,
     showPhase2Overlay,
     isCityIntro,
