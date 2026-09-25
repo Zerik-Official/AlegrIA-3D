@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
+import { PedestalAwakening } from '@/features/pedestal/components/PedestalAwakening'
 import { Wormhole } from '@/features/wormhole/components/Wormhole'
 import { TimeVortexParticles } from '@/features/wormhole/components/TimeVortexParticles'
 import { CyberWall } from '@/features/library/components/CyberWall'
@@ -15,7 +16,7 @@ import { PortalCrossingSequence } from '@/features/cinematics/components/PortalC
 import { RestoredLibrary } from '@/features/library/components/RestoredLibrary'
 import { LightBurst } from '@/features/library/components/LightBurst'
 import { ProceduralPortal } from '@/shared/components/ReusableModels'
-import { SwellIn } from '@/shared/components/SwellIn'
+import { PortalOpening } from '@/shared/components/PortalOpening'
 import { registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 import {
   AISLE_SHELVES,
@@ -105,6 +106,38 @@ const WallTorchFixture = memo(function WallTorchFixture({ position }: WallTorchF
 })
 
 /**
+ * Props for {@link BookGlowLights}.
+ */
+interface BookGlowLightsProps {
+  /** Target power `[0,1]` — `0` while the pedestal is still switched off. */
+  power: number
+}
+
+/**
+ * The warm key light hugging the book and the spot pouring down on it, eased
+ * between dark and full strength along with the pedestal they belong to.
+ *
+ * @param props - Power level
+ * @returns Lights
+ */
+const BookGlowLights = memo(function BookGlowLights({ power }: BookGlowLightsProps) {
+  const pointRef = useRef<THREE.PointLight>(null)
+  const spotRef = useRef<THREE.SpotLight>(null)
+  const current = useRef(power)
+  useFrame((_, delta) => {
+    current.current = THREE.MathUtils.damp(current.current, power, 1.4, Math.min(delta, 0.05))
+    if (pointRef.current) pointRef.current.intensity = 2.4 * current.current
+    if (spotRef.current) spotRef.current.intensity = 3.2 * current.current
+  })
+  return (
+    <>
+      <pointLight ref={pointRef} position={[0, 1.82, 0]} intensity={2.4 * power} distance={5.2} color="#ffcc66" decay={2} />
+      <spotLight ref={spotRef} position={[0, 4.8, 0]} angle={0.5} penumbra={0.62} intensity={3.2 * power} color="#ffe9a0" distance={11} />
+    </>
+  )
+})
+
+/**
  * Props for {@link LibraryScene}.
  */
 interface LibrarySceneProps {
@@ -142,7 +175,8 @@ export const LibraryScene = memo(function LibraryScene({
   editableEntities,
 }: LibrarySceneProps) {
   const libraryRef = useRef<THREE.Group>(null)
-  const bookGone = bookStage === 'hidden' || bookStage === 'transforming' || bookStage === 'restored'
+  const bookGone = bookStage === 'dormant' || bookStage === 'igniting' || bookStage === 'hidden' || bookStage === 'transforming' || bookStage === 'restored'
+  const pedestalPower = bookStage === 'dormant' ? 0 : 1
   const bookAppear = bookGone ? 0 : 1
   const bookShelved = bookStage === 'returning' || bookStage === 'transforming' || bookStage === 'restored' ? 1 : 0
   const showRestored = libraryRestored && !editableEntities
@@ -275,7 +309,7 @@ export const LibraryScene = memo(function LibraryScene({
           ))}
 
           <ScatteredBooks />
-          <Pedestal />
+          <Pedestal power={pedestalPower} />
         </>
       )}
 
@@ -305,12 +339,13 @@ export const LibraryScene = memo(function LibraryScene({
       ) : (
         <LevitatingBook ritualProgress={crossingMode === 'book' ? wormholeProgress : 0} appear={bookAppear} shelved={bookShelved} />
       )}
+      <PedestalAwakening active={bookStage === 'awakening'} />
       <LightBurst active={bookStage === 'transforming'} origin={BOOK_SHELF_SLOT} />
       {libraryPortalUnlocked && (
         <group position={LIBRARY_PORTAL_POSITION}>
-          <SwellIn duration={2}>
+          <PortalOpening radius={LIBRARY_PORTAL_RADIUS} accentColor="#ffcc33" glowColor="#5ad8ff">
             <ProceduralPortal position={[0, 0, 0]} radius={LIBRARY_PORTAL_RADIUS} accentColor="#ffcc33" glowColor="#5ad8ff" />
-          </SwellIn>
+          </PortalOpening>
         </group>
       )}
 
@@ -332,8 +367,7 @@ export const LibraryScene = memo(function LibraryScene({
         <>
           <ambientLight intensity={0.18} color="#7ab8ff" />
           <hemisphereLight args={['#0a1a2e', '#020508', 0.38]} />
-          <pointLight position={[0, 1.82, 0]} intensity={2.4} distance={5.2} color="#ffcc66" decay={2} />
-          <spotLight position={[0, 4.8, 0]} angle={0.5} penumbra={0.62} intensity={3.2} color="#ffe9a0" distance={11} />
+          <BookGlowLights power={pedestalPower} />
           <spotLight position={[0, 4, 12]} angle={0.5} penumbra={0.7} intensity={1.15} color="#0ab8ff" distance={18} />
         </>
       )}
