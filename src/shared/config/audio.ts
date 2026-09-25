@@ -25,3 +25,12 @@ export const audioTracks = {
 
 /** A key into {@link audioTracks}. */
 export type AudioTrackKey = keyof typeof audioTracks
+
+/**
+ * Looping ambience layered under the narration, each driven by its own hook
+ * rather than the single narration track.
+ */
+export const ambienceTracks = {
+  /** Phase 1's rain. */
+  rain: `${base}sounds/atmosphere/SOUND-RAIN.mp3`,
+} as const
