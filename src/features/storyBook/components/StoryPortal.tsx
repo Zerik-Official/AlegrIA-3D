@@ -2,7 +2,7 @@ import { memo, useState } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ProceduralPortal } from '@/shared/components/ReusableModels'
-import { SwellIn } from '@/shared/components/SwellIn'
+import { PortalOpening } from '@/shared/components/PortalOpening'
 import { getCollisionSolids } from '@/features/player/collision'
 import { playerConfig } from '@/shared/config/appConfig'
 import type { Bounds } from '@/shared/types'
@@ -51,8 +51,8 @@ function isBlocked(x: number, z: number, floorY: number, obstacles: StoryPortalP
 /**
  * The portal the Libro de Rosa summons in the open phases: opened directly in
  * front of wherever the player is looking, facing them, on the nearest open
- * ground along that line (so it never sinks into a wall), swelling in with an
- * eased overshoot instead of popping into existence.
+ * ground along that line (so it never sinks into a wall), tearing open as a rift
+ * of light (see `PortalOpening`) instead of popping into existence.
  *
  * @param props - Activation, placement constraints and colors
  * @returns Portal group, or `null` until opened
@@ -96,9 +96,9 @@ export const StoryPortal = memo(function StoryPortal({ active, onPlaced, bounds,
 
   return (
     <group position={placement.position} rotation-y={placement.yaw}>
-      <SwellIn>
+      <PortalOpening radius={1.45} accentColor={accentColor} glowColor={glowColor}>
         <ProceduralPortal position={[0, 0, 0]} radius={1.45} accentColor={accentColor} glowColor={glowColor} />
-      </SwellIn>
+      </PortalOpening>
     </group>
   )
 })
