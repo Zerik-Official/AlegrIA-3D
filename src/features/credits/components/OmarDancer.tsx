@@ -15,12 +15,20 @@ import { CREDITS_CENTER } from '@/features/credits/config/creditsConfig'
 
 /** Height over Omar's head the name tag floats at. */
 const NAME_TAG_Y = 2.1
+/**
+ * Omar's `.glb` (a Sketchfab export) has no consistent real-world unit scale
+ * — its raw geometry spans hundreds of units — so it's rescaled to a
+ * believable standing height, the same way `ModelLoader`'s `targetSize`
+ * normalizes other third-party assets.
+ */
+const OMAR_TARGET_HEIGHT = 1.75
 
 export const OmarDancer = memo(function OmarDancer() {
   return (
     <group position={CREDITS_CENTER}>
       <CongasPerformer
         src={modelRegistry['credits/omar-dancing'].path}
+        targetSize={OMAR_TARGET_HEIGHT}
         fallback={
           <group>
             <mesh position={[0, 0.85, 0]} castShadow>
