@@ -10,17 +10,25 @@ interface PortalCrossingSequenceProps {
   progress: number
   /** Whether the sequence is active. */
   active: boolean
-  /** World position of the portal being crossed (it faces `+Z`). */
+  /** World position of the portal being crossed. */
   center: [number, number, number]
+  /** Y rotation turning the portal's face (its local `+Z`) towards the player. */
+  yaw?: number
 }
+
+/** Half extent of the area around the portal that motes are drawn in from. */
+const MOTE_REACH = 10
+/** Height range motes are spawned across. */
+const MOTE_HEIGHT = 4.6
 
 /** Motes of light pulled out of the hall into the portal. */
 const MOTE_COUNT = 420
 
 /**
- * Cinematic for crossing the restored library's portal into the future — the
- * pedestal is gone, so instead of the book's ritual the portal itself takes
- * over. Paired with `WormholeCamera`'s portal focus, which carries the camera
+ * Cinematic for crossing any portal the player walks into — the restored
+ * library's portal to the future, and the portals the Libro de Rosa summons
+ * in the open phases — played in the scene being left rather than cutting
+ * away. Paired with `WormholeCamera`'s portal focus, which carries the camera
  * up to it and through.
  *
  * Beats (17s total):
@@ -33,7 +41,7 @@ const MOTE_COUNT = 420
  * @param props - Cinematic state
  * @returns Cinematic group, or `null` while idle
  */
-export const PortalCrossingSequence = memo(function PortalCrossingSequence({ progress, active, center }: PortalCrossingSequenceProps) {
+export const PortalCrossingSequence = memo(function PortalCrossingSequence({ progress, active, center, yaw = 0 }: PortalCrossingSequenceProps) {
   const discRef = useRef<THREE.Mesh>(null)
   const motesRef = useRef<THREE.Points>(null)
   const flashRef = useRef<THREE.Mesh>(null)
@@ -81,13 +89,13 @@ export const PortalCrossingSequence = memo(function PortalCrossingSequence({ pro
     const pos = new Float32Array(MOTE_COUNT * 3)
     const spd = new Float32Array(MOTE_COUNT)
     for (let i = 0; i < MOTE_COUNT; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20
-      pos[i * 3 + 1] = Math.random() * 4.6
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 20
+      pos[i * 3] = center[0] + (Math.random() - 0.5) * MOTE_REACH * 2
+      pos[i * 3 + 1] = Math.random() * MOTE_HEIGHT
+      pos[i * 3 + 2] = center[2] + (Math.random() - 0.5) * MOTE_REACH * 2
       spd[i] = 0.4 + Math.random() * 0.8
     }
     return { positions: pos, speeds: spd }
-  }, [])
+  }, [center])
 
   useFrame(({ clock }, delta) => {
     if (!active) return
@@ -117,7 +125,7 @@ export const PortalCrossingSequence = memo(function PortalCrossingSequence({ pro
         const dz = center[2] - z
         const dist = Math.hypot(dx, dy, dz)
         if (dist < 0.35) {
-          attr.setXYZ(i, (Math.random() - 0.5) * 20, Math.random() * 4.6, (Math.random() - 0.5) * 20)
+          attr.setXYZ(i, center[0] + (Math.random() - 0.5) * MOTE_REACH * 2, Math.random() * MOTE_HEIGHT, center[2] + (Math.random() - 0.5) * MOTE_REACH * 2)
           continue
         }
         const step = Math.min(dist, speeds[i] * (1.5 + pull * 9) * dt)
@@ -144,7 +152,7 @@ export const PortalCrossingSequence = memo(function PortalCrossingSequence({ pro
 
   return (
     <group>
-      <group position={center}>
+      <group position={center} rotation-y={yaw}>
         <pointLight ref={lightRef} intensity={2} distance={14} color="#bfe8ff" decay={1.6} />
         <mesh ref={discRef} position={[0, 0, 0.05]} renderOrder={9}>
           <circleGeometry args={[1, 64]} />
