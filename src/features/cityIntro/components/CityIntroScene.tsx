@@ -3,6 +3,7 @@ import { Sparkles } from '@react-three/drei'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { CityFillerSkyline } from '@/features/cityIntro/components/CityFillerSkyline'
 import { CityStreets } from '@/features/cityIntro/components/CityStreets'
+import { StreetCarnival } from '@/features/cityIntro/components/carnival/StreetCarnival'
 import { cityCollisionSolids } from '@/features/cityIntro/config/cityCollision'
 import { registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 import { CaribbeanSky } from '@/features/cityIntro/components/CaribbeanSky'
@@ -30,7 +31,9 @@ const GROUND_SIZE: [number, number] = [280, 180]
  * tecnificado, de un piso, en un atardecer caribeño neón.
  *
  * La calzada, los andenes, la calle lateral frente a la aduana y las plazas
- * hacia RIWI y los edificios de pantalla viven en `CityStreets`; las casas, murales,
+ * hacia RIWI y los edificios de pantalla viven en `CityStreets`; la fiesta
+ * "Baila la Calle 2050" que llena la avenida (multitud, banderines, hologramas,
+ * puestos y luces al ritmo) vive en `StreetCarnival`; las casas, murales,
  * faroles flotantes, robles, vehículos, la luna y la fachada de la biblioteca
  * son JSON (`engine/config/cityIntro.json`) a través de `PhaseEngine`, todas
  * editables con `F2`.
@@ -41,6 +44,7 @@ const GROUND_SIZE: [number, number] = [280, 180]
 export const CityIntroScene = memo(function CityIntroScene({ editableEntities }: CityIntroSceneProps) {
   const entities = editableEntities ?? initialCityIntroEntities
   const flightLanes = useMemo(() => buildFlightLanes(entities), [entities])
+  const walkPath = useMemo(() => entities.filter((e) => e.type === 'path-point'), [entities])
 
   useEffect(() => {
     registerCollisionSolids('city-sidewalk-slabs', cityCollisionSolids)
@@ -58,6 +62,7 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
       </mesh>
 
       <CityStreets />
+      <StreetCarnival pathEntities={walkPath} />
 
       <PhaseEngine entities={entities} context={{ flightLanes }} />
 
