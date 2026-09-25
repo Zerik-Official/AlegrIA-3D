@@ -31,6 +31,14 @@ export interface HotkeyContext {
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
   isPhase2: boolean
+  /** Whether `phase` currently resolves to the credits scene. */
+  isCredits: boolean
+  /** Whether the player is within interact range of the credits door at RIWI Barranquilla. */
+  nearCreditsDoor: boolean
+  /** Enters the credits scene from the door prompt. */
+  enterCredits: () => void
+  /** Leaves the credits scene, back to `cityIntro`. */
+  exitCredits: () => void
   /** Id of the sepia photo currently highlighted by proximity, if any. */
   highlightedPhotoId: string | null
   /** Whether a photo is currently open in the modal. */
@@ -145,6 +153,14 @@ export class HotkeyRouter {
     if (isConfirmKey && ctx.phase === 'exploring' && ctx.nearPortal && ctx.libraryPortalUnlocked && !ctx.isEditorEnabled) {
       ctx.startWormholeToCityIntro()
     }
+    if (isConfirmKey && ctx.isCityIntro && ctx.nearCreditsDoor && !ctx.isEditorEnabled) {
+      ctx.enterCredits()
+      return
+    }
+    if ((isConfirmKey || event.key === 'Escape') && ctx.isCredits && !ctx.isEditorEnabled) {
+      ctx.exitCredits()
+      return
+    }
 
     if (event.key === 'Escape' && ctx.hasSelectedPhoto) {
       ctx.closePhoto()
@@ -160,7 +176,16 @@ export class HotkeyRouter {
    * @param ctx - Context snapshot
    */
   private togglePointerLock(ctx: HotkeyContext): void {
-    if (ctx.isEditorEnabled || ctx.showPhase1Overlay || ctx.showPhase2Overlay || ctx.phase === 'idle' || ctx.phase === 'wormhole' || (ctx.isCityIntro && !ctx.cityFreeRoam)) return
+    if (
+      ctx.isEditorEnabled ||
+      ctx.showPhase1Overlay ||
+      ctx.showPhase2Overlay ||
+      ctx.phase === 'idle' ||
+      ctx.phase === 'wormhole' ||
+      ctx.isCredits ||
+      (ctx.isCityIntro && !ctx.cityFreeRoam)
+    )
+      return
     if (document.pointerLockElement) document.exitPointerLock()
     else document.body.requestPointerLock?.()
   }
