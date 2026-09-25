@@ -1,4 +1,7 @@
-import { memo } from 'react'
+import { memo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+import { PhaseRain } from '@/features/phase1/components/parts/Rain/PhaseRain'
 import { ProceduralTree, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
 import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
@@ -62,6 +65,43 @@ const FAR_GROUND_PANELS: Array<{ position: [number, number, number]; size: [numb
 const PLAY_ENTITIES = initialPhase1Entities.filter((e) => e.type !== 'portal')
 
 /**
+ * Props for {@link Phase1Lights}.
+ */
+interface Phase1LightsProps {
+  /** Whether it's raining — the light dims and cools under the clouds. */
+  raining: boolean
+}
+
+/** How much of each light's strength is left under full rain. */
+const RAIN_DIMMING = 0.55
+
+/**
+ * The barrio's warm afternoon light, dimming smoothly under the rain clouds.
+ * @param props - Rain state
+ * @returns Lights
+ */
+const Phase1Lights = memo(function Phase1Lights({ raining }: Phase1LightsProps) {
+  const ambientRef = useRef<THREE.AmbientLight>(null)
+  const hemiRef = useRef<THREE.HemisphereLight>(null)
+  const sunRef = useRef<THREE.DirectionalLight>(null)
+  const level = useRef(1)
+  useFrame((_, delta) => {
+    level.current = THREE.MathUtils.damp(level.current, raining ? RAIN_DIMMING : 1, 0.5, Math.min(delta, 0.05))
+    if (ambientRef.current) ambientRef.current.intensity = 0.62 * level.current
+    if (hemiRef.current) hemiRef.current.intensity = 0.52 * (0.4 + level.current * 0.6)
+    if (sunRef.current) sunRef.current.intensity = 1.05 * level.current * level.current
+  })
+  return (
+    <>
+      <ambientLight ref={ambientRef} intensity={0.62} color="#ffe9c4" />
+      <hemisphereLight ref={hemiRef} args={['#ffecd0', '#6b4a2a', 0.52]} />
+      <directionalLight ref={sunRef} position={[40, 34, -24]} intensity={1.05} color="#fff4d0" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-90} shadow-camera-right={90} shadow-camera-top={90} shadow-camera-bottom={-90} shadow-camera-far={220} />
+      <pointLight position={[30, 5, 10]} intensity={0.42} distance={24} color="#8ab4c2" decay={2} />
+    </>
+  )
+})
+
+/**
  * Props for {@link Phase1Scene}.
  */
 interface Phase1SceneProps {
@@ -69,6 +109,8 @@ interface Phase1SceneProps {
   highlightedPhotoId?: string | null
   /** Optional engine-driven entities for editor. */
   editableEntities?: EditableEntity[]
+  /** Whether it's raining over the barrio (towards the end of the narration). */
+  raining?: boolean
 }
 
 /**
@@ -82,7 +124,7 @@ interface Phase1SceneProps {
  * @param props - Scene props
  * @returns Phase 1 group
  */
-export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, editableEntities }: Phase1SceneProps) {
+export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, editableEntities, raining = false }: Phase1SceneProps) {
   const entities = editableEntities ?? PLAY_ENTITIES
 
   return (
@@ -145,10 +187,8 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
       <ProceduralTrinitaria position={[2, 0, 65]} bloomColor="#a52ad8" scale={1.03} />
       <ProceduralTrinitaria position={[16, 0, 90]} bloomColor="#d82a3a" scale={0.96} />
 
-      <ambientLight intensity={0.62} color="#ffe9c4" />
-      <hemisphereLight args={['#ffecd0', '#6b4a2a', 0.52]} />
-      <directionalLight position={[40, 34, -24]} intensity={1.05} color="#fff4d0" castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-90} shadow-camera-right={90} shadow-camera-top={90} shadow-camera-bottom={-90} shadow-camera-far={220} />
-      <pointLight position={[30, 5, 10]} intensity={0.42} distance={24} color="#8ab4c2" decay={2} />
+      <Phase1Lights raining={raining} />
+      <PhaseRain active={raining} />
     </group>
   )
 })
