@@ -13,7 +13,8 @@ import { appConfig } from '@/shared/config/appConfig'
 /**
  * Beat of the companion book's choreography.
  * - `hidden` outside the open phases
- * - `calm` floating over the dialogue indicator, spinning gently on its axis
+ * - `calm` floating over the dialogue/portal indicator, spinning gently on its axis — through the
+ *   narration and then the wait while it channels energy for the portal
  * - `restless` spinning brusquely, cover bursting open and pages flipping
  * - `summoning` gliding to the center of the screen while spinning up
  * - `portal` the portal has opened in front of the player; the book fades away
@@ -28,6 +29,10 @@ export interface StoryBookFlow {
   portalOpen: boolean
   /** Whether the "portal opened" title is still showing. */
   showPortalTitle: boolean
+  /** Which title follows the narration's end while the book gathers energy: first `channeling`, then `explore`, then none. */
+  waitTitle: 'channeling' | 'explore' | null
+  /** Whole seconds left until the book grows restless and summons the portal, or `null` outside that wait. */
+  portalCountdownSec: number | null
   /** World XZ where the summoned portal was placed, or `null` before it exists. */
   portalXZ: [number, number] | null
   /** Records where the summoned portal landed; called once by the in-scene portal. */
@@ -45,6 +50,8 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, audioRemaini
   const [dialogEnded, setDialogEnded] = useState(false)
   const [showPortalTitle, setShowPortalTitle] = useState(false)
   const [portalXZ, setPortalXZ] = useState<[number, number] | null>(null)
+  const [waitTitle, setWaitTitle] = useState<'channeling' | 'explore' | null>(null)
+  const [portalCountdownSec, setPortalCountdownSec] = useState<number | null>(null)
   const timers = useRef<number[]>([])
   /** Whether this phase's narration has been seen playing — gates both its end and the missing-audio fallback. */
   const sawAudio = useRef(false)
@@ -59,6 +66,8 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, audioRemaini
     setDialogEnded(false)
     setShowPortalTitle(false)
     setPortalXZ(null)
+    setWaitTitle(null)
+    setPortalCountdownSec(null)
     sawAudio.current = false
     setStage(active ? 'calm' : 'hidden')
     if (!active) return
@@ -82,9 +91,23 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, audioRemaini
 
   useEffect(() => {
     if (!active || !dialogEnded) return
-    const { waitAfterDialogMs, restlessMs, summonMs, portalTitleMs } = appConfig.storyBook
+    const { waitAfterDialogMs, restlessMs, summonMs, portalTitleMs, channelingTitleMs, exploreTitleMs } = appConfig.storyBook
+    const restlessAt = performance.now() + waitAfterDialogMs
+    const tick = (): void => {
+      const left = Math.max(0, Math.ceil((restlessAt - performance.now()) / 1000))
+      setPortalCountdownSec(left > 0 ? left : null)
+    }
+    tick()
+    const intervalId = window.setInterval(tick, 250)
+    setWaitTitle('channeling')
     const ids = [
-      window.setTimeout(() => setStage('restless'), waitAfterDialogMs),
+      window.setTimeout(() => setWaitTitle('explore'), channelingTitleMs),
+      window.setTimeout(() => setWaitTitle(null), channelingTitleMs + exploreTitleMs),
+      window.setTimeout(() => {
+        window.clearInterval(intervalId)
+        setPortalCountdownSec(null)
+        setStage('restless')
+      }, waitAfterDialogMs),
       window.setTimeout(() => setStage('summoning'), waitAfterDialogMs + restlessMs),
       window.setTimeout(() => {
         setStage('portal')
@@ -93,12 +116,15 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, audioRemaini
       window.setTimeout(() => setShowPortalTitle(false), waitAfterDialogMs + restlessMs + summonMs + portalTitleMs),
     ]
     timers.current.push(...ids)
-    return () => ids.forEach((id) => window.clearTimeout(id))
+    return () => {
+      ids.forEach((id) => window.clearTimeout(id))
+      window.clearInterval(intervalId)
+    }
   }, [active, dialogEnded])
 
   useEffect(() => clearTimers, [clearTimers])
 
   const handlePortalPlaced = useCallback((xz: [number, number]) => setPortalXZ(xz), [])
 
-  return { stage, portalOpen: stage === 'portal', showPortalTitle, portalXZ, handlePortalPlaced }
+  return { stage, portalOpen: stage === 'portal', showPortalTitle, waitTitle, portalCountdownSec, portalXZ, handlePortalPlaced }
 }
