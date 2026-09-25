@@ -31,6 +31,23 @@ interface PlayerControlsProps {
   avoidPedestal?: boolean
   /** Holds the player in place (mouse-look still works) while a cinematic plays. */
   movementLocked?: boolean
+  /**
+   * Overlapping rectangles the player must stay inside (a street network,
+   * say) — a step leaving all of them slides along the edge instead, keeping
+   * whichever axis of the move still lands inside one.
+   */
+  walkableAreas?: Array<{ minX: number; maxX: number; minZ: number; maxZ: number }>
+}
+
+/**
+ * @param areas - Walkable rectangles
+ * @param x - World X
+ * @param z - World Z
+ * @returns Whether `(x, z)` lies inside at least one of them
+ */
+function insideAny(areas: NonNullable<PlayerControlsProps['walkableAreas']>, x: number, z: number): boolean {
+  for (const a of areas) if (x >= a.minX && x <= a.maxX && z >= a.minZ && z <= a.maxZ) return true
+  return false
 }
 
 /**
@@ -77,6 +94,7 @@ export const PlayerControls = memo(function PlayerControls({
   spawnAtStart = true,
   avoidPedestal = true,
   movementLocked = false,
+  walkableAreas,
 }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
@@ -200,6 +218,15 @@ export const PlayerControls = memo(function PlayerControls({
     if (bounds) {
       scratch.next.x = THREE.MathUtils.clamp(scratch.next.x, bounds.minX, bounds.maxX)
       scratch.next.z = THREE.MathUtils.clamp(scratch.next.z, bounds.minZ, bounds.maxZ)
+    }
+
+    if (walkableAreas && !insideAny(walkableAreas, scratch.next.x, scratch.next.z)) {
+      if (insideAny(walkableAreas, scratch.next.x, camera.position.z)) scratch.next.z = camera.position.z
+      else if (insideAny(walkableAreas, camera.position.x, scratch.next.z)) scratch.next.x = camera.position.x
+      else {
+        scratch.next.x = camera.position.x
+        scratch.next.z = camera.position.z
+      }
     }
 
     if (avoidPedestal) pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
