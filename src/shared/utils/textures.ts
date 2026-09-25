@@ -238,3 +238,54 @@ export function createParquetTexture(seed: number, size = 512): THREE.Texture {
   texture.needsUpdate = true
   return texture
 }
+
+/**
+ * Deterministic puddle mask: soft-edged irregular blobs in white on black,
+ * meant as an `alphaMap` (three.js reads its green channel) so a single wet
+ * plane only shows where water has pooled. Repeats seamlessly enough for a
+ * large ground to tile it (`wrapS/wrapT` are already set to repeat).
+ * @param seed - Deterministic seed
+ * @param size - Canvas edge length in px
+ * @returns Canvas-based, repeating puddle mask texture
+ */
+export function createPuddleMaskTexture(seed: number, size = 512): THREE.Texture {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const rand = createSeededRandom(seed)
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, size, size)
+
+  const puddles = 9
+  for (let i = 0; i < puddles; i++) {
+    const cx = size * (0.1 + rand() * 0.8)
+    const cy = size * (0.1 + rand() * 0.8)
+    const lobes = 3 + Math.floor(rand() * 3)
+    for (let l = 0; l < lobes; l++) {
+      const x = cx + (rand() - 0.5) * size * 0.08
+      const y = cy + (rand() - 0.5) * size * 0.08
+      const rx = size * (0.025 + rand() * 0.045)
+      const ry = rx * (0.5 + rand() * 0.5)
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.rotate(rand() * Math.PI)
+      ctx.scale(1, ry / rx)
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
+      gradient.addColorStop(0, 'rgba(255,255,255,1)')
+      gradient.addColorStop(0.72, 'rgba(255,255,255,0.9)')
+      gradient.addColorStop(1, 'rgba(255,255,255,0)')
+      ctx.fillStyle = gradient
+      ctx.beginPath()
+      ctx.arc(0, 0, rx, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
+  texture.needsUpdate = true
+  return texture
+}
