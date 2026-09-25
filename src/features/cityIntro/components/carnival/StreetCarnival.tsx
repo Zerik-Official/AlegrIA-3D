@@ -6,7 +6,6 @@ import { CarnivalPennants } from '@/features/cityIntro/components/carnival/Carni
 import { CarnivalHolograms } from '@/features/cityIntro/components/carnival/CarnivalHolograms'
 import { CarnivalStalls } from '@/features/cityIntro/components/carnival/CarnivalStalls'
 import { CarnivalMusicSystem } from '@/features/cityIntro/components/carnival/CarnivalMusicSystem'
-import { canvasTexture } from '@/features/cityIntro/components/carnival/neonCanvas'
 import { beatAt, PARTY_AREA } from '@/features/cityIntro/config/carnivalLayout'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
@@ -18,10 +17,8 @@ interface StreetCarnivalProps {
   pathEntities: EditableEntity[]
 }
 
-/** Spacing of the pulsing lights hung over the avenue. */
-const BEAT_LIGHT_STEP = 11
-/** Spacing of the warm glow pools on the pavement under the crowd. */
-const GLOW_STEP = 6
+/** Spacing of the pulsing lights hung over the avenue — wider than the party's tempo alone would suggest, to keep the number of realtime lights the scene pays for each frame down. */
+const BEAT_LIGHT_STEP = 15
 
 /**
  * Lights strung over the avenue that throb on the beat, alternating magenta
@@ -67,45 +64,10 @@ const BeatLights = memo(function BeatLights() {
 })
 
 /**
- * Warm pools of light glowing on the pavement under the dancers.
- * @returns Glow planes
- */
-const PavementGlow = memo(function PavementGlow() {
-  const texture = useMemo(
-    () =>
-      canvasTexture(128, 128, (c, w, h) => {
-        const gradient = c.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2)
-        gradient.addColorStop(0, 'rgba(255,120,60,0.9)')
-        gradient.addColorStop(1, 'rgba(255,0,120,0)')
-        c.fillStyle = gradient
-        c.fillRect(0, 0, w, h)
-      }),
-    []
-  )
-  const zs = useMemo(() => {
-    const [, , minZ, maxZ] = PARTY_AREA
-    const list: number[] = []
-    for (let z = maxZ - 3; z > minZ + 2; z -= GLOW_STEP) list.push(z)
-    return list
-  }, [])
-  return (
-    <group>
-      {zs.map((z) => (
-        <mesh key={z} rotation-x={-Math.PI / 2} position={[0, 0.02, z]}>
-          <planeGeometry args={[9, 7]} />
-          <meshBasicMaterial map={texture} transparent opacity={0.14} blending={THREE.AdditiveBlending} depthWrite={false} />
-        </mesh>
-      ))}
-    </group>
-  )
-})
-
-/**
  * "Baila la Calle 2050": the street party filling the future city's main
  * avenue — a dancing crowd, electroluminescent pennant strings, suspended
- * holograms, food stalls with neon signs, lights throbbing on the beat and
- * warm light pooling on the pavement. Everything moves to one tempo
- * (`CARNIVAL_BPM`).
+ * holograms, food stalls with neon signs and lights throbbing on the beat.
+ * Everything moves to one tempo (`CARNIVAL_BPM`).
  *
  * @param props - Walk path
  * @returns Party group
@@ -118,7 +80,6 @@ export const StreetCarnival = memo(function StreetCarnival({ pathEntities }: Str
       <CarnivalHolograms />
       <CarnivalStalls />
       <BeatLights />
-      <PavementGlow />
       <CarnivalMusicSystem />
     </group>
   )
