@@ -52,7 +52,7 @@ function createHaloTexture(): THREE.Texture {
 }
 
 /** Largest the halo may grow — keeps it inside the canvas' visible frame. */
-const HALO_MAX_SCALE = 2
+const HALO_MAX_SCALE = 1.8
 
 /** Shared materials so the page stack doesn't allocate one per page. */
 const materials = {
