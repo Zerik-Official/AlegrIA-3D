@@ -51,6 +51,7 @@ function CongasGltf({ src, targetSize }: Omit<CongasPerformerProps, 'fallback'>)
 
   const normalizedScale = useMemo(() => {
     if (!targetSize) return 1
+    cloned.updateMatrixWorld(true)
     const size = new THREE.Box3().setFromObject(cloned).getSize(new THREE.Vector3())
     const maxDim = Math.max(size.x, size.y, size.z)
     return maxDim > 0 ? targetSize / maxDim : 1
