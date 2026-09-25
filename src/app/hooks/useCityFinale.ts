@@ -35,6 +35,8 @@ export interface CityFinale {
 export function useCityFinale(inCity: boolean, entities: EditableEntity[], narration: Narration): CityFinale {
   const [walkProgress, setWalkProgress] = useState(0)
   const [freeRoam, setFreeRoam] = useState(false)
+  /** Set once the narration has had a fair chance to play without ever being heard — a stuck/missing/autoplay-blocked track otherwise leaves `narration.ended` false forever, and the player stuck on the scripted walk with no way to move. */
+  const [narrationStuck, setNarrationStuck] = useState(false)
   const walkPath = useMemo(() => entities.filter((e) => e.type === 'path-point'), [entities])
   const arrived = walkProgress >= appConfig.cityIntro.arrivalThreshold
 
@@ -42,11 +44,18 @@ export function useCityFinale(inCity: boolean, entities: EditableEntity[], narra
     if (inCity) return
     setWalkProgress(0)
     setFreeRoam(false)
+    setNarrationStuck(false)
   }, [inCity])
 
   useEffect(() => {
-    if (inCity && arrived && narration.ended) setFreeRoam(true)
-  }, [inCity, arrived, narration.ended])
+    if (!inCity) return
+    const id = window.setTimeout(() => setNarrationStuck(true), appConfig.cityIntro.narrationFallbackMs)
+    return () => window.clearTimeout(id)
+  }, [inCity])
+
+  useEffect(() => {
+    if (inCity && arrived && (narration.ended || (narrationStuck && !narration.heard))) setFreeRoam(true)
+  }, [inCity, arrived, narration.ended, narration.heard, narrationStuck])
 
   const showFarewell = useTransientFlag(freeRoam, FAREWELL_TITLE_MS)
 
