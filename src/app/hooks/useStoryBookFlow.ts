@@ -27,6 +27,9 @@ export interface PortalPlacement {
   yaw: number
 }
 
+/** How long the "book overloaded" skip title stays up before the restless/summon/portal sequence kicks in. */
+const OVERLOAD_TITLE_MS = 2200
+
 /** Public state exposed by {@link useStoryBookFlow}. */
 export interface StoryBookFlow {
   /** Current beat of the choreography. */
@@ -35,6 +38,8 @@ export interface StoryBookFlow {
   portalOpen: boolean
   /** Whether the "portal opened" title is still showing. */
   showPortalTitle: boolean
+  /** Whether the "book overloaded" skip title is showing (see `skipWait`). */
+  showOverloadTitle: boolean
   /** Which title follows the narration's end while the book gathers energy: first `channeling`, then `explore`, then none. */
   waitTitle: 'channeling' | 'explore' | null
   /** Whole seconds left until the book grows restless and summons the portal, or `null` outside that wait. */
@@ -43,6 +48,13 @@ export interface StoryBookFlow {
   portal: PortalPlacement | null
   /** Records where the summoned portal landed; called once by the in-scene portal. */
   handlePortalPlaced: (placement: PortalPlacement) => void
+  /**
+   * Skips straight to the book growing restless and summoning the portal —
+   * bound to `T`. Only takes effect before the portal has been summoned
+   * (`stage === 'calm'`); shows the "book overloaded" title in place of the
+   * usual minute-long wait.
+   */
+  skipWait: () => void
 }
 
 /**
@@ -56,10 +68,14 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
   const [stage, setStage] = useState<StoryBookStage>('hidden')
   const [fallbackEnded, setFallbackEnded] = useState(false)
   const [showPortalTitle, setShowPortalTitle] = useState(false)
+  const [showOverloadTitle, setShowOverloadTitle] = useState(false)
   const [portal, setPortal] = useState<PortalPlacement | null>(null)
   const [waitTitle, setWaitTitle] = useState<'channeling' | 'explore' | null>(null)
   const [portalCountdownSec, setPortalCountdownSec] = useState<number | null>(null)
   const heardRef = useRef(dialogHeard)
+  /** Set by `skipWait`; read once when the wait effect (re-)starts, so a `T` press during narration also skips the wait once it begins. */
+  const skipRequestedRef = useRef(false)
+  const [skipToken, setSkipToken] = useState(0)
 
   useEffect(() => {
     heardRef.current = dialogHeard
@@ -68,9 +84,11 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
   useEffect(() => {
     setFallbackEnded(false)
     setShowPortalTitle(false)
+    setShowOverloadTitle(false)
     setPortal(null)
     setWaitTitle(null)
     setPortalCountdownSec(null)
+    skipRequestedRef.current = false
     setStage(active ? 'calm' : 'hidden')
     if (!active) return
     const id = window.setTimeout(() => {
@@ -84,36 +102,69 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
   useEffect(() => {
     if (!waitStarted) return
     const { waitAfterDialogMs, restlessMs, summonMs, portalTitleMs, channelingTitleMs, exploreTitleMs } = appConfig.storyBook
-    const restlessAt = performance.now() + waitAfterDialogMs
-    const tick = (): void => {
-      const left = Math.max(0, Math.ceil((restlessAt - performance.now()) / 1000))
-      setPortalCountdownSec(left > 0 ? left : null)
+    const skipped = skipRequestedRef.current
+    const restlessDelay = skipped ? OVERLOAD_TITLE_MS : waitAfterDialogMs
+
+    const ids: number[] = []
+    let intervalId: number | undefined
+
+    if (skipped) {
+      setShowOverloadTitle(true)
+      setWaitTitle(null)
+      setPortalCountdownSec(null)
+      ids.push(window.setTimeout(() => setShowOverloadTitle(false), OVERLOAD_TITLE_MS))
+    } else {
+      const restlessAt = performance.now() + restlessDelay
+      const tick = (): void => {
+        const left = Math.max(0, Math.ceil((restlessAt - performance.now()) / 1000))
+        setPortalCountdownSec(left > 0 ? left : null)
+      }
+      tick()
+      intervalId = window.setInterval(tick, 250)
+      setWaitTitle('channeling')
+      ids.push(window.setTimeout(() => setWaitTitle('explore'), channelingTitleMs))
+      ids.push(window.setTimeout(() => setWaitTitle(null), channelingTitleMs + exploreTitleMs))
     }
-    tick()
-    const intervalId = window.setInterval(tick, 250)
-    setWaitTitle('channeling')
-    const ids = [
-      window.setTimeout(() => setWaitTitle('explore'), channelingTitleMs),
-      window.setTimeout(() => setWaitTitle(null), channelingTitleMs + exploreTitleMs),
+
+    ids.push(
       window.setTimeout(() => {
-        window.clearInterval(intervalId)
+        if (intervalId !== undefined) window.clearInterval(intervalId)
         setPortalCountdownSec(null)
         setStage('restless')
-      }, waitAfterDialogMs),
-      window.setTimeout(() => setStage('summoning'), waitAfterDialogMs + restlessMs),
+      }, restlessDelay)
+    )
+    ids.push(window.setTimeout(() => setStage('summoning'), restlessDelay + restlessMs))
+    ids.push(
       window.setTimeout(() => {
         setStage('portal')
         setShowPortalTitle(true)
-      }, waitAfterDialogMs + restlessMs + summonMs),
-      window.setTimeout(() => setShowPortalTitle(false), waitAfterDialogMs + restlessMs + summonMs + portalTitleMs),
-    ]
+      }, restlessDelay + restlessMs + summonMs)
+    )
+    ids.push(window.setTimeout(() => setShowPortalTitle(false), restlessDelay + restlessMs + summonMs + portalTitleMs))
+
     return () => {
       ids.forEach((id) => window.clearTimeout(id))
-      window.clearInterval(intervalId)
+      if (intervalId !== undefined) window.clearInterval(intervalId)
     }
-  }, [waitStarted])
+  }, [waitStarted, skipToken])
+
+  const skipWait = useCallback(() => {
+    if (stage !== 'calm' || skipRequestedRef.current) return
+    skipRequestedRef.current = true
+    setSkipToken((n) => n + 1)
+  }, [stage])
 
   const handlePortalPlaced = useCallback((placement: PortalPlacement) => setPortal(placement), [])
 
-  return { stage, portalOpen: stage === 'portal', showPortalTitle, waitTitle, portalCountdownSec, portal, handlePortalPlaced }
+  return {
+    stage,
+    portalOpen: stage === 'portal',
+    showPortalTitle,
+    showOverloadTitle,
+    waitTitle,
+    portalCountdownSec,
+    portal,
+    handlePortalPlaced,
+    skipWait,
+  }
 }
