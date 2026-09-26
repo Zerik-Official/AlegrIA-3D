@@ -1,5 +1,5 @@
 import { memo, type ReactNode } from 'react'
-import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiCompass, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
+import { FiEye, FiMove, FiBookOpen, FiClock, FiCompass, FiZap, FiMousePointer } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
 import { NarrationIndicator } from '@/features/ui/components/NarrationIndicator'
 
@@ -146,72 +146,6 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
         className={`pointer-events-none fixed inset-0 z-15 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.85)_80%)] transition-opacity duration-700 ${wormholeActive ? 'opacity-100' : 'opacity-0'}`}
       />
     </>
-  )
-})
-
-/**
- * Props for {@link StartOverlay}.
- */
-interface StartOverlayProps {
-  /** Starts the experience, entering the library. */
-  onStart: () => void
-  /** Whether the city scene is warming up before reveal — disables the button and shows a spinner. */
-  loading?: boolean
-}
-
-/**
- * Full-screen start screen. Only its button (or the `E` key, see
- * `HotkeyRouter`) starts the experience — stray clicks elsewhere do nothing.
- *
- * @param props - Overlay actions and loading state
- * @returns Start overlay
- */
-export const StartOverlay = memo(function StartOverlay({ onStart, loading = false }: StartOverlayProps) {
-  const handleStart = (): void => {
-    if (!loading) onStart()
-  }
-  return (
-    <div
-      className={`fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(10,10,22,0.94)_0%,rgba(4,4,10,0.98)_70%)] p-8 text-center backdrop-blur-xs ${loading ? 'cursor-progress' : ''}`}
-    >
-      <div className="max-w-2xl">
-        <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena -1 — Año 2050</div>
-        <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(120,180,255,0.4)]">
-          La Biblioteca
-          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Abandonada</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-parchment/70">
-          Año 2050. Despiertas entre estanterías polvorientas, iluminadas por antorchas que no deberían seguir ardiendo.
-          <br />
-          En el centro de la sala flota <span className="text-gold-bright font-semibold">El Libro de Rosa</span>, guardián del Vórtice del
-          Tiempo.
-          <br />
-          Acércate y despiértalo para cruzar hacia el pasado.
-        </p>
-        <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
-          <FiEye className="h-3.5 w-3.5" /> WASD — moverse · mouse — mirar alrededor
-        </p>
-
-        <button
-          onClick={handleStart}
-          disabled={loading}
-          className="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)] disabled:cursor-progress disabled:opacity-80 disabled:hover:translate-y-0 disabled:hover:scale-100"
-        >
-          {loading ? (
-            <>
-              <FiLoader className="h-4 w-4 animate-spin" />
-              Despertando la Biblioteca…
-            </>
-          ) : (
-            <>
-              <FiArrowRight className="h-4 w-4" />
-              Entrar a la Biblioteca
-            </>
-          )}
-        </button>
-        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Presiona E o el botón para entrar — ESC para salir</p>
-      </div>
-    </div>
   )
 })
 
