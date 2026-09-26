@@ -25,3 +25,5 @@ dist-ssr
 
 stylized-water/
 .claude/
+.env
+package-lock.json
