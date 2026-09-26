@@ -2,6 +2,7 @@ import { memo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { getEntityRenderer } from '@/engine/entityRegistry'
+import { EntityCollider } from '@/engine/EntityCollider'
 import type { EditableEntity, EngineRenderContext } from '@/engine/types'
 
 /**
@@ -38,6 +39,7 @@ function setGroupCastShadow(group: THREE.Object3D, cast: boolean): void {
  * Data-driven engine that decides where, how and with which model to paint each entity.
  * Consumes JSON from `engine/config` or live editor state. Rendering logic per `type` lives
  * in `engine/entityRegistry` — this component only places entities, it never branches on type.
+ * Each entity's collider (its own or its type's default) is published by {@link EntityCollider}.
  *
  * @param props - Engine props
  * @returns Engine group
@@ -70,6 +72,7 @@ export const PhaseEngine = memo(function PhaseEngine({ entities, context, shadow
         return (
           <group key={entity.id} name={entity.id} position={entity.position} rotation-y={entity.rotationY} scale={entity.scale}>
             <Renderer entity={entity} context={context} />
+            <EntityCollider entity={entity} activeTags={context?.colliderTags} />
           </group>
         )
       })}
