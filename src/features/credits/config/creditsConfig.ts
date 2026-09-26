@@ -91,7 +91,7 @@ export const CREDITS_ROLL: CreditSection[] = [
     ],
   },
   {
-    title: 'QA visual',
+    title: 'QA y visual',
     members: [
       { name: 'Jose Rangel', role: 'Líder' },
       { name: 'Saeb García' },
