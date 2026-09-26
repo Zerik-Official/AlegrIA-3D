@@ -9,7 +9,7 @@ import type { ComponentType } from 'react'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { ProceduralCyberWall } from '@/features/library/components/CyberWall'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
-import { ProceduralBookGeometry } from '@/features/pedestal/components/LevitatingBook'
+import { ProceduralRosaBook } from '@/models/shared/RosaBookModel'
 import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHouse'
 import { AndenAlto } from '@/features/phase1/components/parts/AndenAlto'
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
@@ -33,7 +33,7 @@ export const modelPreviews: Record<string, ComponentType> = {
   'library/bookshelf': () => <Bookshelf position={[0, 0, 0]} />,
   'library/cyber-wall': () => <ProceduralCyberWall position={[0, 0, 0]} size={[4, 2.4, 0.3]} />,
   'pedestal/base': Pedestal,
-  'pedestal/book': ProceduralBookGeometry,
+  'pedestal/book': ProceduralRosaBook,
   'phase1/bahareque-house-short': () => <BaharequeHouse position={[0, 0, 0]} variant="short" />,
   'phase1/bahareque-house-medium': () => <BaharequeHouse position={[0, 0, 0]} variant="medium" />,
   'phase1/bahareque-house-long': () => <BaharequeHouse position={[0, 0, 0]} variant="long" />,
