@@ -39,9 +39,9 @@ interface SlotRect {
  * narration's, then the portal's). The book rests in its slot while
  * `calm`/`restless`, glides to the center of the screen and grows while
  * `summoning`, and once the portal opens contracts into a spark and vanishes,
- * as if it had poured itself into the portal ahead. The slot is measured
- * rather than assumed, so the book stays centered over the pill whatever its
- * width.
+ * as if it had poured itself into the portal ahead. The slot is tracked
+ * every frame rather than assumed, so the book stays centered over the pill
+ * whatever its width and however the dock reflows.
  *
  * @param props - Stage and countdowns
  * @returns Dock and floating book
@@ -57,19 +57,18 @@ export const StoryBookOverlay = memo(function StoryBookOverlay({ stage, audioRem
       setSlot(null)
       return
     }
-    const measure = (): void => {
+    let frame = 0
+    const track = (): void => {
       const r = el.getBoundingClientRect()
-      setSlot({ left: r.left, top: r.top, size: r.width })
+      setSlot((prev) =>
+        prev && Math.abs(prev.left - r.left) < 0.5 && Math.abs(prev.top - r.top) < 0.5 && Math.abs(prev.size - r.width) < 0.5
+          ? prev
+          : { left: r.left, top: r.top, size: r.width }
+      )
+      frame = requestAnimationFrame(track)
     }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(el)
-    if (el.parentElement) observer.observe(el.parentElement)
-    window.addEventListener('resize', measure)
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('resize', measure)
-    }
+    track()
+    return () => cancelAnimationFrame(frame)
   }, [showBook])
 
   const centered = stage === 'summoning' || stage === 'portal'

@@ -12,14 +12,15 @@ import { useEffect, useState } from 'react'
  * @returns Whether the flag is currently up
  */
 export function useTransientFlag(when: boolean, durationMs: number): boolean {
-  const [up, setUp] = useState(false)
+  const [up, setUp] = useState(when)
+  const [prevWhen, setPrevWhen] = useState(when)
+  if (when !== prevWhen) {
+    setPrevWhen(when)
+    setUp(when)
+  }
 
   useEffect(() => {
-    if (!when) {
-      setUp(false)
-      return
-    }
-    setUp(true)
+    if (!when) return
     const id = window.setTimeout(() => setUp(false), durationMs)
     return () => window.clearTimeout(id)
   }, [when, durationMs])

@@ -32,11 +32,7 @@ export function useBookPages(libraryRestored: boolean): BookPages {
   const [openPageId, setOpenPageId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!libraryRestored) {
-      setFocusedPageId(null)
-      setOpenPageId(null)
-      return
-    }
+    if (!libraryRestored) return
     BOOK_PAGES.forEach((page) => {
       const img = new Image()
       img.decoding = 'async'
@@ -50,9 +46,9 @@ export function useBookPages(libraryRestored: boolean): BookPages {
   const closePage = useCallback(() => setOpenPageId(null), [])
 
   return {
-    focusedPageId,
+    focusedPageId: libraryRestored ? focusedPageId : null,
     setFocusedPageId,
-    openPage: BOOK_PAGES.find((p) => p.id === openPageId) ?? null,
+    openPage: libraryRestored ? (BOOK_PAGES.find((p) => p.id === openPageId) ?? null) : null,
     openFocusedPage,
     closePage,
   }

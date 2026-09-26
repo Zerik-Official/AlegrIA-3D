@@ -44,9 +44,14 @@ export function useLibraryDirector(phaseFlow: PhaseFlow, narration: Narration): 
   const { phase, bookStage, libraryVisitCount, libraryPortalUnlocked, awakenLibraryBook, finishLibraryDialog } = phaseFlow
   const inLibrary = phase === 'exploring'
   const [fallbackDone, setFallbackDone] = useState(false)
+  const fallbackKey = `${inLibrary}:${libraryVisitCount}`
+  const [prevFallbackKey, setPrevFallbackKey] = useState(fallbackKey)
+  if (fallbackKey !== prevFallbackKey) {
+    setPrevFallbackKey(fallbackKey)
+    setFallbackDone(false)
+  }
 
   useEffect(() => {
-    setFallbackDone(false)
     if (!inLibrary) return
     const id = window.setTimeout(() => setFallbackDone(true), NARRATION_FALLBACK_MS)
     return () => window.clearTimeout(id)

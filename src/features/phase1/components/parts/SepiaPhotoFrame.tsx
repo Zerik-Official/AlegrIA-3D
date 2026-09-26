@@ -82,13 +82,7 @@ function useSafeTexture(src?: string): THREE.Texture | null {
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
 
   useEffect(() => {
-    if (!src) {
-      setTexture((prev) => {
-        if (prev) prev.dispose()
-        return null
-      })
-      return
-    }
+    if (!src) return
     const resolvedSrc = resolvePublicUrl(src)
     const external = isExternalUrl(resolvedSrc)
     let cancelled = false
@@ -168,7 +162,7 @@ function useSafeTexture(src?: string): THREE.Texture | null {
     }
   }, [src])
 
-  return texture
+  return src ? texture : null
 }
 
 /**

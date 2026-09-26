@@ -16,10 +16,7 @@ export function useTypewriterProgress(totalLength: number, charsPerSecond = 26):
   const [revealed, setRevealed] = useState(0)
 
   useEffect(() => {
-    if (totalLength <= 0) {
-      setRevealed(0)
-      return
-    }
+    if (totalLength <= 0) return
     let raf = 0
     const start = performance.now()
 
@@ -33,5 +30,5 @@ export function useTypewriterProgress(totalLength: number, charsPerSecond = 26):
     return () => cancelAnimationFrame(raf)
   }, [totalLength, charsPerSecond])
 
-  return revealed
+  return totalLength <= 0 ? 0 : Math.min(revealed, totalLength)
 }

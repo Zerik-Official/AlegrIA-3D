@@ -4,7 +4,7 @@
  * @module app/hooks/usePhase1Rain
  */
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { appConfig } from '@/shared/config/appConfig'
 import { useRainAudio } from '@/app/hooks/useRainAudio'
 import type { Narration } from '@/app/hooks/useNarration'
@@ -18,10 +18,8 @@ export function usePhase1Rain(inPhase1: boolean, narration: Narration): boolean 
   const [raining, setRaining] = useState(false)
   const nearEnd = narration.remainingSec !== null && narration.remainingSec <= appConfig.rain.startAtRemainingSec
 
-  useEffect(() => {
-    if (!inPhase1) setRaining(false)
-    else if (nearEnd || narration.ended) setRaining(true)
-  }, [inPhase1, nearEnd, narration.ended])
+  if (!inPhase1 && raining) setRaining(false)
+  else if (inPhase1 && !raining && (nearEnd || narration.ended)) setRaining(true)
 
   useRainAudio(raining)
   return raining

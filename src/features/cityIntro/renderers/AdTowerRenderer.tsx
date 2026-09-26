@@ -31,11 +31,13 @@ function VideoScreen({ texture, width, height }: { texture: THREE.VideoTexture; 
 /** Generated neon ad pattern, scrolled slowly via texture offset instead of a video. */
 function ProceduralScreen({ width, height, seed }: { width: number; height: number; seed: number }) {
   const texture = useMemo(() => createAdScreenTexture(seed), [seed])
+  const meshRef = useRef<THREE.Mesh>(null)
   useFrame((_, delta) => {
-    texture.offset.x += delta * 0.05
+    const map = (meshRef.current?.material as THREE.MeshBasicMaterial | undefined)?.map
+    if (map) map.offset.x += delta * 0.05
   })
   return (
-    <mesh position={[0, 0, 0.02]}>
+    <mesh ref={meshRef} position={[0, 0, 0.02]}>
       <planeGeometry args={[width, height]} />
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>
@@ -45,11 +47,13 @@ function ProceduralScreen({ width, height, seed }: { width: number; height: numb
 /** Thin scrolling ticker band shown under the main screen, always procedural. */
 function TickerBand({ width, seed }: { width: number; seed: number }) {
   const texture = useMemo(() => createAdScreenTexture(seed + 1, 10, 2), [seed])
+  const meshRef = useRef<THREE.Mesh>(null)
   useFrame((_, delta) => {
-    texture.offset.x += delta * 0.18
+    const map = (meshRef.current?.material as THREE.MeshBasicMaterial | undefined)?.map
+    if (map) map.offset.x += delta * 0.18
   })
   return (
-    <mesh position={[0, 0, 0.02]}>
+    <mesh ref={meshRef} position={[0, 0, 0.02]}>
       <planeGeometry args={[width, 0.7]} />
       <meshBasicMaterial map={texture} toneMapped={false} />
     </mesh>

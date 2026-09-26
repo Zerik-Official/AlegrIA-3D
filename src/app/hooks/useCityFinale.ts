@@ -40,12 +40,11 @@ export function useCityFinale(inCity: boolean, entities: EditableEntity[], narra
   const walkPath = useMemo(() => entities.filter((e) => e.type === 'path-point'), [entities])
   const arrived = walkProgress >= appConfig.cityIntro.arrivalThreshold
 
-  useEffect(() => {
-    if (inCity) return
+  if (!inCity && (walkProgress !== 0 || freeRoam || narrationStuck)) {
     setWalkProgress(0)
     setFreeRoam(false)
     setNarrationStuck(false)
-  }, [inCity])
+  }
 
   useEffect(() => {
     if (!inCity) return
@@ -53,9 +52,7 @@ export function useCityFinale(inCity: boolean, entities: EditableEntity[], narra
     return () => window.clearTimeout(id)
   }, [inCity])
 
-  useEffect(() => {
-    if (inCity && arrived && (narration.ended || (narrationStuck && !narration.heard))) setFreeRoam(true)
-  }, [inCity, arrived, narration.ended, narration.heard, narrationStuck])
+  if (inCity && !freeRoam && arrived && (narration.ended || (narrationStuck && !narration.heard))) setFreeRoam(true)
 
   const showFarewell = useTransientFlag(freeRoam, FAREWELL_TITLE_MS)
 

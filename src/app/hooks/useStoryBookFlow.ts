@@ -49,10 +49,7 @@ export interface StoryBookFlow {
   /** Records where the summoned portal landed; called once by the in-scene portal. */
   handlePortalPlaced: (placement: PortalPlacement) => void
   /**
-   * Skips straight to the book growing restless and summoning the portal —
-   * bound to `T`. Only takes effect before the portal has been summoned
-   * (`stage === 'calm'`); shows the "book overloaded" title in place of the
-   * usual minute-long wait.
+   * Skips straight to the book growing restless and summoning the portal, bypassing the wait after the narration. Only works while the book is still calm (i.e., before it starts growing restless).
    */
   skipWait: () => void
 }
@@ -65,7 +62,7 @@ export interface StoryBookFlow {
  * @returns Choreography state and the portal placement callback
  */
 export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded: boolean, dialogHeard: boolean): StoryBookFlow {
-  const [stage, setStage] = useState<StoryBookStage>('hidden')
+  const [stage, setStage] = useState<StoryBookStage>(active ? 'calm' : 'hidden')
   const [fallbackEnded, setFallbackEnded] = useState(false)
   const [showPortalTitle, setShowPortalTitle] = useState(false)
   const [showOverloadTitle, setShowOverloadTitle] = useState(false)
@@ -73,23 +70,27 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
   const [waitTitle, setWaitTitle] = useState<'channeling' | 'explore' | null>(null)
   const [portalCountdownSec, setPortalCountdownSec] = useState<number | null>(null)
   const heardRef = useRef(dialogHeard)
-  /** Set by `skipWait`; read once when the wait effect (re-)starts, so a `T` press during narration also skips the wait once it begins. */
-  const skipRequestedRef = useRef(false)
-  const [skipToken, setSkipToken] = useState(0)
+  const [skipRequested, setSkipRequested] = useState(false)
 
   useEffect(() => {
     heardRef.current = dialogHeard
   }, [dialogHeard])
 
-  useEffect(() => {
+  const flowKey = `${active}:${phaseKey}`
+  const [prevFlowKey, setPrevFlowKey] = useState(flowKey)
+  if (flowKey !== prevFlowKey) {
+    setPrevFlowKey(flowKey)
     setFallbackEnded(false)
     setShowPortalTitle(false)
     setShowOverloadTitle(false)
     setPortal(null)
     setWaitTitle(null)
     setPortalCountdownSec(null)
-    skipRequestedRef.current = false
+    setSkipRequested(false)
     setStage(active ? 'calm' : 'hidden')
+  }
+
+  useEffect(() => {
     if (!active) return
     const id = window.setTimeout(() => {
       if (!heardRef.current) setFallbackEnded(true)
@@ -97,21 +98,31 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
     return () => window.clearTimeout(id)
   }, [active, phaseKey])
 
-  const waitStarted = active && (dialogEnded || fallbackEnded)
+  const waitStarted = flowKey === prevFlowKey && active && (dialogEnded || fallbackEnded || skipRequested)
+  const waitKey = waitStarted ? (skipRequested ? 'skip' : 'wait') : 'idle'
+  const [prevWaitKey, setPrevWaitKey] = useState<'idle' | 'wait' | 'skip'>('idle')
+  if (waitKey !== prevWaitKey) {
+    setPrevWaitKey(waitKey)
+    if (waitKey === 'skip') {
+      setShowOverloadTitle(true)
+      setWaitTitle(null)
+      setPortalCountdownSec(null)
+    } else if (waitKey === 'wait') {
+      setWaitTitle('channeling')
+      setPortalCountdownSec(Math.ceil(appConfig.storyBook.waitAfterDialogMs / 1000))
+    }
+  }
 
   useEffect(() => {
     if (!waitStarted) return
     const { waitAfterDialogMs, restlessMs, summonMs, portalTitleMs, channelingTitleMs, exploreTitleMs } = appConfig.storyBook
-    const skipped = skipRequestedRef.current
+    const skipped = skipRequested
     const restlessDelay = skipped ? OVERLOAD_TITLE_MS : waitAfterDialogMs
 
     const ids: number[] = []
     let intervalId: number | undefined
 
     if (skipped) {
-      setShowOverloadTitle(true)
-      setWaitTitle(null)
-      setPortalCountdownSec(null)
       ids.push(window.setTimeout(() => setShowOverloadTitle(false), OVERLOAD_TITLE_MS))
     } else {
       const restlessAt = performance.now() + restlessDelay
@@ -119,9 +130,7 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
         const left = Math.max(0, Math.ceil((restlessAt - performance.now()) / 1000))
         setPortalCountdownSec(left > 0 ? left : null)
       }
-      tick()
       intervalId = window.setInterval(tick, 250)
-      setWaitTitle('channeling')
       ids.push(window.setTimeout(() => setWaitTitle('explore'), channelingTitleMs))
       ids.push(window.setTimeout(() => setWaitTitle(null), channelingTitleMs + exploreTitleMs))
     }
@@ -146,12 +155,11 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
       ids.forEach((id) => window.clearTimeout(id))
       if (intervalId !== undefined) window.clearInterval(intervalId)
     }
-  }, [waitStarted, skipToken])
+  }, [waitStarted, skipRequested])
 
   const skipWait = useCallback(() => {
-    if (stage !== 'calm' || skipRequestedRef.current) return
-    skipRequestedRef.current = true
-    setSkipToken((n) => n + 1)
+    if (stage !== 'calm') return
+    setSkipRequested(true)
   }, [stage])
 
   const handlePortalPlaced = useCallback((placement: PortalPlacement) => setPortal(placement), [])

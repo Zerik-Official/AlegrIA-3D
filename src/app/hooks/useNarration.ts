@@ -4,7 +4,7 @@
  * @module app/hooks/useNarration
  */
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 /** What {@link useNarration} knows about the current scene's narration. */
 export interface Narration {
@@ -31,18 +31,18 @@ export function useNarration(active: boolean, sceneKey: string, audioRemainingSe
   const [tracked, setTracked] = useState({ key: sceneKey, heard: false, ended: false })
   const current = tracked.key === sceneKey && active ? tracked : { key: sceneKey, heard: false, ended: false }
 
-  useEffect(() => {
-    if (!active || typeof audioRemainingSec !== 'number') return
-    setTracked((prev) => {
-      const base = prev.key === sceneKey ? prev : { key: sceneKey, heard: false, ended: false }
-      if (audioRemainingSec > 0) return base.heard ? base : { ...base, heard: true }
-      return base.heard && !base.ended ? { ...base, ended: true } : base
-    })
-  }, [active, sceneKey, audioRemainingSec])
-
-  useEffect(() => {
-    if (!active) setTracked({ key: sceneKey, heard: false, ended: false })
-  }, [active, sceneKey])
+  if (active && typeof audioRemainingSec === 'number') {
+    const base = tracked.key === sceneKey ? tracked : { key: sceneKey, heard: false, ended: false }
+    let next = base
+    if (audioRemainingSec > 0) {
+      if (!base.heard) next = { ...base, heard: true }
+    } else if (base.heard && !base.ended) {
+      next = { ...base, ended: true }
+    }
+    if (next !== tracked) setTracked(next)
+  } else if (!active && (tracked.key !== sceneKey || tracked.heard || tracked.ended)) {
+    setTracked({ key: sceneKey, heard: false, ended: false })
+  }
 
   return {
     heard: current.heard,

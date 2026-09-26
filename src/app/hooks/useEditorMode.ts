@@ -45,10 +45,6 @@ export function useEditorMode(): EditorMode {
   const closeEditor = useCallback(() => setIsEditorEnabledRaw(false), [])
 
   useEffect(() => {
-    if (!isDebugEnabled && isEditorEnabledRaw) setIsEditorEnabledRaw(false)
-  }, [isEditorEnabledRaw])
-
-  useEffect(() => {
     if (!isEditorEnabled) setCollisionDebugVisible(false)
   }, [isEditorEnabled])
 

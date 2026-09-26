@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, type MutableRefObject } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 /**
@@ -22,8 +22,7 @@ const OVERCAST = { fog: new THREE.Color('#646a72'), near: 10, far: 95, backgroun
  * @returns Null (side-effect only)
  */
 export const RainSky = memo(function RainSky({ intensity }: RainSkyProps) {
-  const { scene } = useThree()
-  const original = useRef<{ fog: THREE.Fog; color: THREE.Color; near: number; far: number; background: THREE.Color | null } | null>(null)
+  const original = useRef<{ scene: THREE.Scene; fog: THREE.Fog; color: THREE.Color; near: number; far: number; background: THREE.Color | null } | null>(null)
 
   useEffect(
     () => () => {
@@ -32,16 +31,17 @@ export const RainSky = memo(function RainSky({ intensity }: RainSkyProps) {
       o.fog.color.copy(o.color)
       o.fog.near = o.near
       o.fog.far = o.far
-      if (o.background && scene.background instanceof THREE.Color) scene.background.copy(o.background)
+      if (o.background && o.scene.background instanceof THREE.Color) o.scene.background.copy(o.background)
     },
-    [scene]
+    []
   )
 
-  useFrame(() => {
+  useFrame(({ scene }) => {
     const fog = scene.fog
     if (!(fog instanceof THREE.Fog)) return
     if (!original.current || original.current.fog !== fog) {
       original.current = {
+        scene,
         fog,
         color: fog.color.clone(),
         near: fog.near,

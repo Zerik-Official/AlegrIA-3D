@@ -7,13 +7,11 @@
 
 import { useContext, useEffect } from 'react'
 import * as THREE from 'three'
-import { registerWalkArea, unregisterWalkArea } from '@/features/player/walkAreas'
+import { DEFAULT_AREA_SIZE, registerWalkArea, unregisterWalkArea } from '@/features/player/walkAreas'
 import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
 import { useCollisionDebugVisible } from '@/features/editor/state/collisionDebug'
 import type { EntityRendererProps } from '@/engine/types'
 
-/** Footprint used when the entity omits `areaSize`. */
-export const DEFAULT_AREA_SIZE: [number, number] = [10, 10]
 /** Height of the debug walls marking the area's edges. */
 const WALL_HEIGHT = 2.5
 /** Debug color of walkable areas. */

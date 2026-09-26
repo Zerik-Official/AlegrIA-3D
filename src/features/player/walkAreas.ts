@@ -7,6 +7,9 @@
 
 import type { Bounds } from '@/shared/types'
 
+/** Footprint of a `walk-area` entity that omits `areaSize`. */
+export const DEFAULT_AREA_SIZE: [number, number] = [10, 10]
+
 const areas = new Map<string, Bounds>()
 let flattened: Bounds[] = []
 let stale = false

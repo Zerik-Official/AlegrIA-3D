@@ -5,7 +5,7 @@
  * @module app/hooks/useHotkeys
  */
 
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { HotkeyRouter, type HotkeyContext } from '@/app/engine/HotkeyRouter'
 
 /**
@@ -14,7 +14,9 @@ import { HotkeyRouter, type HotkeyContext } from '@/app/engine/HotkeyRouter'
  */
 export function useHotkeys(ctx: HotkeyContext): void {
   const ctxRef = useRef(ctx)
-  ctxRef.current = ctx
+  useLayoutEffect(() => {
+    ctxRef.current = ctx
+  })
   const router = useMemo(() => new HotkeyRouter(), [])
 
   useEffect(() => {

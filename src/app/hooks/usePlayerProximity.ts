@@ -4,7 +4,7 @@
  * @module app/hooks/usePlayerProximity
  */
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import * as THREE from 'three'
 import { appConfig } from '@/shared/config/appConfig'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
@@ -40,7 +40,6 @@ const LIBRARY_PORTAL_XZ: [number, number] = [LIBRARY_PORTAL_POSITION[0], LIBRARY
 /** Phase 1's portal (to Phase 2) and Phase 2's portal (back to the library), read once from their JSON. */
 const PORTAL_XZ_BY_PHASE: Partial<Record<GamePhase, [number, number]>> = {
   phase1: portalXZFrom(initialPhase1Entities) ?? undefined,
-  museum: portalXZFrom(initialPhase1Entities) ?? undefined,
   phase2: portalXZFrom(initialPhase2Entities) ?? undefined,
   exploring: LIBRARY_PORTAL_XZ,
 }
@@ -94,22 +93,21 @@ export interface PlayerProximity {
  * @returns Proximity flags and the position feed callback
  */
 export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number, number] | null): PlayerProximity {
-  const playerPos = useRef(new THREE.Vector3(0, appConfig.player.eyeHeight, 9))
   const [distance, setDistance] = useState(9)
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
   const [picoDistance, setPicoDistance] = useState(Infinity)
   const [congasDistance, setCongasDistance] = useState(Infinity)
   const [nearCreditsDoor, setNearCreditsDoor] = useState(false)
+  const [nearPortal, setNearPortal] = useState(false)
 
   const nearBook = distance < appConfig.player.interactDistance
   const portalXZ = portalXZOverride === undefined ? PORTAL_XZ_BY_PHASE[phase] : portalXZOverride
-  const nearPortal = !!portalXZ && Math.hypot(playerPos.current.x - portalXZ[0], playerPos.current.z - portalXZ[1]) < PORTAL_RANGE
 
   const handlePosition = useCallback(
     (pos: THREE.Vector3) => {
-      playerPos.current.copy(pos)
+      setNearPortal(!!portalXZ && Math.hypot(pos.x - portalXZ[0], pos.z - portalXZ[1]) < PORTAL_RANGE)
       setDistance(Math.hypot(pos.x, pos.z))
-      if (phase === 'phase1' || phase === 'museum') {
+      if (phase === 'phase1') {
         setHighlightedPhotoId(findNearestSepiaPhoto(pos.x, pos.z, sepiaPhotos, PHOTO_RANGE))
       } else {
         setHighlightedPhotoId(null)
@@ -118,7 +116,7 @@ export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number,
       setCongasDistance(phase === 'phase2' && CONGAS_XZ ? Math.hypot(pos.x - CONGAS_XZ[0], pos.z - CONGAS_XZ[1]) : Infinity)
       setNearCreditsDoor(phase === 'cityIntro' && Math.hypot(pos.x - CREDITS_DOOR_XZ[0], pos.z - CREDITS_DOOR_XZ[1]) < CREDITS_DOOR_RANGE)
     },
-    [phase]
+    [phase, portalXZ]
   )
 
   return { nearBook, nearPortal, highlightedPhotoId, picoDistance, congasDistance, nearCreditsDoor, handlePosition }

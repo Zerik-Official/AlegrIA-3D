@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RainStreaks } from '@/features/phase1/components/parts/Rain/RainStreaks'
@@ -28,9 +28,7 @@ export const PhaseRain = memo(function PhaseRain({ active }: PhaseRainProps) {
   const intensity = useRef(0)
   const [started, setStarted] = useState(active)
 
-  useEffect(() => {
-    if (active) setStarted(true)
-  }, [active])
+  if (active && !started) setStarted(true)
 
   useFrame((_, delta) => {
     const target = active ? 1 : 0

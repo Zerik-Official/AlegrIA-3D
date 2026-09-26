@@ -102,8 +102,9 @@ export const LocalDanceCrowd = memo(function LocalDanceCrowd({ count, radius, ex
       mesh.count = dancers.length
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     }
-    material.needsUpdate = true
-  }, [dancers, material])
+    const bodyMaterial = body.material as THREE.Material
+    bodyMaterial.needsUpdate = true
+  }, [dancers])
 
   useFrame(({ clock }) => {
     const body = bodyRef.current

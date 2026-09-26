@@ -114,7 +114,8 @@ const BookPageDisplay = memo(function BookPageDisplay({ page, index, focused, gl
     sheet.rotation.set(Math.sin(t * 0.7 + index) * 0.05, s.yaw, Math.sin(t * 0.9 + index * 2) * 0.04)
     sheet.scale.setScalar(s.scale)
     if (outlineRef.current) {
-      outlineMaterial.opacity = s.glow * (0.85 + Math.sin(t * 6) * 0.15)
+      const outline = outlineRef.current.material as THREE.MeshBasicMaterial
+      outline.opacity = s.glow * (0.85 + Math.sin(t * 6) * 0.15)
       outlineRef.current.visible = s.glow > 0.02
     }
     if (haloRef.current) {

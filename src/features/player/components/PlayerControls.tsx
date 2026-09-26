@@ -140,7 +140,7 @@ export const PlayerControls = memo(function PlayerControls({
     camera.lookAt(playerConfig.startLookAt.x, playerConfig.startLookAt.y, playerConfig.startLookAt.z)
   }, [camera, spawnAtStart])
 
-  useFrame((_, delta) => {
+  useFrame(({ camera }, delta) => {
     if (!enabled) return
     if (movementLocked) {
       onPositionChange(camera.position)
