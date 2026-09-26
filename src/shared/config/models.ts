@@ -152,6 +152,8 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/flying-car-star': { path: `${base}models/cityIntro/star-car.glb`, fallback: 'procedural-flying-car' },
   'cityIntro/flying-car-classic': { path: `${base}models/cityIntro/toyota-corolla.glb`, fallback: 'procedural-flying-car' },
   'credits/jafet-futuro': { path: `${base}models/credits/jafet-futuro.glb`, fallback: 'procedural-dancer' },
+  'cityIntro/mototaxi': { path: `${base}models/future/vehicles/mototaxi-barrio-abajo.glb`, fallback: 'procedural-flying-car' },
+  'cityIntro/riwi-fox': { path: `${base}models/future/characters/riwi-fox-dancing.glb`, fallback: 'procedural-dancer' },
   'cityIntro/flying-train': { path: `${base}models/future/vehicles/tren-capsula-futurista.glb`, fallback: 'procedural-flying-train' },
   'cityIntro/moon': { path: `${base}models/cityIntro/moon.glb`, fallback: 'procedural-moon' },
   'cityIntro/library-facade': { path: `${base}models/cityIntro/aduana-barranquilla.glb`, fallback: 'procedural-library-facade' },

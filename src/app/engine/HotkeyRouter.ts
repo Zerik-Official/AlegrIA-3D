@@ -27,6 +27,14 @@ export interface HotkeyContext {
   isCityIntro: boolean
   /** Whether the finale's scripted walk has handed over to free roaming. */
   cityFreeRoam: boolean
+  /** Whether the player is riding the finale's mototaxi (`Q` switches its camera instead of the pointer lock). */
+  isRidingMototaxi: boolean
+  /** Whether the mototaxi has arrived and the player can get off (`E`). */
+  canDismountMototaxi: boolean
+  /** Switches the ride between the passenger seat and the chase camera. */
+  toggleRideView: () => void
+  /** Gets off the mototaxi at the end of the ride. */
+  dismountMototaxi: () => void
   /** Whether `phase` currently resolves to Phase 1. */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
@@ -99,7 +107,13 @@ export class HotkeyRouter {
     const key = event.key.toLowerCase()
 
     if (key === 'q') {
-      this.togglePointerLock(ctx)
+      if (ctx.isRidingMototaxi) ctx.toggleRideView()
+      else this.togglePointerLock(ctx)
+      return
+    }
+
+    if ((key === 'e' || event.key === 'Enter') && ctx.canDismountMototaxi) {
+      ctx.dismountMototaxi()
       return
     }
 

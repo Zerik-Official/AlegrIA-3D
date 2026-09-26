@@ -1,7 +1,7 @@
 /**
  * `path-point` entity renderer for the `cityIntro` scene — a subtle floating
- * guide light marking the scripted walk route, also used as the `CityWalkControls`
- * waypoints (see `App.tsx`).
+ * guide light marking the mototaxi's route, whose waypoints `MototaxiRide`
+ * follows.
  * @module features/cityIntro/renderers/PathPointRenderer
  */
 

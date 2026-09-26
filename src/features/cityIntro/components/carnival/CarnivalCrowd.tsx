@@ -13,6 +13,7 @@ import {
 } from '@/features/cityIntro/config/carnivalLayout'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import { createSeededRandom } from '@/shared/utils/random'
+import { MOTOTAXI_CLEAR_RADIUS, mototaxiState } from '@/features/cityIntro/state/mototaxiState'
 
 /** Deterministic random source for this module's procedural layout, so render stays pure. */
 const seededRandom = createSeededRandom(51587)
@@ -48,7 +49,7 @@ const FRUSTUM_MARGIN = 6
 
 /**
  * @param entities - `path-point` entities
- * @returns The walk's X at a given Z (sampled from the same Catmull-Rom curve `CityWalkControls` follows), or `null` beyond the path
+ * @returns The walk's X at a given Z (sampled from the same Catmull-Rom curve `MototaxiRide` follows), or `null` beyond the path
  */
 function pathXAt(entities: EditableEntity[]): (z: number) => number | null {
   const sorted = [...entities].sort((a, b) => (parseFloat(a.variant ?? '0') || 0) - (parseFloat(b.variant ?? '0') || 0))
@@ -99,6 +100,8 @@ const scratch = {
  * @param beat - Beats elapsed (0 for the initial static pose)
  * @param px - Player/camera X, for the step-aside push
  * @param pz - Player/camera Z, for the step-aside push
+ * @param ox - Current X offset of the dancer's make-way for the mototaxi
+ * @param oz - Current Z offset of the dancer's make-way for the mototaxi
  * @param body - Body instanced mesh
  * @param head - Head instanced mesh
  * @param arm - Arm instanced mesh
@@ -109,12 +112,14 @@ function poseDancer(
   beat: number,
   px: number,
   pz: number,
+  ox: number,
+  oz: number,
   body: THREE.InstancedMesh,
   head: THREE.InstancedMesh,
   arm: THREE.InstancedMesh
 ): void {
-  let x = d.x
-  let z = d.z
+  let x = d.x + ox
+  let z = d.z + oz
   const dx = x - px
   const dz = z - pz
   const dist = Math.hypot(dx, dz)
@@ -155,7 +160,8 @@ function poseDancer(
  * The street party's crowd: hundreds of dancers in carnival colors filling
  * the avenue, hopping and swaying on the beat, some with an arm up. They
  * leave a corridor along the walk's path, keep off the trees, slabs, bus and
- * stalls, and step aside when the player walks among them.
+ * stalls, and step aside when the player walks among them — or ease out of
+ * the mototaxi's way as it rolls through, drifting back once it has passed.
  *
  * @param props - Walk path
  * @returns Instanced crowd
@@ -173,6 +179,8 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     []
   )
   const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05 }), [])
+  /** Per-dancer `[x, z]` make-way offsets for the mototaxi, eased in as it nears and back out once it has passed. */
+  const offsetsRef = useRef<Float32Array>(new Float32Array(0))
   const frustum = useMemo(() => new THREE.Frustum(), [])
   const frustumMatrix = useMemo(() => new THREE.Matrix4(), [])
   const testSphere = useMemo(() => new THREE.Sphere(new THREE.Vector3(), FRUSTUM_MARGIN), [])
@@ -211,7 +219,7 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
       body.setColorAt(i, clothes)
       arm.setColorAt(i, clothes)
       head.setColorAt(i, scratch.color.set(CARNIVAL_SKIN[Math.floor(Math.random() * CARNIVAL_SKIN.length)]))
-      poseDancer(i, d, 0, 0, 0, body, head, arm)
+      poseDancer(i, d, 0, Infinity, Infinity, 0, 0, body, head, arm)
     })
     for (const mesh of [body, head, arm]) {
       mesh.count = dancers.length
@@ -222,7 +230,7 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     bodyMaterial.needsUpdate = true
   }, [dancers])
 
-  useFrame(({ clock, camera }) => {
+  useFrame(({ clock, camera }, delta) => {
     const body = bodyRef.current
     const head = headRef.current
     const arm = armRef.current
@@ -232,12 +240,33 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     frustumMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
     frustum.setFromProjectionMatrix(frustumMatrix)
 
+    const riding = mototaxiState.active
+    const moto = mototaxiState.position
+    const px = riding ? Infinity : camera.position.x
+    const pz = riding ? Infinity : camera.position.z
+    const ease = Math.min(1, delta * 3)
+    const offsets = offsetsRef.current.length === dancers.length * 2 ? offsetsRef.current : (offsetsRef.current = new Float32Array(dancers.length * 2))
+
     let touched = false
     for (let i = 0; i < dancers.length; i++) {
       const d = dancers[i]
-      testSphere.center.set(d.x, 1, d.z)
+      let tx = 0
+      let tz = 0
+      if (riding) {
+        const dx = d.x - moto.x
+        const dz = d.z - moto.z
+        const dist = Math.hypot(dx, dz)
+        if (dist < MOTOTAXI_CLEAR_RADIUS && dist > 0.001) {
+          const push = MOTOTAXI_CLEAR_RADIUS - dist + 0.4
+          tx = (dx / dist) * push
+          tz = (dz / dist) * push
+        }
+      }
+      offsets[i * 2] += (tx - offsets[i * 2]) * ease
+      offsets[i * 2 + 1] += (tz - offsets[i * 2 + 1]) * ease
+      testSphere.center.set(d.x + offsets[i * 2], 1, d.z + offsets[i * 2 + 1])
       if (!frustum.intersectsSphere(testSphere)) continue
-      poseDancer(i, d, beat, camera.position.x, camera.position.z, body, head, arm)
+      poseDancer(i, d, beat, px, pz, offsets[i * 2], offsets[i * 2 + 1], body, head, arm)
       touched = true
     }
     if (touched) {

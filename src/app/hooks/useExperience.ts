@@ -97,7 +97,7 @@ export function useExperience(): Experience {
 
   const editors = useSceneEditors(scenePhase)
   const library = useLibraryDirector(phaseFlow, narration)
-  const city = useCityFinale(phaseFlow.isCityIntro, editor.isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities, narration)
+  const city = useCityFinale(phaseFlow.isCityIntro, editor.isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities)
   const bookPages = useBookPages(phaseFlow.libraryRestored)
   const raining = usePhase1Rain(scenePhase === 'phase1', narration)
 
@@ -115,6 +115,10 @@ export function useExperience(): Experience {
     showPhase2Overlay: phaseFlow.showPhase2Overlay,
     isCityIntro: phaseFlow.isCityIntro,
     cityFreeRoam: city.freeRoam,
+    isRidingMototaxi: phaseFlow.isCityIntro && !city.freeRoam && !editor.isEditorEnabled,
+    canDismountMototaxi: phaseFlow.isCityIntro && !city.freeRoam && city.arrived && !editor.isEditorEnabled,
+    toggleRideView: city.toggleRideView,
+    dismountMototaxi: city.dismount,
     isPhase1: phaseFlow.isPhase1,
     isPhase2: phaseFlow.isPhase2,
     isCredits: phaseFlow.isCredits,

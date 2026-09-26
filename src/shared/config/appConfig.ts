@@ -31,26 +31,17 @@ export const playerConfig = {
 } as const
 
 /**
- * City intro (Escena -1: prologue walk) configuration.
+ * Future city finale (Escena Final: the mototaxi ride) configuration.
  */
 export const cityIntroConfig = {
-  /** Constant forward speed along the walk path, in units per second. */
-  walkSpeed: 2.6,
-  /** Camera eye height while walking the street. */
-  eyeHeight: 1.75,
-  /** Progress in [0,1] along the path at which the player can enter the library. */
+  /** Cruising speed of the mototaxi along its route, in units per second. */
+  walkSpeed: 2.4,
+  /** Progress in [0,1] along the route at which the mototaxi counts as arrived and the player can get off. */
   arrivalThreshold: 0.985,
   /** Minimum time the Start button's loading spinner shows before the city scene reveals, in ms. */
   launchDelayMs: 650,
   /** Hard cap on how long the spinner waits for city assets to preload before revealing anyway, in ms. */
   launchMaxWaitMs: 5000,
-  /**
-   * If the finale's narration is never heard playing at all (missing audio, or
-   * the browser blocking autoplay) within this long of the walk starting, free
-   * roaming unlocks on arrival anyway instead of waiting forever on a
-   * narration that will never end, in ms.
-   */
-  narrationFallbackMs: 16000,
 } as const
 
 /**

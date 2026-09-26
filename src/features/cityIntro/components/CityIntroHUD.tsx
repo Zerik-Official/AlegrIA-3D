@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { FiEye, FiMove, FiClock, FiAward } from 'react-icons/fi'
+import { FiEye, FiMove, FiClock, FiAward, FiVideo } from 'react-icons/fi'
 import { PortalPrompt } from '@/app/components/hud/PortalPrompt'
 
 /**
@@ -14,16 +14,31 @@ interface CityIntroHUDProps {
   nearCreditsDoor?: boolean
   /** Enters the credits scene. */
   onEnterCredits?: () => void
+  /** Current ride camera, while aboard the mototaxi. */
+  rideView?: 'first' | 'third'
+  /** Whether the mototaxi has arrived and the player can get off. */
+  canDismount?: boolean
+  /** Gets off the mototaxi. */
+  onDismount?: () => void
 }
 
 /**
- * Minimal overlay for the finale's walk: a look-only hint while the camera
- * rides the street, and a movement hint once the player is free to roam.
+ * Minimal overlay for the finale: look and camera hints while riding the
+ * mototaxi, the prompt to get off once it arrives, and a movement hint once
+ * the player is free to roam.
  *
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const CityIntroHUD = memo(function CityIntroHUD({ freeRoam, audioRemainingSec, nearCreditsDoor = false, onEnterCredits = () => {} }: CityIntroHUDProps) {
+export const CityIntroHUD = memo(function CityIntroHUD({
+  freeRoam,
+  audioRemainingSec,
+  nearCreditsDoor = false,
+  onEnterCredits = () => {},
+  rideView = 'first',
+  canDismount = false,
+  onDismount = () => {},
+}: CityIntroHUDProps) {
   const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
   const countdownSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
   return (
@@ -31,7 +46,7 @@ export const CityIntroHUD = memo(function CityIntroHUD({ freeRoam, audioRemainin
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_60%,rgba(0,0,0,0.55)_100%)]" />
 
       <div className="pointer-events-none fixed top-6 left-1/2 z-10 -translate-x-1/2 text-center">
-        <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/50">Escena -1 — Barrio Abajo 2050</div>
+        <div className="font-cinzel text-[11px] tracking-[0.3em] uppercase text-parchment/50">Escena Final — Barrio Abajo 2050</div>
         <div className="font-cinzel mt-1.5 text-[20px] tracking-[0.06em] text-parchment drop-shadow-[0_2px_20px_rgba(120,180,255,0.4)]">
           Futurismo Abajero
         </div>
@@ -44,10 +59,16 @@ export const CityIntroHUD = memo(function CityIntroHUD({ freeRoam, audioRemainin
           </>
         ) : (
           <>
-            <FiEye className="h-3.5 w-3.5 text-gold" /> Mouse — Mirar alrededor mientras caminas
+            <FiEye className="h-3.5 w-3.5 text-gold" /> Clic y mouse — Mirar alrededor
+            <span className="mx-1 text-parchment/30">•</span>
+            <FiVideo className="h-3.5 w-3.5 text-gold" /> Q — {rideView === 'first' ? 'Vista en tercera persona' : 'Vista en primera persona'}
           </>
         )}
       </div>
+
+      <PortalPrompt visible={!freeRoam && canDismount} onActivate={onDismount} glowRgb="73, 233, 255" catcherTitle="Click para bajarte del mototaxi">
+        E — Bajarse del mototaxi
+      </PortalPrompt>
 
       <PortalPrompt visible={freeRoam && nearCreditsDoor} onActivate={onEnterCredits} glowRgb="168, 85, 255" catcherTitle="Click para ver la escena de créditos">
         Ver escena de créditos

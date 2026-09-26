@@ -73,6 +73,9 @@ export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
           audioRemainingSec={audioRemainingSec}
           nearCreditsDoor={proximity.nearCreditsDoor}
           onEnterCredits={phaseFlow.enterCredits}
+          rideView={city.rideView}
+          canDismount={city.arrived && !editor.isEditorEnabled}
+          onDismount={city.dismount}
         />
       )}
       {phaseFlow.isCredits && <CreditsHUD audioRemainingSec={audioRemainingSec} onExit={phaseFlow.exitCredits} />}

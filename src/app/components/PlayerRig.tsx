@@ -1,12 +1,13 @@
 /**
  * The player's controls for whichever scene is being played: the finale's
- * scripted walk or free roam, and first-person movement in the library and
- * the open phases, plus the cinematic camera guide.
+ * mototaxi ride (which stays parked once the player gets off) and free
+ * roam, first-person movement in the library and the open phases, plus the
+ * cinematic camera guide.
  * @module app/components/PlayerRig
  */
 
 import { memo } from 'react'
-import { CityWalkControls } from '@/features/cityIntro/components/CityWalkControls'
+import { MototaxiRide } from '@/features/cityIntro/components/mototaxi/MototaxiRide'
 import { PlayerControls } from '@/features/player/components/PlayerControls'
 import { CinematicLookAt } from '@/app/components/CinematicLookAt'
 import { CreditsCamera } from '@/app/components/CreditsCamera'
@@ -37,12 +38,12 @@ export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps)
 
   return (
     <>
-      {phaseFlow.isCityIntro && !city.freeRoam && (
-        <CityWalkControls
-          enabled
+      {phaseFlow.isCityIntro && (
+        <MototaxiRide
           pathEntities={city.walkPath}
           speed={appConfig.cityIntro.walkSpeed}
-          eyeHeight={appConfig.cityIntro.eyeHeight}
+          riding={!city.freeRoam}
+          view={city.rideView}
           onProgress={city.setWalkProgress}
         />
       )}
