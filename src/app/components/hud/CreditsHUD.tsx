@@ -84,7 +84,7 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
     <>
       <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.6)_100%)]" />
 
-      <div className="pointer-events-none fixed top-10 bottom-24 left-8 z-10 w-[300px] overflow-hidden font-cinzel text-parchment">
+      <div className="pointer-events-none fixed top-10 bottom-24 left-8 z-10 w-75 overflow-hidden font-cinzel text-parchment">
         {rendered.map((seg) => {
           if (!seg.text && seg.kind !== 'member') return null
           if (seg.kind === 'heading') {
@@ -127,22 +127,22 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
               }
             >
               {seg.text}
-              {seg.isTyping && <span className="ml-0.5 inline-block w-[6px] bg-gold-bright align-middle" style={{ height: '1em', animation: 'credits-caret-blink 0.9s steps(1) infinite' }} />}
+              {seg.isTyping && <span className="ml-0.5 inline-block w-1.5 bg-gold-bright align-middle" style={{ height: '1em', animation: 'credits-caret-blink 0.9s steps(1) infinite' }} />}
             </div>
           )
         })}
       </div>
 
       <div
-        className="pointer-events-none fixed top-10 bottom-24 right-8 z-10 flex w-[280px] flex-col items-end justify-end text-right font-cinzel text-parchment"
+        className="pointer-events-none fixed top-10 bottom-24 right-8 z-10 flex w-70 flex-col items-end justify-end text-right font-cinzel text-parchment"
         style={{ animation: 'credits-dedication-in 1.1s 0.4s both ease-out' }}
       >
         <div className="rounded-2xl border border-gold/25 bg-black/35 px-5 py-5 backdrop-blur-md">
           <div className="mb-2 flex items-center justify-end gap-2 text-gold-bright">
-            <span className="text-[15px] tracking-[0.1em]">{CREDITS_BOOK_HEADING}</span>
+            <span className="text-[15px] tracking-widest">{CREDITS_BOOK_HEADING}</span>
             <FiBookOpen className="h-4 w-4" />
           </div>
-          <div className="h-px w-full bg-gradient-to-l from-gold/60 to-transparent" />
+          <div className="h-px w-full bg-linear-to-l from-gold/60 to-transparent" />
           <p className="mt-3 text-[12.5px] leading-relaxed text-parchment/75 italic">{CREDITS_BOOK_DEDICATION}</p>
           <p className="mt-2 text-[14px] tracking-[0.04em] text-gold-bright">{CREDITS_BOOK_AUTHOR}</p>
         </div>
