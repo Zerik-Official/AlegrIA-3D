@@ -292,6 +292,11 @@ export const EditorOverlay = memo(function EditorOverlay({
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-sm bg-[#5cff8a]" /> Zona caminable
             </span>
+            {currentScene === 'phase2' && (
+              <span className="flex items-center gap-1">
+                <span className="h-2 w-2 rounded-sm bg-[#ff3cf0]" /> Ruta de carrosas
+              </span>
+            )}
           </div>
         )}
         <div className="mt-3 flex min-h-32 flex-1 flex-col overflow-hidden rounded-lg border border-white/5 bg-black/20">
