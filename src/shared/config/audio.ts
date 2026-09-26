@@ -44,8 +44,11 @@ export const ambienceTracks = {
  */
 export const carnivalPlaylist = [
   `${base}sounds/music/MUSIC-ANIMALS-MARTIN.mp3`,
+  `${base}sounds/music/MUSIC-BAD.mp3`,
+  `${base}sounds/music/MUSIC-CRYSTAL.mp3`,
+  `${base}sounds/music/MUSIC-GEMINI.mp3`,
   `${base}sounds/music/MUSIC-PROFESSIONAL.mp3`,
+  `${base}sounds/music/MUSIC-REDLINE.mp3`,
   `${base}sounds/music/MUSIC-ROCKSTADY.mp3`,
   `${base}sounds/music/MUSIC-STAMINA.mp3`,
-  `${base}sounds/music/MUSIS-CRYSTAL.mp3`,
 ] as const
