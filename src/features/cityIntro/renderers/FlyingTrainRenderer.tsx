@@ -14,18 +14,34 @@ import { useTrailBuffer, createTrailMaterial, pushTrailSample } from '@/features
 import { buildLaneCurve } from '@/features/cityIntro/renderers/flightLane'
 import type { EntityRendererProps } from '@/engine/types'
 
-/** Trail sample count for the lead engine of a flying train. */
-const TRAIN_TRAIL_LENGTH = 22
+/** Trail sample count of the propulsion wake. */
+const TRAIN_TRAIL_LENGTH = 30
 /** Cars per flying train, engine included. */
 const TRAIN_CAR_COUNT = 4
 /** Length of one train car body. */
 const TRAIN_CAR_LENGTH = 1.3
 /**
- * Largest bounding-box dimension (scene units) the train hull is rescaled to
- * fit, matching the `ProceduralFlyingTrain` fallback's overall length — the
- * source `.glb` is authored at an unrelated unit scale.
+ * Length (scene units) the capsule train is rescaled to — its largest
+ * bounding-box dimension — so it reads at street scale over the avenue.
  */
-const TRAIN_TARGET_SIZE = 5.4
+const TRAIN_TARGET_SIZE = 6.5
+/**
+ * The capsule train's own extent along its length, in model units
+ * (`tren-futurista.py`): nose at `-X`, the propulsion nozzle's rim at `+X`.
+ */
+const MODEL_NOSE_X = -1.05
+const MODEL_NOZZLE_X = 9.28
+/** Height of the nozzle's axis, in model units. */
+const MODEL_NOZZLE_Y = 0.04
+/** Model-to-scene scale that {@link TRAIN_TARGET_SIZE} results in. */
+const MODEL_SCALE = TRAIN_TARGET_SIZE / (MODEL_NOZZLE_X - MODEL_NOSE_X)
+/** Offset that centers the model's length on the train's anchor. */
+const MODEL_CENTER_OFFSET = -((MODEL_NOSE_X + MODEL_NOZZLE_X) / 2) * MODEL_SCALE
+/** Nozzle position relative to the train's anchor, in scene units. */
+const NOZZLE_X = MODEL_NOZZLE_X * MODEL_SCALE + MODEL_CENTER_OFFSET
+const NOZZLE_Y = MODEL_NOZZLE_Y * MODEL_SCALE
+/** Color of the nozzle's glow, plume and wake — the model's own cyan light strips. */
+const THRUSTER_COLOR = '#49E9FF'
 
 /**
  * One capsule-bodied, window-striped train car; the lead car also gets a nose cone.
@@ -77,16 +93,54 @@ export function ProceduralFlyingTrain({ color = '#7ad8ff', seed = 42 }: { color?
       {Array.from({ length: TRAIN_CAR_COUNT }).map((_, i) => (
         <TrainCar key={i} index={i} isEngine={i === 0} color={color} windowTexture={windowTexture} />
       ))}
-      <pointLight intensity={0.85} distance={5.5} color={color} decay={2} />
     </group>
   )
 }
 
 /**
- * Follows its assigned flight lane (JSON `title`, looked up in
- * `context.flightLanes`) at a constant arc-length speed when one exists;
- * otherwise slides back and forth along local X like before. Trails a fading
- * light behind the lead car either way.
+ * Propulsion plume at the nozzle: a bright core and a wider, softer cone
+ * pointing back along `+X`, both additive and flickering like exhaust.
+ * @returns Plume group, placed at the nozzle
+ */
+function ThrusterPlume() {
+  const coreRef = useRef<THREE.Mesh>(null)
+  const haloRef = useRef<THREE.Mesh>(null)
+
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    const flicker = 1 + Math.sin(t * 38) * 0.08 + Math.sin(t * 23 + 1.3) * 0.06
+    if (coreRef.current) coreRef.current.scale.set(flicker, 1, 1)
+    if (haloRef.current) {
+      haloRef.current.scale.set(1.05 + Math.sin(t * 17) * 0.1, 1, 1)
+      const halo = haloRef.current.material as THREE.MeshBasicMaterial
+      halo.opacity = 0.32 + Math.sin(t * 29) * 0.06
+    }
+  })
+
+  return (
+    <group position={[NOZZLE_X, NOZZLE_Y, 0]}>
+      <mesh ref={coreRef} rotation-z={Math.PI / 2} position={[0.28, 0, 0]}>
+        <coneGeometry args={[0.07, 0.56, 12, 1, true]} />
+        <meshBasicMaterial color="#e8fdff" transparent opacity={0.85} blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
+      <mesh ref={haloRef} rotation-z={Math.PI / 2} position={[0.5, 0, 0]}>
+        <coneGeometry args={[0.13, 1, 14, 1, true]} />
+        <meshBasicMaterial color={THRUSTER_COLOR} transparent opacity={0.32} blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
+      <mesh rotation-y={Math.PI / 2}>
+        <circleGeometry args={[0.11, 18]} />
+        <meshBasicMaterial color={THRUSTER_COLOR} transparent opacity={0.9} blending={THREE.AdditiveBlending} depthWrite={false} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
+    </group>
+  )
+}
+
+/**
+ * The capsule maglev (`tren-capsula-futurista.glb`, nose first): follows its
+ * assigned flight lane (JSON `title`, looked up in `context.flightLanes`) at
+ * a constant arc-length speed when one exists, otherwise slides back and
+ * forth along local X. Its rear thruster burns with a flickering plume and
+ * leaves a fading cyan wake behind it.
  * @param props - Entity props
  * @returns Renderer element
  */
@@ -109,8 +163,7 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
   }, [seed])
   const trailPositions = useTrailBuffer(TRAIN_TRAIL_LENGTH)
   const trailIndices = useMemo(() => Float32Array.from({ length: TRAIN_TRAIL_LENGTH }, (_, i) => i), [])
-  const trailMaterial = useMemo(() => createTrailMaterial(color, TRAIN_TRAIL_LENGTH), [color])
-  const leadOffset = ((TRAIN_CAR_COUNT - 1) * (TRAIN_CAR_LENGTH + 0.1)) / 2
+  const trailMaterial = useMemo(() => createTrailMaterial(THRUSTER_COLOR, TRAIN_TRAIL_LENGTH), [])
 
   useFrame(({ clock }) => {
     if (laneCurve) {
@@ -125,13 +178,16 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
         groupRef.current.position.set(point.x, y, point.z)
         groupRef.current.rotation.y = heading
       }
-      pushTrailSample(trailRef.current, point.x + Math.cos(heading) * leadOffset, y - 0.06, point.z - Math.sin(heading) * leadOffset)
+      pushTrailSample(trailRef.current, point.x + Math.cos(heading) * NOZZLE_X, y + NOZZLE_Y, point.z - Math.sin(heading) * NOZZLE_X)
     } else {
       const t = clock.elapsedTime * speed + seed
       const x = Math.sin(t) * range
       const direction = Math.cos(t) >= 0 ? 1 : -1
-      if (groupRef.current) groupRef.current.position.x = x
-      pushTrailSample(trailRef.current, x - direction * leadOffset, -0.06, 0)
+      if (groupRef.current) {
+        groupRef.current.position.x = x
+        groupRef.current.rotation.y = direction > 0 ? Math.PI : 0
+      }
+      pushTrailSample(trailRef.current, x - direction * NOZZLE_X, NOZZLE_Y, 0)
     }
   })
 
@@ -142,7 +198,14 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
         <meshBasicMaterial color={color} transparent opacity={0.22} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
       <group ref={groupRef}>
-        <ModelLoader src={modelRegistry['cityIntro/flying-train'].path} fallback={<ProceduralFlyingTrain color={color} seed={seed} />} targetSize={TRAIN_TARGET_SIZE} castShadow={false} />
+        <ModelLoader
+          src={modelRegistry['cityIntro/flying-train'].path}
+          fallback={<ProceduralFlyingTrain color={color} seed={seed} />}
+          targetSize={TRAIN_TARGET_SIZE}
+          position={[MODEL_CENTER_OFFSET, 0, 0]}
+          castShadow={false}
+        />
+        <ThrusterPlume />
       </group>
       <points ref={trailRef} material={trailMaterial} frustumCulled={false}>
         <bufferGeometry>

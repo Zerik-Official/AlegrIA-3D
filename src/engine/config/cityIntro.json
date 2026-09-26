@@ -76,7 +76,6 @@
   { "id": "flying-car-08", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#FFB703", "title": "carsWest" },
   { "id": "flying-car-09", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#FF007F", "title": "carsEast" },
   { "id": "flying-train-01", "type": "flying-train", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#00B4D8", "title": "trainHigh" },
-  { "id": "flying-train-02", "type": "flying-train", "position": [0, 0, 0], "rotationY": 0, "scale": 1.1, "variant": "#FF007F", "title": "trainHigh" },
   { "id": "moon", "type": "moon", "position": [-30, 34, -70], "rotationY": 0, "scale": 1},
   { "id": "planet-02", "type": "planet", "position": [-55, 40, -150], "rotationY": 0, "scale": 1.6, "variant": "#7aa8c9" },
   { "id": "planet-03", "type": "planet", "position": [20, 60, -190], "rotationY": 0, "scale": 2.6, "variant": "#c9a877" },
