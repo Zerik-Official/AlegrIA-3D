@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useImagePreviewTexture } from '@/shared/hooks/useImagePreviewTexture'
 import { BOOK_PAGES, PAGE_FLOAT_Y, PAGE_TABLE_TOP_Y, type BookPage } from '@/features/library/config/bookPages'
+import { RosaBookModel } from '@/models/shared/RosaBookModel'
 
 /** Paper sheet size — every page floats on the same sheet, its scan fitted inside without cropping. */
 const SHEET_W = 0.64
@@ -11,6 +12,10 @@ const SHEET_H = 0.86
 const SHEET_MARGIN = 0.04
 /** How far the outline shell reaches past the sheet's edges. */
 const OUTLINE_MARGIN = 0.035
+/** Height of the floating book on the center table, and its width and thickness at that height. */
+const BOOK_H = 0.66
+const BOOK_W = BOOK_H * (0.245 / 0.32)
+const BOOK_T = BOOK_H * (0.036 / 0.32)
 
 /** How close the player must be to a page to pick it up. */
 const FOCUS_RANGE = 3
@@ -61,7 +66,8 @@ interface BookPageDisplayProps {
 
 /**
  * One display table: a round gilded table with a page of the Libro de Rosa
- * floating and turning over it, its scan on both faces. When focused it
+ * floating and turning over it, its scan on both faces — or, on the center
+ * table, the closed book itself showing its cover. When focused it
  * stops to face the player, grows a little, brightens and is outlined — by
  * a slightly larger gold shell drawn from its back faces, so only a rim shows
  * around the sheet from any angle (drei's `Outlines` crashes the canvas on
@@ -80,6 +86,7 @@ const BookPageDisplay = memo(function BookPageDisplay({ page, index, focused, gl
     []
   )
   const state = useRef({ yaw: index * 1.1, scale: 1, glow: 0 })
+  const isBook = page.display === 'book'
 
   const image = useMemo(() => {
     const aspect = preview?.aspect ?? SHEET_W / SHEET_H
@@ -146,13 +153,24 @@ const BookPageDisplay = memo(function BookPageDisplay({ page, index, focused, gl
       </sprite>
 
       <group ref={sheetRef} position={[0, PAGE_FLOAT_Y, 0]}>
-        <mesh material={mats.paper} castShadow>
-          <boxGeometry args={[SHEET_W, SHEET_H, 0.012]} />
-        </mesh>
-        <mesh ref={outlineRef} material={outlineMaterial} visible={false}>
-          <boxGeometry args={[SHEET_W + OUTLINE_MARGIN * 2, SHEET_H + OUTLINE_MARGIN * 2, 0.03]} />
-        </mesh>
-        {preview && (
+        {isBook ? (
+          <>
+            <RosaBookModel height={BOOK_H} />
+            <mesh ref={outlineRef} material={outlineMaterial} visible={false}>
+              <boxGeometry args={[BOOK_W + OUTLINE_MARGIN * 2, BOOK_H + OUTLINE_MARGIN * 2, BOOK_T + OUTLINE_MARGIN]} />
+            </mesh>
+          </>
+        ) : (
+          <>
+            <mesh material={mats.paper} castShadow>
+              <boxGeometry args={[SHEET_W, SHEET_H, 0.012]} />
+            </mesh>
+            <mesh ref={outlineRef} material={outlineMaterial} visible={false}>
+              <boxGeometry args={[SHEET_W + OUTLINE_MARGIN * 2, SHEET_H + OUTLINE_MARGIN * 2, 0.03]} />
+            </mesh>
+          </>
+        )}
+        {!isBook && preview && (
           <>
             <mesh position={[0, 0, 0.0065]}>
               <planeGeometry args={[image.w, image.h]} />
@@ -185,7 +203,8 @@ interface BookPageDisplaysProps {
 const scratch = { forward: new THREE.Vector3(), toPage: new THREE.Vector3() }
 
 /**
- * The restored library's six display tables, and the crosshair test that
+ * The restored library's display tables — the book at the center and six
+ * pages around it — and the crosshair test that
  * decides which page the player is looking at: the nearest-to-center page
  * within reach whose direction lies close to the view direction.
  *
