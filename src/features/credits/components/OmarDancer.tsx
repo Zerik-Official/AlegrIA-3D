@@ -30,7 +30,7 @@ export const OmarDancer = memo(function OmarDancer() {
           </mesh>
         }
       />
-      <NameTag text="Beckham Torres Caceres" position={[0, NAME_TAG_Y, 0]} />
+      <NameTag text="Beckham Caceres" position={[0, NAME_TAG_Y, 0]} />
     </group>
   )
 })
