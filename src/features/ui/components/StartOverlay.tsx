@@ -11,6 +11,7 @@ import * as THREE from 'three'
 import { FiArrowRight, FiEye, FiLoader } from 'react-icons/fi'
 import { StoryBook3D } from '@/features/storyBook/components/StoryBook3D'
 import { createSeededRandom } from '@/shared/utils/random'
+import { PartnerLogos } from '@/shared/components/PartnerLogos'
 
 /**
  * Props for {@link StartOverlay}.
@@ -21,15 +22,6 @@ interface StartOverlayProps {
   /** Whether the city scene is warming up before reveal — disables the button and shows a spinner. */
   loading?: boolean
 }
-
-const base = import.meta.env.BASE_URL
-
-/** Partner logos, shown side by side in equal boxes; `invert` turns a dark monochrome mark white for the dark backdrop. */
-const PARTNERS: Array<{ name: string; src: string; invert?: boolean }> = [
-  { name: 'Alcaldía de Barranquilla', src: `${base}logos/alcaldia-brq.webp`, invert: true },
-  { name: 'Barrio Abajo del Río Tour', src: `${base}logos/barrio-abajo-tour.webp` },
-  { name: 'Riwi', src: `${base}logos/riwi-logo.webp` },
-]
 
 /** Golden dust motes rising through the screen. */
 const DUST_COUNT = 38
@@ -78,11 +70,11 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
     <div className={`fixed inset-0 z-20 overflow-hidden text-center ${loading ? 'cursor-progress' : ''}`}>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,10,24,0.55)_0%,rgba(4,4,12,0.88)_62%,rgba(2,2,6,0.97)_100%)] backdrop-blur-[3px]" />
       <div
-        className="pointer-events-none absolute -top-[20vh] -left-[15vw] h-[70vh] w-[70vh] rounded-full bg-[radial-gradient(circle,rgba(90,190,255,0.28)_0%,transparent_65%)] blur-2xl"
+        className="pointer-events-none absolute top-[-20vh] left-[-15vw] h-[70vh] w-[70vh] rounded-full bg-[radial-gradient(circle,rgba(90,190,255,0.28)_0%,transparent_65%)] blur-2xl"
         style={{ animation: 'start-drift 18s ease-in-out infinite' }}
       />
       <div
-        className="pointer-events-none absolute -right-[10vw] -bottom-[25vh] h-[80vh] w-[80vh] rounded-full bg-[radial-gradient(circle,rgba(255,190,80,0.24)_0%,transparent_65%)] blur-2xl"
+        className="pointer-events-none absolute right-[-10vw] bottom-[-25vh] h-[80vh] w-[80vh] rounded-full bg-[radial-gradient(circle,rgba(255,190,80,0.24)_0%,transparent_65%)] blur-2xl"
         style={{ animation: 'start-drift 22s ease-in-out -7s infinite reverse' }}
       />
       <div
@@ -191,17 +183,7 @@ export const StartOverlay = memo(function StartOverlay({ onStart, loading = fals
 
       <div className="absolute right-4 bottom-4 flex flex-col items-end gap-2 sm:right-6 sm:bottom-6" style={riseIn(1.5)}>
         <span className="font-cinzel text-[9px] tracking-[0.32em] uppercase text-parchment/40">Con el apoyo de</span>
-        <div className="flex items-center gap-2">
-          {PARTNERS.map((partner) => (
-            <div
-              key={partner.name}
-              title={partner.name}
-              className="flex h-12 w-24 items-center justify-center rounded-xl border border-white/10 bg-white/5 p-2 shadow-[0_6px_20px_rgba(0,0,0,0.35)] backdrop-blur-md transition hover:-translate-y-0.5 hover:border-gold/40 hover:bg-white/10 sm:h-16 sm:w-32"
-            >
-              <img src={partner.src} alt={partner.name} className={`h-full w-full object-contain ${partner.invert ? 'brightness-0 invert' : ''}`} draggable={false} />
-            </div>
-          ))}
-        </div>
+        <PartnerLogos />
       </div>
     </div>
   )
