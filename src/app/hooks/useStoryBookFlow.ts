@@ -48,8 +48,13 @@ export interface StoryBookFlow {
   portal: PortalPlacement | null
   /** Records where the summoned portal landed; called once by the in-scene portal. */
   handlePortalPlaced: (placement: PortalPlacement) => void
+  /** Whether the portal wait is counting down right now — the only moment `T` ({@link skipWait}) does anything. */
+  canSkipWait: boolean
   /**
-   * Skips straight to the book growing restless and summoning the portal, bypassing the wait after the narration. Only works while the book is still calm (i.e., before it starts growing restless).
+   * Skips straight to the book growing restless and summoning the portal,
+   * bypassing the rest of the wait after the narration. Only takes effect
+   * while that wait is counting down ({@link canSkipWait}); presses at any
+   * other time are ignored and never carried over.
    */
   skipWait: () => void
 }
@@ -98,7 +103,7 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
     return () => window.clearTimeout(id)
   }, [active, phaseKey])
 
-  const waitStarted = flowKey === prevFlowKey && active && (dialogEnded || fallbackEnded || skipRequested)
+  const waitStarted = flowKey === prevFlowKey && active && (dialogEnded || fallbackEnded)
   const waitKey = waitStarted ? (skipRequested ? 'skip' : 'wait') : 'idle'
   const [prevWaitKey, setPrevWaitKey] = useState<'idle' | 'wait' | 'skip'>('idle')
   if (waitKey !== prevWaitKey) {
@@ -157,10 +162,12 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
     }
   }, [waitStarted, skipRequested])
 
+  const canSkipWait = waitKey === 'wait' && stage === 'calm'
+
   const skipWait = useCallback(() => {
-    if (stage !== 'calm') return
+    if (!canSkipWait) return
     setSkipRequested(true)
-  }, [stage])
+  }, [canSkipWait])
 
   const handlePortalPlaced = useCallback((placement: PortalPlacement) => setPortal(placement), [])
 
@@ -173,6 +180,7 @@ export function useStoryBookFlow(active: boolean, phaseKey: string, dialogEnded:
     portalCountdownSec,
     portal,
     handlePortalPlaced,
+    canSkipWait,
     skipWait,
   }
 }

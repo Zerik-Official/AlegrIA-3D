@@ -79,6 +79,8 @@ export interface HotkeyContext {
   closePhoto: () => void
   /** Skips the Libro de Rosa's ~1-minute wait straight to summoning the portal (`T`), in the open phases. */
   skipBookWait: () => void
+  /** Whether the Libro de Rosa's post-narration portal wait is counting down, the only time `T` acts. */
+  canSkipBookWait: boolean
   /** Shows/hides the FPS and memory monitor (`Ñ`, debug builds only). */
   togglePerfMonitor: () => void
 }
@@ -106,8 +108,8 @@ export class HotkeyRouter {
       return
     }
 
-    if (key === 't' && (ctx.isPhase1 || ctx.isPhase2) && !ctx.showPhase1Overlay && !ctx.showPhase2Overlay && !ctx.isEditorEnabled) {
-      ctx.skipBookWait()
+    if (key === 't') {
+      if (ctx.canSkipBookWait && !ctx.isEditorEnabled) ctx.skipBookWait()
       return
     }
 

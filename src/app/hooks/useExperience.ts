@@ -136,6 +136,7 @@ export function useExperience(): Experience {
     dismissPhase2Intro: phaseFlow.dismissPhase2Intro,
     selectPhoto: photo.selectPhoto,
     closePhoto: photo.closePhoto,
+    canSkipBookWait: storyBook.canSkipWait,
     skipBookWait: storyBook.skipWait,
     focusedBookPageId: bookPages.focusedPageId,
     hasOpenBookPage: !!bookPages.openPage,
