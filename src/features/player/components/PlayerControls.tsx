@@ -1,6 +1,7 @@
 import { useEffect, useRef, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { PointerLockControls } from '@react-three/drei'
+import type { PointerLockControls as PointerLockControlsImpl } from 'three-stdlib'
 import * as THREE from 'three'
 import { useKeyboard } from '@/features/player/hooks/useKeyboard'
 import { playerConfig } from '@/shared/config/appConfig'
@@ -57,6 +58,16 @@ export const PlayerControls = memo(function PlayerControls({
 }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
+  const lookRef = useRef<PointerLockControlsImpl>(null)
+
+  useEffect(() => {
+    const sync = (): void => {
+      if (lookRef.current) lookRef.current.isLocked = !!document.pointerLockElement
+    }
+    sync()
+    document.addEventListener('pointerlockchange', sync)
+    return () => document.removeEventListener('pointerlockchange', sync)
+  }, [enabled])
   const audioCtxRef = useRef<AudioContext | null>(null)
   const lastStepRef = useRef(0)
   const stepIdxRef = useRef(0)
@@ -213,5 +224,5 @@ export const PlayerControls = memo(function PlayerControls({
     onPositionChange(camera.position)
   })
 
-  return <PointerLockControls enabled={enabled} />
+  return <PointerLockControls ref={lookRef} enabled={enabled} />
 })
