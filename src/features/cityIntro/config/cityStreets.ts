@@ -2,12 +2,10 @@
  * The future city's street plan beyond the main avenue: the side street that
  * turns right in front of the aduana (the library), and the paved walks that
  * open from the avenue onto RIWI's building and the two screen buildings.
- * Kept as data so the scene's paving and the free-roam walkable areas are
- * derived from one source and can't drift apart.
+ * Kept as data so the paving and the skyline filler's clear zones share one
+ * source. Where the player may walk is the scene's JSON `walk-area` entities.
  * @module features/cityIntro/config/cityStreets
  */
-
-import type { Bounds } from '@/shared/types'
 
 /** Half-width of the main avenue's asphalt, out to its yellow curb lines. */
 export const AVENUE_CURB_X = 3.55
@@ -50,29 +48,6 @@ export const PLAZAS: Plaza[] = [
   { id: 'plaza-pantalla-oeste', area: [-13, -AVENUE_SIDEWALK_OUTER_X, -25, -1.2], side: -1, accent: '#00B4D8' },
   { id: 'plaza-pantalla-este', area: [AVENUE_SIDEWALK_OUTER_X, 13, 2.4, 14.6], side: 1, accent: '#FF007F' },
   { id: 'plaza-riwi-barranquilla', area: [19.5, 28.5, -30, -19.5], side: 1, accent: '#a855ff' },
-]
-
-/** Player body radius kept clear of every walkable edge. */
-const EDGE = 0.4
-
-/**
- * @param area - `[minX, maxX, minZ, maxZ]`
- * @returns The area shrunk by the player's body radius, as movement bounds
- */
-function inset([minX, maxX, minZ, maxZ]: [number, number, number, number]): Bounds {
-  return { minX: minX + EDGE, maxX: maxX - EDGE, minZ: minZ + EDGE, maxZ: maxZ - EDGE }
-}
-
-/**
- * Where the player may walk once the finale hands over to free roaming: the
- * avenue up to the aduana's steps, the side street in front of it, and the
- * three plazas. Overlapping rectangles — the player may stand anywhere inside
- * at least one of them.
- */
-export const CITY_WALKABLE_AREAS: Bounds[] = [
-  inset([-AVENUE_SIDEWALK_OUTER_X - 0.4, AVENUE_SIDEWALK_OUTER_X + 0.4, SIDE_STREET.southLimitZ, 30.4]),
-  inset([AVENUE_CURB_X, SIDE_STREET.toX + SIDEWALK_WIDTH, SIDE_STREET.southLimitZ, SIDE_STREET.centerZ + SIDE_STREET.curbHalf + SIDEWALK_WIDTH]),
-  ...PLAZAS.map((plaza) => inset([plaza.area[0] - (plaza.side < 0 ? 0 : 0.6), plaza.area[1] + (plaza.side < 0 ? 0.6 : 0), plaza.area[2], plaza.area[3]])),
 ]
 
 /**
