@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { beatAt, CARNIVAL_STALLS, STALL_SIZE, type CarnivalStall } from '@/features/cityIntro/config/carnivalLayout'
 import { canvasTexture, neonText } from '@/features/cityIntro/components/carnival/neonCanvas'
+import { GlowSprite, GroundGlow } from '@/shared/components/LightGlows'
 
 /** Shared materials for the stalls' structure. */
 const mats = {
@@ -71,7 +72,8 @@ const Stall = memo(function Stall({ text, color, position, side }: CarnivalStall
         <planeGeometry args={[length - 0.1, 0.7]} />
         <meshBasicMaterial ref={signRef} map={sign} toneMapped={false} />
       </mesh>
-      <pointLight position={[-side * 0.8, 2, 0]} color={color} intensity={3} distance={5} decay={2} />
+      <GlowSprite color={color} size={2.2} opacity={0.45} position={[-side * 0.8, 2, 0]} />
+      <GroundGlow color={color} radius={2.2} opacity={0.38} position={[-side * 1.2, 0.03, 0]} />
     </group>
   )
 })

@@ -68,7 +68,6 @@ export function ProceduralFlyingCar({ color = '#ff6a3a' }: { color?: string }) {
         <planeGeometry args={[0.34, 0.5]} />
         <meshBasicMaterial color={color} transparent opacity={0.5} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
-      <pointLight intensity={0.5} distance={2.4} color={color} decay={2} />
     </group>
   )
 }

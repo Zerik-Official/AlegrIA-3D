@@ -26,6 +26,7 @@ export const CreditsDoorPortal = memo(function CreditsDoorPortal() {
       accentColor={CREDITS_PORTAL_ACCENT}
       glowColor={CREDITS_PORTAL_GLOW}
       label="Portal a la escena de créditos"
+      castsLight={false}
     />
   )
 })

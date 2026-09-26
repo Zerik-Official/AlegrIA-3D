@@ -16,6 +16,7 @@ import * as THREE from 'three'
 import { createSeededRandom, hashSeed } from '@/shared/utils/random'
 import { GUACHERNA_FIRE } from '@/features/cityIntro/config/colorPalette'
 import type { EntityRendererProps } from '@/engine/types'
+import { GlowSprite, GroundGlow } from '@/shared/components/LightGlows'
 
 /** Altura base de vuelo sobre el punto de la entidad. */
 const HOVER_Y = 3.4
@@ -45,44 +46,46 @@ export function FloatingFaroleRenderer({ entity }: EntityRendererProps) {
   })
 
   return (
-    <group ref={groupRef} position={[0, HOVER_Y, 0]}>
-      <mesh>
-        <cylinderGeometry args={[0.42, 0.34, 0.72, 8, 1, true]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={1.6}
-          roughness={0.85}
-          side={THREE.DoubleSide}
-          transparent
-          opacity={0.92}
-        />
-      </mesh>
-
-      {[0.4, -0.4].map((y) => (
-        <mesh key={y} position={[0, y, 0]}>
-          <cylinderGeometry args={[y > 0 ? 0.44 : 0.36, y > 0 ? 0.44 : 0.36, 0.07, 8]} />
-          <meshStandardMaterial color="#5a3a22" roughness={0.9} />
+    <>
+      <GroundGlow color={color} radius={2.6} opacity={0.4} />
+      <group ref={groupRef} position={[0, HOVER_Y, 0]}>
+        <mesh>
+          <cylinderGeometry args={[0.42, 0.34, 0.72, 8, 1, true]} />
+          <meshStandardMaterial
+            color={color}
+            emissive={color}
+            emissiveIntensity={1.6}
+            roughness={0.85}
+            side={THREE.DoubleSide}
+            transparent
+            opacity={0.92}
+          />
         </mesh>
-      ))}
 
-      <mesh>
-        <sphereGeometry args={[0.18, 10, 10]} />
-        <meshBasicMaterial color="#FFF3D0" />
-      </mesh>
-      <mesh>
-        <sphereGeometry args={[0.74, 12, 12]} />
-        <meshBasicMaterial color={color} transparent opacity={0.13} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
+        {[0.4, -0.4].map((y) => (
+          <mesh key={y} position={[0, y, 0]}>
+            <cylinderGeometry args={[y > 0 ? 0.44 : 0.36, y > 0 ? 0.44 : 0.36, 0.07, 8]} />
+            <meshStandardMaterial color="#5a3a22" roughness={0.9} />
+          </mesh>
+        ))}
 
-      {[0, 1, 2, 3].map((i) => (
-        <mesh key={i} position={[Math.cos((i / 4) * Math.PI * 2) * 0.26, -0.62, Math.sin((i / 4) * Math.PI * 2) * 0.26]}>
-          <boxGeometry args={[0.05, 0.36, 0.05]} />
-          <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.7} roughness={0.9} />
+        <mesh>
+          <sphereGeometry args={[0.18, 10, 10]} />
+          <meshBasicMaterial color="#FFF3D0" />
         </mesh>
-      ))}
+        <mesh>
+          <sphereGeometry args={[0.74, 12, 12]} />
+          <meshBasicMaterial color={color} transparent opacity={0.13} depthWrite={false} blending={THREE.AdditiveBlending} />
+        </mesh>
+        <GlowSprite color={color} size={2.6} opacity={0.4} />
 
-      <pointLight intensity={2.6} distance={11} decay={2} color={color} />
-    </group>
+        {[0, 1, 2, 3].map((i) => (
+          <mesh key={i} position={[Math.cos((i / 4) * Math.PI * 2) * 0.26, -0.62, Math.sin((i / 4) * Math.PI * 2) * 0.26]}>
+            <boxGeometry args={[0.05, 0.36, 0.05]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.7} roughness={0.9} />
+          </mesh>
+        ))}
+      </group>
+    </>
   )
 }

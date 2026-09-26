@@ -11,6 +11,7 @@ import { Sparkles } from '@react-three/drei'
 import { createSeededRandom, hashSeed } from '@/shared/utils/random'
 import { FLORA_GREEN, ROBLE_BLOOM, SOLAR_YELLOW } from '@/features/cityIntro/config/colorPalette'
 import type { EntityRendererProps } from '@/engine/types'
+import { GroundGlow } from '@/shared/components/LightGlows'
 
 /** Alto del andén sobre la calzada. */
 const CURB_H = 0.34
@@ -106,7 +107,7 @@ export function YellowTreeRenderer({ entity }: EntityRendererProps) {
       </mesh>
 
       <Sparkles count={26} scale={[3.4, 2.6, 3.4]} position={[0, canopy.height + 0.2, 0]} size={3.5} speed={0.35} color={bloom} />
-      <pointLight position={[0, canopy.height + 0.3, 0]} intensity={0.9} distance={6} decay={2} color={bloom} />
+      <GroundGlow color={bloom} radius={2.4} opacity={0.28} />
     </group>
   )
 }

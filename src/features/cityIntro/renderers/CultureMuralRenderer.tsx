@@ -17,6 +17,7 @@ import * as THREE from 'three'
 import { createMuralTexture } from '@/features/cityIntro/renderers/muralTexture'
 import { NEON_CYAN, NEON_MAGENTA, SOLAR_YELLOW } from '@/features/cityIntro/config/colorPalette'
 import type { EntityRendererProps } from '@/engine/types'
+import { GroundGlow } from '@/shared/components/LightGlows'
 
 /** Ancho y alto (unidades de mundo) del panel a `scale: 1`. */
 const PANEL_W = 7.2
@@ -119,7 +120,7 @@ export function CultureMuralRenderer({ entity }: EntityRendererProps) {
       </mesh>
 
       <pointLight position={[0, PANEL_H / 2 + 0.6, 2.4]} intensity={3.2} distance={16} decay={2} color={NEON_MAGENTA} />
-      <pointLight position={[0, 1.2, 1.8]} intensity={1.4} distance={9} decay={2} color={spark} />
+      <GroundGlow color={spark} radius={3.2} opacity={0.35} position={[0, 0.03, 1.8]} />
     </group>
   )
 }

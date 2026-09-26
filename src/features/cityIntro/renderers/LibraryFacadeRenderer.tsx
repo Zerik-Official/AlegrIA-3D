@@ -12,6 +12,7 @@ import { modelRegistry } from '@/shared/config/models'
 import { createWeatheredWallTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import { ProceduralStreetlight } from '@/features/cityIntro/renderers/StreetlightRenderer'
+import { GlowSprite, GroundGlow } from '@/shared/components/LightGlows'
 
 /** Generates (once) a weathered "BIBLIOTECA" sign texture with a few dead/flickering letters. */
 function useLibrarySignTexture(): THREE.Texture {
@@ -302,16 +303,17 @@ export function ProceduralLibraryFacade() {
             </mesh>
           ))}
 
-      <pointLight position={[0, 1.8, FRONT_Z + 1.3]} intensity={1.4} distance={7} color="#ff8a1a" decay={2} />
-      <pointLight position={[0, GROUND_HEIGHT + UPPER_HEIGHT, FRONT_Z + 2]} intensity={0.5} distance={10} color="#8fa8ff" decay={2} />
+      <GroundGlow color="#ff8a1a" radius={2.6} opacity={0.35} position={[0, 0.03, FRONT_Z + 1.3]} />
+      <GlowSprite color="#8fa8ff" size={3} opacity={0.3} position={[0, GROUND_HEIGHT + UPPER_HEIGHT, FRONT_Z + 2]} />
     </group>
   )
 }
 
 /**
  * Lighting rig framing the landmark facade — a pair of the city's streetlight
- * fixtures flanking it, plus warm and cool point lights washing the colonnade
- * and roofline — kept outside the procedural fallback so it lights the real
+ * fixtures flanking it, a warm wash on the colonnade and a cool one on the
+ * roofline as the only real lights, and colored pools and halos standing in
+ * for the rest — kept outside the procedural fallback so it lights the real
  * `.glb` too, which has no light sources of its own (its neon sign is
  * emissive-only, it doesn't cast light).
  * @returns Light rig elements
@@ -320,18 +322,20 @@ function FacadeLightRig() {
   return (
     <>
       <group position={[-24, 0, 9]}>
-        <ProceduralStreetlight />
+        <ProceduralStreetlight castsLight={false} />
       </group>
       <group position={[24, 0, 9]}>
-        <ProceduralStreetlight />
+        <ProceduralStreetlight castsLight={false} />
       </group>
-      <pointLight position={[-12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
-      <pointLight position={[12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
-      <pointLight position={[0, 10.5, 10]} intensity={1.6} distance={22} color="#5ad8ff" decay={2} />
-      <pointLight position={[0, 3.5, 13]} intensity={1.1} distance={18} color="#8fd8ff" decay={2} />
-      <pointLight position={[-22, 5, 4]} intensity={1.8} distance={22} color="#ffd23a" decay={2} />
-      <pointLight position={[22, 5, 4]} intensity={1.8} distance={22} color="#ffd23a" decay={2} />
-      <pointLight position={[0, 4.5, -6]} intensity={1.3} distance={24} color="#8fa8ff" decay={2} />
+      <pointLight position={[0, 2.6, 12]} intensity={4.2} distance={34} color="#ff8a1a" decay={2} />
+      <pointLight position={[0, 10.5, 10]} intensity={2} distance={26} color="#5ad8ff" decay={2} />
+      <GroundGlow color="#ff8a1a" radius={5} opacity={0.3} position={[-12, 0.03, 11]} />
+      <GroundGlow color="#ff8a1a" radius={5} opacity={0.3} position={[12, 0.03, 11]} />
+      <GroundGlow color="#8fd8ff" radius={4} opacity={0.22} position={[0, 0.03, 13]} />
+      <GlowSprite color="#ffd23a" size={7} opacity={0.35} position={[-22, 5, 4]} />
+      <GlowSprite color="#ffd23a" size={7} opacity={0.35} position={[22, 5, 4]} />
+      <GroundGlow color="#ffd23a" radius={5} opacity={0.26} position={[-22, 0.03, 4]} />
+      <GroundGlow color="#ffd23a" radius={5} opacity={0.26} position={[22, 0.03, 4]} />
     </>
   )
 }

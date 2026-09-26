@@ -2,6 +2,7 @@ import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
+import { GlowSprite } from '@/shared/components/LightGlows'
 
 /** Deterministic random source for this module's procedural layout, so render stays pure. */
 const seededRandom = createSeededRandom(66226)
@@ -166,6 +167,8 @@ interface PortalProps {
   accentColor?: string
   /** Cool glow color for the inner ring, vortex disc and ground light. */
   glowColor?: string
+  /** Whether the portal casts real light; off where the scene is short on light budget, leaving a halo in its place. */
+  castsLight?: boolean
 }
 
 /**
@@ -177,7 +180,7 @@ interface PortalProps {
  * @param props - Portal placement and colors
  * @returns Portal group
  */
-export const ProceduralPortal = memo(function ProceduralPortal({ position, radius = 1.15, accentColor = '#ffcc33', glowColor = '#0ab8ff' }: PortalProps) {
+export const ProceduralPortal = memo(function ProceduralPortal({ position, radius = 1.15, accentColor = '#ffcc33', glowColor = '#0ab8ff', castsLight = true }: PortalProps) {
   const outerRef = useRef<THREE.Mesh>(null)
   const innerRef = useRef<THREE.Mesh>(null)
   const haloRef = useRef<THREE.Mesh>(null)
@@ -256,8 +259,14 @@ export const ProceduralPortal = memo(function ProceduralPortal({ position, radiu
         <circleGeometry args={[radius * 0.9, 32]} />
         <meshBasicMaterial color={glowColor} transparent opacity={0.16} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
-      <pointLight intensity={1.6} distance={4.6} color={glowColor} decay={2} />
-      <pointLight intensity={0.9} distance={3.2} color={accentColor} decay={2} position={[0, 0, 0.4]} />
+      {castsLight ? (
+        <>
+          <pointLight intensity={1.6} distance={4.6} color={glowColor} decay={2} />
+          <pointLight intensity={0.9} distance={3.2} color={accentColor} decay={2} position={[0, 0, 0.4]} />
+        </>
+      ) : (
+        <GlowSprite color={glowColor} size={radius * 4} opacity={0.4} />
+      )}
     </group>
   )
 })
