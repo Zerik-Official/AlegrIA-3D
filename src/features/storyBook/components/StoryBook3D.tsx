@@ -3,6 +3,10 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RosaBookModel } from '@/models/shared/RosaBookModel'
 import type { StoryBookStage } from '@/app/hooks/useStoryBookFlow'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(30194)
 
 /**
  * Props for {@link StoryBook3D}.
@@ -74,10 +78,10 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
   const sparkPositions = useMemo(() => {
     const arr = new Float32Array(60 * 3)
     for (let i = 0; i < 60; i++) {
-      const r = 0.55 + Math.random() * 0.35
-      const theta = Math.random() * Math.PI * 2
+      const r = 0.55 + seededRandom() * 0.35
+      const theta = seededRandom() * Math.PI * 2
       arr[i * 3] = Math.cos(theta) * r
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 1.2
+      arr[i * 3 + 1] = (seededRandom() - 0.5) * 1.2
       arr[i * 3 + 2] = Math.sin(theta) * r
     }
     return arr

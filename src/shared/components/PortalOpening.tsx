@@ -1,6 +1,10 @@
 import { memo, useMemo, useRef, type ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(64923)
 
 /**
  * Props for {@link PortalOpening}.
@@ -58,11 +62,11 @@ export const PortalOpening = memo(function PortalOpening({ children, radius = 1.
     const pos = new Float32Array(SPARK_COUNT * 3)
     const vel = new Float32Array(SPARK_COUNT * 3)
     for (let i = 0; i < SPARK_COUNT; i++) {
-      const a = Math.random() * Math.PI * 2
-      const speed = 2.2 + Math.random() * 3.2
+      const a = seededRandom() * Math.PI * 2
+      const speed = 2.2 + seededRandom() * 3.2
       vel[i * 3] = Math.cos(a) * speed
       vel[i * 3 + 1] = Math.sin(a) * speed
-      vel[i * 3 + 2] = (Math.random() - 0.2) * 1.6
+      vel[i * 3 + 2] = (seededRandom() - 0.2) * 1.6
     }
     return { positions: pos, velocities: vel }
   }, [])
@@ -102,6 +106,7 @@ export const PortalOpening = memo(function PortalOpening({ children, radius = 1.
     if (sparksRef.current) {
       const burst = t > 0.4
       const attr = sparksRef.current.geometry.attributes.position as THREE.BufferAttribute
+      const velocities = (sparksRef.current.geometry.attributes.aVelocity as THREE.BufferAttribute).array as Float32Array
       for (let i = 0; i < SPARK_COUNT; i++) {
         if (!burst) continue
         attr.setXYZ(
@@ -142,6 +147,7 @@ export const PortalOpening = memo(function PortalOpening({ children, radius = 1.
         <points ref={sparksRef}>
           <bufferGeometry>
             <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+            <bufferAttribute attach="attributes-aVelocity" args={[velocities, 3]} />
           </bufferGeometry>
           <pointsMaterial size={0.07} color={accentColor} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} sizeAttenuation />
         </points>

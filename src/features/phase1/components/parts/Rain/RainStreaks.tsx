@@ -1,6 +1,10 @@
 import { memo, useMemo, useRef, type MutableRefObject } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(69277)
 
 /**
  * Props for {@link RainStreaks}.
@@ -35,11 +39,11 @@ export const RainStreaks = memo(function RainStreaks({ count, intensity }: RainS
     const pos = new Float32Array(count * 6)
     const spd = new Float32Array(count)
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * HALF_REACH * 2
-      const y = Math.random() * TOP_Y
-      const z = (Math.random() - 0.5) * HALF_REACH * 2
+      const x = (seededRandom() - 0.5) * HALF_REACH * 2
+      const y = seededRandom() * TOP_Y
+      const z = (seededRandom() - 0.5) * HALF_REACH * 2
       pos.set([x, y, z, x - WIND * STREAK, y - STREAK, z], i * 6)
-      spd[i] = 16 + Math.random() * 8
+      spd[i] = 16 + seededRandom() * 8
     }
     return { positions: pos, speeds: spd }
   }, [count])

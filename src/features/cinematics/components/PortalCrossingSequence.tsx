@@ -1,6 +1,10 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(78524)
 
 /**
  * Props for {@link PortalCrossingSequence}.
@@ -89,10 +93,10 @@ export const PortalCrossingSequence = memo(function PortalCrossingSequence({ pro
     const pos = new Float32Array(MOTE_COUNT * 3)
     const spd = new Float32Array(MOTE_COUNT)
     for (let i = 0; i < MOTE_COUNT; i++) {
-      pos[i * 3] = center[0] + (Math.random() - 0.5) * MOTE_REACH * 2
-      pos[i * 3 + 1] = Math.random() * MOTE_HEIGHT
-      pos[i * 3 + 2] = center[2] + (Math.random() - 0.5) * MOTE_REACH * 2
-      spd[i] = 0.4 + Math.random() * 0.8
+      pos[i * 3] = center[0] + (seededRandom() - 0.5) * MOTE_REACH * 2
+      pos[i * 3 + 1] = seededRandom() * MOTE_HEIGHT
+      pos[i * 3 + 2] = center[2] + (seededRandom() - 0.5) * MOTE_REACH * 2
+      spd[i] = 0.4 + seededRandom() * 0.8
     }
     return { positions: pos, speeds: spd }
   }, [center])
@@ -102,9 +106,10 @@ export const PortalCrossingSequence = memo(function PortalCrossingSequence({ pro
     const t = clock.elapsedTime
     const dt = Math.min(delta, 0.05)
 
-    discMaterial.uniforms.uTime.value = t
-    discMaterial.uniforms.uProgress.value = progress
     if (discRef.current) {
+      const uniforms = (discRef.current.material as THREE.ShaderMaterial).uniforms
+      uniforms.uTime.value = t
+      uniforms.uProgress.value = progress
       const wake = THREE.MathUtils.smoothstep(progress, 0, 0.35)
       const bloom = THREE.MathUtils.smoothstep(progress, 0.35, 0.55)
       const s = 1.2 + wake * 0.8 + bloom * bloom * 14

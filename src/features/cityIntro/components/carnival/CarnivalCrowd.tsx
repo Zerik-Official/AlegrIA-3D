@@ -12,6 +12,10 @@ import {
   WALK_CLEARANCE,
 } from '@/features/cityIntro/config/carnivalLayout'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(51587)
 
 /**
  * Props for {@link CarnivalCrowd}.
@@ -180,18 +184,18 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     let attempts = 0
     while (list.length < CROWD_COUNT && attempts < CROWD_COUNT * 12) {
       attempts++
-      const x = minX + Math.random() * (maxX - minX)
-      const z = minZ + Math.random() * (maxZ - minZ)
+      const x = minX + seededRandom() * (maxX - minX)
+      const z = minZ + seededRandom() * (maxZ - minZ)
       if (!isFreeSpot(x, z, walkX(z))) continue
       list.push({
         x,
         z,
-        scale: 0.88 + Math.random() * 0.24,
-        phase: Math.random() * Math.PI * 2,
-        hasArm: Math.random() < 0.35,
-        armSide: Math.random() < 0.5 ? -1 : 1,
-        sway: 0.04 + Math.random() * 0.1,
-        rotation: Math.random() * Math.PI * 2,
+        scale: 0.88 + seededRandom() * 0.24,
+        phase: seededRandom() * Math.PI * 2,
+        hasArm: seededRandom() < 0.35,
+        armSide: seededRandom() < 0.5 ? -1 : 1,
+        sway: 0.04 + seededRandom() * 0.1,
+        rotation: seededRandom() * Math.PI * 2,
       })
     }
     return list
@@ -207,9 +211,6 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
       body.setColorAt(i, clothes)
       arm.setColorAt(i, clothes)
       head.setColorAt(i, scratch.color.set(CARNIVAL_SKIN[Math.floor(Math.random() * CARNIVAL_SKIN.length)]))
-      // Resting pose for everyone up front, so dancers outside the camera's
-      // view on the very first frame (see the frustum check below) still
-      // stand in the right spot instead of defaulting to an identity matrix.
       poseDancer(i, d, 0, 0, 0, body, head, arm)
     })
     for (const mesh of [body, head, arm]) {
@@ -217,8 +218,9 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
       mesh.instanceMatrix.needsUpdate = true
     }
-    material.needsUpdate = true
-  }, [dancers, material])
+    const bodyMaterial = body.material as THREE.Material
+    bodyMaterial.needsUpdate = true
+  }, [dancers])
 
   useFrame(({ clock, camera }) => {
     const body = bodyRef.current
@@ -227,10 +229,6 @@ export const CarnivalCrowd = memo(function CarnivalCrowd({ pathEntities }: Carni
     if (!body || !head || !arm) return
     const { beat } = beatAt(clock.elapsedTime)
 
-    // Only pay the per-dancer trig + matrix-write cost for dancers the
-    // camera can actually see — the rest keep whatever pose they were last
-    // drawn in, which is imperceptible off-screen and keeps the frame cheap
-    // even with hundreds of dancers filling the avenue.
     frustumMatrix.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
     frustum.setFromProjectionMatrix(frustumMatrix)
 

@@ -1,6 +1,10 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { initialPhase1Entities } from '@/features/editor/config/editableEntities'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(34081)
 
 /** Circular area other scatter points must avoid. */
 interface ExclusionZone {
@@ -44,8 +48,8 @@ function useScatterPoints(count: number, exclusions: ExclusionZone[]): [number, 
     let attempts = 0
     while (points.length < count && attempts < count * 14) {
       attempts++
-      const x = GROUND_CENTER_X + (Math.random() - 0.5) * GROUND_HALF_X * 2
-      const z = (Math.random() - 0.5) * GROUND_HALF_Z * 2
+      const x = GROUND_CENTER_X + (seededRandom() - 0.5) * GROUND_HALF_X * 2
+      const z = (seededRandom() - 0.5) * GROUND_HALF_Z * 2
       if (isExcluded(x, z, exclusions)) continue
       points.push([x, z])
     }

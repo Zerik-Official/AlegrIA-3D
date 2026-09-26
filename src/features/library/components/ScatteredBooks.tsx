@@ -1,5 +1,9 @@
 import { memo, useMemo } from 'react'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(27397)
 
 /**
  * Scattered book entry.
@@ -50,27 +54,27 @@ export const ScatteredBooks = memo(function ScatteredBooks() {
     ]
 
     clusters.forEach(([x, z]) => {
-      const count = 2 + Math.floor(Math.random() * 3)
+      const count = 2 + Math.floor(seededRandom() * 3)
       for (let i = 0; i < count; i++) {
         entries.push({
-          pos: [x + (Math.random() - 0.5) * 1.1, 0.02, z + (Math.random() - 0.5) * 1.0],
-          rot: [Math.random() * 0.25, Math.random() * Math.PI * 2, (Math.random() - 0.5) * 0.35],
-          scale: [0.52 + Math.random() * 0.18, 0.06 + Math.random() * 0.03, 0.36 + Math.random() * 0.12],
-          color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
-          open: Math.random() > 0.55,
+          pos: [x + (seededRandom() - 0.5) * 1.1, 0.02, z + (seededRandom() - 0.5) * 1.0],
+          rot: [seededRandom() * 0.25, seededRandom() * Math.PI * 2, (seededRandom() - 0.5) * 0.35],
+          scale: [0.52 + seededRandom() * 0.18, 0.06 + seededRandom() * 0.03, 0.36 + seededRandom() * 0.12],
+          color: PALETTE[Math.floor(seededRandom() * PALETTE.length)],
+          open: seededRandom() > 0.55,
         })
       }
     })
 
     for (let i = 0; i < 10; i++) {
-      const angle = Math.random() * Math.PI * 2
-      const r = 4.2 + Math.random() * 4.8
+      const angle = seededRandom() * Math.PI * 2
+      const r = 4.2 + seededRandom() * 4.8
       entries.push({
         pos: [Math.cos(angle) * r, 0.015, Math.sin(angle) * r],
-        rot: [Math.random() * 0.18, Math.random() * Math.PI * 2, (Math.random() - 0.5) * 0.3],
-        scale: [0.48 + Math.random() * 0.2, 0.055, 0.34 + Math.random() * 0.1],
-        color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
-        open: Math.random() > 0.65,
+        rot: [seededRandom() * 0.18, seededRandom() * Math.PI * 2, (seededRandom() - 0.5) * 0.3],
+        scale: [0.48 + seededRandom() * 0.2, 0.055, 0.34 + seededRandom() * 0.1],
+        color: PALETTE[Math.floor(seededRandom() * PALETTE.length)],
+        open: seededRandom() > 0.65,
       })
     }
     return entries

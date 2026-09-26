@@ -1,8 +1,12 @@
-import { useRef, memo, useMemo } from 'react'
+import { useRef, memo, useMemo, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RosaBookModel } from '@/models/shared/RosaBookModel'
 import { BOOK_SHELF_SLOT } from '@/features/library/config/libraryLayout'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(86214)
 
 /**
  * Props for {@link LevitatingBook}.
@@ -68,17 +72,19 @@ export const LevitatingBook = memo(function LevitatingBook({ ritualProgress = 0,
   const ringRefs = useRef<Array<THREE.Mesh | null>>([])
   /** Damped values, tracked outside React state so the smoothing runs every frame without re-rendering. */
   const current = useRef({ appear, shelved, ritual: 0, yaw: 0 })
+  /** Whether the book has fully faded out and its content is unmounted, set from the frame loop once the fade completes. */
+  const [faded, setFaded] = useState(appear <= 0.001)
 
   const aura = useMemo(() => {
     const positions = new Float32Array(AURA_PARTICLES * 3)
     const speeds = new Float32Array(AURA_PARTICLES)
     for (let i = 0; i < AURA_PARTICLES; i++) {
-      const r = 0.45 + Math.random() * 0.9
-      const theta = Math.random() * Math.PI * 2
+      const r = 0.45 + seededRandom() * 0.9
+      const theta = seededRandom() * Math.PI * 2
       positions[i * 3] = Math.cos(theta) * r
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 1.1
+      positions[i * 3 + 1] = (seededRandom() - 0.5) * 1.1
       positions[i * 3 + 2] = Math.sin(theta) * r
-      speeds[i] = 0.15 + Math.random() * 0.55
+      speeds[i] = 0.15 + seededRandom() * 0.55
     }
     return { positions, speeds }
   }, [])
@@ -95,6 +101,8 @@ export const LevitatingBook = memo(function LevitatingBook({ ritualProgress = 0,
     c.shelved = THREE.MathUtils.damp(c.shelved, shelved, 2.2, delta)
     c.ritual = THREE.MathUtils.damp(c.ritual, ritualProgress, 6, delta)
     const r = c.ritual
+    const fullyHidden = appear <= 0.001 && c.appear <= 0.001
+    if (fullyHidden !== faded) setFaded(fullyHidden)
 
     wrap.scale.setScalar(c.appear)
     wrap.position.copy(SHELF_OFFSET).multiplyScalar(c.shelved)
@@ -182,7 +190,7 @@ export const LevitatingBook = memo(function LevitatingBook({ ritualProgress = 0,
     }
   })
 
-  if (appear <= 0.001 && current.current.appear <= 0.001) return <group ref={wrapRef} />
+  if (faded && appear <= 0.001) return <group ref={wrapRef} />
 
   return (
     <group ref={wrapRef}>

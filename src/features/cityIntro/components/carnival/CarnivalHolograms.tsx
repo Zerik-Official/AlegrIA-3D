@@ -3,6 +3,10 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { beatAt, CARNIVAL_HOLOGRAMS, CARNIVAL_NEON, type CarnivalHologram } from '@/features/cityIntro/config/carnivalLayout'
 import { canvasTexture, neonText } from '@/features/cityIntro/components/carnival/neonCanvas'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(4416)
 
 /** Hologram panel size. */
 const PANEL: [number, number] = [4.4, 2.2]
@@ -94,8 +98,9 @@ function createHologramMaterial(map: THREE.Texture, tint: string): THREE.ShaderM
  */
 const Hologram = memo(function Hologram({ z, side, art }: CarnivalHologram) {
   const groupRef = useRef<THREE.Group>(null)
-  const phase = useMemo(() => Math.random() * 6, [])
-  const tint = useMemo(() => CARNIVAL_NEON[Math.floor(Math.random() * CARNIVAL_NEON.length)], [])
+  const panelRef = useRef<THREE.Mesh>(null)
+  const phase = useMemo(() => seededRandom() * 6, [])
+  const tint = useMemo(() => CARNIVAL_NEON[Math.floor(seededRandom() * CARNIVAL_NEON.length)], [])
   const material = useMemo(() => {
     const texture = canvasTexture(1024, 512, (c, w, h) => {
       c.clearRect(0, 0, w, h)
@@ -117,15 +122,19 @@ const Hologram = memo(function Hologram({ z, side, art }: CarnivalHologram) {
 
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
-    material.uniforms.t.value = t + phase
-    material.uniforms.pulse.value = beatAt(t).kick
+    const panel = panelRef.current
+    if (panel) {
+      const uniforms = (panel.material as THREE.ShaderMaterial).uniforms
+      uniforms.t.value = t + phase
+      uniforms.pulse.value = beatAt(t).kick
+    }
     if (groupRef.current) groupRef.current.position.y = HANG_Y + Math.sin(t * 0.8 + phase) * 0.06
   })
 
   const [w, h] = PANEL
   return (
     <group ref={groupRef} position={[side * OFFSET_X, HANG_Y, z]} rotation-y={-side * 0.75}>
-      <mesh material={material}>
+      <mesh ref={panelRef} material={material}>
         <planeGeometry args={PANEL} />
       </mesh>
       {[

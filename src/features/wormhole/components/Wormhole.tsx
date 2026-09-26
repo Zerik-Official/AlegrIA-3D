@@ -2,6 +2,10 @@ import { useRef, useMemo, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { wormholeConfig } from '@/shared/config/appConfig'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(15130)
 
 /** Where the effect sits unless told otherwise: over the pedestal's levitating book. */
 const DEFAULT_CENTER: [number, number, number] = [0, 1.65, 0]
@@ -55,9 +59,9 @@ export const Wormhole = memo(function Wormhole({ active, progress, center = DEFA
   const starPositions = useMemo(() => {
     const arr = new Float32Array(starCount * 3)
     for (let i = 0; i < starCount; i++) {
-      const r = 0.25 + Math.random() * 3.1
-      const theta = Math.random() * Math.PI * 2
-      const z = -Math.random() * 52
+      const r = 0.25 + seededRandom() * 3.1
+      const theta = seededRandom() * Math.PI * 2
+      const z = -seededRandom() * 52
       arr[i * 3] = Math.cos(theta) * r
       arr[i * 3 + 1] = Math.sin(theta) * r
       arr[i * 3 + 2] = z
@@ -67,7 +71,7 @@ export const Wormhole = memo(function Wormhole({ active, progress, center = DEFA
 
   const starSpeeds = useMemo(() => {
     const arr = new Float32Array(starCount)
-    for (let i = 0; i < starCount; i++) arr[i] = 0.18 + Math.random() * 0.55
+    for (let i = 0; i < starCount; i++) arr[i] = 0.18 + seededRandom() * 0.55
     return arr
   }, [starCount])
 

@@ -1,5 +1,9 @@
 import { memo, useMemo } from 'react'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(37089)
 
 /**
  * Props for {@link Bookshelf}.
@@ -71,17 +75,17 @@ export const Bookshelf = memo(function Bookshelf({
       const y = -height / 2 + 0.35 + r * (height / rows)
       let x = -width / 2 + 0.22
       while (x < width / 2 - 0.22) {
-        const w = 0.12 + Math.random() * 0.18
-        const h = 0.48 + Math.random() * 0.18
+        const w = 0.12 + seededRandom() * 0.18
+        const h = 0.48 + seededRandom() * 0.18
         if (x + w > width / 2 - 0.1) break
-        if (restored || Math.random() > 0.15) {
+        if (restored || seededRandom() > 0.15) {
           items.push({
-            color: palette[Math.floor(Math.random() * palette.length)],
+            color: palette[Math.floor(seededRandom() * palette.length)],
             w,
             h,
             x: x + w / 2,
             y: y + h / 2 - 0.12,
-            z: (Math.random() - 0.5) * 0.06,
+            z: (seededRandom() - 0.5) * 0.06,
           })
         }
         x += w + 0.015

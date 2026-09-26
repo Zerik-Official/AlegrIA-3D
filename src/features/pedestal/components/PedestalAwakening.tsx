@@ -1,6 +1,10 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(43415)
 
 /**
  * Props for {@link PedestalAwakening}.
@@ -42,8 +46,8 @@ export const PedestalAwakening = memo(function PedestalAwakening({ active }: Ped
     const pos = new Float32Array(MOTE_COUNT * 3)
     const ph = new Float32Array(MOTE_COUNT)
     for (let i = 0; i < MOTE_COUNT; i++) {
-      ph[i] = Math.random()
-      pos[i * 3 + 1] = Math.random() * COLUMN_TOP
+      ph[i] = seededRandom()
+      pos[i * 3 + 1] = seededRandom() * COLUMN_TOP
     }
     return { positions: pos, phases: ph }
   }, [])

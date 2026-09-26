@@ -9,6 +9,10 @@ import { memo, useMemo } from 'react'
 import * as THREE from 'three'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { SHELF_DEPTH, SHELF_HEIGHT, TABLE_SIZE, TABLE_TOP_Y } from '@/features/library/config/libraryLayout'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(90164)
 
 /**
  * Generates (once per label) a placard texture — grimy parchment with the
@@ -32,10 +36,10 @@ function useSectionSignTexture(label: string): THREE.Texture {
 
     ctx.fillStyle = 'rgba(40,30,18,0.16)'
     for (let i = 0; i < 26; i++) {
-      const x = Math.random() * w
-      const y = Math.random() * h
+      const x = seededRandom() * w
+      const y = seededRandom() * h
       ctx.beginPath()
-      ctx.ellipse(x, y, 6 + Math.random() * 26, 4 + Math.random() * 14, Math.random() * Math.PI, 0, Math.PI * 2)
+      ctx.ellipse(x, y, 6 + seededRandom() * 26, 4 + seededRandom() * 14, seededRandom() * Math.PI, 0, Math.PI * 2)
       ctx.fill()
     }
 

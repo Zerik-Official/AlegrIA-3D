@@ -3,6 +3,13 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(30316)
+
+/** Z rotation of each of the three crack strips on a damaged panel. */
+const CRACK_ROTATIONS = [0.7, 2.3, 1.4]
 
 /**
  * Props for {@link ProceduralCyberWall}.
@@ -36,9 +43,9 @@ function ProceduralCyberWall({ position, size, rotationY = 0, missingIndex = 5 }
   const sparkPositions = useMemo(() => {
     const arr = new Float32Array(48 * 3)
     for (let i = 0; i < 48; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 1.8
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 1.2
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 0.35
+      arr[i * 3] = (seededRandom() - 0.5) * 1.8
+      arr[i * 3 + 1] = (seededRandom() - 0.5) * 1.2
+      arr[i * 3 + 2] = (seededRandom() - 0.5) * 0.35
     }
     return arr
   }, [])
@@ -122,7 +129,7 @@ function ProceduralCyberWall({ position, size, rotationY = 0, missingIndex = 5 }
             [0.28, -0.18, 0.06],
             [0.12, 0.22, 0.09],
           ].map((p, i) => (
-            <mesh key={i} position={p as [number, number, number]} rotation-z={Math.random() * Math.PI}>
+            <mesh key={i} position={p as [number, number, number]} rotation-z={CRACK_ROTATIONS[i]}>
               <boxGeometry args={[0.22, 0.015, 0.015]} />
               <meshStandardMaterial color="#2a3a48" roughness={0.68} metalness={0.42} />
             </mesh>

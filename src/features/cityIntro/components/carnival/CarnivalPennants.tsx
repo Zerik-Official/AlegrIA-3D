@@ -2,6 +2,10 @@ import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { beatAt, CARNIVAL_NEON, PENNANT_POLES, POLE_BLOCKED_EAST_Z } from '@/features/cityIntro/config/carnivalLayout'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(84852)
 
 /** One pennant on a string. */
 interface Pennant {
@@ -55,16 +59,16 @@ export const CarnivalPennants = memo(function CarnivalPennants() {
       poleSet.set(`${p.x.toFixed(2)}:${p.z.toFixed(2)}`, new THREE.Vector3(p.x, 0, p.z))
     }
     for (let z = fromZ; z > toZ; z -= spacing) {
-      const eastZ = z - (2 + Math.random() * 4)
+      const eastZ = z - (2 + seededRandom() * 4)
       if (!eastPoleFree(eastZ)) continue
       const a = new THREE.Vector3(-x, height, z)
       const b = new THREE.Vector3(x, height, eastZ)
       spans.push([a, b])
       addPole(a)
       addPole(b)
-      if (Math.random() < 0.5 && eastPoleFree(z + 1)) {
+      if (seededRandom() < 0.5 && eastPoleFree(z + 1)) {
         const c = new THREE.Vector3(x, height - 0.2, z + 1)
-        const d = new THREE.Vector3(-x, height - 0.35, z - (3 + Math.random() * 3))
+        const d = new THREE.Vector3(-x, height - 0.35, z - (3 + seededRandom() * 3))
         if (d.z > toZ) {
           spans.push([c, d])
           addPole(c)
@@ -77,7 +81,7 @@ export const CarnivalPennants = memo(function CarnivalPennants() {
     const lines: THREE.Line[] = []
     spans.forEach(([a, b], si) => {
       const mid = a.clone().lerp(b, 0.5)
-      mid.y -= SAG[0] + Math.random() * (SAG[1] - SAG[0])
+      mid.y -= SAG[0] + seededRandom() * (SAG[1] - SAG[0])
       const curve = new THREE.QuadraticBezierCurve3(a, mid, b)
       lines.push(new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(40)), CABLE_MATERIAL))
       const count = Math.floor(curve.getLength() / PENNANT_STEP)
@@ -89,7 +93,7 @@ export const CarnivalPennants = memo(function CarnivalPennants() {
           yaw: Math.atan2(tangent.x, tangent.z) - Math.PI / 2,
           color: new THREE.Color(CARNIVAL_NEON[(k + si) % 4]),
           phase: si * 0.9 + k * 0.25,
-          sway: Math.random() * 6,
+          sway: seededRandom() * 6,
         })
       }
     })

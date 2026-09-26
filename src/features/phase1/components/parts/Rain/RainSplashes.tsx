@@ -1,7 +1,11 @@
-import { memo, useEffect, useMemo, useRef, type MutableRefObject } from 'react'
+import { memo, useEffect, useRef, type MutableRefObject } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { getCollisionSolids } from '@/features/player/collision'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(66181)
 
 /**
  * Props for {@link RainSplashes}.
@@ -43,6 +47,22 @@ const scratch = {
   color: new THREE.Color(),
 }
 
+/** Per-ripple life cycle: each one's age and where it last landed. */
+interface SplashState {
+  ages: Float32Array
+  spots: Float32Array
+}
+
+/**
+ * @param count - Ripple count
+ * @returns Fresh state with staggered ages, so ripples don't all appear at once
+ */
+function createSplashState(count: number): SplashState {
+  const ages = new Float32Array(count)
+  for (let i = 0; i < count; i++) ages[i] = seededRandom() * LIFETIME
+  return { ages, spots: new Float32Array(count * 3) }
+}
+
 /**
  * Raindrops hitting the ground around the player: little rings that spring
  * open and fade, respawning at random spots (on raised sidewalks too) with
@@ -53,12 +73,7 @@ const scratch = {
  */
 export const RainSplashes = memo(function RainSplashes({ count, intensity }: RainSplashesProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null)
-  const state = useMemo(() => {
-    const ages = new Float32Array(count)
-    const spots = new Float32Array(count * 3)
-    for (let i = 0; i < count; i++) ages[i] = Math.random() * LIFETIME
-    return { ages, spots }
-  }, [count])
+  const stateRef = useRef<SplashState | null>(null)
 
   useEffect(() => {
     const mesh = meshRef.current
@@ -70,6 +85,8 @@ export const RainSplashes = memo(function RainSplashes({ count, intensity }: Rai
   useFrame(({ camera }, delta) => {
     const mesh = meshRef.current
     if (!mesh) return
+    if (!stateRef.current || stateRef.current.ages.length !== count) stateRef.current = createSplashState(count)
+    const state = stateRef.current
     const dt = Math.min(delta, 0.05)
     const alive = Math.floor(count * intensity.current)
     for (let i = 0; i < count; i++) {
