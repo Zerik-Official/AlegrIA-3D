@@ -107,7 +107,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setOnlyCurrentPhase((v) => !v)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${onlyCurrentPhase ? 'bg-gold text-[#1a1205]' : 'bg-white/10 text-parchment/70 hover:bg-white/15'}`}
+                className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${onlyCurrentPhase ? 'bg-gold text-[#1a1205]' : 'bg-white/10 text-parchment/70 hover:bg-white/15'}`}
               >
                 <FiFilter className="h-3 w-3" /> {onlyCurrentPhase ? `Solo ${currentScene ?? 'fase'}` : 'Todos'}
               </button>
@@ -128,7 +128,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
                   <button
                     key={key}
                     onClick={() => setSelectedKey(key)}
-                    className={`block w-full truncate rounded-md px-2 py-1.5 text-left text-[12px] ${
+                    className={`block w-full cursor-pointer truncate rounded-md px-2 py-1.5 text-left text-[12px] ${
                       effectiveSelectedKey === key ? 'bg-gold text-[#1a1205]' : 'text-parchment/75 hover:bg-white/10'
                     }`}
                   >
@@ -170,7 +170,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
               <button
                 onClick={handleQuickAdd}
                 disabled={!effectiveSelectedKey}
-                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1a1205] hover:bg-gold-bright disabled:opacity-40"
+                className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1a1205] hover:bg-gold-bright disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <FiPlus className="h-3.5 w-3.5" /> Añadir a escena
               </button>
