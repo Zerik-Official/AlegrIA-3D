@@ -3,9 +3,9 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ProceduralPortal } from '@/shared/components/ReusableModels'
 import { PortalOpening } from '@/shared/components/PortalOpening'
-import { getCollisionSolids } from '@/features/player/collision'
+import { getCollisionCircles, getCollisionSolids } from '@/features/player/collision'
 import { playerConfig } from '@/shared/config/appConfig'
-import type { Bounds } from '@/shared/types'
+import { getWalkAreas, isInsideWalkAreas } from '@/features/player/walkAreas'
 import type { PortalPlacement } from '@/app/hooks/useStoryBookFlow'
 
 /**
@@ -16,10 +16,6 @@ interface StoryPortalProps {
   active: boolean
   /** Reports where the portal was placed, so proximity can find it and the crossing cinematic can dive into it. */
   onPlaced: (placement: PortalPlacement) => void
-  /** Movement bounds of the current phase — the portal never opens outside them. */
-  bounds?: Bounds
-  /** Ground-level circles the player can't enter (e.g. Phase 2's landmark footprints). */
-  obstacles?: Array<{ x: number; z: number; radius: number }>
   /** Warm accent color for the ring. */
   accentColor?: string
   /** Cool glow color for the vortex. */
@@ -37,15 +33,17 @@ const PORTAL_CENTER_Y = 1.35
  * @param x - Candidate world X
  * @param z - Candidate world Z
  * @param floorY - Floor height the player stands on
- * @param obstacles - Extra blocking circles
  * @returns Whether a standing obstacle occupies `(x, z)`
  */
-function isBlocked(x: number, z: number, floorY: number, obstacles: StoryPortalProps['obstacles']): boolean {
+function isBlocked(x: number, z: number, floorY: number): boolean {
   for (const solid of getCollisionSolids()) {
     if (solid.maxY <= floorY + playerConfig.stepUpHeight || solid.minY > floorY + playerConfig.bodyHeight) continue
     if (x > solid.minX - PORTAL_CLEARANCE && x < solid.maxX + PORTAL_CLEARANCE && z > solid.minZ - PORTAL_CLEARANCE && z < solid.maxZ + PORTAL_CLEARANCE) return true
   }
-  if (obstacles) for (const o of obstacles) if (Math.hypot(x - o.x, z - o.z) < o.radius + PORTAL_CLEARANCE) return true
+  for (const circle of getCollisionCircles()) {
+    if (circle.maxY <= floorY + playerConfig.stepUpHeight || circle.minY > floorY + playerConfig.bodyHeight) continue
+    if (Math.hypot(x - circle.x, z - circle.z) < circle.radius + PORTAL_CLEARANCE) return true
+  }
   return false
 }
 
@@ -58,7 +56,7 @@ function isBlocked(x: number, z: number, floorY: number, obstacles: StoryPortalP
  * @param props - Activation, placement constraints and colors
  * @returns Portal group, or `null` until opened
  */
-export const StoryPortal = memo(function StoryPortal({ active, onPlaced, bounds, obstacles, accentColor = '#ffcc33', glowColor = '#5ad8ff' }: StoryPortalProps) {
+export const StoryPortal = memo(function StoryPortal({ active, onPlaced, accentColor = '#ffcc33', glowColor = '#5ad8ff' }: StoryPortalProps) {
   const { camera } = useThree()
   const [placement, setPlacement] = useState<PortalPlacement | null>(null)
   useFrame(() => {
@@ -73,14 +71,12 @@ export const StoryPortal = memo(function StoryPortal({ active, onPlaced, bounds,
       forward.normalize()
       const floorY = camera.position.y - playerConfig.eyeHeight
       let chosen: [number, number] | null = null
+      const walkAreas = getWalkAreas()
       for (const d of CANDIDATE_DISTANCES) {
-        let x = camera.position.x + forward.x * d
-        let z = camera.position.z + forward.z * d
-        if (bounds) {
-          x = THREE.MathUtils.clamp(x, bounds.minX, bounds.maxX)
-          z = THREE.MathUtils.clamp(z, bounds.minZ, bounds.maxZ)
-        }
-        if (!isBlocked(x, z, floorY, obstacles)) {
+        const x = camera.position.x + forward.x * d
+        const z = camera.position.z + forward.z * d
+        if (walkAreas.length && !isInsideWalkAreas(walkAreas, x, z)) continue
+        if (!isBlocked(x, z, floorY)) {
           chosen = [x, z]
           break
         }
