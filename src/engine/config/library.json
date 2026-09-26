@@ -32,6 +32,7 @@
   { "id": "col-planter-02", "type": "collider", "position": [2.9, 0.5, -9.9], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [0.8, 1, 0.8], "tag": "restored" } },
   { "id": "col-planter-03", "type": "collider", "position": [-2.9, 0.5, 10.1], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [0.8, 1, 0.8], "tag": "restored" } },
   { "id": "col-planter-04", "type": "collider", "position": [2.9, 0.5, 10.1], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [0.8, 1, 0.8], "tag": "restored" } },
+  { "id": "col-page-table-00", "type": "collider", "position": [0, 0.46, 0], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.1, 0.92, 1.1], "tag": "restored" } },
   { "id": "col-page-table-01", "type": "collider", "position": [2.97, 0.46, 2.97], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.1, 0.92, 1.1], "tag": "restored" } },
   { "id": "col-page-table-02", "type": "collider", "position": [4.2, 0.46, 0], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.1, 0.92, 1.1], "tag": "restored" } },
   { "id": "col-page-table-03", "type": "collider", "position": [2.97, 0.46, -2.97], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.1, 0.92, 1.1], "tag": "restored" } },
