@@ -24,6 +24,14 @@ export interface EntityCatalogItem {
   scenes: SceneId[]
   /** Fields merged onto a fresh entity (besides the generated `id` and `type`, which come from this item). */
   defaultEntity: Omit<EditableEntity, 'id' | 'type'>
+  /**
+   * Where a fresh entity is spawned: `surface` (default) at what the editor's
+   * crosshair points at, `sky` at `defaultEntity.position`, for elements that
+   * live far overhead.
+   */
+  placement?: 'surface' | 'sky'
+  /** Whether a fresh entity's `variant` is the current scene id, for elements whose look is a per-scene preset. */
+  variantFromScene?: boolean
 }
 
 /**
@@ -168,12 +176,14 @@ export const entityCatalog: EntityCatalogItem[] = [
     label: 'Luna',
     scenes: ['cityIntro'],
     defaultEntity: { position: [-20, 26, -60], rotationY: 0, scale: 1 },
+    placement: 'sky',
   },
   {
     type: 'planet',
     label: 'Planeta',
     scenes: ['cityIntro'],
     defaultEntity: { position: [45, 48, -100], rotationY: 0, scale: 4, variant: '#c9a877' },
+    placement: 'sky',
   },
   {
     type: 'library-facade',
@@ -846,6 +856,40 @@ export const entityCatalog: EntityCatalogItem[] = [
     label: 'Portal',
     scenes: ['phase1', 'phase2'],
     defaultEntity: { position: [0, 1.05, 0], rotationY: 0, scale: 1.5 },
+  },
+  {
+    type: 'rail-tunnel',
+    label: 'Túnel de tren',
+    scenes: ['phase1'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'sun',
+    label: 'Sol',
+    scenes: ['cityIntro', 'phase1', 'phase2'],
+    defaultEntity: { position: [18, 14, -12], rotationY: 0, scale: 1 },
+    placement: 'sky',
+    variantFromScene: true,
+  },
+  {
+    type: 'cloud',
+    label: 'Nube',
+    scenes: ['phase1', 'phase2'],
+    defaultEntity: { position: [0, 10, -18], rotationY: 0, scale: 1.6 },
+    placement: 'sky',
+    variantFromScene: true,
+  },
+  {
+    type: 'collider',
+    label: 'Colisión',
+    scenes: ['cityIntro', 'library', 'phase1', 'phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, collider: { shape: 'box', offset: [0, 1, 0], size: [2, 2, 2] } },
+  },
+  {
+    type: 'walk-area',
+    label: 'Zona caminable',
+    scenes: ['cityIntro', 'library', 'phase1', 'phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, areaSize: [10, 10] },
   },
   {
     type: 'generic',
