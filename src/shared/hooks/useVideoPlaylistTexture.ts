@@ -13,19 +13,17 @@ import * as THREE from 'three'
 
 /**
  * @param srcs - Ordered, resolved video URLs; empty/undefined plays nothing
- * @returns Live video texture, or `null` while there's nothing to play
+ * @param flipY - Texture `flipY`; `false` for screens UV-mapped the glTF way
+ * @returns Live video texture once the first video has loaded, or `null` while there's nothing to play
  */
-export function useVideoPlaylistTexture(srcs: string[] | undefined): THREE.VideoTexture | null {
-  const [texture, setTexture] = useState<THREE.VideoTexture | null>(null)
+export function useVideoPlaylistTexture(srcs: string[] | undefined, flipY = true): THREE.VideoTexture | null {
+  const [published, setPublished] = useState<{ key: string; texture: THREE.VideoTexture } | null>(null)
   /** Joined into the effect's dep key so a changed playlist (editor edit) restarts playback from the first entry. */
   const key = (srcs ?? []).join('|')
 
   useEffect(() => {
     const list = key ? key.split('|') : []
-    if (list.length === 0) {
-      setTexture(null)
-      return
-    }
+    if (list.length === 0) return
 
     const video = document.createElement('video')
     video.muted = true
@@ -47,19 +45,21 @@ export function useVideoPlaylistTexture(srcs: string[] | undefined): THREE.Video
 
     const videoTexture = new THREE.VideoTexture(video)
     videoTexture.colorSpace = THREE.SRGBColorSpace
-    setTexture(videoTexture)
+    videoTexture.flipY = flipY
+    const publish = (): void => setPublished({ key, texture: videoTexture })
+    video.addEventListener('loadeddata', publish, { once: true })
 
     return () => {
       video.removeEventListener('ended', handleEnded)
+      video.removeEventListener('loadeddata', publish)
       video.pause()
       video.removeAttribute('src')
       video.load()
       videoTexture.dispose()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` is the flattened, comparable form of `srcs`
-  }, [key])
+  }, [key, flipY])
 
-  return texture
+  return key && published?.key === key ? published.texture : null
 }
 
 /**

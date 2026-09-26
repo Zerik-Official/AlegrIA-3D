@@ -21,16 +21,14 @@ export interface SpatialVideo {
  * the component unmounts.
  *
  * @param src - Video URL, or `undefined` for none
- * @returns The video and its texture once created, else `null`
+ * @param flipY - Texture `flipY`; `false` for screens UV-mapped the glTF way
+ * @returns The video and its texture once its first frame has loaded, else `null`
  */
-export function useSpatialVideoTexture(src: string | undefined): SpatialVideo | null {
-  const [state, setState] = useState<SpatialVideo | null>(null)
+export function useSpatialVideoTexture(src: string | undefined, flipY = true): SpatialVideo | null {
+  const [state, setState] = useState<(SpatialVideo & { src: string }) | null>(null)
 
   useEffect(() => {
-    if (!src) {
-      setState(null)
-      return
-    }
+    if (!src) return
     const video = document.createElement('video')
     video.src = src
     video.loop = true
@@ -43,15 +41,18 @@ export function useSpatialVideoTexture(src: string | undefined): SpatialVideo | 
 
     const texture = new THREE.VideoTexture(video)
     texture.colorSpace = THREE.SRGBColorSpace
-    setState({ texture, video })
+    texture.flipY = flipY
+    const publish = (): void => setState({ src, texture, video })
+    video.addEventListener('loadeddata', publish, { once: true })
 
     return () => {
+      video.removeEventListener('loadeddata', publish)
       video.pause()
       video.removeAttribute('src')
       video.load()
       texture.dispose()
     }
-  }, [src])
+  }, [src, flipY])
 
-  return state
+  return state && state.src === src ? state : null
 }

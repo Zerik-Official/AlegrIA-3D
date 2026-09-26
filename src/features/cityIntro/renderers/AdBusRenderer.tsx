@@ -27,12 +27,11 @@ const SCREEN_MATERIAL = 'PantallaVideo'
  */
 function AdBus({ videoSrc }: { videoSrc: string | undefined }) {
   const { scene } = useGLTF(modelRegistry['cityIntro/ad-bus'].path) as unknown as { scene: THREE.Group }
-  const spatial = useSpatialVideoTexture(videoSrc)
+  const spatial = useSpatialVideoTexture(videoSrc, false)
   const groupRef = useRef<THREE.Group>(null)
 
   const screenMaterial = useMemo(() => {
     if (!spatial) return null
-    spatial.texture.flipY = false
     return new THREE.MeshBasicMaterial({ map: spatial.texture, toneMapped: false })
   }, [spatial])
 
@@ -60,8 +59,6 @@ function AdBus({ videoSrc }: { videoSrc: string | undefined }) {
   useFrame(() => {
     const video = spatial?.video
     if (!video) return
-    video.muted = true
-    video.volume = 0
     if (video.paused && video.readyState >= 2) video.play().catch(() => {})
   })
 

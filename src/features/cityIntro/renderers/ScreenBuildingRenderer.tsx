@@ -60,9 +60,6 @@ export function ScreenBuildingRenderer({ entity }: EntityRendererProps) {
     () => resolvePlaylist(resolvePublicSrc(entity.videoSrc), resolvePublicSrcs(entity.videoSrcs)),
     [entity.videoSrc, entity.videoSrcs]
   )
-  const texture = useVideoPlaylistTexture(playlist)
-  useEffect(() => {
-    if (texture) texture.flipY = false
-  }, [texture])
+  const texture = useVideoPlaylistTexture(playlist, false)
   return <Building texture={texture} />
 }
