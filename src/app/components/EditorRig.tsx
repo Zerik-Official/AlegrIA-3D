@@ -25,26 +25,25 @@ interface EditorRigProps {
 
 /**
  * @param props - Experience state
- * @returns Editor tools, or `null` while the editor is closed
+ * @returns Editor tools; mounted only while the editor is open (see `App`)
  */
 export const EditorRig = memo(function EditorRig({ experience }: EditorRigProps) {
-  const { editor, editors } = experience
-  if (!editor.isEditorEnabled) return null
-  const current = editors.currentEditor
+  const { orbitControlsRef, spawnResolverRef, editorTarget, setEditorTarget } = experience.editor
+  const current = experience.editors.currentEditor
 
   return (
     <>
-      <OrbitControls ref={editor.orbitControlsRef} enableDamping={false} />
-      <EditorFlyControls controlsRef={editor.orbitControlsRef} enabled />
+      <OrbitControls ref={orbitControlsRef} enableDamping={false} />
+      <EditorFlyControls controlsRef={orbitControlsRef} enabled />
       <EditorSelectionPicker enabled entities={current.entities} onSelect={current.setSelectedId} />
-      <EditorTargetFinder selectedId={current.selectedId} onFound={editor.setEditorTarget} />
-      <EditorSpawnProbe entities={current.entities} resolverRef={editor.spawnResolverRef} />
+      <EditorTargetFinder selectedId={current.selectedId} onFound={setEditorTarget} />
+      <EditorSpawnProbe entities={current.entities} resolverRef={spawnResolverRef} />
       <CollisionDebugLayer />
       <EditorGizmo
-        target={editor.editorTarget}
+        target={editorTarget}
         mode={current.mode}
-        enabled={!!editor.editorTarget}
-        orbitControlsRef={editor.orbitControlsRef}
+        enabled={!!editorTarget}
+        orbitControlsRef={orbitControlsRef}
         onChange={(pos, rotY, scale) => {
           if (!current.selectedId) return
           current.updateEntity(current.selectedId, { position: pos, rotationY: rotY, scale })

@@ -1,11 +1,16 @@
+import { lazy, Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { appConfig } from '@/shared/config/appConfig'
 import { useExperience } from '@/app/hooks/useExperience'
 import { SceneStage } from '@/app/components/SceneStage'
 import { PlayerRig } from '@/app/components/PlayerRig'
-import { EditorRig } from '@/app/components/EditorRig'
 import { GameHUD } from '@/app/components/hud/GameHUD'
+import { PerfProbe } from '@/features/debug/components/PerfProbe'
+import { isDebugEnabled } from '@/shared/config/debug'
+
+/** The editor's in-canvas tools, split into their own chunk so they are only downloaded once the editor is opened. */
+const EditorRig = lazy(() => import('@/app/components/EditorRig').then((m) => ({ default: m.EditorRig })))
 
 /**
  * Root of the experience. All state — the phase machine, narration and the
@@ -31,7 +36,12 @@ export default function App() {
       >
         <SceneStage experience={experience} />
         <PlayerRig experience={experience} />
-        <EditorRig experience={experience} />
+        {experience.editor.isEditorEnabled && (
+          <Suspense fallback={null}>
+            <EditorRig experience={experience} />
+          </Suspense>
+        )}
+        {isDebugEnabled && <PerfProbe />}
       </Canvas>
       <GameHUD experience={experience} />
     </div>

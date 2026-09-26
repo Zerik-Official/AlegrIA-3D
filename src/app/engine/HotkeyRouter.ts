@@ -27,7 +27,7 @@ export interface HotkeyContext {
   isCityIntro: boolean
   /** Whether the finale's scripted walk has handed over to free roaming. */
   cityFreeRoam: boolean
-  /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
+  /** Whether `phase` currently resolves to Phase 1. */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
   isPhase2: boolean
@@ -79,6 +79,8 @@ export interface HotkeyContext {
   closePhoto: () => void
   /** Skips the Libro de Rosa's ~1-minute wait straight to summoning the portal (`T`), in the open phases. */
   skipBookWait: () => void
+  /** Shows/hides the FPS and memory monitor (`Ñ`, debug builds only). */
+  togglePerfMonitor: () => void
 }
 
 /**
@@ -96,6 +98,11 @@ export class HotkeyRouter {
 
     if (key === 'q') {
       this.togglePointerLock(ctx)
+      return
+    }
+
+    if (key === 'ñ') {
+      if (isDebugEnabled) ctx.togglePerfMonitor()
       return
     }
 

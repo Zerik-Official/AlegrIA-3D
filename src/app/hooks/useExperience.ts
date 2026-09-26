@@ -15,6 +15,7 @@ import { useStoryBookFlow, type PortalPlacement, type StoryBookFlow } from '@/ap
 import { usePlayerProximity, type PlayerProximity } from '@/app/hooks/usePlayerProximity'
 import { usePicoAudio } from '@/app/hooks/usePicoAudio'
 import { useCongasAudio } from '@/app/hooks/useCongasAudio'
+import { togglePerfMonitor } from '@/features/debug/state/perfMonitor'
 import { useSceneEditors, type SceneEditors } from '@/app/hooks/useSceneEditors'
 import { useEditorMode, type EditorMode } from '@/app/hooks/useEditorMode'
 import { usePhotoSelection, type PhotoSelection } from '@/app/hooks/usePhotoSelection'
@@ -62,10 +63,10 @@ export interface Experience {
 
 /**
  * @param phase - Phase to test
- * @returns Whether it is one of the open phases (Phase 1, its `museum` alias, or Phase 2)
+ * @returns Whether it is one of the open phases (Phase 1 or Phase 2)
  */
 function isOpenPhase(phase: GamePhase): boolean {
-  return phase === 'phase1' || phase === 'museum' || phase === 'phase2'
+  return phase === 'phase1' || phase === 'phase2'
 }
 
 /**
@@ -98,7 +99,7 @@ export function useExperience(): Experience {
   const library = useLibraryDirector(phaseFlow, narration)
   const city = useCityFinale(phaseFlow.isCityIntro, editor.isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities, narration)
   const bookPages = useBookPages(phaseFlow.libraryRestored)
-  const raining = usePhase1Rain(scenePhase === 'phase1' || scenePhase === 'museum', narration)
+  const raining = usePhase1Rain(scenePhase === 'phase1', narration)
 
   const storyBookVisible = inOpenPhase && !phaseFlow.introOverlayOpen && !photo.selectedPhoto && !editor.isEditorEnabled
   const portalFocus = scenePhase === 'exploring' ? LIBRARY_PORTAL : isOpenPhase(scenePhase) ? storyBook.portal : null
@@ -140,6 +141,7 @@ export function useExperience(): Experience {
     hasOpenBookPage: !!bookPages.openPage,
     openBookPage: bookPages.openFocusedPage,
     closeBookPage: bookPages.closePage,
+    togglePerfMonitor,
   }
   useHotkeys(hotkeyContext)
 
