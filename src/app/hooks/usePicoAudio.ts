@@ -24,20 +24,25 @@ const FAR_RADIUS = 20
 const MAX_VOLUME = 0.32
 
 /**
+ * @returns The hook's audio element, or `null` where `Audio` is unavailable
+ */
+function createAudioElement(): HTMLAudioElement | null {
+  if (typeof Audio === 'undefined') return null
+  const el = new Audio(PICO_SRC)
+  el.loop = true
+  el.volume = 0
+  return el
+}
+
+/**
  * @param active - Whether the picó should be audible at all (Phase 2 only)
  * @param distance - Player's distance to the picó, in world units (`Infinity` when `active` is `false`)
  */
 export function usePicoAudio(active: boolean, distance: number): void {
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  if (audioRef.current === null && typeof Audio !== 'undefined') {
-    const el = new Audio(PICO_SRC)
-    el.loop = true
-    el.volume = 0
-    audioRef.current = el
-  }
 
   useEffect(() => {
-    const el = audioRef.current
+    const el = (audioRef.current ??= createAudioElement())
     if (!el) return
     if (active) {
       if (el.paused) el.play().catch(() => {})
@@ -47,7 +52,7 @@ export function usePicoAudio(active: boolean, distance: number): void {
   }, [active])
 
   useEffect(() => {
-    const el = audioRef.current
+    const el = (audioRef.current ??= createAudioElement())
     if (!el || !active) return
     const falloff = 1 - THREE.MathUtils.smoothstep(distance, NEAR_RADIUS, FAR_RADIUS)
     el.volume = THREE.MathUtils.clamp(falloff, 0, 1) * MAX_VOLUME

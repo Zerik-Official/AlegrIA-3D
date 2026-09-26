@@ -14,19 +14,24 @@ const FADE_STEP_MS = 50
 const FADE_OUT_MS = 1800
 
 /**
+ * @returns The hook's audio element, or `null` where `Audio` is unavailable
+ */
+function createAudioElement(): HTMLAudioElement | null {
+  if (typeof Audio === 'undefined') return null
+  const el = new Audio(ambienceTracks.rain)
+  el.loop = true
+  el.volume = 0
+  return el
+}
+
+/**
  * @param active - Whether it's raining
  */
 export function useRainAudio(active: boolean): void {
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  if (audioRef.current === null && typeof Audio !== 'undefined') {
-    const el = new Audio(ambienceTracks.rain)
-    el.loop = true
-    el.volume = 0
-    audioRef.current = el
-  }
 
   useEffect(() => {
-    const el = audioRef.current
+    const el = (audioRef.current ??= createAudioElement())
     if (!el) return
     const target = active ? appConfig.rain.volume : 0
     const durationMs = active ? appConfig.rain.buildUpSec * 1000 : FADE_OUT_MS
