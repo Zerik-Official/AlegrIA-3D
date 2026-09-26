@@ -34,8 +34,6 @@ const RING_ANGLES_DEG = [45, 90, 135, 225, 270, 315]
 export const PAGE_TABLE_TOP_Y = 0.92
 /** Height the pages float at, around eye level. */
 export const PAGE_FLOAT_Y = 1.72
-/** Side of the square collider around each round table. */
-export const PAGE_TABLE_FOOTPRINT = 1.1
 
 /** The book at the center, then the six pages in reading order around the ring. */
 export const BOOK_PAGES: BookPage[] = [

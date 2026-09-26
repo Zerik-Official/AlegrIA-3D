@@ -115,9 +115,6 @@ export const RESTORED_PLANTERS: Array<[number, number]> = [
   [2.9, 10.1],
 ]
 
-/** Planter footprint (a square box collider around its round pot). */
-export const PLANTER_SIZE = 0.8
-
 /** Table top surface height, and the footprint its collider covers. */
 export const TABLE_TOP_Y = 0.78
 export const TABLE_SIZE: [number, number] = [2.4, 1.15]
