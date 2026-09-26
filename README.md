@@ -10,67 +10,20 @@
   <img src="https://img.shields.io/badge/Three.js-111111?style=for-the-badge&logo=threedotjs">
   <img src="https://img.shields.io/badge/React_Three_Fiber-111111?style=for-the-badge&logo=threedotjs">
   <img src="https://img.shields.io/badge/Drei-111111?style=for-the-badge&logo=threedotjs">
-  <img src="https://img.shields.io/badge/Oxlint-111111?style=for-the-badge&logo=oxc">
+  <img src="https://img.shields.io/badge/License-MIT-111111?style=for-the-badge">
 </p>
 
 <p align="center">
   <img src=".github/images/preview.png" alt="AlegrIA 3D Preview"/>
 </p>
 
-AlegrIA 3D is an immersive 3D web experience set inside a time library. You spawn in an abandoned library, explore in first person with **WASD + mouse look**, approach the levitating book on the central pedestal and cross a **No Man's Sky-inspired hyperspace vortex** to awaken inside the **Museum of Time**, a marble hall with columns, paintings and explorable display cases.
-
----
-
-## Features
-
-- **Abandoned library** with procedural bookshelves, point-light torches, parquet floor and vaulted beams; scattered books tell the story of abandonment without physics.
-- **Central pedestal** with animated golden inlay rings and point light; the book levitates with sinusoidal bobbing, rotation and floating runes.
-- **Levitating book** with particle aura, pulsating glow volume, half-open cover with golden sigil and emissive light that illuminates the room.
-- **NMS vortex** with 46 toroidal rings in a gold→cyan→purple gradient, 520 streaking stars at `progress*3.5`, core flash, additive tunnel cylinder and chromatic rim; camera FOV `74→112` with random shake.
-- **Museum of Time** with marble floor, emissive skylight, beams, light walls, 6 columns, 6 paintings with random hue and golden frames, and 5 self-lit display pedestals.
-- **First-person controls** with `PointerLockControls`, `WASD + Shift` to sprint, cylindrical pedestal collision and per-room bounds, and footstep synthesis via Web Audio API with no external files.
-- **Immersive HUD** with vignette, crosshair, top bar with controls legend, pulsating `E` prompt when near (`distance < 2.4m`), distance readout and radial overlay during the vortex.
-- **Phase machine** `idle → exploring → wormhole → museum` with `StartOverlay` and `PastOverlay`; museum re-entry keeps controls locked until the intro is dismissed and offers a button to return to the library.
-- **Decoupled Blender pipeline**: any procedural mesh can be swapped for a `.glb` under `public/models/` without touching scene code, with automatic fallback via `ModelLoader` and a central registry in `shared/config/models.ts`.
-- **GitHub Pages deployment** with `base: '/AlegrIA-3D/'` and a workflow that builds and publishes on every PR to `main`, with a `404.html` fallback for SPA routing.
-
----
-
-## Architecture
-
-Monorepo `Vite + React 18 + TypeScript 6 + Three.js 0.160` with feature-based architecture and centralized config. Frontend `Tailwind CSS 4 + @tailwindcss/vite` for the HUD (no vanilla CSS except theme vars), `@react-three/fiber 8.15 + @react-three/drei 9.88` for declarative 3D and `react-icons` for `Fi/Lu` icons.
-
-```
-src/
-├── app/App.tsx                 # phase machine + WormholeCamera + KeyListener
-├── features/
-│   ├── library/                # LibraryScene + Bookshelf + ScatteredBooks
-│   ├── pedestal/               # Pedestal + LevitatingBook (with ModelLoader)
-│   ├── museum/                 # MuseumScene (columns, paintings, pedestals)
-│   ├── wormhole/               # Wormhole (rings + stars)
-│   ├── player/                 # PlayerControls + useKeyboard + useFootsteps
-│   └── ui/                     # HUD, StartOverlay, PastOverlay (memo + JSDoc)
-├── models/
-│   ├── shared/ModelLoader.tsx  # generic useGLTF + HEAD check + fallback loader
-│   ├── library/                # re-exports ProceduralBookshelf/ScatteredBooks
-│   ├── pedestal/               # re-exports ProceduralPedestal/Book
-│   ├── museum/                 # re-exports ProceduralMuseumScene
-│   └── wormhole/               # re-exports ProceduralWormhole
-├── shared/
-│   ├── config/appConfig.ts     # centralized player, wormhole and render config
-│   ├── config/models.ts        # registry for /models/*.glb paths
-│   ├── types/index.ts          # GamePhase, Bounds, ModelRegistry (JSDoc)
-│   └── utils/perf.ts           # scratch vectors and easing
-└── index.css                   # @import tailwindcss + @theme vars
-```
-
-Phase state via `useState<GamePhase>` with interpolated progress through `easeCubicInOut` and `requestAnimationFrame`; book distance via `Math.hypot(pos.x, pos.z)`; rendering via `Canvas` (`shadows`, `dpr [1, 1.8]`, `ACESFilmicToneMapping`) and per-room switchable fog/background. No external store; all side effects (pointer lock, audio) live in dedicated hooks.
+An immersive first-person 3D experience through the history of Barrio Abajo, Barranquilla — from an abandoned library in 2050 to the riverside of 1857 and the Golden Age of the early 20th century, guided by El Libro de Rosa. Built with React Three Fiber.
 
 ---
 
 ## Requirements
 
-- Node 18+
+- Node.js 20.19+ (or 22.12+)
 - npm 9+
 
 ---
@@ -84,65 +37,97 @@ git clone https://github.com/Zerik-Official/AlegrIA-3D
 cd AlegrIA-3D
 ```
 
-### Dependencies
+Create your environment file — `VITE_DEBUG=True` enables the in-game editor:
+
+```bash
+cp .env.example .env        # Linux / macOS
+copy .env.example .env      # Windows
+```
+
+Install and run:
 
 ```bash
 npm install
+npm run dev
+```
+
+Available at `http://localhost:5173` (`npm run dev -- --host` to test on mobile).
+
+---
+
+## Controls
+
+| Input | Action |
+|---|---|
+| WASD / Shift | Move / sprint |
+| Mouse | Look around (click to lock) |
+| E | Interact |
+| ESC | Release pointer |
+
+---
+
+## Project Structure
+
+Feature-based architecture — the engine renders JSON-authored scenes, each folder owns one game domain:
+
+```
+src/
+├── app/           # Composition root: scene/player/editor rigs, HUD, phase & narration hooks
+├── components/    # Shared UI primitives
+├── engine/        # PhaseEngine — data-driven entity rendering, colliders & scene JSONs
+├── features/
+│   ├── library/     # The abandoned library and its restored counterpart (2050)
+│   ├── phase1/      # Barrio Abajo & the Río Magdalena waterfront (1857–1900)
+│   ├── phase2/      # Golden Age: carnival, baseball & trinitarias (1919–1950s)
+│   ├── cityIntro/   # "Futurismo Abajero" street finale (2050)
+│   ├── storyBook/   # El Libro de Rosa companion and the portal it summons
+│   ├── cinematics/  # Wormhole and portal-crossing sequences
+│   ├── player/      # First-person controls, collision world, walk areas
+│   └── editor/      # The F2 in-game editor (entities, colliders, models)
+├── models/        # ModelLoader with procedural fallback + shared 3D components
+└── shared/        # Config, hooks, utils and reusable components
+
+public/
+├── models/        # Blender .glb assets, swappable without touching code
+├── images/        # Book scans, logos and textures
+├── videos/        # Screen-building & ad-bus loops
+└── sounds/        # Narration and atmosphere audio
 ```
 
 ---
 
-## Running
+## In-Game Editor
 
-### Development (Vite) — recommended with `--host` to test on mobile
+Enabled with `VITE_DEBUG=True` and toggled with **F2**:
 
-```bash
-npm run dev
-# or with host
-npm run dev -- --host
-```
+- **Entity editing** — add, select (Alt + right-click), move, rotate and scale any scene entity with a transform gizmo
+- **Model browser** — preview and quick-add any registered `.glb` to the scene
+- **Colliders & walk areas** — author box/cylinder colliders and walkable areas with a live collision debug view
+- **Spawn placement** — new entities drop right where the crosshair points
+- **Story checkpoints** — jump straight to any point of the story (library visits, phases, finale)
+- **JSON export** — every scene serializes back to `engine/config/*.json`
 
-Available at `http://localhost:5173` and `http://<your-ip>:5173` for mobile.
+---
 
-### Production preview
+## 3D Models (Blender)
+
+Every procedural mesh can be swapped for a Blender asset without touching scene code:
+
+1. Export from Blender: `File > Export > glTF 2.0 (.glb)` with `Apply Modifiers` and `+Y Up`
+2. Drop it under `public/models/<scene>/` and reference it in `src/shared/config/models.ts`
+
+If a file is missing, `ModelLoader` falls back to the procedural mesh automatically.
+
+---
+
+## Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-### Controls
-
-- **WASD** — move, **Shift** — sprint, **Mouse** — look (click to lock)
-- **E / Click** when `distance < 2.4m` from the book — trigger vortex
-- **ESC** — unlock pointer
-
----
-
-## Production Build
-
-```bash
-npm run build
-```
-
-Outputs `dist/` with `base: '/AlegrIA-3D/'` ready for GitHub Pages. The workflow `.github/workflows/deploy.yml` builds on every PR to `main` (`pull_request` + `push` on `main`), copies `dist/index.html` to `dist/404.html` for SPA fallback and publishes with `actions/deploy-pages@v4`.
-
-You can verify the base path locally by inspecting `dist/index.html` — assets should appear as `/AlegrIA-3D/assets/...`.
-
----
-
-## 3D Models (Blender)
-
-Any mesh can be replaced without touching the scene:
-
-1. Export from Blender: `File > Export > glTF 2.0 (.glb)` with `Apply Modifiers` and `+Y Up`, origin at the object base.
-2. Place the `.glb` under `public/models/<domain>/` as defined in `src/shared/config/models.ts`:
-   - `library/bookshelf.glb`, `library/scattered-book.glb`
-   - `pedestal/pedestal.glb`, `pedestal/book.glb`
-   - `museum/pedestal-display.glb`, `museum/column.glb`, `museum/painting-frame.glb`
-3. No code changes — `ModelLoader` performs a `fetch HEAD` check and falls back to the procedural mesh if the file is missing.
-
-Folders with explanatory `README.md` are already included in `public/models/` and re-exports in `src/models/<domain>/`.
+Outputs `dist/` ready for GitHub Pages — `.github/workflows/deploy.yml` builds on every PR and publishes on every push to `main`. Lint with `npm run lint` (oxlint).
 
 ---
 
