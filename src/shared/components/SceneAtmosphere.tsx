@@ -2,6 +2,8 @@ import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { createPlanetTexture } from '@/shared/utils/textures'
+import { createSeededRandom, hashSeed } from '@/shared/utils/random'
+import { SunLensFlare } from '@/shared/components/SunLensFlare'
 
 /**
  * Props for {@link SceneSun}.
@@ -19,8 +21,12 @@ interface SceneSunProps {
   size?: number
   /** Whether the directional light casts shadows. */
   castShadow?: boolean
-  /** Paired hemisphere light (sky/ground/intensity). */
-  hemisphere?: { sky: string; ground: string; intensity: number }
+  /** Paired hemisphere light (sky/ground/intensity), or `null` for none. */
+  hemisphere?: { sky: string; ground: string; intensity: number } | null
+  /** Whether to draw the glowing disc; off where the sky shader already paints the sun. */
+  disc?: boolean
+  /** Lens flare tint; no flare when omitted. */
+  flareColor?: string
 }
 
 /**
@@ -39,6 +45,8 @@ export const SceneSun = memo(function SceneSun({
   size = 2.2,
   castShadow = true,
   hemisphere = { sky: '#ffecd0', ground: '#6b4a2a', intensity: 0.52 },
+  disc = true,
+  flareColor,
 }: SceneSunProps) {
   const discRef = useRef<THREE.Group>(null)
 
@@ -51,45 +59,44 @@ export const SceneSun = memo(function SceneSun({
   })
 
   return (
-    <group>
-      <group ref={discRef} position={position}>
-        <mesh>
-          <sphereGeometry args={[size, 24, 24]} />
-          <meshBasicMaterial color={color} />
-        </mesh>
-        <mesh>
-          <sphereGeometry args={[size * 1.5, 20, 20]} />
-          <meshBasicMaterial color={glowColor} transparent opacity={0.18} depthWrite={false} blending={THREE.AdditiveBlending} />
-        </mesh>
-        <mesh>
-          <sphereGeometry args={[size * 2.3, 18, 18]} />
-          <meshBasicMaterial color={glowColor} transparent opacity={0.09} depthWrite={false} blending={THREE.AdditiveBlending} />
-        </mesh>
-        <mesh>
-          <sphereGeometry args={[size * 3.4, 16, 16]} />
-          <meshBasicMaterial color={color} transparent opacity={0.04} depthWrite={false} blending={THREE.AdditiveBlending} />
-        </mesh>
-      </group>
+    <group userData={{ editorIgnore: true }}>
+      {disc && (
+        <group ref={discRef} position={position}>
+          <mesh>
+            <sphereGeometry args={[size, 24, 24]} />
+            <meshBasicMaterial color={color} />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[size * 1.5, 20, 20]} />
+            <meshBasicMaterial color={glowColor} transparent opacity={0.18} depthWrite={false} blending={THREE.AdditiveBlending} />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[size * 2.3, 18, 18]} />
+            <meshBasicMaterial color={glowColor} transparent opacity={0.09} depthWrite={false} blending={THREE.AdditiveBlending} />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[size * 3.4, 16, 16]} />
+            <meshBasicMaterial color={color} transparent opacity={0.04} depthWrite={false} blending={THREE.AdditiveBlending} />
+          </mesh>
+        </group>
+      )}
+      {flareColor && (
+        <group position={position}>
+          <SunLensFlare color={flareColor} clearance={disc ? size * 1.1 : 0} />
+        </group>
+      )}
       <directionalLight position={position} intensity={intensity} color={color} castShadow={castShadow} shadow-mapSize={[2048, 2048]} />
-      <hemisphereLight args={[hemisphere.sky, hemisphere.ground, hemisphere.intensity]} />
+      {hemisphere && <hemisphereLight args={[hemisphere.sky, hemisphere.ground, hemisphere.intensity]} />}
     </group>
   )
 })
 
 /**
- * Props for {@link SceneClouds}.
+ * Props for {@link SceneCloud}.
  */
-interface SceneCloudsProps {
-  /** Number of cloud clusters. */
-  count?: number
-  /** Spread of cluster X positions, centered on 0. */
-  spreadX?: number
-  /** [min, max] cluster Z position (usually negative — further from the player). */
-  rangeZ?: [number, number]
-  /** [min, max] cluster height. */
-  rangeY?: [number, number]
-  /** [min, max] cluster scale. */
-  rangeScale?: [number, number]
+interface SceneCloudProps {
+  /** Seed for the puff layout and drift, typically the entity id, so each cloud keeps its shape across renders. */
+  seed: string
   /** Top-puff color. */
   color?: string
   /** Underside-puff color, for a soft lit/shadowed look. */
@@ -103,80 +110,43 @@ interface CloudPuff {
   under: boolean
 }
 
-/** One cloud cluster's drift data. */
-interface CloudData {
-  x: number
-  y: number
-  z: number
-  scale: number
-  speed: number
-  puffs: CloudPuff[]
-}
-
 /**
- * Reusable drifting cumulus clouds built from clustered, flattened spheres —
- * puffier and more varied than a single sphere trio, with a tinted underside.
- * Drop into any scene; tune `color`/`underColor` for the scene's light.
+ * Reusable drifting cumulus cloud built from a cluster of flattened spheres
+ * with a tinted underside. It sways around its own origin, so it is placed
+ * and scaled by its parent (an entity group).
  *
- * @param props - Cloud field configuration
- * @returns Clouds group
+ * @param props - Cloud seed and colors
+ * @returns Cloud group
  */
-export const SceneClouds = memo(function SceneClouds({
-  count = 7,
-  spreadX = 34,
-  rangeZ = [-26, -8],
-  rangeY = [8.5, 12],
-  rangeScale = [1.1, 2.1],
-  color = '#ffffff',
-  underColor = '#e8d8c0',
-}: SceneCloudsProps) {
+export const SceneCloud = memo(function SceneCloud({ seed, color = '#ffffff', underColor = '#e8d8c0' }: SceneCloudProps) {
   const groupRef = useRef<THREE.Group>(null)
-  const [minZ, maxZ] = rangeZ
-  const [minY, maxY] = rangeY
-  const [minScale, maxScale] = rangeScale
 
-  const clouds = useMemo<CloudData[]>(
-    () =>
-      Array.from({ length: count }).map(() => {
-        const puffCount = 5 + Math.floor(Math.random() * 3)
-        return {
-          x: (Math.random() - 0.5) * spreadX,
-          z: minZ + Math.random() * (maxZ - minZ),
-          y: minY + Math.random() * (maxY - minY),
-          scale: minScale + Math.random() * (maxScale - minScale),
-          speed: 0.05 + Math.random() * 0.05,
-          puffs: Array.from({ length: puffCount }).map((_, j) => ({
-            position: [(Math.random() - 0.5) * 2.3, (Math.random() - 0.35) * 0.5, (Math.random() - 0.5) * 1.1],
-            radius: 0.55 + Math.random() * 0.55,
-            under: j % 3 === 0,
-          })),
-        }
-      }),
-    [count, spreadX, minZ, maxZ, minY, maxY, minScale, maxScale]
-  )
+  const cloud = useMemo(() => {
+    const random = createSeededRandom(hashSeed(seed))
+    const puffCount = 5 + Math.floor(random() * 3)
+    const puffs: CloudPuff[] = Array.from({ length: puffCount }).map((_, j) => ({
+      position: [(random() - 0.5) * 2.3, (random() - 0.35) * 0.5, (random() - 0.5) * 1.1],
+      radius: 0.55 + random() * 0.55,
+      under: j % 3 === 0,
+    }))
+    return { puffs, speed: 0.05 + random() * 0.05, phase: random() * Math.PI * 2 }
+  }, [seed])
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return
     const t = clock.elapsedTime
-    groupRef.current.children.forEach((cluster, i) => {
-      const data = clouds[i]
-      cluster.position.x = data.x + Math.sin(t * data.speed + i) * 1.4
-      cluster.position.y = data.y + Math.sin(t * 0.1 + i) * 0.2
-      cluster.rotation.y = Math.sin(t * 0.03 + i) * 0.08
-    })
+    groupRef.current.position.x = Math.sin(t * cloud.speed + cloud.phase) * 1.4
+    groupRef.current.position.y = Math.sin(t * 0.1 + cloud.phase) * 0.2
+    groupRef.current.rotation.y = Math.sin(t * 0.03 + cloud.phase) * 0.08
   })
 
   return (
     <group ref={groupRef}>
-      {clouds.map((cluster, i) => (
-        <group key={i} position={[cluster.x, cluster.y, cluster.z]} scale={cluster.scale}>
-          {cluster.puffs.map((puff, j) => (
-            <mesh key={j} position={puff.position} scale={[1, 0.72, 1]}>
-              <sphereGeometry args={[puff.radius, 10, 10]} />
-              <meshStandardMaterial color={puff.under ? underColor : color} transparent opacity={puff.under ? 0.26 : 0.34} roughness={1} />
-            </mesh>
-          ))}
-        </group>
+      {cloud.puffs.map((puff, j) => (
+        <mesh key={j} position={puff.position} scale={[1, 0.72, 1]}>
+          <sphereGeometry args={[puff.radius, 10, 10]} />
+          <meshStandardMaterial color={puff.under ? underColor : color} transparent opacity={puff.under ? 0.26 : 0.34} roughness={1} />
+        </mesh>
       ))}
     </group>
   )
