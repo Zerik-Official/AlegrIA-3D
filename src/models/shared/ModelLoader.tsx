@@ -4,10 +4,11 @@
  * @module models/shared/ModelLoader
  */
 
-import { Suspense, useEffect, useRef, useState, useMemo } from 'react'
+import { Suspense, useContext, useEffect, useRef, useState, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { extractBoundsSolid, extractCollisionSolids, registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
+import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
 
 /**
  * Props for {@link ModelLoader}.
@@ -82,6 +83,7 @@ function GltfScene({
 }: Omit<ModelLoaderProps, 'fallback'>) {
   const { scene } = useGLTF(src) as unknown as { scene: THREE.Group }
   const rootRef = useRef<THREE.Object3D>(null)
+  const publishCollisions = useContext(CollisionPublishContext)
 
   const cloned = useMemo(() => {
     const c = scene.clone(true)
@@ -111,7 +113,7 @@ function GltfScene({
   }, [scale, normalizedScale])
 
   useEffect(() => {
-    if (!collisionId) return
+    if (!collisionId || !publishCollisions) return
     const root = rootRef.current
     if (!root) return
     const proxies = extractCollisionSolids(root, isCollisionMesh)
@@ -121,7 +123,7 @@ function GltfScene({
     }
     registerCollisionSolids(collisionId, proxies)
     return () => unregisterCollisionSolids(collisionId)
-  }, [collisionId, collisionFallback, cloned, finalScale, position, rotation])
+  }, [collisionId, collisionFallback, cloned, finalScale, position, rotation, publishCollisions])
 
   return <primitive ref={rootRef} object={cloned} scale={finalScale} position={position} rotation={rotation} />
 }
