@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 stylized-water/
+.claude/
