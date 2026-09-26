@@ -561,5 +561,19 @@
   {"id":"plaza-congas-personaje","type":"congas-personaje","position":[11.4,0,7.8],"rotationY":-2.17,"scale":1},
   {"id":"plaza-el-poderoso","type":"phase2/decorations/el-poderoso","position":[-3,0,0],"rotationY":1.57,"scale":1.5},
   {"id":"plaza-rey-momo","type":"rey-momo","position":[3,0,0],"rotationY":-1.57,"scale":1},
-  {"id":"portal-to-library","type":"portal","position":[0,1.05,-16],"rotationY":0,"scale":1.55}
+  {"id":"portal-to-library","type":"portal","position":[0,1.05,-16],"rotationY":0,"scale":1.55},
+
+  { "id": "sun", "type": "sun", "position": [8, 24, 4], "rotationY": 0, "scale": 1, "variant": "phase2" },
+  { "id": "cloud-phase2-01", "type": "cloud", "position": [-21.85, 23.18, -34.71], "rotationY": 0, "scale": 1.15, "variant": "phase2" },
+  { "id": "cloud-phase2-02", "type": "cloud", "position": [-9.4, 19.17, -22.91], "rotationY": 0, "scale": 1.83, "variant": "phase2" },
+  { "id": "cloud-phase2-03", "type": "cloud", "position": [-26, 18.65, -35.73], "rotationY": 0, "scale": 1.71, "variant": "phase2" },
+  { "id": "cloud-phase2-04", "type": "cloud", "position": [21.81, 21.55, -25.52], "rotationY": 0, "scale": 1.72, "variant": "phase2" },
+  { "id": "cloud-phase2-05", "type": "cloud", "position": [23.37, 21.97, -19.4], "rotationY": 0, "scale": 1.36, "variant": "phase2" },
+  { "id": "cloud-phase2-06", "type": "cloud", "position": [-20.85, 23.3, -30.26], "rotationY": 0, "scale": 1.92, "variant": "phase2" },
+  { "id": "cloud-phase2-07", "type": "cloud", "position": [-4.33, 22.57, -14.8], "rotationY": 0, "scale": 1.78, "variant": "phase2" },
+  { "id": "cloud-phase2-08", "type": "cloud", "position": [25.52, 22.56, -19.42], "rotationY": 0, "scale": 1.66, "variant": "phase2" },
+  { "id": "cloud-phase2-09", "type": "cloud", "position": [1.92, 20.16, -21.6], "rotationY": 0, "scale": 2.06, "variant": "phase2" },
+  { "id": "cloud-phase2-10", "type": "cloud", "position": [-5.6, 19.09, -23.47], "rotationY": 0, "scale": 2, "variant": "phase2" },
+
+  { "id": "walk-barrio", "type": "walk-area", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "areaSize": [72, 72] }
 ]
