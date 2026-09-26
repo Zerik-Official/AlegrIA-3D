@@ -1,9 +1,8 @@
-import { memo, useRef } from 'react'
+import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { PhaseRain } from '@/features/phase1/components/parts/Rain/PhaseRain'
 import { ProceduralTree, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
-import { Phase1Sun, Phase1Clouds } from '@/features/phase1/components/parts/Phase1Environment'
 import { GroundDetail } from '@/features/phase1/components/parts/GroundDetail'
 import { Phase1Backdrop } from '@/features/phase1/components/parts/Phase1Backdrop'
 import { MagdalenaRiver, MAGDALENA_CORRIDOR } from '@/features/phase1/components/parts/MagdalenaRiver'
@@ -117,15 +116,16 @@ interface Phase1SceneProps {
  * Phase 1 scene — Barrio Abajo & the Río Magdalena waterfront (1857–1900).
  * Fully JSON/engine-driven (see `engine/config/phase1.json`): houses, the
  * port/station/boardwalk set pieces, the rail kit and its animated train,
- * port decor and the sepia photos all come from `PhaseEngine`. Only the
- * ground, the river and unauthored atmosphere (backdrop, sun, flood) stay
- * hardcoded here, same as Phase 2's plaza floor and lighting.
+ * port decor, the sepia photos, the sun and the clouds all come from
+ * `PhaseEngine`. Only the ground, the river and unauthored atmosphere
+ * (backdrop, flood) stay hardcoded here, same as Phase 2's plaza floor and lighting.
  *
  * @param props - Scene props
  * @returns Phase 1 group
  */
 export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, editableEntities, raining = false }: Phase1SceneProps) {
   const entities = editableEntities ?? PLAY_ENTITIES
+  const railTunnels = useMemo(() => entities.filter((e) => e.type === 'rail-tunnel').map((e) => e.position), [entities])
 
   return (
     <group>
@@ -147,14 +147,12 @@ export const Phase1Scene = memo(function Phase1Scene({ highlightedPhotoId, edita
       <GroundDetail />
       <Phase1Backdrop />
 
-      <Phase1Sun />
-      <Phase1Clouds />
       <MagdalenaRiver />
 
-      <PhaseEngine entities={entities} context={{ highlightedPhotoId }} shadowDistance={SHADOW_DISTANCE} />
+      <PhaseEngine entities={entities} context={{ highlightedPhotoId, railTunnels }} shadowDistance={SHADOW_DISTANCE} />
 
       <ProceduralTree position={[-52, 0, -30]} scale={1.15} foliageColor="#2a5a1e" />
-      <ProceduralTree position={[-20, 0, -55]} scale={1.28} foliageColor="#1e4a14" trunkColor="#2e1f14" />
+      <ProceduralTree position={[-18, 0, -61]} scale={1.28} foliageColor="#1e4a14" trunkColor="#2e1f14" />
       <ProceduralTree position={[-42, 0, 32]} scale={0.92} foliageColor="#3a6a1e" />
       <ProceduralTree position={[-8, 0, 48]} scale={1.05} foliageColor="#2a5a1e" />
       <ProceduralTree position={[-62, 0, 8]} scale={0.98} foliageColor="#1e3a0f" />
