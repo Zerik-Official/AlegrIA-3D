@@ -30,9 +30,9 @@ interface EditorSelectionPickerProps {
 export function EditorSelectionPicker({ enabled, entities, onSelect }: EditorSelectionPickerProps) {
   const { camera, scene, gl } = useThree()
   const entityIds = useMemo(() => new Set(entities.map((e) => e.id)), [entities])
-  /** Ground tiles / big scene models sit under everything, so they are only picked when nothing else is hit. */
+  /** Ground tiles, big scene models and walkable areas sit under everything, so they are only picked when nothing else is hit. */
   const backdropIds = useMemo(
-    () => new Set(entities.filter((e) => e.type.includes('/floors/') || e.type.includes('/scenes/')).map((e) => e.id)),
+    () => new Set(entities.filter((e) => e.type.includes('/floors/') || e.type.includes('/scenes/') || e.type === 'walk-area').map((e) => e.id)),
     [entities],
   )
   const raycaster = useMemo(() => new THREE.Raycaster(), [])
