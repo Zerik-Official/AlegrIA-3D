@@ -7,6 +7,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { audioTracks, type AudioTrackKey } from '@/shared/config/audio'
+import { registerAudioSource } from '@/shared/audio/audioAnalyser'
 import type { GamePhase } from '@/shared/types'
 
 /** Playback volume for every track. */
@@ -47,6 +48,7 @@ function createAudioElement(): HTMLAudioElement | null {
   if (typeof Audio === 'undefined') return null
   const el = new Audio()
   el.volume = VOLUME
+  registerAudioSource('phase', el)
   return el
 }
 
