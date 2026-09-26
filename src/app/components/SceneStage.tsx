@@ -15,8 +15,6 @@ import { StoryPortal } from '@/features/storyBook/components/StoryPortal'
 import { PortalCrossing } from '@/features/cinematics/components/PortalCrossing'
 import { WormholeCamera } from '@/app/components/WormholeCamera'
 import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
-import { phase2Obstacles } from '@/features/phase2/config/phase2Collision'
-import { appConfig } from '@/shared/config/appConfig'
 import type { Experience } from '@/app/hooks/useExperience'
 
 /** Crossing progress at which the camera is through the portal and the scene left behind stops being drawn. */
@@ -75,7 +73,7 @@ export const SceneStage = memo(function SceneStage({ experience }: SceneStagePro
         <>
           <Phase1Scene highlightedPhotoId={proximity.highlightedPhotoId} editableEntities={editing ? editors.phase1Editor.entities : undefined} raining={raining} />
           {!editing && (
-            <StoryPortal active={storyBook.portalOpen} onPlaced={storyBook.handlePortalPlaced} bounds={appConfig.player.phase1Bounds} accentColor="#ff8a1a" glowColor="#5ad8ff" />
+            <StoryPortal active={storyBook.portalOpen} onPlaced={storyBook.handlePortalPlaced} accentColor="#ff8a1a" glowColor="#5ad8ff" />
           )}
         </>
       )}
@@ -86,8 +84,6 @@ export const SceneStage = memo(function SceneStage({ experience }: SceneStagePro
             <StoryPortal
               active={storyBook.portalOpen}
               onPlaced={storyBook.handlePortalPlaced}
-              bounds={appConfig.player.phase2Bounds}
-              obstacles={phase2Obstacles}
               accentColor="#ff8ad2"
               glowColor="#78b4ff"
             />
