@@ -94,7 +94,7 @@ export interface PhaseFlow {
   showPhase2Overlay: boolean
   /** Whether `phase` currently resolves to the city intro walk. */
   isCityIntro: boolean
-  /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
+  /** Whether `phase` currently resolves to Phase 1. */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
   isPhase2: boolean
@@ -168,12 +168,12 @@ export function usePhaseFlow(): PhaseFlow {
   const [libraryPortalUnlocked, setLibraryPortalUnlocked] = useState(false)
   /** Bumped to re-run the library's entry choreography when jumping into the library while already in it. */
   const [libraryEntry, setLibraryEntry] = useState(0)
-  const timeline = useRef(new WormholeTimeline()).current
+  const [timeline] = useState(() => new WormholeTimeline())
   /** Pending `setTimeout` ids from the book/portal choreography, cleared on unmount or when a new visit restarts it. */
   const bookTimers = useRef<number[]>([])
 
   const isCityIntro = phase === 'cityIntro'
-  const isPhase1 = phase === 'phase1' || phase === 'museum'
+  const isPhase1 = phase === 'phase1'
   const isPhase2 = phase === 'phase2'
   const isCredits = phase === 'credits'
   const scenePhase = phase === 'wormhole' ? wormholeSource : phase

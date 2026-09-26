@@ -3,7 +3,6 @@
  * @module shared/config/appConfig
  */
 
-import type { Bounds } from '@/shared/types'
 
 /**
  * Player movement configuration.
@@ -29,8 +28,6 @@ export const playerConfig = {
   bodyHeight: 1.85,
   /** How quickly the camera settles to a new floor height when stepping up or down. */
   floorDamping: 11,
-  /** Movement bounds inside the museum hall. */
-  museumBounds: { minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 } as Bounds,
 } as const
 
 /**
@@ -118,10 +115,6 @@ export const wormholeConfig = {
 export const renderConfig = {
   /** Default DPR range for adaptive performance. */
   dpr: [1, 1.8] as [number, number],
-  /** Shadow map sizes. */
-  shadows: { pedestal: 1024, museum: 2048 },
-  /** Antialias and tone mapping defaults. */
-  gl: { antialias: true },
 } as const
 
 /**
@@ -136,4 +129,3 @@ export const appConfig = {
   render: renderConfig,
 } as const
 
-export type AppConfig = typeof appConfig

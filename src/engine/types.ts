@@ -68,18 +68,6 @@ export interface EditableEntity {
 }
 
 /**
- * Phase configuration driven by JSON.
- */
-export interface PhaseConfig {
-  /** Phase identifier. */
-  id: string
-  /** Human readable name. */
-  name: string
-  /** Entities to render in this phase. */
-  entities: EditableEntity[]
-}
-
-/**
  * Render context passed to the engine.
  */
 export interface EngineRenderContext {

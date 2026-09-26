@@ -20,14 +20,9 @@ const base = import.meta.env.BASE_URL
 
 export const modelRegistry: ModelRegistry = {
   'library/bookshelf': { path: `${base}models/library/bookshelf.glb`, fallback: 'procedural-bookshelf' },
-  'library/scattered-book': { path: `${base}models/library/scattered-book.glb`, fallback: 'procedural-scattered-book' },
   'library/cyber-wall': { path: `${base}models/library/cyber-wall.glb`, fallback: 'procedural-cyber-wall' },
   'pedestal/base': { path: `${base}models/pedestal/pedestal.glb`, fallback: 'procedural-pedestal' },
   'pedestal/book': { path: `${base}models/shared/libro-historia-barrio-abajo.glb`, fallback: 'procedural-book' },
-  'museum/pedestal': { path: `${base}models/museum/pedestal-display.glb`, fallback: 'procedural-museum-pedestal' },
-  'museum/column': { path: `${base}models/museum/column.glb`, fallback: 'procedural-column' },
-  'museum/painting-frame': { path: `${base}models/museum/painting-frame.glb`, fallback: 'procedural-painting' },
-  'wormhole/portal': { path: `${base}models/wormhole/portal.glb`, fallback: 'procedural-portal' },
   'phase1/bahareque-house-short': { path: `${base}models/phase1/bahareque-house-short.glb`, fallback: 'procedural-bahareque-short' },
   'phase1/bahareque-house-medium': { path: `${base}models/phase1/bahareque-house-medium.glb`, fallback: 'procedural-bahareque-medium' },
   'phase1/bahareque-house-long': { path: `${base}models/phase1/bahareque-house-long.glb`, fallback: 'procedural-bahareque-long' },
@@ -51,7 +46,6 @@ export const modelRegistry: ModelRegistry = {
   'phase1/vehicles/tren-locomotora': { path: `${base}models/phase1/vehicles/tren-locomotora.glb`, fallback: 'procedural-train' },
   'phase1/vehicles/tren-coche': { path: `${base}models/phase1/vehicles/tren-coche.glb`, fallback: 'procedural-train' },
   'phase1/vehicles/tren-vagon': { path: `${base}models/phase1/vehicles/tren-vagon.glb`, fallback: 'procedural-train' },
-  'phase1/floors/rieles': { path: `${base}models/phase1/floors/rieles.glb`, fallback: 'procedural-floor' },
   'phase1/floors/rieles-riel-recta': { path: `${base}models/phase1/floors/rieles-riel-recta.glb`, fallback: 'procedural-floor' },
   'phase1/floors/rieles-riel-recta-media': { path: `${base}models/phase1/floors/rieles-riel-recta-media.glb`, fallback: 'procedural-floor' },
   'phase1/floors/rieles-riel-recta-gastada': { path: `${base}models/phase1/floors/rieles-riel-recta-gastada.glb`, fallback: 'procedural-floor' },

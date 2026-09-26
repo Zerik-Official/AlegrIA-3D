@@ -26,18 +26,3 @@ export const scratch = {
 export function easeCubicInOut(p: number): number {
   return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
 }
-
-/**
- * Clamps a vector inside axis-aligned bounds without allocating a new vector.
- * @param v - Vector mutated in place
- * @param bounds - Movement bounds
- * @returns The same vector reference
- */
-export function clampToBounds(
-  v: THREE.Vector3,
-  bounds: { minX: number; maxX: number; minZ: number; maxZ: number },
-): THREE.Vector3 {
-  v.x = THREE.MathUtils.clamp(v.x, bounds.minX, bounds.maxX)
-  v.z = THREE.MathUtils.clamp(v.z, bounds.minZ, bounds.maxZ)
-  return v
-}

@@ -26,8 +26,8 @@ import { ProceduralLibraryFacade } from '@/features/cityIntro/renderers/LibraryF
 
 /**
  * `modelRegistry` key → the same procedural component the game itself falls
- * back to for that key. Keys with no entry here (e.g. still-unbuilt museum
- * assets) fall through to the browser's generic placeholder.
+ * back to for that key. Keys with no entry here fall through to the
+ * browser's generic placeholder.
  */
 export const modelPreviews: Record<string, ComponentType> = {
   'library/bookshelf': () => <Bookshelf position={[0, 0, 0]} />,

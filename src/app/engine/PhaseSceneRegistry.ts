@@ -81,15 +81,14 @@ class PhaseSceneRegistry {
    * `idle` resolves to the library, which is mounted (and so preloaded)
    * behind the start screen since that's where the experience opens;
    * `wormhole` falls back to the library, but callers should resolve the
-   * crossing's source phase instead (see `usePhaseFlow`'s `scenePhase`);
-   * `museum` is the deprecated alias for `phase1`.
+   * crossing's source phase instead (see `usePhaseFlow`'s `scenePhase`).
    *
    * @param phase - Current game phase
    * @returns Scene id
    */
   resolveScene(phase: GamePhase): SceneId {
     if (phase === 'cityIntro') return 'cityIntro'
-    if (phase === 'phase1' || phase === 'museum') return 'phase1'
+    if (phase === 'phase1') return 'phase1'
     if (phase === 'phase2') return 'phase2'
     if (phase === 'credits') return 'credits'
     return 'library'
@@ -133,7 +132,7 @@ class PhaseSceneRegistry {
   checkpointFor(phase: GamePhase, libraryVisitCount: number): string {
     if (phase === 'idle') return 'start'
     if (phase === 'exploring') return libraryVisitCount >= 2 ? 'library-return' : 'library-first'
-    if (phase === 'phase1' || phase === 'museum') return 'phase1'
+    if (phase === 'phase1') return 'phase1'
     if (phase === 'phase2') return 'phase2'
     if (phase === 'credits') return 'credits'
     return 'future'
