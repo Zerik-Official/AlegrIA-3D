@@ -3,14 +3,10 @@
  * shelves have gone over in the collapsed row, where the pendant lamps hang
  * and which of them still flicker.
  *
- * Kept as data rather than inline JSX so the scene's geometry and the
- * colliders the player walks against ({@link libraryCollisionSolids}) are
- * derived from one source and can't drift apart.
+ * Kept as data rather than inline JSX. The colliders the player walks
+ * against live in `engine/config/library.json` as `collider` entities.
  * @module features/library/config/libraryLayout
  */
-
-import { createBoxSolid, type CollisionSolid } from '@/features/player/collision'
-import { BOOK_PAGES, PAGE_TABLE_FOOTPRINT, PAGE_TABLE_TOP_Y } from '@/features/library/config/bookPages'
 
 /** Shared shelf dimensions — `Bookshelf`'s own defaults for height/depth. */
 export const SHELF_HEIGHT = 3.2
@@ -168,83 +164,4 @@ export const LAMPS: LampPlacement[] = [
   { position: [0, 7.6], drop: 1.9, flicker: true },
   { position: [-8.8, 0], drop: 1.5, flicker: false },
   { position: [8.8, 0], drop: 1.6, flicker: false },
-]
-
-/**
- * @param shelf - Upright unit
- * @returns Collider matching the unit's footprint
- */
-function solidForShelf(shelf: ShelfPlacement): CollisionSolid {
-  return createBoxSolid({
-    x: shelf.position[0],
-    y: SHELF_HEIGHT / 2,
-    z: shelf.position[1],
-    sizeX: shelf.width,
-    sizeY: SHELF_HEIGHT,
-    sizeZ: SHELF_DEPTH,
-    rotationY: shelf.rotationY,
-  })
-}
-
-/**
- * A leaning unit's collider: its footprint stretches along the fall direction
- * and its top drops as it goes over, so the flat ones at the end of the row
- * end up low enough to walk onto rather than blocking the aisle.
- * @param shelf - Toppled unit
- * @returns Collider matching the unit's leaning pose
- */
-function solidForToppledShelf(shelf: ToppledShelfPlacement): CollisionSolid {
-  const sin = Math.sin(shelf.tilt)
-  const cos = Math.cos(shelf.tilt)
-  const alongFall = SHELF_HEIGHT * sin + SHELF_DEPTH * cos
-  const vertical = SHELF_HEIGHT * cos + SHELF_DEPTH * sin
-  const centerOffset = (SHELF_HEIGHT / 2) * sin
-  return createBoxSolid({
-    x: shelf.position[0] + Math.sin(shelf.rotationY) * centerOffset,
-    y: (SHELF_HEIGHT / 2) * cos + (SHELF_DEPTH / 2) * sin,
-    z: shelf.position[1] + Math.cos(shelf.rotationY) * centerOffset,
-    sizeX: shelf.width,
-    sizeY: vertical,
-    sizeZ: alongFall,
-    rotationY: shelf.rotationY,
-  })
-}
-
-/**
- * @param table - Reading table
- * @returns Collider matching the table's top footprint
- */
-function solidForTable(table: ReadingTablePlacement): CollisionSolid {
-  return createBoxSolid({
-    x: table.position[0],
-    y: TABLE_TOP_Y / 2,
-    z: table.position[1],
-    sizeX: TABLE_SIZE[0],
-    sizeY: TABLE_TOP_Y,
-    sizeZ: TABLE_SIZE[1],
-    rotationY: table.rotationY,
-  })
-}
-
-/**
- * Every collider the library publishes to the shared collision world, so the
- * shelving is solid, the aisles actually route the player, and the flattened
- * end of the toppled row can be walked over.
- */
-export const libraryCollisionSolids: CollisionSolid[] = [
-  ...WALL_SHELVES.map(solidForShelf),
-  ...AISLE_SHELVES.map(solidForShelf),
-  ...TOPPLED_SHELVES.map(solidForToppledShelf),
-  ...READING_TABLES.map(solidForTable),
-]
-
-/** The restored hall's colliders: the same shelving, no toppled row, the extra reading table, the planters and the page display tables. */
-export const restoredLibraryCollisionSolids: CollisionSolid[] = [
-  ...WALL_SHELVES.map(solidForShelf),
-  ...AISLE_SHELVES.map(solidForShelf),
-  ...RESTORED_READING_TABLES.map(solidForTable),
-  ...RESTORED_PLANTERS.map(([x, z]) => createBoxSolid({ x, y: 0.5, z, sizeX: PLANTER_SIZE, sizeY: 1, sizeZ: PLANTER_SIZE, rotationY: 0 })),
-  ...BOOK_PAGES.map(({ table: [x, z] }) =>
-    createBoxSolid({ x, y: PAGE_TABLE_TOP_Y / 2, z, sizeX: PAGE_TABLE_FOOTPRINT, sizeY: PAGE_TABLE_TOP_Y, sizeZ: PAGE_TABLE_FOOTPRINT, rotationY: 0 })
-  ),
 ]
