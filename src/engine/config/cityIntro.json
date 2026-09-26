@@ -31,11 +31,11 @@
   { "id": "farol-10", "type": "floating-farol", "position": [3.2, 0, -34], "rotationY": 0, "scale": 1, "variant": "#FFD08A" },
   { "id": "farol-11", "type": "floating-farol", "position": [-3.2, 0, -40], "rotationY": 0, "scale": 1, "variant": "#FF007F" },
   { "id": "farol-12", "type": "floating-farol", "position": [0, 0, -46], "rotationY": 0, "scale": 1, "variant": "#FFD08A" },
-  { "id": "anden-oeste-01", "type": "anden-bordillo", "position": [-4.85, 0, 20], "rotationY": 0, "scale": 1, "variant": "7" },
-  { "id": "anden-este-01", "type": "anden-bordillo", "position": [4.85, 0, 10.5], "rotationY": 3.1416, "scale": 1, "variant": "7" },
-  { "id": "anden-oeste-02", "type": "anden-bordillo", "position": [-4.85, 0, -9.5], "rotationY": 0, "scale": 1, "variant": "7" },
-  { "id": "anden-este-02", "type": "anden-bordillo", "position": [4.85, 0, -19], "rotationY": 3.1416, "scale": 1, "variant": "7" },
-  { "id": "anden-oeste-03", "type": "anden-bordillo", "position": [-4.85, 0, -29], "rotationY": 0, "scale": 1, "variant": "7" },
+  { "id": "anden-oeste-01", "type": "anden-bordillo", "position": [-4.85, 0, 20], "rotationY": 0, "scale": 1, "variant": "7", "collider": { "shape": "box", "offset": [0, 0.17, 0], "size": [2.1, 0.34, 7] } },
+  { "id": "anden-este-01", "type": "anden-bordillo", "position": [4.85, 0, 10.5], "rotationY": 3.1416, "scale": 1, "variant": "7", "collider": { "shape": "box", "offset": [0, 0.17, 0], "size": [2.1, 0.34, 7] } },
+  { "id": "anden-oeste-02", "type": "anden-bordillo", "position": [-4.85, 0, -9.5], "rotationY": 0, "scale": 1, "variant": "7", "collider": { "shape": "box", "offset": [0, 0.17, 0], "size": [2.1, 0.34, 7] } },
+  { "id": "anden-este-02", "type": "anden-bordillo", "position": [4.85, 0, -19], "rotationY": 3.1416, "scale": 1, "variant": "7", "collider": { "shape": "box", "offset": [0, 0.17, 0], "size": [2.1, 0.34, 7] } },
+  { "id": "anden-oeste-03", "type": "anden-bordillo", "position": [-4.85, 0, -29], "rotationY": 0, "scale": 1, "variant": "7", "collider": { "shape": "box", "offset": [0, 0.17, 0], "size": [2.1, 0.34, 7] } },
   { "id": "roble-oeste-01", "type": "roble-amarillo", "position": [-5.2, 0, 16], "rotationY": 0, "scale": 1, "variant": "#F2C14E" },
   { "id": "roble-oeste-02", "type": "roble-amarillo", "position": [-5.2, 0, 0], "rotationY": 0, "scale": 1, "variant": "#F2C14E" },
   { "id": "roble-oeste-03", "type": "roble-amarillo", "position": [-5.2, 0, -14], "rotationY": 0, "scale": 1, "variant": "#FFB703" },
@@ -81,5 +81,18 @@
   { "id": "planet-02", "type": "planet", "position": [-55, 40, -150], "rotationY": 0, "scale": 1.6, "variant": "#7aa8c9" },
   { "id": "planet-03", "type": "planet", "position": [20, 60, -190], "rotationY": 0, "scale": 2.6, "variant": "#c9a877" },
   { "id": "riwi-building", "type": "riwi-building", "position": [-21.5, 0, 17], "rotationY": 1.5708, "scale": 0.85},
-  { "id": "library-facade", "type": "library-facade", "position": [0, 0, -54], "rotationY": 0, "scale": 1}
+  { "id": "library-facade", "type": "library-facade", "position": [0, 0, -54], "rotationY": 0, "scale": 1},
+
+  { "id": "sun", "type": "sun", "position": [-67.2, 16, -160], "rotationY": 0, "scale": 1, "variant": "cityIntro" },
+  { "id": "col-stall-01", "type": "collider", "position": [-5.25, 1.25, 26], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.2, 2.5, 2.7] } },
+  { "id": "col-stall-02", "type": "collider", "position": [5.25, 1.25, 18], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.2, 2.5, 2.7] } },
+  { "id": "col-stall-03", "type": "collider", "position": [5.25, 1.25, -28], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.2, 2.5, 2.7] } },
+  { "id": "col-stall-04", "type": "collider", "position": [-5.25, 1.25, -35.5], "rotationY": 0, "scale": 1, "collider": { "shape": "box", "size": [1.2, 2.5, 2.7] } },
+
+  { "id": "walk-avenida", "type": "walk-area", "position": [0, 0, -5.1], "rotationY": 0, "scale": 1, "areaSize": [11.6, 70.2] },
+  { "id": "walk-calle-aduana", "type": "walk-area", "position": [19.975, 0, -35.05], "rotationY": 0, "scale": 1, "areaSize": [32.05, 10.3] },
+  { "id": "walk-plaza-01", "type": "walk-area", "position": [-9, 0, 15], "rotationY": 0, "scale": 1, "areaSize": [6.8, 10.4] },
+  { "id": "walk-plaza-02", "type": "walk-area", "position": [-9.1, 0, -13.1], "rotationY": 0, "scale": 1, "areaSize": [7, 23] },
+  { "id": "walk-plaza-03", "type": "walk-area", "position": [9.1, 0, 8.5], "rotationY": 0, "scale": 1, "areaSize": [7, 11.4] },
+  { "id": "walk-plaza-04", "type": "walk-area", "position": [23.7, 0, -24.75], "rotationY": 0, "scale": 1, "areaSize": [8.8, 9.7] }
 ]
