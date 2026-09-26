@@ -10,7 +10,7 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createWindowGridTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
-import { useTrailBuffer, createTrailMaterial } from '@/features/cityIntro/renderers/trail'
+import { useTrailBuffer, createTrailMaterial, pushTrailSample } from '@/features/cityIntro/renderers/trail'
 import { buildLaneCurve } from '@/features/cityIntro/renderers/flightLane'
 import type { EntityRendererProps } from '@/engine/types'
 
@@ -107,7 +107,7 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
       laneReverse: rand() > 0.5,
     }
   }, [seed])
-  const { positions: trailPositions, push: pushTrail } = useTrailBuffer(TRAIN_TRAIL_LENGTH)
+  const trailPositions = useTrailBuffer(TRAIN_TRAIL_LENGTH)
   const trailIndices = useMemo(() => Float32Array.from({ length: TRAIN_TRAIL_LENGTH }, (_, i) => i), [])
   const trailMaterial = useMemo(() => createTrailMaterial(color, TRAIN_TRAIL_LENGTH), [color])
   const leadOffset = ((TRAIN_CAR_COUNT - 1) * (TRAIN_CAR_LENGTH + 0.1)) / 2
@@ -125,16 +125,14 @@ export function FlyingTrainRenderer({ entity, context }: EntityRendererProps) {
         groupRef.current.position.set(point.x, y, point.z)
         groupRef.current.rotation.y = heading
       }
-      pushTrail(point.x + Math.cos(heading) * leadOffset, y - 0.06, point.z - Math.sin(heading) * leadOffset)
+      pushTrailSample(trailRef.current, point.x + Math.cos(heading) * leadOffset, y - 0.06, point.z - Math.sin(heading) * leadOffset)
     } else {
       const t = clock.elapsedTime * speed + seed
       const x = Math.sin(t) * range
       const direction = Math.cos(t) >= 0 ? 1 : -1
       if (groupRef.current) groupRef.current.position.x = x
-      pushTrail(x - direction * leadOffset, -0.06, 0)
+      pushTrailSample(trailRef.current, x - direction * leadOffset, -0.06, 0)
     }
-    const attr = trailRef.current?.geometry.attributes.position as THREE.BufferAttribute | undefined
-    if (attr) attr.needsUpdate = true
   })
 
   return (

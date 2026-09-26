@@ -9,7 +9,7 @@ import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
-import { useTrailBuffer, createTrailMaterial } from '@/features/cityIntro/renderers/trail'
+import { useTrailBuffer, createTrailMaterial, pushTrailSample } from '@/features/cityIntro/renderers/trail'
 import { buildLaneCurve } from '@/features/cityIntro/renderers/flightLane'
 import type { EntityRendererProps } from '@/engine/types'
 
@@ -102,7 +102,7 @@ export function FlyingCarRenderer({ entity, context }: EntityRendererProps) {
       bobPhase: rand() * Math.PI * 2,
     }
   }, [seed])
-  const { positions: trailPositions, push: pushTrail } = useTrailBuffer(CAR_TRAIL_LENGTH)
+  const trailPositions = useTrailBuffer(CAR_TRAIL_LENGTH)
   const trailIndices = useMemo(() => Float32Array.from({ length: CAR_TRAIL_LENGTH }, (_, i) => i), [])
   const trailMaterial = useMemo(() => createTrailMaterial(color, CAR_TRAIL_LENGTH), [color])
 
@@ -132,9 +132,7 @@ export function FlyingCarRenderer({ entity, context }: EntityRendererProps) {
       groupRef.current.position.set(x, y, z)
       groupRef.current.rotation.y = heading
     }
-    pushTrail(x, y - 0.05, z)
-    const attr = trailRef.current?.geometry.attributes.position as THREE.BufferAttribute | undefined
-    if (attr) attr.needsUpdate = true
+    pushTrailSample(trailRef.current, x, y - 0.05, z)
   })
 
   return (
