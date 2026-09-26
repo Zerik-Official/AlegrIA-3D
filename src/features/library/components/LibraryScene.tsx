@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
@@ -16,7 +16,6 @@ import { RestoredLibrary } from '@/features/library/components/RestoredLibrary'
 import { LightBurst } from '@/features/library/components/LightBurst'
 import { ProceduralPortal } from '@/shared/components/ReusableModels'
 import { PortalOpening } from '@/shared/components/PortalOpening'
-import { registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 import {
   AISLE_SHELVES,
   BOOK_SHELF_SLOT,
@@ -29,13 +28,25 @@ import {
   SHELF_HEIGHT,
   TOPPLED_SHELVES,
   WALL_SHELVES,
-  libraryCollisionSolids,
-  restoredLibraryCollisionSolids,
 } from '@/features/library/config/libraryLayout'
 
 import { PhaseEngine } from '@/engine/PhaseEngine'
+import { initialLibraryEntities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import type { LibraryBookStage } from '@/app/hooks/usePhaseFlow'
+
+/**
+ * The hall's JSON colliders (shelving, tables, planters, the pedestal) and
+ * walkable area, which outside the editor are the only `library.json`
+ * entities `PhaseEngine` renders — the furnishings themselves are drawn by
+ * the components below.
+ */
+const LIBRARY_BOUNDARY_ENTITIES = initialLibraryEntities.filter((e) => e.type === 'collider' || e.type === 'walk-area')
+
+/** Collider tags active in the abandoned hall. */
+const RUINED_COLLIDER_TAGS = ['ruined']
+/** Collider tags active once the hall is restored. */
+const RESTORED_COLLIDER_TAGS = ['restored']
 
 /**
  * Props for {@link FlickeringTorch}.
@@ -211,10 +222,7 @@ export const LibraryScene = memo(function LibraryScene({
     })
   })
 
-  useEffect(() => {
-    registerCollisionSolids('library-furnishings', showRestored ? restoredLibraryCollisionSolids : libraryCollisionSolids)
-    return () => unregisterCollisionSolids('library-furnishings')
-  }, [showRestored])
+  const colliderTags = showRestored ? RESTORED_COLLIDER_TAGS : RUINED_COLLIDER_TAGS
 
   /**
    * Emergency wall lighting, thinned out now that the pendant lamps carry the
@@ -272,7 +280,7 @@ export const LibraryScene = memo(function LibraryScene({
       ))}
 
       {editableEntities ? (
-        <PhaseEngine entities={editableEntities.filter((e) => e.type !== 'book')} />
+        <PhaseEngine entities={editableEntities.filter((e) => e.type !== 'book')} context={{ colliderTags }} />
       ) : (
         <>
           <CyberWall position={[0, 2.6, -11]} size={[22, 5.2, 0.45]} missingIndex={5} />
@@ -345,6 +353,7 @@ export const LibraryScene = memo(function LibraryScene({
         )}
       </group>
 
+      {!editableEntities && <PhaseEngine entities={LIBRARY_BOUNDARY_ENTITIES} context={{ colliderTags }} />}
       {editableEntities ? (
         <PhaseEngine entities={editableEntities.filter((e) => e.type === 'book')} context={{ ritualProgress: wormholeProgress }} />
       ) : (
