@@ -1,4 +1,5 @@
 import { memo } from 'react'
+import { BOOK_PAGES } from '@/features/library/config/bookPages'
 import { HUD } from '@/features/ui/components/HUD'
 import { StoryTitle } from '@/shared/components/StoryTitle'
 import { PortalPrompt } from '@/app/components/hud/PortalPrompt'
@@ -24,6 +25,7 @@ interface LibraryHUDProps {
 export const LibraryHUD = memo(function LibraryHUD({ experience }: LibraryHUDProps) {
   const { phaseFlow, proximity, library, editor, bookPages, audioRemainingSec } = experience
   const pageInReach = !!bookPages.focusedPageId && !bookPages.openPage
+  const bookInReach = BOOK_PAGES.find((page) => page.id === bookPages.focusedPageId)?.display === 'book'
   const bookUsable = proximity.nearBook && phaseFlow.bookStage === 'ready'
 
   return (
@@ -54,9 +56,9 @@ export const LibraryHUD = memo(function LibraryHUD({ experience }: LibraryHUDPro
         onActivate={bookPages.openFocusedPage}
         glowRgb="255, 204, 102"
         catchClicks={!editor.isEditorEnabled}
-        catcherTitle="Click para ver la página"
+        catcherTitle={bookInReach ? 'Click para ver el libro' : 'Click para ver la página'}
       >
-        E — Ver página del Libro de Rosa
+        {bookInReach ? 'E — Ver el Libro de Rosa' : 'E — Ver página del Libro de Rosa'}
       </PortalPrompt>
       <PortalPrompt
         visible={phaseFlow.libraryPortalUnlocked && proximity.nearPortal && !pageInReach}
