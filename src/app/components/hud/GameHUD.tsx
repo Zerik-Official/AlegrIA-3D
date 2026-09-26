@@ -98,6 +98,7 @@ export const GameHUD = memo(function GameHUD({ experience }: GameHUDProps) {
         currentCheckpointId={phaseFlow.checkpointId}
         onJumpToCheckpoint={phaseFlow.jumpToCheckpoint}
         currentScene={editors.currentScene}
+        spawnResolverRef={editor.spawnResolverRef}
       />
 
       {isDebugEnabled && !editor.isEditorEnabled && (
