@@ -7,6 +7,27 @@ import type { ReactNode } from 'react'
 import type { Vector3, Vector3Tuple } from 'three'
 
 /**
+ * Collider attached to an entity, in the entity's local space: `offset` and
+ * the dimensions are multiplied by the entity's `scale` and turned by its
+ * `rotationY`. A rotated box still collides as its world-space AABB, the only
+ * shape the player resolver understands.
+ */
+export interface ColliderSpec {
+  /** `box` becomes a walkable solid, `cylinder` a blocking circle, `none` disables the type's default collider. */
+  shape: 'box' | 'cylinder' | 'none'
+  /** Local offset of the collider's center (box) or base center (cylinder). */
+  offset?: Vector3Tuple
+  /** Box extents along local X, Y and Z. */
+  size?: Vector3Tuple
+  /** Cylinder radius. */
+  radius?: number
+  /** Cylinder height. */
+  height?: number
+  /** When set, the collider only takes part in collision while the scene lists this tag as active (see {@link EngineRenderContext.colliderTags}). */
+  tag?: string
+}
+
+/**
  * Editable entity record — the single JSON-serializable unit the engine renders.
  * `type` is intentionally an open string keyed against `engine/entityRegistry`'s
  * renderer map and `engine/config/entityCatalog`'s editor palette, so new scene
@@ -40,6 +61,10 @@ export interface EditableEntity {
    * and non-empty; a single-item array behaves like `videoSrc`.
    */
   videoSrcs?: string[]
+  /** Collider override; when absent the type's default from `engine/config/colliders.json` applies. */
+  collider?: ColliderSpec
+  /** Footprint `[width along X, depth along Z]` of area-like entities (`walk-area`), multiplied by `scale`; rotation is ignored, areas stay axis-aligned. */
+  areaSize?: [number, number]
 }
 
 /**
@@ -64,6 +89,10 @@ export interface EngineRenderContext {
   ritualProgress?: number
   /** Named `cityIntro` flight-lane waypoints (see `features/cityIntro/renderers/flightLane`), keyed by lane id. */
   flightLanes?: Record<string, Vector3[]>
+  /** World positions of the scene's `rail-tunnel` mouths, which bound the train's line. */
+  railTunnels?: Vector3Tuple[]
+  /** Tags of the tagged colliders that currently collide; tagged colliders are ignored when this is omitted. */
+  colliderTags?: string[]
 }
 
 /**
