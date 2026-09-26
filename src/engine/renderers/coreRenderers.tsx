@@ -1,10 +1,8 @@
 /**
- * Renderer registry mapping `EditableEntity.type` to the component that paints it.
- * This is the single place that knows how to turn a JSON entity into a mesh/model —
- * `PhaseEngine` just looks types up here, so adding a new scene element never requires
- * touching `PhaseEngine` itself, only registering it below (and, for the editor's
- * "add element" palette, `engine/config/entityCatalog`).
- * @module engine/entityRegistry
+ * Renderers for the engine's built-in entity types (library, phase 1,
+ * phase 2 and the shared collider/generic-model fallbacks), registered by
+ * type in `engine/entityRegistry`.
+ * @module engine/renderers/coreRenderers
  */
 
 import { useRef } from 'react'
@@ -28,16 +26,11 @@ import { CyberWall } from '@/features/library/components/CyberWall'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
-import { cityIntroRenderers } from '@/features/cityIntro/renderers'
-import { skyRenderers } from '@/shared/renderers/skyRenderers'
-import { WalkAreaRenderer } from '@/features/player/renderers/WalkAreaRenderer'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
-import type { EntityRenderer, EntityRendererProps } from '@/engine/types'
+import type { EntityRendererProps } from '@/engine/types'
 
-export type { EntityRenderer, EntityRendererProps } from '@/engine/types'
-
-function BahareqHouseRenderer({ entity }: EntityRendererProps) {
+export function BahareqHouseRenderer({ entity }: EntityRendererProps) {
   const variant = (entity.variant as 'short' | 'medium' | 'long') ?? 'medium'
   const key = `phase1/bahareque-house-${variant}` as keyof typeof modelRegistry
   const path = modelRegistry[key]?.path ?? modelRegistry['phase1/bahareque-house'].path
@@ -64,7 +57,7 @@ function resolveSepiaImageSrc(entity: EntityRendererProps['entity']): string | u
   return photo?.src
 }
 
-function SepiaPhotoRenderer({ entity, context }: EntityRendererProps) {
+export function SepiaPhotoRenderer({ entity, context }: EntityRendererProps) {
   const imageSrc = resolveSepiaImageSrc(entity)
   return (
     <ModelLoader
@@ -82,30 +75,30 @@ function SepiaPhotoRenderer({ entity, context }: EntityRendererProps) {
   )
 }
 
-function PortalRenderer({ entity }: EntityRendererProps) {
+export function PortalRenderer({ entity }: EntityRendererProps) {
   return <ProceduralPortal position={[0, 0, 0]} radius={1.55} accentColor={entity.variant} />
 }
 
-function CyberWallRenderer({ entity }: EntityRendererProps) {
+export function CyberWallRenderer({ entity }: EntityRendererProps) {
   const variant = entity.variant ?? '22x5.2'
   const size: [number, number, number] = variant === '22x5.2' ? [22, 5.2, 0.45] : [22, 5.2, 0.45]
   return <CyberWall position={[0, 0, 0]} size={size} />
 }
 
-function BookshelfRenderer({ entity }: EntityRendererProps) {
+export function BookshelfRenderer({ entity }: EntityRendererProps) {
   const width = entity.variant ? parseFloat(entity.variant) : 5.2
   return <Bookshelf position={[0, 0, 0]} width={width} />
 }
 
-function PedestalRenderer() {
+export function PedestalRenderer() {
   return <Pedestal />
 }
 
-function BookRenderer({ context }: EntityRendererProps) {
+export function BookRenderer({ context }: EntityRendererProps) {
   return <LevitatingBook ritualProgress={context?.ritualProgress} />
 }
 
-function FacadeRenderer({ entity }: EntityRendererProps) {
+export function FacadeRenderer({ entity }: EntityRendererProps) {
   const color = entity.variant ?? '#e85a3a'
   return (
     <mesh castShadow receiveShadow>
@@ -115,7 +108,7 @@ function FacadeRenderer({ entity }: EntityRendererProps) {
   )
 }
 
-function TempleRenderer() {
+export function TempleRenderer() {
   return (
     <mesh castShadow>
       <boxGeometry args={[4.2, 3.3, 2.0]} />
@@ -130,13 +123,13 @@ function TempleRenderer() {
  * corner-plot-sized building, and the extra Y-only `scale` compensates for
  * how flat that leaves it so it still reads as a building rather than a slab.
  */
-function ParroquiaRenderer() {
+export function ParroquiaRenderer() {
   return (
     <ModelLoader src={modelRegistry['phase2/parroquia'].path} targetSize={16} scale={[1, 2.3, 1]} fallback={<GothicTemple position={[0, 0, 0]} />} />
   )
 }
 
-function CarnivalHouseRenderer() {
+export function CarnivalHouseRenderer() {
   return (
     <ModelLoader
       src={modelRegistry['phase2/casa-carnavalera'].path}
@@ -151,7 +144,7 @@ function CarnivalHouseRenderer() {
   )
 }
 
-function TrinitariaRenderer({ entity }: EntityRendererProps) {
+export function TrinitariaRenderer({ entity }: EntityRendererProps) {
   const bloom = entity.variant ?? '#d82a7a'
   return <ProceduralTrinitaria position={[0, 0, 0]} bloomColor={bloom} />
 }
@@ -166,7 +159,7 @@ const DANCER_MODELS: Record<string, { key: keyof typeof modelRegistry; color: st
   'bailarin-blanco-azul': { key: 'phase2/bailarin-blanco-azul', color: '#3a5ad8' },
 }
 
-function DancerRenderer({ entity }: EntityRendererProps) {
+export function DancerRenderer({ entity }: EntityRendererProps) {
   const dancer = DANCER_MODELS[entity.variant ?? ''] ?? DANCER_MODELS['bailarina-amarilla']
   const seed = createSeededRandom(hashSeed(entity.id))()
   return (
@@ -189,7 +182,7 @@ function DancerRenderer({ entity }: EntityRendererProps) {
   )
 }
 
-function ReyMomoRenderer() {
+export function ReyMomoRenderer() {
   return (
     <ReyMomoPerformer
       src={modelRegistry['phase2/rey-momo'].path}
@@ -209,7 +202,7 @@ function ReyMomoRenderer() {
  * so it gets its own renderer instead of the generic `ModelLoader`-based one.
  * @returns Animated congas character or fallback
  */
-function CongasRenderer() {
+export function CongasRenderer() {
   return (
     <CongasPerformer
       src={modelRegistry['phase2/congas-personaje'].path}
@@ -251,7 +244,7 @@ const BOUNDS_COLLISION_MODELS = new Set<string>(['phase1/scenes/puerto-fluvial']
  * @param props - Entity props
  * @returns Model loader or fallback box
  */
-function GenericModelRenderer({ entity }: EntityRendererProps) {
+export function GenericModelRenderer({ entity }: EntityRendererProps) {
   const rawKey = (entity.variant || entity.type) as string
   const normalizedKey = rawKey as keyof typeof modelRegistry
   const entry = modelRegistry[normalizedKey]
@@ -299,7 +292,7 @@ const TRAIN_KEYS = new Set<string>([
  * @param props - Entity props and the scene's tunnel positions
  * @returns Animated train or fallback
  */
-function TrenRenderer({ entity, context }: EntityRendererProps) {
+export function TrenRenderer({ entity, context }: EntityRendererProps) {
   const key = entity.variant && TRAIN_KEYS.has(entity.variant) ? entity.variant : 'phase1/vehicles/tren-completo'
   const fallback = (
     <group position={[0, 0.55, 0]}>
@@ -323,7 +316,7 @@ function TrenRenderer({ entity, context }: EntityRendererProps) {
 /**
  * @returns Procedural railway tunnel
  */
-function RailTunnelRenderer() {
+export function RailTunnelRenderer() {
   return <RailTunnel />
 }
 
@@ -338,7 +331,7 @@ const PATROL_BOATS: Record<string, { offset: number; speed: number }> = {
  * @param props - Entity props
  * @returns Bobbing boat or fallback
  */
-function PuertoBoatRenderer({ entity }: EntityRendererProps) {
+export function PuertoBoatRenderer({ entity }: EntityRendererProps) {
   const key = (entity.variant || entity.type) as keyof typeof modelRegistry
   const entry = modelRegistry[key]
   const seed = createSeededRandom(hashSeed(entity.id))()
@@ -362,7 +355,7 @@ function PuertoBoatRenderer({ entity }: EntityRendererProps) {
  * @param props - Entity props
  * @returns Animated jukebox
  */
-function ElPoderosoRenderer(props: EntityRendererProps) {
+export function ElPoderosoRenderer(props: EntityRendererProps) {
   return (
     <MusicalJukebox>
       <GenericModelRenderer {...props} />
@@ -454,7 +447,7 @@ function ParadeVehicleRenderer({ entity }: EntityRendererProps) {
  * @param props - Entity props
  * @returns The variant-appropriate vehicle renderer
  */
-function ParadeVehicleDispatcher({ entity }: EntityRendererProps) {
+export function ParadeVehicleDispatcher({ entity }: EntityRendererProps) {
   if (entity.variant === 'carrosa-riwi') {
     return <CarrozaRiwiRenderer entity={entity} fallback={<ParadeVehicleFallback />} />
   }
@@ -466,12 +459,12 @@ function ParadeVehicleDispatcher({ entity }: EntityRendererProps) {
  * `EntityCollider` publishes it and draws it while the editor's collision view is on.
  * @returns Nothing
  */
-function ColliderEntityRenderer() {
+export function ColliderEntityRenderer() {
   return null
 }
 
 /** Rendered for a `type` with no registry entry, so missing types stay visible instead of silently vanishing. */
-function UnknownEntityRenderer({ entity }: EntityRendererProps) {
+export function UnknownEntityRenderer({ entity }: EntityRendererProps) {
   console.warn(`[PhaseEngine] Unknown entity type "${entity.type}" (id "${entity.id}") — check entityRegistry.tsx`)
   return (
     <mesh>
@@ -479,63 +472,4 @@ function UnknownEntityRenderer({ entity }: EntityRendererProps) {
       <meshStandardMaterial color="#ff3b1f" />
     </mesh>
   )
-}
-
-/**
- * Registry of entity renderers keyed by `EditableEntity.type`.
- * To add a new scene element: write its renderer above, register it here, and (optionally)
- * add a matching entry to `engine/config/entityCatalog` so the editor can spawn it.
- */
-export const entityRegistry: Record<string, EntityRenderer> = {
-  'bahareque-house': BahareqHouseRenderer,
-  'sepia-photo': SepiaPhotoRenderer,
-  portal: PortalRenderer,
-  'cyber-wall': CyberWallRenderer,
-  bookshelf: BookshelfRenderer,
-  pedestal: PedestalRenderer,
-  book: BookRenderer,
-  facade: FacadeRenderer,
-  temple: TempleRenderer,
-  parroquia: ParroquiaRenderer,
-  'carnival-house': CarnivalHouseRenderer,
-  trinitaria: TrinitariaRenderer,
-  dancer: DancerRenderer,
-  'rey-momo': ReyMomoRenderer,
-  'congas-personaje': CongasRenderer,
-  'parade-vehicle': ParadeVehicleDispatcher,
-  'phase2/decorations/el-poderoso': ElPoderosoRenderer,
-  'phase2-house': GenericModelRenderer,
-  'phase2-floor': GenericModelRenderer,
-  'phase2-decoration': GenericModelRenderer,
-  'phase2-scene': GenericModelRenderer,
-  'phase2-model': GenericModelRenderer,
-  'phase1-train': TrenRenderer,
-  'rail-tunnel': RailTunnelRenderer,
-  'phase1/decorators/decorativos-bote-canoa': PuertoBoatRenderer,
-  'phase1/decorators/decorativos-bote-chalupa': PuertoBoatRenderer,
-  'phase1/decorators/decorativos-vapor-fluvial': PuertoBoatRenderer,
-  'phase1-floor': GenericModelRenderer,
-  'phase1-decoration': GenericModelRenderer,
-  'phase1-scene': GenericModelRenderer,
-  'phase1-vehicle': GenericModelRenderer,
-  'phase1-model': GenericModelRenderer,
-  collider: ColliderEntityRenderer,
-  'walk-area': WalkAreaRenderer,
-  ...cityIntroRenderers,
-  ...skyRenderers,
-}
-
-/**
- * Looks up the renderer for an entity type. If the type itself is a
- * `modelRegistry` key (e.g. `phase1/floors/rieles-riel-recta`,
- * `phase2/houses/casa-cafe`), a generic model renderer is returned so new
- * `public/models/phase1/**`/`public/models/phase2/**` files work without
- * manual registry edits.
- * @param type - `EditableEntity.type` value
- * @returns Renderer component
- */
-export function getEntityRenderer(type: string): EntityRenderer {
-  if (entityRegistry[type]) return entityRegistry[type]
-  if ((modelRegistry as Record<string, unknown>)[type]) return GenericModelRenderer
-  return UnknownEntityRenderer
 }
