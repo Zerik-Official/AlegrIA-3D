@@ -7,6 +7,8 @@
 import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react'
 import type * as THREE from 'three'
 import { isDebugEnabled } from '@/shared/config/debug'
+import { setCollisionDebugVisible } from '@/features/editor/state/collisionDebug'
+import type { SpawnResolver } from '@/features/editor/components/EditorSpawnProbe'
 
 /** Public state and actions exposed by {@link useEditorMode}. */
 export interface EditorMode {
@@ -22,6 +24,8 @@ export interface EditorMode {
   setEditorTarget: (target: THREE.Object3D | null) => void
   /** Orbit controls instance, shared by the fly controls and the gizmo. */
   orbitControlsRef: MutableRefObject<any>
+  /** Resolves where the crosshair would spawn a new element, filled in by the in-canvas probe while the editor is open. */
+  spawnResolverRef: MutableRefObject<SpawnResolver | null>
 }
 
 /**
@@ -32,6 +36,7 @@ export function useEditorMode(): EditorMode {
   const isEditorEnabled = isDebugEnabled && isEditorEnabledRaw
   const [editorTarget, setEditorTarget] = useState<THREE.Object3D | null>(null)
   const orbitControlsRef = useRef<any>(null)
+  const spawnResolverRef = useRef<SpawnResolver | null>(null)
 
   const toggleEditor = useCallback(() => {
     if (!isDebugEnabled) return
@@ -43,5 +48,9 @@ export function useEditorMode(): EditorMode {
     if (!isDebugEnabled && isEditorEnabledRaw) setIsEditorEnabledRaw(false)
   }, [isEditorEnabledRaw])
 
-  return { isEditorEnabled, toggleEditor, closeEditor, editorTarget, setEditorTarget, orbitControlsRef }
+  useEffect(() => {
+    if (!isEditorEnabled) setCollisionDebugVisible(false)
+  }, [isEditorEnabled])
+
+  return { isEditorEnabled, toggleEditor, closeEditor, editorTarget, setEditorTarget, orbitControlsRef, spawnResolverRef }
 }
