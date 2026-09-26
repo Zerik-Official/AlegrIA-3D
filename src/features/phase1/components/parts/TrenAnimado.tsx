@@ -10,10 +10,10 @@
  */
 
 import { Suspense, useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
-import { isCollisionMesh } from '@/models/shared/ModelLoader'
+import { isCollisionMesh } from '@/models/shared/collisionMesh'
 
 /**
  * Props for {@link TrenAnimado}. The train runs along its parent's local
@@ -201,7 +201,6 @@ function clipSubtree(root: THREE.Object3D, planes: THREE.Plane[], done: WeakSet<
  */
 export function TrenAnimado({ src, fallback, tunnels, speed = 9, dwellSeconds = 15, hiddenSeconds = 15 }: TrenAnimadoProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
-  const { gl } = useThree()
   const motionRef = useRef<THREE.Group>(null)
   const speedFactorRef = useRef(0)
   const extentsRef = useRef<TrainExtents>(FALLBACK_EXTENTS)
@@ -224,11 +223,8 @@ export function TrenAnimado({ src, fallback, tunnels, speed = 9, dwellSeconds = 
     }
   }, [src])
 
-  useEffect(() => {
-    gl.localClippingEnabled = true
-  }, [gl])
-
-  useFrame(({ clock }) => {
+  useFrame(({ clock, gl }) => {
+    if (!gl.localClippingEnabled) gl.localClippingEnabled = true
     const motion = motionRef.current
     const parent = motion?.parent
     if (!motion || !parent) return

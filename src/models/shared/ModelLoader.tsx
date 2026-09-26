@@ -9,6 +9,7 @@ import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { extractBoundsSolid, extractCollisionSolids, registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
+import { isCollisionMesh } from '@/models/shared/collisionMesh'
 
 /**
  * Props for {@link ModelLoader}.
@@ -48,23 +49,6 @@ export interface ModelLoaderProps {
    * where a single AABB would wall off open ground. Requires {@link collisionId}.
    */
   collisionFallback?: 'none' | 'bounds'
-}
-
-/**
- * Whether a mesh is a Blender-authored collision proxy, not meant to be
- * rendered: the Python export scripts (`.vscode/scripts/*.py`) name these
- * `COL_*` and paint them with a "Colision" placeholder material (flat
- * magenta, `[1, 0, 1, 0.25]`), for a future physics pass rather than display.
- * Filtered out here at load time — the same `.glb` a physics system would
- * later read the `COL_*` nodes from stays visually correct without a re-export.
- * @param mesh - Candidate mesh from a loaded glTF scene graph
- * @returns Whether this mesh should stay hidden
- */
-export function isCollisionMesh(mesh: THREE.Mesh): boolean {
-  if (mesh.name.startsWith('COL_')) return true
-  const material = mesh.material as THREE.Material | THREE.Material[] | undefined
-  const materials = Array.isArray(material) ? material : material ? [material] : []
-  return materials.some((mat) => mat.name === 'Colision')
 }
 
 /**
@@ -187,16 +171,4 @@ export function ModelLoader({
       />
     </Suspense>
   )
-}
-
-/**
- * Preloads a model for faster first render.
- * Safe to call even when the asset does not exist.
- * @param src - Model URL
- */
-export function preloadModel(src: string): void {
-  try {
-    useGLTF.preload(src)
-  } catch {
-  }
 }

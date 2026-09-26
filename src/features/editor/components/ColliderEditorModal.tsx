@@ -6,7 +6,7 @@
  * @module features/editor/components/ColliderEditorModal
  */
 
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
+import { createElement, memo, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, TransformControls } from '@react-three/drei'
 import * as THREE from 'three'
@@ -14,7 +14,7 @@ import { FiCrosshair, FiMaximize2, FiMove, FiShield } from 'react-icons/fi'
 import { Modal } from '@/shared/components/Modal'
 import { getEntityRenderer } from '@/engine/entityRegistry'
 import { DEFAULT_BOX_SIZE, DEFAULT_CYLINDER_HEIGHT, DEFAULT_CYLINDER_RADIUS, defaultColliderForType } from '@/engine/colliders'
-import { isCollisionMesh } from '@/models/shared/ModelLoader'
+import { isCollisionMesh } from '@/models/shared/collisionMesh'
 import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
 import { ColliderSection, NumberField, Vector3Fields } from '@/features/editor/components/EditorFields'
 import type { ColliderSpec, EditableEntity } from '@/engine/types'
@@ -191,7 +191,6 @@ interface ColliderSceneProps {
  * @returns Scene elements
  */
 function ColliderScene({ entity, mode, onUpdate, modelRef, frameRequest }: ColliderSceneProps) {
-  const Renderer = getEntityRenderer(entity.type)
   const spec = effectiveCollider(entity)
   const [proxy, setProxy] = useState<THREE.Group | null>(null)
   const displayEntity = useMemo<EditableEntity>(() => ({ ...entity, position: [0, 0, 0], rotationY: 0 }), [entity])
@@ -221,7 +220,7 @@ function ColliderScene({ entity, mode, onUpdate, modelRef, frameRequest }: Colli
       <group scale={entity.scale}>
         <group ref={modelRef}>
           <CollisionPublishContext.Provider value={false}>
-            <Renderer entity={displayEntity} />
+            {createElement(getEntityRenderer(entity.type), { entity: displayEntity })}
           </CollisionPublishContext.Provider>
         </group>
         {spec && <ColliderProxy spec={spec} onObject={setProxy} />}

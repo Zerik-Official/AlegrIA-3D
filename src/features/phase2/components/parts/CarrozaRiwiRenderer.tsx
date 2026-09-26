@@ -17,7 +17,7 @@ import * as THREE from 'three'
 import { modelRegistry } from '@/shared/config/models'
 import { resolvePublicSrc, resolvePublicSrcs } from '@/shared/utils/media'
 import { useVideoPlaylistTexture, resolvePlaylist } from '@/shared/hooks/useVideoPlaylistTexture'
-import { isCollisionMesh } from '@/models/shared/ModelLoader'
+import { isCollisionMesh } from '@/models/shared/collisionMesh'
 import { useParadeLoopMotion } from '@/features/phase2/renderers/paradeLoop'
 import type { EntityRendererProps } from '@/engine/types'
 
@@ -63,9 +63,6 @@ function CarrozaBody({ texture }: { texture: THREE.VideoTexture | null }) {
     })
   }, [cloned, screenMaterial])
 
-  useEffect(() => {
-    if (texture) texture.flipY = false
-  }, [texture])
 
   return <primitive object={cloned} />
 }
@@ -82,7 +79,7 @@ function CarrozaWithPlaylist({ entity }: { entity: EntityRendererProps['entity']
     () => resolvePlaylist(resolvePublicSrc(entity.videoSrc), resolvePublicSrcs(entity.videoSrcs)),
     [entity.videoSrc, entity.videoSrcs]
   )
-  const texture = useVideoPlaylistTexture(playlist)
+  const texture = useVideoPlaylistTexture(playlist, false)
   return <CarrozaBody texture={texture} />
 }
 

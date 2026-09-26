@@ -10,7 +10,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
-import { isCollisionMesh } from '@/models/shared/ModelLoader'
+import { isCollisionMesh } from '@/models/shared/collisionMesh'
 
 /** Props for {@link CongasPerformer}. */
 interface CongasPerformerProps {
