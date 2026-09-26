@@ -7,13 +7,14 @@
  * @module engine/entityRegistry
  */
 
-import { useMemo, useRef } from 'react'
+import { useRef } from 'react'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { BaharequeHouse } from '@/features/phase1/components/parts/BaharequeHouse'
 import { SepiaPhotoFrame } from '@/features/phase1/components/parts/SepiaPhotoFrame'
 import { TrenAnimado } from '@/features/phase1/components/parts/TrenAnimado'
+import { RailTunnel } from '@/features/phase1/components/parts/RailTunnel'
 import { PuertoBoat } from '@/features/phase1/components/parts/PuertoBoat'
 import { ProceduralPortal, ProceduralTrinitaria } from '@/shared/components/ReusableModels'
 import { GothicTemple } from '@/features/phase2/components/parts/GothicTemple'
@@ -28,6 +29,8 @@ import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
 import { cityIntroRenderers } from '@/features/cityIntro/renderers'
+import { skyRenderers } from '@/shared/renderers/skyRenderers'
+import { WalkAreaRenderer } from '@/features/player/renderers/WalkAreaRenderer'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import type { EntityRenderer, EntityRendererProps } from '@/engine/types'
@@ -239,15 +242,6 @@ const VEHICLE_MODELS: Record<string, keyof typeof modelRegistry> = {
  * to spawn new `public/models/phase1/**`/`public/models/phase2/**` assets
  * without adding a dedicated renderer per file, keeping the JSON-driven
  * workflow.
- *
- * `phase1/**` assets (rail kit, port scenes, decorators) are authored in
- * consistent real-world meters — the rail modules' 8m length, the train's
- * 0.36m wheel-rest height and the port buildings' tens-of-meters footprints
- * were all co-designed to that same scale — so they render at native size
- * (`entity.scale` only, no normalization). `phase2/**
- * Phase 1 set pieces that ship no `COL_*` proxies but are solid, box-shaped
- * buildings, so their whole bounding box becomes their collider — the Aduana
- * (`puerto-fluvial`) could otherwise be walked straight through.
  */
 const BOUNDS_COLLISION_MODELS = new Set<string>(['phase1/scenes/puerto-fluvial'])
 
@@ -295,60 +289,18 @@ const TRAIN_KEYS = new Set<string>([
 ])
 
 /**
- * `[x, z]` waypoints of the rail loop laid out around Estación Montoya in
- * `phase1.json` (the `rail-*` entities) — corners plus one midpoint per side,
- * so the closed Catmull-Rom curve tracks that rectangle closely. The train
- * entity itself sits at the identity transform (`position: [0,0,0]`) since
- * this curve already carries it in world space. Kept 10 units west of the
- * rail JSON's original placement so the loop's east side clears the Río
- * Magdalena's town-side bank (`MAGDALENA_TOWN_EDGE_X`), which used to swallow
- * the track and train on that side.
- */
-const TRAIN_LOOP_POINTS: Array<[number, number]> = [
-  [-14, -76],
-  [18, -76],
-  [50, -76],
-  [50, -60],
-  [50, -44],
-  [18, -44],
-  [-14, -44],
-  [-14, -60],
-]
-
-/**
- * Arc-length distance each car trails behind the locomotive, matching the
- * coupler-to-coupler gaps baked into `tren_animado.py` (front coupler +
- * ~0.4m slack + the next car's front-to-center distance). Used to run the
- * consist as independently-oriented pieces instead of one long rigid body
- * pivoting around a single curve sample — which is what made turns at the
- * rail loop's corners look wrong.
- */
-const TRAIN_CAR_OFFSETS = [
-  { key: 'phase1/vehicles/tren-locomotora', trailDistance: 0 },
-  { key: 'phase1/vehicles/tren-coche', trailDistance: 15.5 },
-  { key: 'phase1/vehicles/tren-vagon', trailDistance: 25.6 },
-] as const
-
-/**
  * The train — its `.glb`s carry baked wheel-rotation clips (see
  * `TrenAnimado`), so it gets its own renderer instead of the generic
- * `ModelLoader`-based one. Runs around {@link TRAIN_LOOP_POINTS} at constant
- * speed regardless of its own JSON `position`/`rotationY`.
- *
- * The default "full train" variant is assembled from the three separately
- * exported car `.glb`s (locomotive, coche, vagón), each independently
- * positioned/oriented along the loop via its own {@link TRAIN_CAR_OFFSETS}
- * trail distance — rather than the single `tren-completo.glb` moved as one
- * rigid body — so each car's heading follows the curve at its own point
- * instead of the whole consist swinging around one pivot on turns.
- * @param props - Entity props
+ * `ModelLoader`-based one. It runs in a straight line along its entity's
+ * local `+X` (set its `rotationY` to aim it): out of the `rail-tunnel` behind
+ * its position, stopping with the model's origin at the entity's position
+ * (the station), then on into the tunnel ahead. `variant` picks the model,
+ * the complete train by default.
+ * @param props - Entity props and the scene's tunnel positions
  * @returns Animated train or fallback
  */
-function TrenRenderer({ entity }: EntityRendererProps) {
-  const loopCurve = useMemo(
-    () => new THREE.CatmullRomCurve3(TRAIN_LOOP_POINTS.map(([x, z]) => new THREE.Vector3(x, 0, z)), true, 'catmullrom', 0.3),
-    []
-  )
+function TrenRenderer({ entity, context }: EntityRendererProps) {
+  const key = entity.variant && TRAIN_KEYS.has(entity.variant) ? entity.variant : 'phase1/vehicles/tren-completo'
   const fallback = (
     <group position={[0, 0.55, 0]}>
       <mesh position={[-1.6, 0, 0]} castShadow receiveShadow>
@@ -365,26 +317,14 @@ function TrenRenderer({ entity }: EntityRendererProps) {
       </mesh>
     </group>
   )
+  return <TrenAnimado src={modelRegistry[key as keyof typeof modelRegistry].path} tunnels={context?.railTunnels} fallback={fallback} />
+}
 
-  if (entity.variant && TRAIN_KEYS.has(entity.variant) && entity.variant !== 'phase1/vehicles/tren-completo') {
-    const entry = modelRegistry[entity.variant as keyof typeof modelRegistry]
-    return <TrenAnimado src={entry.path} loopCurve={loopCurve} speed={9} fallback={fallback} />
-  }
-
-  return (
-    <>
-      {TRAIN_CAR_OFFSETS.map(({ key, trailDistance }) => (
-        <TrenAnimado
-          key={key}
-          src={modelRegistry[key as keyof typeof modelRegistry].path}
-          loopCurve={loopCurve}
-          speed={9}
-          trailDistance={trailDistance}
-          fallback={trailDistance === 0 ? fallback : <></>}
-        />
-      ))}
-    </>
-  )
+/**
+ * @returns Procedural railway tunnel
+ */
+function RailTunnelRenderer() {
+  return <RailTunnel />
 }
 
 /** Boat registry keys that patrol the Río Magdalena instead of staying moored, and their lane offset/speed. */
@@ -521,6 +461,15 @@ function ParadeVehicleDispatcher({ entity }: EntityRendererProps) {
   return <ParadeVehicleRenderer entity={entity} />
 }
 
+/**
+ * A standalone world collider draws nothing itself: `PhaseEngine`'s
+ * `EntityCollider` publishes it and draws it while the editor's collision view is on.
+ * @returns Nothing
+ */
+function ColliderEntityRenderer() {
+  return null
+}
+
 /** Rendered for a `type` with no registry entry, so missing types stay visible instead of silently vanishing. */
 function UnknownEntityRenderer({ entity }: EntityRendererProps) {
   console.warn(`[PhaseEngine] Unknown entity type "${entity.type}" (id "${entity.id}") — check entityRegistry.tsx`)
@@ -561,6 +510,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'phase2-scene': GenericModelRenderer,
   'phase2-model': GenericModelRenderer,
   'phase1-train': TrenRenderer,
+  'rail-tunnel': RailTunnelRenderer,
   'phase1/decorators/decorativos-bote-canoa': PuertoBoatRenderer,
   'phase1/decorators/decorativos-bote-chalupa': PuertoBoatRenderer,
   'phase1/decorators/decorativos-vapor-fluvial': PuertoBoatRenderer,
@@ -569,7 +519,10 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'phase1-scene': GenericModelRenderer,
   'phase1-vehicle': GenericModelRenderer,
   'phase1-model': GenericModelRenderer,
+  collider: ColliderEntityRenderer,
+  'walk-area': WalkAreaRenderer,
   ...cityIntroRenderers,
+  ...skyRenderers,
 }
 
 /**
