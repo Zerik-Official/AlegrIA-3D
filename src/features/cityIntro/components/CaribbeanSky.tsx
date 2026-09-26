@@ -9,13 +9,15 @@
  * @module features/cityIntro/components/CaribbeanSky
  */
 
-import { memo, useMemo, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { DUSK_PURPLE, NEON_MAGENTA, SOLAR_YELLOW, SUNSET_ORANGE } from '@/features/cityIntro/config/colorPalette'
 
-/** Radio de la cúpula: dentro del `far` de la cámara (280) y más allá del relleno urbano. */
 const SKY_RADIUS = 258
+
+/** Sun direction used when the scene has no `sun` entity. */
+const DEFAULT_SUN_POSITION: [number, number, number] = [-0.42, 0.1, -1]
 
 const SKY_VERTEX = /* glsl */ `
   varying vec3 vDir;
@@ -25,11 +27,6 @@ const SKY_VERTEX = /* glsl */ `
   }
 `
 
-/**
- * Mezcla cuatro paradas de color por altura y le suma el halo del sol bajo
- * más unas bandas de nube que derivan despacio, para que el cielo no sea un
- * degradado muerto detrás de la ciudad.
- */
 const SKY_FRAGMENT = /* glsl */ `
   uniform vec3 uZenith;
   uniform vec3 uMid;
@@ -59,9 +56,18 @@ const SKY_FRAGMENT = /* glsl */ `
 `
 
 /**
- * @returns Cúpula de cielo + el sol direccional que la acompaña
+ * Props for {@link CaribbeanSky}.
  */
-export const CaribbeanSky = memo(function CaribbeanSky() {
+interface CaribbeanSkyProps {
+  /** World position of the scene's `sun` entity; the dome paints the sun's glow in that direction. */
+  sunPosition?: [number, number, number]
+}
+
+/**
+ * @param props - Sun placement
+ * @returns Sky dome and its magenta fill light; the sun's own light comes from the `sun` entity
+ */
+export const CaribbeanSky = memo(function CaribbeanSky({ sunPosition = DEFAULT_SUN_POSITION }: CaribbeanSkyProps) {
   const materialRef = useRef<THREE.ShaderMaterial>(null)
 
   const uniforms = useMemo(
@@ -70,18 +76,23 @@ export const CaribbeanSky = memo(function CaribbeanSky() {
       uMid: { value: new THREE.Color(NEON_MAGENTA).lerp(new THREE.Color(DUSK_PURPLE), 0.42) },
       uHorizon: { value: new THREE.Color(SUNSET_ORANGE).lerp(new THREE.Color(SOLAR_YELLOW), 0.35) },
       uGround: { value: new THREE.Color(SOLAR_YELLOW).lerp(new THREE.Color('#ffffff'), 0.25) },
-      uSunDir: { value: new THREE.Vector3(-0.42, 0.1, -1).normalize() },
+      uSunDir: { value: new THREE.Vector3(...DEFAULT_SUN_POSITION).normalize() },
       uTime: { value: 0 },
     }),
     []
   )
+
+  const [sunX, sunY, sunZ] = sunPosition
+  useEffect(() => {
+    uniforms.uSunDir.value.set(sunX, sunY, sunZ).normalize()
+  }, [uniforms, sunX, sunY, sunZ])
 
   useFrame(({ clock }) => {
     if (materialRef.current) materialRef.current.uniforms.uTime.value = clock.elapsedTime
   })
 
   return (
-    <group>
+    <group userData={{ editorIgnore: true }}>
       <mesh frustumCulled={false}>
         <sphereGeometry args={[SKY_RADIUS, 32, 24]} />
         <shaderMaterial
@@ -96,7 +107,6 @@ export const CaribbeanSky = memo(function CaribbeanSky() {
         />
       </mesh>
 
-      <directionalLight position={[-70, 22, -160]} intensity={1.25} color={SUNSET_ORANGE} castShadow={false} />
       <directionalLight position={[40, 30, 60]} intensity={0.35} color={NEON_MAGENTA} castShadow={false} />
     </group>
   )
