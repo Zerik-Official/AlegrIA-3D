@@ -1,7 +1,7 @@
 /**
  * The team credits scene: where its door prompt sits on `cityIntro`'s RIWI
  * Barranquilla building, the room's layout, the orbiting camera's path
- * around Omar, and the roll of names shown while "CREDITS-MUSIC.mp3" plays.
+ * around Jafet, and the roll of names shown while "CREDITS-MUSIC.mp3" plays.
  * @module features/credits/config/creditsConfig
  */
 
@@ -41,10 +41,15 @@ export const CREDITS_PORTAL_ACCENT = '#ffd27a'
 /** Visible credits portal's cool glow color (inner ring, vortex, ground light). */
 export const CREDITS_PORTAL_GLOW = '#a855ff'
 
-/** World point the credits scene's room is built around — between its two columns, where Omar dances. */
+/** World point the credits scene's room is built around — between its two columns, where Jafet dances. */
 export const CREDITS_CENTER: [number, number, number] = [0, 0, 0]
-/** Height the orbiting camera looks at (roughly Omar's chest/head). */
+/** Height the orbiting camera looks at (roughly Jafet's chest/head). */
 export const CREDITS_LOOK_HEIGHT = 1.35
+
+/** Name floating over the dancer at the center of the credits room. */
+export const CREDITS_DANCER_NAME = 'Jafet Torres Del Futuro'
+/** Line that pops up next to the dancer every half minute. */
+export const CREDITS_SHOUT_TEXT = 'Chicos, silencio porfaa'
 
 /** Orbiting camera's distance from {@link CREDITS_CENTER}. */
 export const CREDITS_CAMERA_RADIUS = 5.2
@@ -57,6 +62,8 @@ export const CREDITS_ORBIT_PERIOD_S = 42
 export interface CreditMember {
   name: string
   role?: string
+  /** Extra effect behind the name's letters: `soundBars` pulses equalizer bars, like a volume meter. */
+  effect?: 'soundBars'
 }
 
 /** One role section of the credits roll. */
@@ -65,12 +72,19 @@ export interface CreditSection {
   members: CreditMember[]
 }
 
+/** Prefix of each section's title in the cinematic slam-in (`Equipo de Investigación`, ...). */
+export const CREDITS_SECTION_PREFIX = 'Equipo de'
+
 /** Heading shown above the roll. */
 export const CREDITS_HEADING = 'Equipo Futuro Abajero'
 /** Subheading introducing the member list. */
 export const CREDITS_SUBHEADING = 'Integrantes'
 
-/** The team, by section — shown in the credits roll, typed on letter by letter. */
+/**
+ * The team, by section — first announced one name at a time with the
+ * cinematic slam-in (`CinematicCredits`), then shown in full in the roll,
+ * typed on letter by letter.
+ */
 export const CREDITS_ROLL: CreditSection[] = [
   {
     title: 'Investigación',
@@ -104,7 +118,7 @@ export const CREDITS_ROLL: CreditSection[] = [
   },
   {
     title: 'Producción',
-    members: [{ name: 'Andrés Elles', role: 'Sonido ambiental' }],
+    members: [{ name: 'Andrés Elles', role: 'Sonido ambiental', effect: 'soundBars' }],
   },
 ]
 

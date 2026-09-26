@@ -97,3 +97,34 @@ canvas { display: block; }
   0% { transform: translateX(0) skewX(-20deg); }
   45%, 100% { transform: translateX(420%) skewX(-20deg); }
 }
+
+@keyframes credits-slam {
+  0% { opacity: 0; transform: translateX(70vw) rotateY(-55deg) scaleX(1.8); filter: blur(10px); }
+  55% { opacity: 1; transform: translateX(-14px) rotateY(8deg) scaleX(0.86); filter: blur(0); }
+  78% { transform: translateX(5px) rotateY(-3deg) scaleX(1.04); }
+  100% { opacity: 1; transform: translateX(0) rotateY(0) scaleX(1); filter: blur(0); }
+}
+
+@keyframes credits-impact {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 2px); }
+  40% { transform: translate(5px, -2px); }
+  60% { transform: translate(-3px, 1px); }
+  80% { transform: translate(2px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes credits-slam-out {
+  0% { opacity: 1; transform: translateX(0) scaleX(1); filter: blur(0); }
+  100% { opacity: 0; transform: translateX(-45vw) scaleX(1.6); filter: blur(12px); }
+}
+
+@keyframes credits-role-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes credits-eq {
+  0% { transform: scaleY(0.12); }
+  100% { transform: scaleY(1); }
+}

@@ -1,6 +1,6 @@
 /**
  * Low-poly recreation of the RIWI coworking room the credits scene is staged
- * in: the two square columns Omar dances between, rows of empty
+ * in: the two square columns Jafet dances between, rows of empty
  * workstations (desks, monitors, keyboards, chairs, backpacks — no people),
  * the ceiling's AC units, red pipe and cable tray, the roll-up blinds and the
  * glass door. Built from plain geometries, matching the reference photos'
@@ -169,7 +169,7 @@ function RiwiBanner({ x, z }: { x: number; z: number }) {
   )
 }
 
-/** The two square columns Omar dances between, with a capital and base for a bit of architectural detail. */
+/** The two square columns Jafet dances between, with a capital and base for a bit of architectural detail. */
 function CenterColumns() {
   return (
     <group>
@@ -190,7 +190,7 @@ function CenterColumns() {
   )
 }
 
-/** Warm spotlight pool on the floor where Omar dances, between the columns. */
+/** Warm spotlight pool on the floor where Jafet dances, between the columns. */
 const StageGlow = memo(function StageGlow() {
   const texture = useMemo(
     () =>

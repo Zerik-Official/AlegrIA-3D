@@ -50,6 +50,9 @@ function createAudioElement(): HTMLAudioElement | null {
   return el
 }
 
+/** Tracks that repeat for as long as their scene stays on screen instead of playing once. */
+const LOOPING_TRACKS = new Set<AudioTrackKey>(['credits'])
+
 /**
  * @param phase - Current game phase
  * @param libraryVisitCount - How many times `exploring` has been entered so far
@@ -72,7 +75,7 @@ export function usePhaseAudio(phase: GamePhase, libraryVisitCount: number): numb
       return
     }
     const src = audioTracks[key]
-    el.loop = false
+    el.loop = LOOPING_TRACKS.has(key)
     if (!el.src.endsWith(src)) {
       el.src = src
       el.currentTime = 0

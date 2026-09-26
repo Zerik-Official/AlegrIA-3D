@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { FiBookOpen, FiMusic, FiX } from 'react-icons/fi'
 import {
   CREDITS_BOOK_AUTHOR,
@@ -11,6 +11,8 @@ import {
   CREDITS_SUBHEADING,
 } from '@/features/credits/config/creditsConfig'
 import { useTypewriterProgress } from '@/features/credits/hooks/useTypewriterProgress'
+import { CinematicCredits } from '@/features/credits/components/CinematicCredits'
+import { SoundBars } from '@/features/credits/components/SoundBars'
 
 /** Props for {@link CreditsHUD}. */
 interface CreditsHUDProps {
@@ -26,6 +28,8 @@ interface Segment {
   text: string
   /** Whether this member line gets the leader's shimmering writing animation. */
   isLeader: boolean
+  /** Extra effect behind the line's letters. */
+  effect?: 'soundBars'
 }
 
 /** Letters revealed per second by the typewriter. */
@@ -42,15 +46,12 @@ function formatClock(seconds: number): string {
 }
 
 /**
- * The credits scene's overlay: the team roll typed on letter by letter down
- * the left edge (leaders shimmer in gold as their name is written), the book
- * dedication plaque on the right, the music box (time remaining + composer
- * credit) bottom-left, and the way back out bottom-right.
- *
- * @param props - Track countdown and the exit action
- * @returns Overlay elements
+ * The full team roll, typed on letter by letter down the left edge once the
+ * cinematic opening is over (leaders shimmer in gold as their name is
+ * written; the sound designer's name pulses over equalizer bars).
+ * @returns Roll column
  */
-export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }: CreditsHUDProps) {
+function CreditsRoll() {
   const segments = useMemo<Segment[]>(
     () => [
       { kind: 'heading', text: CREDITS_HEADING, isLeader: false },
@@ -61,6 +62,7 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
           kind: 'member' as const,
           text: m.role ? `${m.name} — ${m.role}` : m.name,
           isLeader: m.role === CREDITS_LEADER_ROLE,
+          effect: m.effect,
         })),
       ]),
     ],
@@ -74,16 +76,10 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
     const start = consumed
     const visible = Math.max(0, Math.min(seg.text.length, revealed - start))
     consumed += seg.text.length
-    return { kind: seg.kind, isLeader: seg.isLeader, text: seg.text.slice(0, visible), isTyping: visible > 0 && visible < seg.text.length, key: i }
+    return { kind: seg.kind, isLeader: seg.isLeader, effect: seg.effect, text: seg.text.slice(0, visible), isTyping: visible > 0 && visible < seg.text.length, key: i }
   })
 
-  const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
-  const remainingSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
-
   return (
-    <>
-      <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.6)_100%)]" />
-
       <div className="pointer-events-none fixed top-10 bottom-24 left-8 z-10 w-75 overflow-hidden font-cinzel text-parchment">
         {rendered.map((seg) => {
           if (!seg.text && seg.kind !== 'member') return null
@@ -112,7 +108,7 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
           return (
             <div
               key={seg.key}
-              className={`mt-1 text-[13px] ${seg.isLeader ? 'font-semibold tracking-[0.01em]' : 'text-parchment/85'}`}
+              className={`relative isolate mt-1 w-fit text-[13px] ${seg.isLeader ? 'font-semibold tracking-[0.01em]' : 'text-parchment/85'}`}
               style={
                 seg.isLeader
                   ? {
@@ -126,12 +122,37 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
                   : undefined
               }
             >
+              {seg.effect === 'soundBars' && <SoundBars count={Math.max(8, Math.round(seg.text.length * 1.4))} />}
               {seg.text}
               {seg.isTyping && <span className="ml-0.5 inline-block w-1.5 bg-gold-bright align-middle" style={{ height: '1em', animation: 'credits-caret-blink 0.9s steps(1) infinite' }} />}
             </div>
           )
         })}
       </div>
+  )
+}
+
+/**
+ * The credits scene's overlay: the cinematic team-by-team opening, then the
+ * team roll typed on letter by letter down the left edge, the book
+ * dedication plaque on the right, the music box (time remaining + composer
+ * credit) bottom-left, and the way back out bottom-right.
+ *
+ * @param props - Track countdown and the exit action
+ * @returns Overlay elements
+ */
+export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }: CreditsHUDProps) {
+  const [cinematicDone, setCinematicDone] = useState(false)
+  const finishCinematic = useCallback(() => setCinematicDone(true), [])
+
+  const showCountdown = typeof audioRemainingSec === 'number' && Number.isFinite(audioRemainingSec) && audioRemainingSec > 0.35
+  const remainingSec = showCountdown ? Math.ceil(audioRemainingSec as number) : 0
+
+  return (
+    <>
+      <div className="pointer-events-none fixed inset-0 z-5 bg-[radial-gradient(ellipse_at_center,transparent_55%,rgba(0,0,0,0.6)_100%)]" />
+
+      {cinematicDone ? <CreditsRoll /> : <CinematicCredits onDone={finishCinematic} />}
 
       <div
         className="pointer-events-none fixed top-10 bottom-24 right-8 z-10 flex w-70 flex-col items-end justify-end text-right font-cinzel text-parchment"

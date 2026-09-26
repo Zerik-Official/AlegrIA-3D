@@ -1,6 +1,6 @@
 /**
  * The credits scene's cinematic camera: a slow, continuous orbit around
- * {@link CREDITS_CENTER}, always looking at Omar dancing in the middle of the
+ * {@link CREDITS_CENTER}, always looking at Jafet dancing in the middle of the
  * room — no player control, the same way `WormholeCamera` fully owns the
  * camera during a crossing.
  * @module app/components/CreditsCamera
