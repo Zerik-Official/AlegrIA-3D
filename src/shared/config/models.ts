@@ -23,7 +23,7 @@ export const modelRegistry: ModelRegistry = {
   'library/scattered-book': { path: `${base}models/library/scattered-book.glb`, fallback: 'procedural-scattered-book' },
   'library/cyber-wall': { path: `${base}models/library/cyber-wall.glb`, fallback: 'procedural-cyber-wall' },
   'pedestal/base': { path: `${base}models/pedestal/pedestal.glb`, fallback: 'procedural-pedestal' },
-  'pedestal/book': { path: `${base}models/pedestal/book.glb`, fallback: 'procedural-book' },
+  'pedestal/book': { path: `${base}models/shared/libro-historia-barrio-abajo.glb`, fallback: 'procedural-book' },
   'museum/pedestal': { path: `${base}models/museum/pedestal-display.glb`, fallback: 'procedural-museum-pedestal' },
   'museum/column': { path: `${base}models/museum/column.glb`, fallback: 'procedural-column' },
   'museum/painting-frame': { path: `${base}models/museum/painting-frame.glb`, fallback: 'procedural-painting' },
