@@ -4,7 +4,8 @@ import { PointerLockControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useKeyboard } from '@/features/player/hooks/useKeyboard'
 import { playerConfig } from '@/shared/config/appConfig'
-import { getCollisionSolids, resolveAgainstSolids } from '@/features/player/collision'
+import { getCollisionCircles, getCollisionSolids, resolveAgainstCircles, resolveAgainstSolids } from '@/features/player/collision'
+import { getWalkAreas, isInsideWalkAreas } from '@/features/player/walkAreas'
 
 /**
  * Props for {@link PlayerControls}.
@@ -14,56 +15,18 @@ interface PlayerControlsProps {
   enabled: boolean
   /** Callback invoked every frame with the current camera position. */
   onPositionChange: (pos: THREE.Vector3) => void
-  /** Optional movement bounds clamping. */
-  bounds?: { minX: number; maxX: number; minZ: number; maxZ: number }
-  /** Extra ground-level collision circles (e.g. landmark footprints) the player can't walk into. */
-  obstacles?: Array<{ x: number; z: number; radius: number }>
   /**
-   * Whether to resolve movement against the shared `COL_*`-driven collision
-   * world (see `features/player/collision`), making authored decks, platforms
+   * Whether to resolve movement against the shared collision world (see
+   * `features/player/collision`): `COL_*` proxies of loaded models and the
+   * JSON colliders of the scene's entities, making authored decks, platforms
    * and stairs solid and walkable. Off by default so scenes that publish no
    * colliders keep the original flat-ground behavior.
    */
   useCollisionWorld?: boolean
   /** Whether to move the camera to the library's start position on mount; off to keep walking from wherever the camera already is (the finale's free roam). */
   spawnAtStart?: boolean
-  /** Whether the central pedestal at the origin blocks the player; off where there is no pedestal (the restored library, the city). */
-  avoidPedestal?: boolean
   /** Holds the player in place (mouse-look still works) while a cinematic plays. */
   movementLocked?: boolean
-  /**
-   * Overlapping rectangles the player must stay inside (a street network,
-   * say) — a step leaving all of them slides along the edge instead, keeping
-   * whichever axis of the move still lands inside one.
-   */
-  walkableAreas?: Array<{ minX: number; maxX: number; minZ: number; maxZ: number }>
-}
-
-/**
- * @param areas - Walkable rectangles
- * @param x - World X
- * @param z - World Z
- * @returns Whether `(x, z)` lies inside at least one of them
- */
-function insideAny(areas: NonNullable<PlayerControlsProps['walkableAreas']>, x: number, z: number): boolean {
-  for (const a of areas) if (x >= a.minX && x <= a.maxX && z >= a.minZ && z <= a.maxZ) return true
-  return false
-}
-
-/**
- * Clamps `point` to just outside the circle at `(cx, cz)` when it falls inside it.
- * @param point - Candidate position, mutated in place
- * @param cx - Circle center X
- * @param cz - Circle center Z
- * @param radius - Circle radius
- */
-function pushOutOfCircle(point: THREE.Vector3, cx: number, cz: number, radius: number): void {
-  const dx = point.x - cx
-  const dz = point.z - cz
-  if (Math.hypot(dx, dz) >= radius) return
-  const angle = Math.atan2(dz, dx)
-  point.x = cx + Math.cos(angle) * radius
-  point.z = cz + Math.sin(angle) * radius
 }
 
 /** Reusable vectors to avoid per-frame GC. */
@@ -78,8 +41,8 @@ const scratch = {
 }
 
 /**
- * First-person pointer-lock controls with WASD movement, sprint, pedestal collision and synthesized footsteps.
- * Reusable across library and museum by swapping {@link PlayerControlsProps.bounds}.
+ * First-person pointer-lock controls with WASD movement, sprint, collision and synthesized footsteps.
+ * Stays inside the scene's JSON `walk-area` rectangles (see `features/player/walkAreas`).
  *
  * @param props - Control configuration
  * @returns PointerLockControls element
@@ -88,13 +51,9 @@ const scratch = {
 export const PlayerControls = memo(function PlayerControls({
   enabled,
   onPositionChange,
-  bounds,
-  obstacles,
   useCollisionWorld = false,
   spawnAtStart = true,
-  avoidPedestal = true,
   movementLocked = false,
-  walkableAreas,
 }: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
@@ -215,24 +174,18 @@ export const PlayerControls = memo(function PlayerControls({
 
     scratch.next.copy(camera.position).add(scratch.move)
 
-    if (bounds) {
-      scratch.next.x = THREE.MathUtils.clamp(scratch.next.x, bounds.minX, bounds.maxX)
-      scratch.next.z = THREE.MathUtils.clamp(scratch.next.z, bounds.minZ, bounds.maxZ)
-    }
-
-    if (walkableAreas && !insideAny(walkableAreas, scratch.next.x, scratch.next.z)) {
-      if (insideAny(walkableAreas, scratch.next.x, camera.position.z)) scratch.next.z = camera.position.z
-      else if (insideAny(walkableAreas, camera.position.x, scratch.next.z)) scratch.next.x = camera.position.x
+    const walkAreas = getWalkAreas()
+    if (walkAreas.length && isInsideWalkAreas(walkAreas, camera.position.x, camera.position.z) && !isInsideWalkAreas(walkAreas, scratch.next.x, scratch.next.z)) {
+      if (isInsideWalkAreas(walkAreas, scratch.next.x, camera.position.z)) scratch.next.z = camera.position.z
+      else if (isInsideWalkAreas(walkAreas, camera.position.x, scratch.next.z)) scratch.next.x = camera.position.x
       else {
         scratch.next.x = camera.position.x
         scratch.next.z = camera.position.z
       }
     }
 
-    if (avoidPedestal) pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
-    if (obstacles) for (const o of obstacles) pushOutOfCircle(scratch.next, o.x, o.z, o.radius)
-
     if (useCollisionWorld) {
+      resolveAgainstCircles(scratch.next, getCollisionCircles(), floorRef.current, playerConfig.bodyHeight)
       const floor = resolveAgainstSolids(scratch.next, getCollisionSolids(), floorRef.current, {
         stepUp: playerConfig.stepUpHeight,
         bodyHeight: playerConfig.bodyHeight,
