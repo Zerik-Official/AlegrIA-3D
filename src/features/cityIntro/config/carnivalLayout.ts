@@ -121,13 +121,13 @@ export const STREET_JUKEBOX_CAR_XZ: [number, number] = (() => {
 })()
 
 /**
- * World XZ of "El Poderoso Premium" rig (`poderoso-premium` entity), parked
- * in front of RIWI's building on the side street by the aduana — looked up
- * the same way as {@link STREET_JUKEBOX_CAR_XZ}.
+ * World XZ of the concert stage (`concert-stage` entity) at the end of the
+ * side street by RIWI's headquarters — looked up the same way as
+ * {@link STREET_JUKEBOX_CAR_XZ}.
  */
-export const PODEROSO_PREMIUM_XZ: [number, number] = (() => {
-  const rig = initialCityIntroEntities.find((e) => e.type === 'poderoso-premium')
-  return rig ? [rig.position[0], rig.position[2]] : [29, -36.5]
+export const CONCERT_STAGE_XZ: [number, number] = (() => {
+  const stage = initialCityIntroEntities.find((e) => e.type === 'concert-stage')
+  return stage ? [stage.position[0], stage.position[2]] : [39.5, -35.5]
 })()
 
 /** Half-footprint of the parked street jukebox car, so the avenue crowd dances around it instead of through it. */

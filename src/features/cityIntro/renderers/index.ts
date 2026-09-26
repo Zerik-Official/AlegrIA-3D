@@ -1,13 +1,13 @@
 /**
- * Renderer map for the `cityIntro` scene's entity types, merged into
- * `engine/entityRegistry`'s `entityRegistry` export. Each renderer lives in
- * its own file here (not in `engine/`) because it's entirely specific to this
- * scene's content — the engine itself only needs the map, not the geometry.
+ * Maps entity types in the `cityIntro` scene to their renderers and is merged
+ * into the `entityRegistry` export from `engine/entityRegistry`. Each renderer
+ * is defined in a separate file because it is specific to this scene; the
+ * engine only needs this map, not the renderer geometry.
  *
- * El bloque "Futurismo Abajero 2050" (casa neopatrimonial, mural cultural,
- * farol flotante, andén y roble) es el que da la identidad caribeña de la
- * fase; los tipos cyberpunk originales (rascacielos, torres, banca/maceta de
- * neón) siguen registrados para no romper escenas ya exportadas del editor.
+ * The "Futurismo Abajero 2050" set includes a neo-heritage house, cultural
+ * mural, floating streetlight, curb, and oak tree. The original cyberpunk
+ * types remain registered to preserve compatibility with scenes exported
+ * from the editor.
  * @module features/cityIntro/renderers
  */
 
@@ -31,10 +31,11 @@ import { CurbRenderer, YellowTreeRenderer } from '@/features/cityIntro/renderers
 import { RiwiBarranquillaRenderer } from '@/features/cityIntro/renderers/RiwiBarranquillaRenderer'
 import { AdBusRenderer } from '@/features/cityIntro/renderers/AdBusRenderer'
 import { StreetJukeboxCarRenderer } from '@/features/cityIntro/renderers/StreetJukeboxCarRenderer'
-import { PoderosoPremiumRenderer } from '@/features/cityIntro/renderers/PoderosoPremiumRenderer'
+import { ConcertStageRenderer } from '@/features/cityIntro/renderers/concert/ConcertStageRenderer'
 import type { EntityRenderer } from '@/engine/types'
 
 export const cityIntroRenderers: Record<string, EntityRenderer> = {
+  'concert-stage': ConcertStageRenderer,
   skyscraper: SkyscraperRenderer,
   streetlight: StreetlightRenderer,
   'flying-car': FlyingCarRenderer,
@@ -59,5 +60,4 @@ export const cityIntroRenderers: Record<string, EntityRenderer> = {
   'riwi-barranquilla': RiwiBarranquillaRenderer,
   'ad-bus': AdBusRenderer,
   'street-jukebox-car': StreetJukeboxCarRenderer,
-  'poderoso-premium': PoderosoPremiumRenderer,
 }

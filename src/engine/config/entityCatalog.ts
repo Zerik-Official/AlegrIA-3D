@@ -130,8 +130,8 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
   {
-    type: 'poderoso-premium',
-    label: 'El Poderoso Premium (picó)',
+    type: 'concert-stage',
+    label: 'Concierto (tarima RIWI)',
     scenes: ['cityIntro'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
