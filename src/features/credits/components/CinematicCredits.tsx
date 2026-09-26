@@ -8,7 +8,7 @@
 
 import { memo, useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { CREDITS_LEADER_ROLE, CREDITS_ROLL, CREDITS_SECTION_PREFIX, type CreditMember } from '@/features/credits/config/creditsConfig'
-import { SoundBars } from '@/features/credits/components/SoundBars'
+import { EqualizerText } from '@/features/credits/components/EqualizerText'
 
 /** Props for {@link CinematicCredits}. */
 interface CinematicCreditsProps {
@@ -28,6 +28,8 @@ const SECTION_GAP_S = 0.35
 const LETTER_STAGGER_S = 0.035
 /** Seconds one letter's slam takes. */
 const LETTER_SLAM_S = 0.55
+/** Font size of a name drawn with the equalizer fill, in px. */
+const SOUND_BARS_FONT_PX = 56
 /** How often the schedule is sampled, in ms. */
 const TICK_MS = 50
 
@@ -93,7 +95,7 @@ interface SlamTextProps {
   className: string
   /** Whether the line is flying out. */
   leaving: boolean
-  /** Extra effect behind the letters. */
+  /** Extra effect on the letters: `soundBars` fills them with a live equalizer, the line slamming in as one block. */
   effect?: CreditMember['effect']
 }
 
@@ -113,20 +115,25 @@ function SlamText({ text, className, leaving, effect }: SlamTextProps) {
 
   return (
     <div className={`relative isolate inline-block whitespace-nowrap ${className}`} style={lineStyle}>
-      {effect === 'soundBars' && <SoundBars count={Math.max(8, Math.round(letters.length * 1.6))} />}
-      {letters.map((letter, i) => (
-        <span
-          key={i}
-          className="inline-block"
-          style={{
-            animation: `credits-slam ${LETTER_SLAM_S}s cubic-bezier(0.16, 1.35, 0.35, 1) ${i * LETTER_STAGGER_S}s both`,
-            textShadow:
-              '1px 1px 0 #b8862a, 2px 2px 0 #9c6f1f, 3px 3px 0 #825a17, 4px 4px 0 #6a4812, 5px 5px 0 #53380e, 6px 7px 14px rgba(0,0,0,0.65), 0 0 24px rgba(255,204,51,0.35)',
-          }}
-        >
-          {letter === ' ' ? ' ' : letter}
+      {effect === 'soundBars' ? (
+        <span className="inline-block" style={{ animation: `credits-slam ${LETTER_SLAM_S}s cubic-bezier(0.16, 1.35, 0.35, 1) both` }}>
+          <EqualizerText text={text} fontSize={SOUND_BARS_FONT_PX} letterSpacing={2} />
         </span>
-      ))}
+      ) : (
+        letters.map((letter, i) => (
+          <span
+            key={i}
+            className="inline-block"
+            style={{
+              animation: `credits-slam ${LETTER_SLAM_S}s cubic-bezier(0.16, 1.35, 0.35, 1) ${i * LETTER_STAGGER_S}s both`,
+              textShadow:
+                '1px 1px 0 #b8862a, 2px 2px 0 #9c6f1f, 3px 3px 0 #825a17, 4px 4px 0 #6a4812, 5px 5px 0 #53380e, 6px 7px 14px rgba(0,0,0,0.65), 0 0 24px rgba(255,204,51,0.35)',
+            }}
+          >
+            {letter === ' ' ? ' ' : letter}
+          </span>
+        ))
+      )}
     </div>
   )
 }

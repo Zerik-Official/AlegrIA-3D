@@ -11,8 +11,8 @@ import { initialCityIntroEntities } from '@/features/editor/config/editableEntit
  * How far in front of the RIWI Barranquilla building (along its facing
  * direction) the door trigger — and its visible portal — sit. Out in the open
  * forecourt rather than tucked against the door, so the portal reads clearly
- * from a distance; the street party ("El Poderoso Premium" and its dancers)
- * moved down to the street's actual dead end instead of camping here.
+ * from a distance; the concert stage sits at the street's actual dead end
+ * instead of camping here.
  */
 const DOOR_OFFSET = 5.5
 
@@ -130,6 +130,8 @@ export const CREDITS_LEADER_ROLE = 'Líder'
 
 /** Heading of the book dedication panel, on the right side of the credits scene. */
 export const CREDITS_BOOK_HEADING = 'El Libro de Rosa'
+/** Line of the dedication panel that frames the whole experience. */
+export const CREDITS_BOOK_QUOTE = 'Un barrio no se mide en calles, sino en las memorias de quienes lo habitan.'
 /** Its body text — the in-game book's real-world source. */
 export const CREDITS_BOOK_DEDICATION = 'Toda la investigación de esta experiencia está basada en el libro de'
 /** The book's author, credited by name. */

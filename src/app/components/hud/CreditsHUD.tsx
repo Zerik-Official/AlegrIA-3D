@@ -1,9 +1,12 @@
 import { memo, useCallback, useMemo, useState } from 'react'
+import { Canvas } from '@react-three/fiber'
+import * as THREE from 'three'
 import { FiBookOpen, FiMusic, FiX } from 'react-icons/fi'
 import {
   CREDITS_BOOK_AUTHOR,
   CREDITS_BOOK_DEDICATION,
   CREDITS_BOOK_HEADING,
+  CREDITS_BOOK_QUOTE,
   CREDITS_HEADING,
   CREDITS_LEADER_ROLE,
   CREDITS_MUSIC_BY,
@@ -12,7 +15,10 @@ import {
 } from '@/features/credits/config/creditsConfig'
 import { useTypewriterProgress } from '@/features/credits/hooks/useTypewriterProgress'
 import { CinematicCredits } from '@/features/credits/components/CinematicCredits'
-import { SoundBars } from '@/features/credits/components/SoundBars'
+import { EqualizerText } from '@/features/credits/components/EqualizerText'
+import { StoryBook3D } from '@/features/storyBook/components/StoryBook3D'
+import { PartnerLogos } from '@/shared/components/PartnerLogos'
+import { LiveEqualizer } from '@/shared/components/LiveEqualizer'
 
 /** Props for {@link CreditsHUD}. */
 interface CreditsHUDProps {
@@ -122,8 +128,7 @@ function CreditsRoll() {
                   : undefined
               }
             >
-              {seg.effect === 'soundBars' && <SoundBars count={Math.max(8, Math.round(seg.text.length * 1.4))} />}
-              {seg.text}
+              {seg.effect === 'soundBars' ? <EqualizerText text={seg.text} fontSize={13} fontWeight={600} /> : seg.text}
               {seg.isTyping && <span className="ml-0.5 inline-block w-1.5 bg-gold-bright align-middle" style={{ height: '1em', animation: 'credits-caret-blink 0.9s steps(1) infinite' }} />}
             </div>
           )
@@ -134,9 +139,10 @@ function CreditsRoll() {
 
 /**
  * The credits scene's overlay: the cinematic team-by-team opening, then the
- * team roll typed on letter by letter down the left edge, the book
- * dedication plaque on the right, the music box (time remaining + composer
- * credit) bottom-left, and the way back out bottom-right.
+ * team roll typed on letter by letter down the left edge; the Libro de Rosa
+ * panel on the right (the book itself, a line about memory, the dedication
+ * and the partners' logos); the music box bottom-left with an equalizer
+ * moving to the track; and the way back out bottom-right.
  *
  * @param props - Track countdown and the exit action
  * @returns Overlay elements
@@ -154,28 +160,61 @@ export const CreditsHUD = memo(function CreditsHUD({ audioRemainingSec, onExit }
 
       {cinematicDone ? <CreditsRoll /> : <CinematicCredits onDone={finishCinematic} />}
 
-      <div
-        className="pointer-events-none fixed top-10 bottom-24 right-8 z-10 flex w-70 flex-col items-end justify-end text-right font-cinzel text-parchment"
-        style={{ animation: 'credits-dedication-in 1.1s 0.4s both ease-out' }}
-      >
-        <div className="rounded-2xl border border-gold/25 bg-black/35 px-5 py-5 backdrop-blur-md">
-          <div className="mb-2 flex items-center justify-end gap-2 text-gold-bright">
-            <span className="text-[15px] tracking-widest">{CREDITS_BOOK_HEADING}</span>
-            <FiBookOpen className="h-4 w-4" />
+      <div className="pointer-events-none fixed top-10 bottom-24 right-8 z-10 flex w-80 flex-col items-end justify-end text-right font-cinzel text-parchment">
+        <div className="relative w-full overflow-hidden rounded-2xl p-px" style={{ animation: 'start-rise 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.3s both' }}>
+          <div
+            className="absolute -inset-1/2 bg-[conic-gradient(from_0deg,transparent_0%,rgba(255,204,85,0.9)_12%,transparent_28%,rgba(168,85,255,0.7)_55%,transparent_72%)]"
+            style={{ animation: 'spin 9s linear infinite' }}
+          />
+          <div className="relative flex flex-col items-center rounded-2xl bg-[#0b0814]/88 px-5 pt-3 pb-5 text-center backdrop-blur-md">
+            <div className="relative h-32 w-32" style={{ animation: 'start-rise 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.6s both' }}>
+              <div className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle,rgba(255,204,85,0.45)_0%,rgba(255,150,40,0.1)_55%,transparent_72%)] blur-xl" style={{ animation: 'start-halo 4.5s ease-in-out infinite' }} />
+              <Canvas
+                dpr={[1, 2]}
+                gl={{ alpha: true, antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
+                camera={{ fov: 35, position: [0, 0, 2.7] }}
+                style={{ position: 'absolute', inset: 0, background: 'transparent' }}
+              >
+                <StoryBook3D stage="calm" />
+              </Canvas>
+            </div>
+            <div className="flex items-center gap-2 text-gold-bright" style={{ animation: 'start-rise 0.9s ease-out 0.9s both' }}>
+              <FiBookOpen className="h-4 w-4" />
+              <span className="text-[15px] tracking-widest">{CREDITS_BOOK_HEADING}</span>
+            </div>
+            <p
+              className="mt-3 bg-linear-to-r from-[#ffe6a8] via-[#fff3d8] to-[#ffcc33] bg-size-[200%_auto] bg-clip-text text-[14px] leading-relaxed text-transparent italic"
+              style={{ animation: 'start-rise 1s ease-out 1.2s both, start-shimmer 7s linear 2s infinite' }}
+            >
+              “{CREDITS_BOOK_QUOTE}”
+            </p>
+            <div className="my-3 h-px w-2/3 bg-linear-to-r from-transparent via-gold/60 to-transparent" style={{ animation: 'start-rise 0.8s ease-out 1.5s both' }} />
+            <p className="text-[12px] leading-relaxed text-parchment/70" style={{ animation: 'start-rise 0.9s ease-out 1.7s both' }}>
+              {CREDITS_BOOK_DEDICATION}
+            </p>
+            <p className="mt-1.5 text-[14px] tracking-[0.04em] text-gold-bright drop-shadow-[0_0_12px_rgba(255,204,51,0.45)]" style={{ animation: 'start-rise 0.9s ease-out 2s both' }}>
+              {CREDITS_BOOK_AUTHOR}
+            </p>
+            <span className="mt-4 text-[9px] tracking-[0.32em] uppercase text-parchment/40" style={{ animation: 'start-rise 0.8s ease-out 2.3s both' }}>
+              Con el apoyo de
+            </span>
+            <div className="mt-2">
+              <PartnerLogos tileClassName="h-11 w-[5.5rem]" entranceDelay={2.5} />
+            </div>
           </div>
-          <div className="h-px w-full bg-linear-to-l from-gold/60 to-transparent" />
-          <p className="mt-3 text-[12.5px] leading-relaxed text-parchment/75 italic">{CREDITS_BOOK_DEDICATION}</p>
-          <p className="mt-2 text-[14px] tracking-[0.04em] text-gold-bright">{CREDITS_BOOK_AUTHOR}</p>
         </div>
       </div>
 
-      <div className="pointer-events-none fixed bottom-6 left-6 z-10 flex items-center gap-3 rounded-xl border border-gold/20 bg-black/50 px-4 py-3 backdrop-blur-md">
-        <FiMusic className="h-4 w-4 text-gold" />
-        <div className="flex flex-col">
-          <span className="text-[11px] tracking-[0.14em] uppercase text-parchment/60">
-            {showCountdown ? `Faltan ${formatClock(remainingSec)}` : 'Música de créditos'}
-          </span>
-          <span className="text-[11px] text-parchment/45">{CREDITS_MUSIC_BY}</span>
+      <div className="pointer-events-none fixed bottom-6 left-6 z-10 overflow-hidden rounded-xl border border-gold/20 bg-black/55 backdrop-blur-md">
+        <LiveEqualizer source="phase" bars={28} className="absolute inset-x-2 top-2 bottom-0 opacity-45" />
+        <div className="relative flex items-center gap-3 px-4 py-3">
+          <FiMusic className="h-4 w-4 text-gold" style={{ animation: 'start-halo 1.2s ease-in-out infinite' }} />
+          <div className="flex flex-col">
+            <span className="text-[11px] tracking-[0.14em] uppercase text-parchment/80">
+              {showCountdown ? `Faltan ${formatClock(remainingSec)}` : 'Música de créditos'}
+            </span>
+            <span className="text-[11px] text-parchment/60">{CREDITS_MUSIC_BY}</span>
+          </div>
         </div>
       </div>
 

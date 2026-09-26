@@ -55,12 +55,6 @@ canvas { display: block; }
   100% { opacity: 1; }
 }
 
-/* The book dedication panel's entrance, on the credits scene's right side. */
-@keyframes credits-dedication-in {
-  0% { opacity: 0; transform: translateX(18px); }
-  100% { opacity: 1; transform: translateX(0); }
-}
-
 @keyframes start-rise {
   0% { opacity: 0; transform: translateY(18px); filter: blur(6px); }
   100% { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -122,9 +116,4 @@ canvas { display: block; }
 @keyframes credits-role-in {
   0% { opacity: 0; transform: translateY(8px); }
   100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes credits-eq {
-  0% { transform: scaleY(0.12); }
-  100% { transform: scaleY(1); }
 }
