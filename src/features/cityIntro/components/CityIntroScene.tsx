@@ -1,12 +1,10 @@
-import { memo, useEffect, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { Sparkles } from '@react-three/drei'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { CityFillerSkyline } from '@/features/cityIntro/components/CityFillerSkyline'
 import { CityStreets } from '@/features/cityIntro/components/CityStreets'
 import { StreetCarnival } from '@/features/cityIntro/components/carnival/StreetCarnival'
 import { CreditsDoorPortal } from '@/features/cityIntro/renderers/CreditsDoorPortal'
-import { cityCollisionSolids } from '@/features/cityIntro/config/cityCollision'
-import { registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
 import { CaribbeanSky } from '@/features/cityIntro/components/CaribbeanSky'
 import { buildFlightLanes } from '@/features/cityIntro/renderers/flightLane'
 import { NEON_MAGENTA, SOLAR_YELLOW, SUNSET_ORANGE } from '@/features/cityIntro/config/colorPalette'
@@ -26,18 +24,9 @@ const GROUND_CENTER_Z = 7
 const GROUND_SIZE: [number, number] = [280, 180]
 
 /**
- * Escena -1 — "Futurismo Abajero 2050": la calle que el jugador recorre
- * (cámara sobre rieles, solo mirar) desde el barrio hacia la biblioteca que
- * se asoma al final. No es la ciudad cyberpunk genérica: es Barrio Abajo
- * tecnificado, de un piso, en un atardecer caribeño neón.
- *
- * La calzada, los andenes, la calle lateral frente a la aduana y las plazas
- * hacia RIWI y los edificios de pantalla viven en `CityStreets`; la fiesta
- * "Baila la Calle 2050" que llena la avenida (multitud, banderines, hologramas,
- * puestos y luces al ritmo) vive en `StreetCarnival`; las casas, murales,
- * faroles flotantes, robles, vehículos, la luna y la fachada de la biblioteca
- * son JSON (`engine/config/cityIntro.json`) a través de `PhaseEngine`, todas
- * editables con `F2`.
+ * Scene -1 — "Futurismo Abajero 2050": the street the player traverses
+ * (rail camera, look-only) from the neighborhood toward the library that
+ * comes into view at the end.
  *
  * @param props - Scene props
  * @returns City intro group
@@ -46,15 +35,11 @@ export const CityIntroScene = memo(function CityIntroScene({ editableEntities }:
   const entities = editableEntities ?? initialCityIntroEntities
   const flightLanes = useMemo(() => buildFlightLanes(entities), [entities])
   const walkPath = useMemo(() => entities.filter((e) => e.type === 'path-point'), [entities])
-
-  useEffect(() => {
-    registerCollisionSolids('city-sidewalk-slabs', cityCollisionSolids)
-    return () => unregisterCollisionSolids('city-sidewalk-slabs')
-  }, [])
+  const sunPosition = entities.find((e) => e.type === 'sun')?.position
 
   return (
     <group>
-      <CaribbeanSky />
+      <CaribbeanSky sunPosition={sunPosition} />
       <CityFillerSkyline />
 
       <mesh rotation-x={-Math.PI / 2} position={[0, 0, GROUND_CENTER_Z]} receiveShadow>
