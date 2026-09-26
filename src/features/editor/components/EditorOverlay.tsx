@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
-import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap, FiEye, FiEyeOff } from 'react-icons/fi'
+import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi'
+import { useProgress } from '@react-three/drei'
 import type { Vector3Tuple } from 'three'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import type { EntityCatalogItem, SceneId } from '@/engine/config/entityCatalog'
@@ -10,8 +11,9 @@ import { ModelBrowserModal } from '@/features/editor/components/ModelBrowserModa
 import { Select } from '@/components/ui/Select'
 import { ColliderSection, FieldLabel, INPUT_CLASS, NumberField, Vector3Fields } from '@/features/editor/components/EditorFields'
 import { ColliderEditorModal } from '@/features/editor/components/ColliderEditorModal'
-import { DEFAULT_AREA_SIZE } from '@/features/player/renderers/WalkAreaRenderer'
+import { DEFAULT_AREA_SIZE } from '@/features/player/walkAreas'
 import { setCollisionDebugVisible, useCollisionDebugVisible } from '@/features/editor/state/collisionDebug'
+import { preloadModels, sceneModelUrls } from '@/features/editor/utils/preloadModels'
 
 /**
  * Props for {@link EditorOverlay}.
@@ -84,10 +86,19 @@ export const EditorOverlay = memo(function EditorOverlay({
   spawnResolverRef,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
-  const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
+  const [chosenAddType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
+  const addType = catalog.some((c) => c.type === chosenAddType) ? chosenAddType : (catalog[0]?.type ?? chosenAddType)
   const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
   const [colliderEditorId, setColliderEditorId] = useState<string | null>(null)
   const colliderEditorEntity = entities.find((e) => e.id === colliderEditorId) ?? null
+  const [loadedScene, setLoadedScene] = useState<SceneId | null>(null)
+  const modelsReady = !currentScene || loadedScene === currentScene
+  const loading = useProgress()
+  const entitiesRef = useRef(entities)
+
+  useEffect(() => {
+    entitiesRef.current = entities
+  }, [entities])
   const collisionsVisible = useCollisionDebugVisible()
   const crosshairRef = useRef<HTMLDivElement>(null)
   const jumpTargets = phaseSceneRegistry.listJumpTargets()
@@ -132,10 +143,15 @@ export const EditorOverlay = memo(function EditorOverlay({
   )
 
   useEffect(() => {
-    if (catalog.length && !catalog.some((c) => c.type === addType)) {
-      setAddType(catalog[0].type)
+    if (!enabled || !currentScene) return
+    let cancelled = false
+    preloadModels(sceneModelUrls(currentScene, entitiesRef.current)).then(() => {
+      if (!cancelled) setLoadedScene(currentScene)
+    })
+    return () => {
+      cancelled = true
     }
-  }, [catalog, addType])
+  }, [enabled, currentScene])
 
   const handleAdd = useCallback(() => {
     const item = catalog.find((c) => c.type === addType)
@@ -161,6 +177,15 @@ export const EditorOverlay = memo(function EditorOverlay({
 
   return (
     <>
+      {!modelsReady && (
+        <div className="pointer-events-auto fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-[#05070f]/70 text-parchment backdrop-blur-sm">
+          <FiLoader className="h-8 w-8 animate-spin text-gold" />
+          <div className="font-cinzel text-[12px] tracking-[0.24em] uppercase text-gold">Cargando modelos del editor</div>
+          <div className="text-[11px] text-parchment/50">
+            {loading.total > 0 ? `${loading.loaded} / ${loading.total} archivos` : 'Comprobando modelos…'}
+          </div>
+        </div>
+      )}
       <div
         ref={crosshairRef}
         className="pointer-events-none fixed top-1/2 z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2"

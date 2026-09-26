@@ -1,12 +1,16 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Bounds, Center } from '@react-three/drei'
-import { FiBox, FiFilter, FiPlus } from 'react-icons/fi'
+import { FiBox, FiFilter, FiLoader, FiPlus } from 'react-icons/fi'
 import { Modal } from '@/shared/components/Modal'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { modelPreviews } from '@/features/editor/config/modelPreviews'
 import type { SceneId } from '@/engine/config/entityCatalog'
+import { allModelUrls, preloadModels } from '@/features/editor/utils/preloadModels'
+
+/** Whether every registry model has been loaded this session, shared by every modal instance. */
+let allModelsLoaded = false
 
 /**
  * Props for {@link ModelBrowserModal}.
@@ -58,6 +62,20 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
   const entries = useMemo(() => Object.entries(modelRegistry), [])
   const [onlyCurrentPhase, setOnlyCurrentPhase] = useState<boolean>(!!currentScene)
   const [search, setSearch] = useState<string>('')
+  const [allReady, setAllReady] = useState(allModelsLoaded)
+  const loadingAll = open && !onlyCurrentPhase && !allReady
+
+  useEffect(() => {
+    if (!loadingAll) return
+    let cancelled = false
+    preloadModels(allModelUrls()).then(() => {
+      allModelsLoaded = true
+      if (!cancelled) setAllReady(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [loadingAll])
 
   const filteredEntries = useMemo(() => {
     let list = entries
@@ -120,7 +138,13 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
             />
             <div className="mt-1 text-[10px] text-parchment/35">{filteredEntries.length} modelos</div>
           </div>
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="relative flex-1 overflow-y-auto p-2">
+            {loadingAll && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0f1e]/85 text-[11px] text-parchment/70">
+                <FiLoader className="h-5 w-5 animate-spin text-gold" />
+                Cargando modelos de todas las fases…
+              </div>
+            )}
             {groups.map(([group, keys]) => (
               <div key={group} className="mb-2">
                 <div className="px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-parchment/40">{group}</div>
