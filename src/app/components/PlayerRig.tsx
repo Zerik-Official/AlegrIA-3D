@@ -10,9 +10,6 @@ import { CityWalkControls } from '@/features/cityIntro/components/CityWalkContro
 import { PlayerControls } from '@/features/player/components/PlayerControls'
 import { CinematicLookAt } from '@/app/components/CinematicLookAt'
 import { CreditsCamera } from '@/app/components/CreditsCamera'
-import { cityObstacles } from '@/features/cityIntro/config/cityCollision'
-import { CITY_WALKABLE_AREAS } from '@/features/cityIntro/config/cityStreets'
-import { phase2Obstacles } from '@/features/phase2/config/phase2Collision'
 import { appConfig } from '@/shared/config/appConfig'
 import type { Experience } from '@/app/hooks/useExperience'
 
@@ -53,20 +50,15 @@ export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps)
         <PlayerControls
           enabled
           onPositionChange={proximity.handlePosition}
-          walkableAreas={CITY_WALKABLE_AREAS}
-          obstacles={cityObstacles}
           useCollisionWorld
           spawnAtStart={false}
-          avoidPedestal={false}
         />
       )}
       {phaseFlow.phase === 'exploring' && (
         <PlayerControls
           enabled={!bookPages.openPage}
           onPositionChange={proximity.handlePosition}
-          bounds={appConfig.player.libraryBounds}
           useCollisionWorld
-          avoidPedestal={!phaseFlow.libraryRestored}
           movementLocked={library.bookCinematicPlaying}
         />
       )}
@@ -75,7 +67,6 @@ export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps)
         <PlayerControls
           enabled={!phaseFlow.showPhase1Overlay && !photo.selectedPhoto}
           onPositionChange={proximity.handlePosition}
-          bounds={appConfig.player.phase1Bounds}
           useCollisionWorld
         />
       )}
@@ -83,8 +74,7 @@ export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps)
         <PlayerControls
           enabled={!phaseFlow.showPhase2Overlay}
           onPositionChange={proximity.handlePosition}
-          bounds={appConfig.player.phase2Bounds}
-          obstacles={phase2Obstacles}
+          useCollisionWorld
         />
       )}
       <CreditsCamera active={phaseFlow.isCredits} />
