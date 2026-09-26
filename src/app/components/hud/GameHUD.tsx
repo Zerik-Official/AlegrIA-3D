@@ -1,5 +1,6 @@
 import { memo } from 'react'
-import { HUD, StartOverlay } from '@/features/ui/components/HUD'
+import { HUD } from '@/features/ui/components/HUD'
+import { StartOverlay } from '@/features/ui/components/StartOverlay'
 import { CityIntroHUD } from '@/features/cityIntro/components/CityIntroHUD'
 import { PhotoModal } from '@/shared/components/PhotoModal'
 import { BookPageModal } from '@/features/library/components/BookPageModal'
