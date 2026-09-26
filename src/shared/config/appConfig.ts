@@ -21,8 +21,6 @@ export const playerConfig = {
   startLookAt: { x: 0, y: 1.2, z: 0 } as const,
   /** Interaction distance to trigger the book. */
   interactDistance: 2.4,
-  /** Collision radius around the central pedestal. */
-  pedestalRadius: 1.05,
   /** Player's body radius, used against the `COL_*`-driven collision world (see `features/player/collision`). */
   collisionRadius: 0.38,
   /** Tallest surface the player can step up onto unaided — anything higher blocks instead, so decks need their authored stairs or ramp. */
@@ -31,14 +29,8 @@ export const playerConfig = {
   bodyHeight: 1.85,
   /** How quickly the camera settles to a new floor height when stepping up or down. */
   floorDamping: 11,
-  /** Movement bounds inside the library hall. */
-  libraryBounds: { minX: -9.2, maxX: 9.2, minZ: -9.2, maxZ: 9.2 } as Bounds,
   /** Movement bounds inside the museum hall. */
   museumBounds: { minX: -11.5, maxX: 11.5, minZ: -11.5, maxZ: 11.5 } as Bounds,
-  /** Movement bounds inside Phase 1 barrio & Río Magdalena waterfront (larger, open; east edge stops short of the water). */
-  phase1Bounds: { minX: -79, maxX: 54, minZ: -93, maxZ: 93 } as Bounds,
-  /** Movement bounds inside Phase 2 barrio (colorful facades). */
-  phase2Bounds: { minX: -36, maxX: 36, minZ: -36, maxZ: 36 } as Bounds,
 } as const
 
 /**
