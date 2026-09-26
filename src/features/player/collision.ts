@@ -283,22 +283,78 @@ export function createBoxSolid(box: {
   }
 }
 
-const groups = new Map<string, CollisionSolid[]>()
-let flattened: CollisionSolid[] = []
+/**
+ * Vertical blocking cylinder — trunks, landmark footprints — which the player
+ * is pushed out of radially instead of along the nearest axis.
+ */
+export interface CollisionCircle {
+  /** World-space center. */
+  x: number
+  z: number
+  /** Blocking radius around the center. */
+  radius: number
+  /** World-space vertical span. */
+  minY: number
+  maxY: number
+}
+
+/**
+ * Pushes `point` out of every circle whose vertical span overlaps the
+ * player's body standing on `floor`.
+ * @param point - Candidate position, mutated in place
+ * @param circles - Blocking circles
+ * @param floor - Height the player is standing at
+ * @param bodyHeight - Player's standing height
+ */
+export function resolveAgainstCircles(point: THREE.Vector3, circles: readonly CollisionCircle[], floor: number, bodyHeight: number): void {
+  for (const circle of circles) {
+    if (circle.maxY <= floor + 0.001 || circle.minY >= floor + bodyHeight) continue
+    const dx = point.x - circle.x
+    const dz = point.z - circle.z
+    const distance = Math.hypot(dx, dz)
+    if (distance >= circle.radius) continue
+    const angle = distance > 0 ? Math.atan2(dz, dx) : 0
+    point.x = circle.x + Math.cos(angle) * circle.radius
+    point.z = circle.z + Math.sin(angle) * circle.radius
+  }
+}
+
+/** Where a registered collider group comes from: a `.glb`'s own proxies or bounds, or a JSON collider spec. */
+export type CollisionSource = 'model' | 'json'
+
+/** One owner's registered colliders. */
+interface CollisionGroup {
+  solids: CollisionSolid[]
+  circles: CollisionCircle[]
+  source: CollisionSource
+}
+
+const groups = new Map<string, CollisionGroup>()
+let flattenedSolids: CollisionSolid[] = []
+let flattenedCircles: CollisionCircle[] = []
 let stale = false
+let version = 0
+
+/** Marks the flattened caches stale and bumps {@link getCollisionVersion}. */
+function markChanged(): void {
+  stale = true
+  version += 1
+}
 
 /**
  * Registers (or replaces) one source's colliders in the shared world.
  * @param id - Stable owner id, typically the entity id
- * @param solids - That owner's colliders
+ * @param solids - That owner's box colliders
+ * @param circles - That owner's blocking circles
+ * @param source - Where the colliders come from, used by the editor's collision view
  */
-export function registerCollisionSolids(id: string, solids: CollisionSolid[]): void {
-  if (solids.length === 0) {
+export function registerCollisionSolids(id: string, solids: CollisionSolid[], circles: CollisionCircle[] = [], source: CollisionSource = 'model'): void {
+  if (solids.length === 0 && circles.length === 0) {
     unregisterCollisionSolids(id)
     return
   }
-  groups.set(id, solids)
-  stale = true
+  groups.set(id, { solids, circles, source })
+  markChanged()
 }
 
 /**
@@ -307,16 +363,52 @@ export function registerCollisionSolids(id: string, solids: CollisionSolid[]): v
  * @param id - Owner id passed to {@link registerCollisionSolids}
  */
 export function unregisterCollisionSolids(id: string): void {
-  if (groups.delete(id)) stale = true
+  if (groups.delete(id)) markChanged()
+}
+
+/** Rebuilds the flattened caches when the world changed since the last read. */
+function refreshFlattened(): void {
+  if (!stale) return
+  const all = Array.from(groups.values())
+  flattenedSolids = all.flatMap((group) => group.solids)
+  flattenedCircles = all.flatMap((group) => group.circles)
+  stale = false
 }
 
 /**
- * @returns Every registered collider, flattened and cached until the world changes
+ * @returns Every registered box collider, flattened and cached until the world changes
  */
 export function getCollisionSolids(): readonly CollisionSolid[] {
-  if (stale) {
-    flattened = Array.from(groups.values()).flat()
-    stale = false
+  refreshFlattened()
+  return flattenedSolids
+}
+
+/**
+ * @returns Every registered blocking circle, flattened and cached until the world changes
+ */
+export function getCollisionCircles(): readonly CollisionCircle[] {
+  refreshFlattened()
+  return flattenedCircles
+}
+
+/**
+ * @returns Counter bumped on every registration change, for consumers that rebuild derived data lazily
+ */
+export function getCollisionVersion(): number {
+  return version
+}
+
+/**
+ * @param source - Source to keep
+ * @returns The box colliders and circles registered by that source
+ */
+export function getCollisionsBySource(source: CollisionSource): { solids: CollisionSolid[]; circles: CollisionCircle[] } {
+  const solids: CollisionSolid[] = []
+  const circles: CollisionCircle[] = []
+  for (const group of groups.values()) {
+    if (group.source !== source) continue
+    solids.push(...group.solids)
+    circles.push(...group.circles)
   }
-  return flattened
+  return { solids, circles }
 }
