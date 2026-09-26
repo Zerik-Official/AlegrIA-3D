@@ -1,30 +1,27 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { RosaBookModel } from '@/models/shared/RosaBookModel'
 import type { StoryBookStage } from '@/app/hooks/useStoryBookFlow'
 
 /**
  * Props for {@link StoryBook3D}.
  */
 interface StoryBook3DProps {
-  /** Beat of the choreography — drives spin, opening and page flipping. */
+  /** Beat of the choreography — drives spin, shaking and glow. */
   stage: StoryBookStage
 }
 
-/** Page (and cover) width, from the spine outwards. */
-const PAGE_W = 0.72
-/** Page (and cover) height. */
-const PAGE_H = 0.98
-/** How many loose pages flip while the book is restless. */
-const FLIP_PAGES = 7
+/** Height of the book in its canvas. */
+const BOOK_HEIGHT = 1.02
 
 /** Target values each stage eases towards. */
-const STAGE_TARGETS: Record<StoryBookStage, { open: number; spin: number; jitter: number; glow: number; flip: number }> = {
-  hidden: { open: 0.25, spin: 0.6, jitter: 0, glow: 0.4, flip: 0 },
-  calm: { open: 0.25, spin: 0.6, jitter: 0, glow: 0.55, flip: 0 },
-  restless: { open: 2.7, spin: 5.2, jitter: 1, glow: 1.6, flip: 1 },
-  summoning: { open: 3.0, spin: 11, jitter: 0.35, glow: 2.6, flip: 1 },
-  portal: { open: 3.0, spin: 14, jitter: 0, glow: 3.2, flip: 1 },
+const STAGE_TARGETS: Record<StoryBookStage, { spin: number; jitter: number; glow: number }> = {
+  hidden: { spin: 0, jitter: 0, glow: 0.4 },
+  calm: { spin: 0, jitter: 0, glow: 0.55 },
+  restless: { spin: 5.2, jitter: 1, glow: 1.6 },
+  summoning: { spin: 11, jitter: 0.35, glow: 2.6 },
+  portal: { spin: 14, jitter: 0, glow: 3.2 },
 }
 
 /**
@@ -54,34 +51,25 @@ function createHaloTexture(): THREE.Texture {
 /** Largest the halo may grow — keeps it inside the canvas' visible frame. */
 const HALO_MAX_SCALE = 1.8
 
-/** Shared materials so the page stack doesn't allocate one per page. */
-const materials = {
-  cover: new THREE.MeshStandardMaterial({ color: '#8b1a3a', roughness: 0.42, metalness: 0.18 }),
-  backCover: new THREE.MeshStandardMaterial({ color: '#5b0f1f', roughness: 0.52, metalness: 0.12 }),
-  block: new THREE.MeshStandardMaterial({ color: '#f5e6c8', roughness: 0.9 }),
-  page: new THREE.MeshStandardMaterial({ color: '#fff8e0', roughness: 1, side: THREE.DoubleSide }),
-  gold: new THREE.MeshStandardMaterial({ color: '#c9a86a', metalness: 0.8, roughness: 0.2 }),
-  sigil: new THREE.MeshStandardMaterial({ color: '#ffcc33', emissive: '#ffb400', emissiveIntensity: 1, side: THREE.DoubleSide }),
-}
-
 /**
  * El Libro de Rosa as a small, self-lit hero object for the HUD's own canvas:
- * a standing hardcover whose front cover swings open on a spine hinge and
- * whose loose pages flip one after another while it is restless. Every
- * stage change is eased, so the book never snaps between beats.
+ * the "Historia del Barrio Abajo" hardcover standing in a warm halo and a
+ * ring of sparks — showing its cover, swaying, while calm; spinning and
+ * shaking harder as the portal nears — plus a
+ * gilded ring that flares around it. Every stage change is eased, so the book
+ * never snaps between beats.
  *
  * @param props - Current stage
  * @returns Book group
  */
 export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps) {
   const rootRef = useRef<THREE.Group>(null)
-  const coverRef = useRef<THREE.Group>(null)
-  const pageRefs = useRef<THREE.Group[]>([])
+  const ringRef = useRef<THREE.Mesh>(null)
   const glowRef = useRef<THREE.Sprite>(null)
   const haloTexture = useMemo(() => createHaloTexture(), [])
   const lightRef = useRef<THREE.PointLight>(null)
   const sparksRef = useRef<THREE.Points>(null)
-  const state = useRef({ open: 0.25, spin: 0.6, jitter: 0, glow: 0.4, flip: 0, angle: 0, kick: 0, kickTimer: 0 })
+  const state = useRef({ spin: 0, jitter: 0, glow: 0.4, angle: 0, kick: 0, kickTimer: 0 })
 
   const sparkPositions = useMemo(() => {
     const arr = new Float32Array(60 * 3)
@@ -100,11 +88,9 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
     const dt = Math.min(delta, 0.05)
     const s = state.current
     const target = STAGE_TARGETS[stage]
-    s.open = THREE.MathUtils.damp(s.open, target.open, 3.2, dt)
     s.spin = THREE.MathUtils.damp(s.spin, target.spin, 2.4, dt)
     s.jitter = THREE.MathUtils.damp(s.jitter, target.jitter, 4, dt)
     s.glow = THREE.MathUtils.damp(s.glow, target.glow, 3, dt)
-    s.flip = THREE.MathUtils.damp(s.flip, target.flip, 3, dt)
 
     s.kickTimer -= dt
     if (s.jitter > 0.2 && s.kickTimer <= 0) {
@@ -112,7 +98,12 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
       s.kickTimer = 0.25 + Math.random() * 0.45
     }
     s.kick = THREE.MathUtils.damp(s.kick, 0, 5, dt)
-    s.angle += (s.spin + s.kick) * dt
+    if (s.spin < 0.3 && s.jitter < 0.2) {
+      const home = Math.round(s.angle / (Math.PI * 2)) * Math.PI * 2 + Math.sin(t * 0.7) * 0.32
+      s.angle = THREE.MathUtils.damp(s.angle, home, 2, dt)
+    } else {
+      s.angle += (s.spin + s.kick) * dt
+    }
 
     const root = rootRef.current
     if (root) {
@@ -122,15 +113,11 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
       root.position.y = Math.sin(t * 1.4) * 0.07 + Math.sin(t * 31) * 0.035 * s.jitter
       root.position.x = Math.sin(t * 27) * 0.03 * s.jitter
     }
-    if (coverRef.current) coverRef.current.rotation.y = -s.open
-    for (let i = 0; i < pageRefs.current.length; i++) {
-      const page = pageRefs.current[i]
-      if (!page) continue
-      const cycle = (t * 1.35 + i / FLIP_PAGES) % 1
-      const flipped = THREE.MathUtils.smoothstep(cycle, 0.1, 0.9) * (Math.PI - 0.12) + 0.06
-      const rest = 0.04 + i * 0.012
-      page.rotation.y = -THREE.MathUtils.lerp(rest, Math.min(flipped, s.open - 0.05), s.flip)
-      page.visible = s.flip > 0.02
+    if (ringRef.current) {
+      const ring = 1 + Math.sin(t * 2.4) * 0.04 + s.glow * 0.06
+      ringRef.current.scale.setScalar(ring)
+      ringRef.current.rotation.z = t * (0.5 + s.spin * 0.05)
+      ;(ringRef.current.material as THREE.MeshBasicMaterial).opacity = Math.min(0.9, 0.25 + s.glow * 0.2)
     }
     if (glowRef.current) {
       const g = Math.min(HALO_MAX_SCALE, 1.5 + s.glow * 0.18 + Math.sin(t * 2.2) * 0.05)
@@ -163,52 +150,13 @@ export const StoryBook3D = memo(function StoryBook3D({ stage }: StoryBook3DProps
         <pointsMaterial size={0.04} color="#ffe9a0" transparent opacity={0.6} depthWrite={false} blending={THREE.AdditiveBlending} sizeAttenuation />
       </points>
 
+      <mesh ref={ringRef} position={[0, 0, -0.25]}>
+        <torusGeometry args={[0.7, 0.012, 8, 96]} />
+        <meshBasicMaterial color="#ffd166" transparent opacity={0.3} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+      </mesh>
+
       <group ref={rootRef}>
-        <group position={[-PAGE_W / 2, 0, 0]}>
-          <mesh position={[PAGE_W / 2, 0, -0.07]} material={materials.backCover}>
-            <boxGeometry args={[PAGE_W + 0.04, PAGE_H + 0.04, 0.035]} />
-          </mesh>
-          <mesh position={[0, 0, -0.035]} material={materials.backCover}>
-            <boxGeometry args={[0.05, PAGE_H + 0.04, 0.1]} />
-          </mesh>
-          <mesh position={[PAGE_W / 2 - 0.01, 0, -0.03]} material={materials.block}>
-            <boxGeometry args={[PAGE_W - 0.03, PAGE_H - 0.03, 0.05]} />
-          </mesh>
-
-          {Array.from({ length: FLIP_PAGES }).map((_, i) => (
-            <group
-              key={i}
-              ref={(el) => {
-                if (el) pageRefs.current[i] = el
-              }}
-              position={[0, 0, -0.002 + i * 0.001]}
-            >
-              <mesh position={[PAGE_W / 2 - 0.02, 0, 0]} material={materials.page}>
-                <planeGeometry args={[PAGE_W - 0.05, PAGE_H - 0.05]} />
-              </mesh>
-            </group>
-          ))}
-
-          <group ref={coverRef} position={[0, 0, 0.012]}>
-            <mesh position={[PAGE_W / 2, 0, 0]} material={materials.cover}>
-              <boxGeometry args={[PAGE_W + 0.04, PAGE_H + 0.04, 0.035]} />
-            </mesh>
-            {[
-              [PAGE_W - 0.05, PAGE_H / 2 - 0.05],
-              [PAGE_W - 0.05, -PAGE_H / 2 + 0.05],
-            ].map(([x, y], i) => (
-              <mesh key={i} position={[x, y, 0.02]} material={materials.gold}>
-                <boxGeometry args={[0.08, 0.08, 0.01]} />
-              </mesh>
-            ))}
-            <mesh position={[PAGE_W / 2, 0, 0.019]} material={materials.sigil}>
-              <ringGeometry args={[0.13, 0.16, 40]} />
-            </mesh>
-            <mesh position={[PAGE_W / 2, 0, 0.02]} material={materials.sigil}>
-              <circleGeometry args={[0.05, 32]} />
-            </mesh>
-          </group>
-        </group>
+        <RosaBookModel height={BOOK_HEIGHT} castShadow={false} />
       </group>
     </group>
   )
