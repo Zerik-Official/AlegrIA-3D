@@ -1,7 +1,7 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
-import { MAGDALENA_CORRIDOR } from '@/features/phase1/components/parts/MagdalenaRiver'
+import { MAGDALENA_CORRIDOR } from '@/features/phase1/config/magdalenaRiver'
 
 /** Instance counts for the two instanced backdrop layers. */
 const HILL_COUNT = 28

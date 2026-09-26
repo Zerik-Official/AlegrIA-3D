@@ -12,7 +12,7 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
-import { buildMagdalenaCurve, MAGDALENA_WATER_Y } from '@/features/phase1/components/parts/MagdalenaRiver'
+import { buildMagdalenaCurve, MAGDALENA_WATER_Y } from '@/features/phase1/config/magdalenaRiver'
 
 /**
  * The steamboat `.glb` is authored bow-toward local `-X` rather than `+X`,
