@@ -11,6 +11,7 @@ import { EditorGizmo } from '@/features/editor/components/EditorGizmo'
 import { EditorFlyControls } from '@/features/editor/components/EditorFlyControls'
 import { EditorSpawnProbe } from '@/features/editor/components/EditorSpawnProbe'
 import { CollisionDebugLayer } from '@/features/editor/components/CollisionDebugLayer'
+import { ParadeLoopGuide } from '@/features/editor/components/ParadeLoopGuide'
 import { EditorTargetFinder } from '@/app/components/EditorTargetFinder'
 import { EditorSelectionPicker } from '@/app/components/EditorSelectionPicker'
 import type { Experience } from '@/app/hooks/useExperience'
@@ -30,6 +31,7 @@ interface EditorRigProps {
 export const EditorRig = memo(function EditorRig({ experience }: EditorRigProps) {
   const { orbitControlsRef, spawnResolverRef, editorTarget, setEditorTarget } = experience.editor
   const current = experience.editors.currentEditor
+  const currentScene = experience.editors.currentScene
 
   return (
     <>
@@ -39,6 +41,7 @@ export const EditorRig = memo(function EditorRig({ experience }: EditorRigProps)
       <EditorTargetFinder selectedId={current.selectedId} onFound={setEditorTarget} />
       <EditorSpawnProbe entities={current.entities} resolverRef={spawnResolverRef} />
       <CollisionDebugLayer />
+      <ParadeLoopGuide scene={currentScene} />
       <EditorGizmo
         target={editorTarget}
         mode={current.mode}
