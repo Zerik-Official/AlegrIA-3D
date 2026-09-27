@@ -1,11 +1,12 @@
 /**
- * Cielo de atardecer caribeño neón para `cityIntro`. Reemplaza la noche negra
- * de la versión cyberpunk: degradado púrpura → magenta → naranja → amarillo
- * solar en el horizonte, con un sol bajo y un banco de nubes teñidas.
+ * Neon Caribbean sunset sky for `cityIntro`. Replaces the black night of the
+ * cyberpunk version: purple -> magenta -> orange -> solar yellow gradient at
+ * the horizon, with a low sun and a bank of tinted clouds.
  *
- * Es una esfera invertida con shader propio en vez de un `Environment` HDRI
- * porque el degradado es parte de la identidad de la fase (viene de la paleta
- * abajera) y así no hay que versionar un `.hdr` de varios MB.
+ * It is an inverted sphere with a custom shader instead of an HDRI
+ * `Environment` because the gradient is part of the phase identity (it comes
+ * from the abajera palette), avoiding the need to version a multi-megabyte
+ * `.hdr` file.
  * @module features/cityIntro/components/CaribbeanSky
  */
 

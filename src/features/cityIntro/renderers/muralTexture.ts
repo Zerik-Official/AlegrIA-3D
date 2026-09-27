@@ -1,31 +1,31 @@
 /**
- * Texturas de canvas para el Mural Cultural Digital (`culture-mural`).
- * Dibuja los motivos del Carnaval de Barranquilla (marimonda, garabato,
- * tambores) como arte gráfico de trazo neón sobre fondo oscuro, listo para
- * que el shader del mural lo proyecte como holograma.
+ * Canvas textures for the Digital Cultural Mural (`culture-mural`).
+ * Draws Carnival of Barranquilla motifs (marimonda, garabato, and drums)
+ * as neon line art over a dark background, ready for the mural shader
+ * to project as a hologram.
  *
- * Son canvas y no imágenes porque el resto de la escena ya resuelve sus
- * texturas procedurales así (ver `shared/utils/textures`): cero assets que
- * versionar y colores que salen directo de la paleta de la fase.
+ * Canvas textures are used instead of images because the rest of the scene
+ * already handles procedural textures this way (see `shared/utils/textures`):
+ * no assets to version and colors taken directly from the phase palette.
  * @module features/cityIntro/renderers/muralTexture
  */
 
 import * as THREE from 'three'
 import { CARNAVAL_RED, NEON_CYAN, NEON_MAGENTA, SOLAR_YELLOW } from '@/features/cityIntro/config/colorPalette'
 
-/** Motivos de carnaval que el mural sabe dibujar. */
+/** Carnival motifs that the mural can draw. */
 export type MuralMotif = 'marimonda' | 'garabato' | 'tambores'
 
-/** Lado del canvas cuadrado del mural, en píxeles. */
+/** Size of one side of the mural's square canvas, in pixels. */
 const SIZE = 512
 
 /**
- * Traza `path` dos veces: un halo ancho translúcido y encima la línea sólida,
- * que es lo que hace que el dibujo lea como neón y no como contorno plano.
- * @param ctx - Contexto 2D del mural
- * @param color - Color del neón
- * @param width - Grosor de la línea sólida
- * @param path - Dibuja la figura (se invoca dos veces)
+ * Strokes `path` twice: a wide translucent halo followed by the solid line,
+ * making the drawing read as neon rather than a flat outline.
+ * @param ctx - Mural 2D context
+ * @param color - Neon color
+ * @param width - Solid line width
+ * @param path - Draws the shape; invoked twice
  */
 function neonStroke(ctx: CanvasRenderingContext2D, color: string, width: number, path: () => void): void {
   ctx.strokeStyle = color
@@ -40,8 +40,8 @@ function neonStroke(ctx: CanvasRenderingContext2D, color: string, width: number,
 }
 
 /**
- * Marimonda: cara redonda, ojos saltones, orejas y la trompa colgante.
- * @param ctx - Contexto 2D del mural
+ * Marimonda: a round face, bulging eyes, ears, and a hanging trunk.
+ * @param ctx - Mural 2D context
  */
 function drawMarimonda(ctx: CanvasRenderingContext2D): void {
   const cx = SIZE / 2
@@ -86,8 +86,8 @@ function drawMarimonda(ctx: CanvasRenderingContext2D): void {
 }
 
 /**
- * Garabato: sombrero de copa, capa y el garabato (la hoz curva) en alto.
- * @param ctx - Contexto 2D del mural
+ * Garabato: a top hat, cape, and the raised garabato (curved sickle).
+ * @param ctx - Mural 2D context
  */
 function drawGarabato(ctx: CanvasRenderingContext2D): void {
   const cx = SIZE * 0.46
@@ -132,8 +132,9 @@ function drawGarabato(ctx: CanvasRenderingContext2D): void {
 }
 
 /**
- * Tambores: tambora y dos alegres con parches y zigzags de cuero tensado.
- * @param ctx - Contexto 2D del mural
+ * Drums: a tambora and two alegre drums with heads and stretched-leather
+ * zigzags.
+ * @param ctx - Mural 2D context
  */
 function drawTambores(ctx: CanvasRenderingContext2D): void {
   const drums: Array<[number, number, number, number, string]> = [
@@ -168,7 +169,7 @@ function drawTambores(ctx: CanvasRenderingContext2D): void {
   }
 }
 
-/** Dibujante por motivo — añadir uno nuevo es registrar su función aquí. */
+/** Motif painters; add a new motif by registering its function here. */
 const MOTIF_PAINTERS: Record<MuralMotif, (ctx: CanvasRenderingContext2D) => void> = {
   marimonda: drawMarimonda,
   garabato: drawGarabato,
@@ -176,9 +177,9 @@ const MOTIF_PAINTERS: Record<MuralMotif, (ctx: CanvasRenderingContext2D) => void
 }
 
 /**
- * Genera la textura del mural para un motivo de carnaval.
- * @param motif - Motivo a dibujar; cualquier valor desconocido cae en marimonda
- * @returns Textura de canvas lista para el shader del mural
+ * Generates the mural texture for a Carnival motif.
+ * @param motif - Motif to draw; unknown values fall back to marimonda
+ * @returns Canvas texture ready for the mural shader
  */
 export function createMuralTexture(motif: string | undefined): THREE.Texture {
   const canvas = document.createElement('canvas')

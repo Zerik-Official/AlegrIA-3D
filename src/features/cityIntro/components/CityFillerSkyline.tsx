@@ -19,10 +19,11 @@ const SEED = 9182731
  * JSON/editor-driven on purpose — hundreds of individually-editable background
  * silhouettes would defeat the point; only the near "hero" buildings are authored.
  *
- * Rediseño "Futurismo Abajero 2050": la mayoría de las siluetas quedaron
- * bajas (el barrio es horizontal, de uno o dos pisos) y solo ~1 de cada 6
- * sube como torre lejana; el tinte pasó de azul noche a magenta/ladrillo
- * para que el relleno se funda con el atardecer caribeño en vez de recortarse.
+ * "Futurismo Abajero 2050" redesign: most silhouettes are low (the
+ * neighborhood is horizontal, one or two stories tall), and only about one
+ * in six rises as a distant tower; the tint changed from midnight blue to
+ * magenta/brick so the filler blends into the Caribbean sunset instead of
+ * standing out against it.
  *
  * @returns Instanced filler-building mesh
  */

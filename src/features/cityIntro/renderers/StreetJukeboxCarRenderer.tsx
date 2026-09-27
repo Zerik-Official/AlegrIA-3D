@@ -1,6 +1,6 @@
 /**
  * `street-jukebox-car` entity renderer — the hover carrosa parked amid the
- * avenue's dancing crowd, "batuqueándose" on the beat with musical notes
+ * avenue's dancing crowd, "batuqueando" on the beat with musical notes
  * rising off its sound equipment like "El Poderoso" does in Phase 2. It never
  * moves from its spot (unlike the parade floats); the avenue crowd
  * (`CarnivalCrowd`) already dances all around it, kept clear of its

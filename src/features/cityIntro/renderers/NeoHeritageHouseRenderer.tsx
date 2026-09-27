@@ -1,13 +1,13 @@
 /**
- * `neo-heritage-house` — la casa de Barrio Abajo en 2050. Reemplaza a los
- * rascacielos oscuros abstractos: un solo piso, fachada saturada, y toda la
- * carpintería republicana (zócalo, molduras, marcos de puerta y ventana,
- * cornisa) convertida en tira de energía solar integrada que emite luz.
+ * `neo-heritage-house` — a Barrio Abajo house in 2050. It replaces abstract
+ * dark skyscrapers with a single story, saturated facade and Republican-era
+ * woodwork (plinth, trim, door and window frames, and cornice) turned into an
+ * integrated, glowing strip of solar energy.
  *
- * La silueta (ancho, fondo, si tiene alero o antepecho) sale de una semilla
- * determinista del `id`, así que la calle no se ve repetida pero cada casa se
- * ve igual en cada carga. `variant` fija el color de fachada y `title` el
- * neón de las molduras; ambos opcionales.
+ * The silhouette (width, depth, and whether it has an awning or parapet) comes
+ * from a deterministic seed based on the `id`, so the street does not look
+ * repetitive while each house remains consistent across loads. `variant` sets
+ * the facade color and `title` sets the trim neon; both are optional.
  * @module features/cityIntro/renderers/NeoHeritageHouseRenderer
  */
 
@@ -16,14 +16,14 @@ import { createSeededRandom, hashSeed } from '@/shared/utils/random'
 import { FACADE_PALETTE, TEJA_BARRO, TRIM_PALETTE } from '@/features/cityIntro/config/colorPalette'
 import type { EntityRendererProps } from '@/engine/types'
 
-/** Altura del piso único; el barrio se mantiene bajo y horizontal a propósito. */
+/** Single-story height; the neighborhood is intentionally low and horizontal. */
 const WALL_H = 3.6
-/** Alto del zócalo pintado que recorre la base de la fachada. */
+/** Height of the painted plinth running along the facade base. */
 const PLINTH_H = 0.85
 
 /**
  * @param props - Entity props
- * @returns Casa neopatrimonial con molduras emisivas
+ * @returns Neo-heritage house with emissive trim
  */
 export function NeoHeritageHouseRenderer({ entity }: EntityRendererProps) {
   const shape = useMemo(() => {
@@ -44,7 +44,7 @@ export function NeoHeritageHouseRenderer({ entity }: EntityRendererProps) {
   const { width, depth, windows, hasEave } = shape
   const front = depth / 2
 
-  /** Repartidos sobre el ancho dejando el centro libre para la puerta. */
+  /** Spread across the width, leaving the center clear for the door. */
   const windowXs = Array.from({ length: windows }, (_, i) => {
     const span = width - 2.2
     return windows === 1 ? 0 : -span / 2 + (i * span) / (windows - 1)

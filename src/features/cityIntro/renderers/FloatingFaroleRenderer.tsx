@@ -1,12 +1,11 @@
 /**
- * `floating-farol` — los faroles de La Guacherna, levitando. Sustituyen a las
- * farolas metálicas de poste como fuente de luz de la calle: la iluminación
- * del barrio en 2050 la sigue dando el desfile, solo que el farol ya no lo
- * carga nadie.
+ * `floating-farol` — La Guacherna lanterns, floating in the air. They replace
+ * metal street lamps as the street's light source: the parade still lights
+ * the neighborhood in 2050, but nobody carries the lantern anymore.
  *
- * Cada farol flota con su propio desfase (semilla del `id`) para que el grupo
- * respire desacompasado en vez de moverse en bloque. `variant` fija el color
- * del papel y de la luz.
+ * Each lantern floats with its own offset (seeded from its `id`) so the group
+ * breathes out of sync instead of moving as a block. `variant` sets the paper
+ * and light color.
  * @module features/cityIntro/renderers/FloatingFaroleRenderer
  */
 
@@ -18,14 +17,14 @@ import { GUACHERNA_FIRE } from '@/features/cityIntro/config/colorPalette'
 import type { EntityRendererProps } from '@/engine/types'
 import { GlowSprite, GroundGlow } from '@/shared/components/LightGlows'
 
-/** Altura base de vuelo sobre el punto de la entidad. */
+/** Base flight height above the entity's position. */
 const HOVER_Y = 3.4
-/** Amplitud (unidades) del vaivén vertical. */
+/** Vertical bob amplitude, in world units. */
 const BOB_AMPLITUDE = 0.32
 
 /**
- * @param props - Entity props (`variant` = color del farol)
- * @returns Farol flotante animado con su luz
+ * @param props - Entity props (`variant` = lantern color)
+ * @returns Animated floating lantern with its light
  */
 export function FloatingFaroleRenderer({ entity }: EntityRendererProps) {
   const groupRef = useRef<THREE.Group>(null)

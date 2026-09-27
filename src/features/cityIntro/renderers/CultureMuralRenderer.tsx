@@ -1,13 +1,13 @@
 /**
- * `culture-mural` — Mural Cultural Digital: la pieza que reemplaza la valla
- * publicitaria genérica de la escena. Una pantalla holográfica montada sobre
- * la pared/estructura lateral que proyecta arte del Carnaval de Barranquilla
- * (marimonda, garabato, tambores) con barrido de escaneo, parpadeo y derrame
- * de color magenta/cian/amarillo solar.
+ * `culture-mural` — Digital Cultural Mural: the piece that replaces the
+ * scene's generic billboard. A holographic screen mounted on the side
+ * wall/structure that projects Carnival of Barranquilla art (marimonda,
+ * garabato, and drums) with scan lines, flicker, and magenta/cyan/solar-yellow
+ * color spill.
  *
- * El motivo llega en `entity.variant` y el color dominante del derrame en
- * `entity.title` (hex opcional), para que el mural se re-tematice desde JSON
- * sin tocar el shader.
+ * The motif comes from `entity.variant`, and the dominant spill color comes
+ * from `entity.title` (optional hex), allowing the mural to be rethemed from
+ * JSON without touching the shader.
  * @module features/cityIntro/renderers/CultureMuralRenderer
  */
 
@@ -19,7 +19,7 @@ import { NEON_CYAN, NEON_MAGENTA, SOLAR_YELLOW } from '@/features/cityIntro/conf
 import type { EntityRendererProps } from '@/engine/types'
 import { GroundGlow } from '@/shared/components/LightGlows'
 
-/** Ancho y alto (unidades de mundo) del panel a `scale: 1`. */
+/** Width and height (world units) of the panel at `scale: 1`. */
 const PANEL_W = 7.2
 const PANEL_H = 4.4
 
@@ -32,10 +32,10 @@ const MURAL_VERTEX = /* glsl */ `
 `
 
 /**
- * Toma el dibujo de carnaval en escala de intensidad y lo re-colorea entre
- * dos neones según la altura, le suma líneas de escaneo, una banda de glitch
- * que baja en bucle y un parpadeo lento — el conjunto es lo que lo hace leer
- * como proyección holográfica y no como una calcomanía.
+ * Takes the Carnival drawing as an intensity map and recolors it between two
+ * neons based on height, then adds scan lines, a looping descending glitch
+ * band, and slow flicker. Together, these make it read as a holographic
+ * projection rather than a decal.
  */
 const MURAL_FRAGMENT = /* glsl */ `
   uniform sampler2D uMap;
@@ -70,8 +70,8 @@ const MURAL_FRAGMENT = /* glsl */ `
 `
 
 /**
- * @param props - Entity props (`variant` = motivo, `title` = hex de derrame)
- * @returns Mural holográfico con su estructura y luz
+ * @param props - Entity props (`variant` = motif, `title` = spill hex)
+ * @returns Holographic mural with its structure and light
  */
 export function CultureMuralRenderer({ entity }: EntityRendererProps) {
   const materialRef = useRef<THREE.ShaderMaterial>(null)

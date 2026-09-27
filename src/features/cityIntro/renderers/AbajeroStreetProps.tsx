@@ -1,8 +1,7 @@
 /**
- * Mobiliario urbano de la calle abajera 2050 — la "cultura de bordillo" en
- * vez de bancas metálicas aisladas: el andén alto con su bordillo amarillo
- * desgastado (donde la gente se sienta) y los robles amarillos con polen
- * resplandeciente.
+ * Urban furniture for the 2050 abajera street — "curb culture" instead of
+ * isolated metal benches: a raised sidewalk with a worn yellow curb (where
+ * people sit) and yellow oaks with glowing pollen.
  * @module features/cityIntro/renderers/AbajeroStreetProps
  */
 
@@ -13,17 +12,17 @@ import { FLORA_GREEN, ROBLE_BLOOM, SOLAR_YELLOW } from '@/features/cityIntro/con
 import type { EntityRendererProps } from '@/engine/types'
 import { GroundGlow } from '@/shared/components/LightGlows'
 
-/** Alto del andén sobre la calzada. */
+/** Height of the sidewalk above the roadway. */
 const CURB_H = 0.34
-/** Fondo (profundidad) del andén desde el filo del bordillo. */
+/** Sidewalk depth from the curb edge. */
 const CURB_DEPTH = 2.1
 
 /**
- * Tramo de andén con bordillo amarillo. El largo llega en `entity.variant`
- * (número en unidades de mundo, por defecto 6) y las manchas de desgaste se
- * siembran del `id`, así que dos tramos contiguos no se ven calcados.
+ * Sidewalk segment with a yellow curb. Its length comes from `entity.variant`
+ * (a number in world units, defaulting to 6), and wear patches are seeded from
+ * the `id`, so adjacent segments do not look identical.
  * @param props - Entity props
- * @returns Tramo de andén
+ * @returns Sidewalk segment
  */
 export function CurbRenderer({ entity }: EntityRendererProps) {
   const length = Number.parseFloat(entity.variant ?? '') || 6
@@ -64,11 +63,10 @@ export function CurbRenderer({ entity }: EntityRendererProps) {
 }
 
 /**
- * Roble amarillo en flor con polen luminiscente. Es el relevo vegetal de las
- * macetas de neón: la misma función de acento luminoso, pero con la flora del
- * barrio (roble / matarratón).
+ * Blooming yellow oak with luminous pollen. It replaces the neon planters as
+ * the neighborhood's luminous accent, using local flora (oak / matarraton).
  * @param props - Entity props
- * @returns Árbol con partículas
+ * @returns Tree with particles
  */
 export function YellowTreeRenderer({ entity }: EntityRendererProps) {
   const bloom = entity.variant ?? ROBLE_BLOOM
