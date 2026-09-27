@@ -131,6 +131,8 @@ export function useExperience(): Experience {
     toggleEditor: editor.toggleEditor,
     closeEditor: editor.closeEditor,
     setEditorMode: editors.currentEditor.setMode,
+    hasEditorSelection: !!editors.currentEditor.selected,
+    duplicateEditorSelection: editors.currentEditor.duplicateSelected,
     startExperience: phaseFlow.startExperience,
     handleBookInteract: phaseFlow.handleBookInteract,
     startWormholeToPhase2: phaseFlow.startWormholeToPhase2,
