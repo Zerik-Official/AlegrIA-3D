@@ -8,7 +8,7 @@
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { readAudioLevels } from '@/shared/audio/audioAnalyser'
+import { readAudioAnalysis } from '@/shared/audio/audioAnalyser'
 import { GlowSprite } from '@/shared/components/LightGlows'
 
 /** Canvas resolution of the screen. */
@@ -64,15 +64,19 @@ export const FlyingEqualizerScreen = memo(function FlyingEqualizerScreen({ posit
   useFrame(({ clock }) => {
     const t = clock.elapsedTime
     const group = groupRef.current
+    const state = stateRef.current
+    const analysis = readAudioAnalysis('carnival', state.levels)
+    const live = analysis !== null
+    const beat = analysis?.beat ?? 0
     if (group) {
       group.position.y = position[1] + Math.sin(t * 0.9) * 0.18
       group.rotation.z = Math.sin(t * 0.6) * 0.02
+      const pulse = 1 + beat * 0.05
+      group.scale.setScalar(pulse)
     }
     const ctx = canvas.getContext('2d')
     const screen = screenRef.current
     if (!ctx || !gradient || !screen) return
-    const state = stateRef.current
-    const live = readAudioLevels('carnival', state.levels)
     ctx.fillStyle = 'rgba(8, 4, 20, 0.55)'
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
     const barW = CANVAS_W / BANDS
