@@ -14,8 +14,8 @@ interface EditorGizmoProps {
   enabled: boolean
   /** Live `OrbitControls` instance — disabled while dragging the gizmo so rotating/scaling doesn't also orbit the camera. */
   orbitControlsRef?: React.RefObject<{ enabled: boolean } | null>
-  /** Called when transform ends. */
-  onChange?: (pos: [number, number, number], rotY: number, scale: number) => void
+  /** Called when transform ends, with position, full XYZ rotation and uniform scale. */
+  onChange?: (pos: [number, number, number], rotation: [number, number, number], scale: number) => void
 }
 
 /**
@@ -42,9 +42,9 @@ export const EditorGizmo = memo(function EditorGizmo({ target, mode, enabled, or
         if (orbitControlsRef?.current) orbitControlsRef.current.enabled = true
         if (!target || !onChange) return
         const p: [number, number, number] = [target.position.x, target.position.y, target.position.z]
-        const rY = target.rotation.y
+        const r: [number, number, number] = [target.rotation.x, target.rotation.y, target.rotation.z]
         const s = target.scale.x
-        onChange(p, rY, s)
+        onChange(p, r, s)
       }}
     />
   )
