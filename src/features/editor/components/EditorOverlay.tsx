@@ -3,6 +3,7 @@ import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, 
 import { useProgress } from '@react-three/drei'
 import type { Vector3Tuple } from 'three'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import type { DraftSummary } from '@/features/editor/state/editorDrafts'
 import type { EntityCatalogItem, SceneId } from '@/engine/config/entityCatalog'
 import type { GamePhase } from '@/shared/types'
 import type { SpawnResolver } from '@/features/editor/components/EditorSpawnProbe'
@@ -41,6 +42,12 @@ interface EditorOverlayProps {
   onRemove: (id: string) => void
   /** Export handler. */
   onExport: () => string
+  /** Restored draft summary, shown once until discarded. */
+  draft: DraftSummary | null
+  /** Discards the restored draft and resets entities to the bundled JSON. */
+  onDiscardDraft: () => void
+  /** When the session was last autosaved, or `null` before the first save. */
+  lastSavedAt: number | null
   /** Close editor. */
   onClose: () => void
   /** Current game phase, shown next to the jump control. */
@@ -53,6 +60,15 @@ interface EditorOverlayProps {
   currentScene?: SceneId
   /** Resolves where the crosshair would spawn a new element; `null` result means the camera is far from the map. */
   spawnResolverRef?: MutableRefObject<SpawnResolver | null>
+}
+
+/**
+ * Drops near-zero tilt angles so untouched entities keep no `rotationX`/`rotationZ` keys in exports.
+ * @param value - Angle in radians
+ * @returns The angle, or `undefined` when negligible
+ */
+function cleanAngle(value: number): number | undefined {
+  return Math.abs(value) < 1e-9 ? undefined : value
 }
 
 /** Width of the editor panel; the crosshair sits at the center of the canvas area left of it. */
@@ -78,6 +94,9 @@ export const EditorOverlay = memo(function EditorOverlay({
   onAdd,
   onRemove,
   onExport,
+  onDiscardDraft,
+  draft,
+  lastSavedAt,
   onClose,
   currentPhase,
   currentCheckpointId,
@@ -168,10 +187,55 @@ export const EditorOverlay = memo(function EditorOverlay({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'phase1-positions.json'
+    a.download = `${currentScene ?? 'phase1'}.json`
     a.click()
     URL.revokeObjectURL(url)
-  }, [onExport])
+  }, [onExport, currentScene])
+
+  const [copied, setCopied] = useState(false)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [armDiscard, setArmDiscard] = useState(false)
+  const discardTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current)
+      if (discardTimer.current) clearTimeout(discardTimer.current)
+    }
+  }, [])
+
+  /**
+   * Two-step draft discard: the first press arms the button, the second
+   * reverts the session to the bundled JSON. Prevents wiping a session
+   * with a single mistaken click.
+   */
+  const handleDiscard = useCallback(() => {
+    if (!armDiscard) {
+      setArmDiscard(true)
+      if (discardTimer.current) clearTimeout(discardTimer.current)
+      discardTimer.current = setTimeout(() => setArmDiscard(false), 4000)
+      return
+    }
+    if (discardTimer.current) clearTimeout(discardTimer.current)
+    setArmDiscard(false)
+    onDiscardDraft()
+  }, [armDiscard, onDiscardDraft])
+
+  /**
+   * Copies the selected entity's full properties (position, rotation, scale,
+   * variant, collider and optional media fields) to the clipboard.
+   */
+  const handleCopySelected = useCallback(() => {
+    if (!selected) return
+    navigator.clipboard
+      .writeText(JSON.stringify(selected, null, 2))
+      .then(() => {
+        setCopied(true)
+        if (copyTimer.current) clearTimeout(copyTimer.current)
+        copyTimer.current = setTimeout(() => setCopied(false), 1600)
+      })
+      .catch(() => {})
+  }, [selected])
 
   if (!enabled) return null
 
@@ -214,6 +278,24 @@ export const EditorOverlay = memo(function EditorOverlay({
             </button>
           </div>
         </div>
+        {draft && (
+          <div className="mt-3 shrink-0 rounded-lg border border-gold/30 bg-gold/10 p-2.5">
+            <div className="text-[10px] font-semibold tracking-[0.14em] uppercase text-gold">Borrador restaurado</div>
+            <div className="mt-1 text-[10px] leading-4 text-parchment/60">
+              {new Date(draft.savedAt).toLocaleString()} • {draft.entityCount} elementos
+              {draft.baseCount !== draft.bundleCount
+                ? ` • el JSON del juego trae ${draft.bundleCount}; revisa antes de exportar`
+                : ' • autoguardado al cerrar'}
+            </div>
+            <button
+              type="button"
+              onClick={handleDiscard}
+              className={`mt-1.5 cursor-pointer rounded-md px-2 py-1 text-[10px] ${armDiscard ? 'bg-red-500/25 text-red-200 hover:bg-red-500/35' : 'bg-white/10 hover:bg-white/15'}`}
+            >
+              {armDiscard ? 'Pulsa de nuevo: revierte la sesión al JSON del juego' : 'Descartar borrador'}
+            </button>
+          </div>
+        )}
         {hasJump && (
           <div className="mt-3 shrink-0 rounded-lg border border-gold/20 bg-black/25 p-2.5">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase text-gold/80">
@@ -319,19 +401,32 @@ export const EditorOverlay = memo(function EditorOverlay({
           <div className="mt-3 max-h-[46vh] shrink-0 overflow-y-auto rounded-lg border border-white/5 bg-black/20 p-3">
             <div className="flex items-center justify-between gap-2">
               <span className="min-w-0 truncate font-semibold text-[12px] text-gold">{selected.id}</span>
-              <button
-                type="button"
-                onClick={() => onRemove(selected.id)}
-                className="shrink-0 cursor-pointer rounded-md bg-red-500/15 p-1.5 text-red-300 hover:bg-red-500/25"
-              >
-                <FiTrash2 className="h-3.5 w-3.5" />
-              </button>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleCopySelected}
+                  title="Copiar propiedades"
+                  className="cursor-pointer rounded-md bg-white/10 p-1.5 text-parchment/80 hover:bg-white/15"
+                >
+                  <FiCopy className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onRemove(selected.id)}
+                  className="cursor-pointer rounded-md bg-red-500/15 p-1.5 text-red-300 hover:bg-red-500/25"
+                >
+                  <FiTrash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
+            {copied && <div className="mt-1.5 text-[10px] text-[#8dffab]">Propiedades copiadas al portapapeles</div>}
             <div className="mt-2">
               <Vector3Fields labels={['x', 'y', 'z']} value={selected.position} onChange={(position) => onUpdate(selected.id, { position })} />
             </div>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
+              <NumberField label="Rot X" step={0.05} value={selected.rotationX ?? 0} onChange={(rotationX) => onUpdate(selected.id, { rotationX: cleanAngle(rotationX) })} />
               <NumberField label="Rot Y" step={0.05} value={selected.rotationY} onChange={(rotationY) => onUpdate(selected.id, { rotationY })} />
+              <NumberField label="Rot Z" step={0.05} value={selected.rotationZ ?? 0} onChange={(rotationZ) => onUpdate(selected.id, { rotationZ: cleanAngle(rotationZ) })} />
               <NumberField label="Scale" step={0.05} value={selected.scale} fallback={1} onChange={(scale) => onUpdate(selected.id, { scale })} />
             </div>
             <FieldLabel label="Variante" className="mt-2">
@@ -467,7 +562,8 @@ export const EditorOverlay = memo(function EditorOverlay({
             <div className="mt-2 flex min-w-0 items-center gap-1.5 text-[10px] text-parchment/40">
               <FiCopy className="h-3 w-3 shrink-0" />
               <span className="truncate">
-                {selected.position.map((n) => n.toFixed(2)).join(', ')} • rY {selected.rotationY.toFixed(2)} • s {selected.scale.toFixed(2)}
+                {selected.position.map((n) => n.toFixed(2)).join(', ')} • r {(selected.rotationX ?? 0).toFixed(2)}/
+                {selected.rotationY.toFixed(2)}/{(selected.rotationZ ?? 0).toFixed(2)} • s {selected.scale.toFixed(2)}
               </span>
             </div>
           </div>
@@ -482,9 +578,15 @@ export const EditorOverlay = memo(function EditorOverlay({
           </button>
         </div>
         <div className="mt-2 shrink-0 text-[10px] leading-4 text-parchment/30">
-          Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • <span className="text-parchment/60">Alt + clic derecho</span> seleccionar
+          Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • <span className="text-parchment/60">Alt + clic derecho</span> seleccionar • <span className="text-parchment/60">C</span> duplicar
           <br />
           Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
+          <br />
+          {lastSavedAt ? (
+            <span className="text-[#8dffab]/70">Borrador autoguardado {new Date(lastSavedAt).toLocaleTimeString()}</span>
+          ) : (
+            <span>Autoguardado del borrador pendiente…</span>
+          )}
         </div>
 
         <ColliderEditorModal entity={colliderEditorEntity} onUpdate={onUpdate} onClose={() => setColliderEditorId(null)} />
