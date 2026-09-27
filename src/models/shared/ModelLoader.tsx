@@ -4,7 +4,7 @@
  * @module models/shared/ModelLoader
  */
 
-import { Suspense, useContext, useEffect, useRef, useState, useMemo } from 'react'
+import { Suspense, useContext, useEffect, useRef, useState, useMemo, Component, type ErrorInfo, type ReactNode } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { extractBoundsSolid, extractCollisionSolids, registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
@@ -113,6 +113,54 @@ function GltfScene({
 }
 
 /**
+ * Props for {@link ModelErrorBoundary}.
+ */
+interface ModelErrorBoundaryProps {
+  /** Content attempting to load the model. */
+  children: ReactNode
+  /** Shown when the model fails to load. */
+  fallback: ReactNode
+}
+
+/** State for {@link ModelErrorBoundary}. */
+interface ModelErrorBoundaryState {
+  /** Whether a load error was caught. */
+  failed: boolean
+}
+
+/**
+ * Catches `useGLTF` load failures (missing or corrupt `.glb`, e.g. a
+ * registry entry whose file was never added to `public/models`) and falls
+ * back to the procedural placeholder instead of unmounting the Canvas.
+ */
+class ModelErrorBoundary extends Component<ModelErrorBoundaryProps, ModelErrorBoundaryState> {
+  state: ModelErrorBoundaryState = { failed: false }
+
+  /**
+   * @param error - Load error thrown while rendering the model
+   * @returns Error info for logging
+   */
+  componentDidCatch(error: Error, info: ErrorInfo): void {
+    console.warn(`[ModelLoader] Falling back to procedural placeholder: ${error.message}`, info.componentStack)
+  }
+
+  /**
+   * @returns Fallback state once a load error is caught
+   */
+  static getDerivedStateFromError(): ModelErrorBoundaryState {
+    return { failed: true }
+  }
+
+  /**
+   * @returns Children, or the fallback after a load error
+   */
+  render(): ReactNode {
+    if (this.state.failed) return this.props.fallback
+    return this.props.children
+  }
+}
+
+/**
  * Loads a Blender `.glb` with HEAD pre-check and Suspense fallback.
  * Use this to make any domain mesh swappable without touching scene code.
  *
@@ -136,6 +184,11 @@ export function ModelLoader({
   collisionFallback,
 }: ModelLoaderProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
+  const [checkedSrc, setCheckedSrc] = useState(src)
+  if (checkedSrc !== src) {
+    setCheckedSrc(src)
+    setAvailable(null)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -158,17 +211,19 @@ export function ModelLoader({
   if (available === null) return <>{fallback}</>
 
   return (
-    <Suspense fallback={fallback}>
-      <GltfScene
-        src={src}
-        scale={scale}
-        position={position ?? [0, 0, 0]}
-        rotation={rotation ?? [0, 0, 0]}
-        targetSize={targetSize}
-        castShadow={castShadow}
-        collisionId={collisionId}
-        collisionFallback={collisionFallback}
-      />
-    </Suspense>
+    <ModelErrorBoundary key={src} fallback={fallback}>
+      <Suspense fallback={fallback}>
+        <GltfScene
+          src={src}
+          scale={scale}
+          position={position ?? [0, 0, 0]}
+          rotation={rotation ?? [0, 0, 0]}
+          targetSize={targetSize}
+          castShadow={castShadow}
+          collisionId={collisionId}
+          collisionFallback={collisionFallback}
+        />
+      </Suspense>
+    </ModelErrorBoundary>
   )
 }
