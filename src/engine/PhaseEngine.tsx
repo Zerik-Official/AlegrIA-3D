@@ -70,7 +70,15 @@ export const PhaseEngine = memo(function PhaseEngine({ entities, context, shadow
       {entities.map((entity) => {
         const Renderer = getEntityRenderer(entity.type)
         return (
-          <group key={entity.id} name={entity.id} position={entity.position} rotation-y={entity.rotationY} scale={entity.scale}>
+          <group
+            key={entity.id}
+            name={entity.id}
+            position={entity.position}
+            rotation-x={entity.rotationX ?? 0}
+            rotation-y={entity.rotationY}
+            rotation-z={entity.rotationZ ?? 0}
+            scale={entity.scale}
+          >
             <Renderer entity={entity} context={context} />
             <EntityCollider entity={entity} activeTags={context?.colliderTags} />
           </group>
