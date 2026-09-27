@@ -9,6 +9,20 @@
 import { isDebugEnabled } from '@/shared/config/debug'
 import type { GamePhase } from '@/shared/types'
 
+/**
+ * Detects keystrokes typed into form fields, where single-letter shortcuts
+ * must not fire (editor inputs, the model browser filter, video URLs...).
+ * @param event - The DOM keydown event
+ * @returns Whether the event target is an editable field
+ */
+function isTypingTarget(event: KeyboardEvent): boolean {
+  const target = event.target as HTMLElement | null
+  if (!target) return false
+  if (target.isContentEditable) return true
+  const tag = target.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
+}
+
 /** Everything {@link HotkeyRouter.handle} needs to decide what a keypress should do. */
 export interface HotkeyContext {
   /** Current game phase. */
@@ -59,6 +73,10 @@ export interface HotkeyContext {
   closeEditor: () => void
   /** Sets the editor gizmo mode (`W`/`E`/`R`). */
   setEditorMode: (mode: 'translate' | 'rotate' | 'scale') => void
+  /** Whether the editor has an entity selected. */
+  hasEditorSelection: boolean
+  /** Duplicates the editor's selected entity (`C`). */
+  duplicateEditorSelection: () => void
   /** Transitions from `idle` straight into `exploring` (the library), where the experience now starts. */
   startExperience: () => void
   /** Book interaction in the library: first visit heads to Phase 1, the second (and later) returns the book to its shelf once its narration has ended. */
@@ -140,6 +158,11 @@ export class HotkeyRouter {
 
     if (isDebugEnabled && ctx.isEditorEnabled && (key === 'w' || key === 'e' || key === 'r')) {
       ctx.setEditorMode(key === 'w' ? 'translate' : key === 'e' ? 'rotate' : 'scale')
+      return
+    }
+
+    if (key === 'c' && isDebugEnabled && ctx.isEditorEnabled && ctx.hasEditorSelection && !isTypingTarget(event)) {
+      ctx.duplicateEditorSelection()
       return
     }
 
