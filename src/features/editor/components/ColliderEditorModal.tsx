@@ -193,7 +193,7 @@ interface ColliderSceneProps {
 function ColliderScene({ entity, mode, onUpdate, modelRef, frameRequest }: ColliderSceneProps) {
   const spec = effectiveCollider(entity)
   const [proxy, setProxy] = useState<THREE.Group | null>(null)
-  const displayEntity = useMemo<EditableEntity>(() => ({ ...entity, position: [0, 0, 0], rotationY: 0 }), [entity])
+  const displayEntity = useMemo<EditableEntity>(() => ({ ...entity, position: [0, 0, 0], rotationY: 0, rotationX: 0, rotationZ: 0 }), [entity])
 
   const handleCommit = useCallback(() => {
     if (!proxy || !spec) return
