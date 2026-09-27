@@ -55,9 +55,9 @@ export const EqualizerText = memo(function EqualizerText({ text, fontSize, fontW
   const bars = Math.max(1, Math.ceil(width / BAR_PITCH))
   const barRefs = useRef<Array<SVGRectElement | null>>([])
 
-  const apply = useCallback((i: number, level: number) => {
+  const apply = useCallback((i: number, level: number, beat: number) => {
     const bar = barRefs.current[i]
-    if (bar) bar.style.transform = `scaleY(${0.35 + level * 0.65})`
+    if (bar) bar.style.transform = `scaleY(${(0.35 + level * 0.65) * (1 + beat * 0.18)})`
   }, [])
   useLiveBars('phase', bars, apply)
 
