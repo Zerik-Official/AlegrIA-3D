@@ -25,7 +25,7 @@ import { usePhase1Rain } from '@/app/hooks/usePhase1Rain'
 import { useBookPages, type BookPages } from '@/app/hooks/useBookPages'
 import { usePointerLockGuard } from '@/app/hooks/usePointerLockGuard'
 import { useHotkeys } from '@/app/hooks/useHotkeys'
-import { initialCityIntroEntities } from '@/features/editor/config/editableEntities'
+import { initialCityIntroEntities, initialPhase1Entities, initialPhase2Entities } from '@/features/editor/config/editableEntities'
 import { LIBRARY_PORTAL_POSITION } from '@/features/library/config/libraryLayout'
 import type { HotkeyContext } from '@/app/engine/HotkeyRouter'
 import { narrationState } from '@/shared/audio/narrationState'
@@ -91,11 +91,27 @@ export function useExperience(): Experience {
     () => (storyBook.portal ? [storyBook.portal.position[0], storyBook.portal.position[2]] : null),
     [storyBook.portal]
   )
-  const proximity = usePlayerProximity(phase, inOpenPhase ? storyPortalXZ : undefined)
+  const editors = useSceneEditors(scenePhase)
+  const photoSpots = useMemo(
+    () =>
+      (editor.isEditorEnabled ? editors.phase1Editor.entities : initialPhase1Entities)
+        .filter((e) => e.type === 'sepia-photo')
+        .map((e) => ({ id: e.id, position: e.position })),
+    [editor.isEditorEnabled, editors.phase1Editor.entities],
+  )
+  const audioSpots = useMemo(() => {
+    const entities = editor.isEditorEnabled ? editors.phase2Editor.entities : initialPhase2Entities
+    const pico = entities.find((e) => e.type === 'phase2/decorations/el-poderoso')
+    const congas = entities.find((e) => e.type === 'congas-personaje')
+    return {
+      pico: pico ? ([pico.position[0], pico.position[2]] as [number, number]) : null,
+      congas: congas ? ([congas.position[0], congas.position[2]] as [number, number]) : null,
+    }
+  }, [editor.isEditorEnabled, editors.phase2Editor.entities])
+  const proximity = usePlayerProximity(phase, inOpenPhase ? storyPortalXZ : undefined, photoSpots, audioSpots)
   usePicoAudio(phaseFlow.isPhase2, proximity.picoDistance)
   useCongasAudio(phaseFlow.isPhase2, proximity.congasDistance)
 
-  const editors = useSceneEditors(scenePhase)
   const library = useLibraryDirector(phaseFlow, narration)
   const city = useCityFinale(phaseFlow.isCityIntro, editor.isEditorEnabled ? editors.cityIntroEditor.entities : initialCityIntroEntities)
   const bookPages = useBookPages(phaseFlow.libraryRestored)
