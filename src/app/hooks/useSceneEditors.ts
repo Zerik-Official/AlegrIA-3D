@@ -34,10 +34,10 @@ export interface SceneEditors {
  * @returns The four scene editors plus the one active for `phase`
  */
 export function useSceneEditors(phase: GamePhase): SceneEditors {
-  const cityIntroEditor = useEditor(initialCityIntroEntities)
-  const libraryEditor = useEditor(initialLibraryEntities)
-  const phase1Editor = useEditor(initialPhase1Entities)
-  const phase2Editor = useEditor(initialPhase2Entities)
+  const cityIntroEditor = useEditor(initialCityIntroEntities, 'cityIntro')
+  const libraryEditor = useEditor(initialLibraryEntities, 'library')
+  const phase1Editor = useEditor(initialPhase1Entities, 'phase1')
+  const phase2Editor = useEditor(initialPhase2Entities, 'phase2')
 
   const currentScene = phaseSceneRegistry.resolveScene(phase)
   const currentEditor =
