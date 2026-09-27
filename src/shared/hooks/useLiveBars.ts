@@ -6,14 +6,14 @@
  */
 
 import { useEffect, useRef } from 'react'
-import { readAudioLevels, type AudioSourceName } from '@/shared/audio/audioAnalyser'
+import { readAudioAnalysis, type AudioSourceName } from '@/shared/audio/audioAnalyser'
 
 /**
  * @param source - Which music to follow
  * @param count - Number of bars
- * @param apply - Called every frame for each bar with its smoothed level, `[0.06, 1]`
+ * @param apply - Called every frame for each bar with its smoothed level, `[0.06, 1]`, and the current beat pulse
  */
-export function useLiveBars(source: AudioSourceName, count: number, apply: (index: number, level: number) => void): void {
+export function useLiveBars(source: AudioSourceName, count: number, apply: (index: number, level: number, beat: number) => void): void {
   const applyRef = useRef(apply)
   useEffect(() => {
     applyRef.current = apply
@@ -24,12 +24,15 @@ export function useLiveBars(source: AudioSourceName, count: number, apply: (inde
     const smoothed = new Float32Array(count)
     let frame = 0
     const tick = (now: number): void => {
-      const live = readAudioLevels(source, levels)
+      const analysis = readAudioAnalysis(source, levels)
       const t = now / 1000
+      const beat = analysis?.beat ?? 0
       for (let i = 0; i < count; i++) {
-        const target = live ? levels[i] : 0.3 + 0.22 * Math.sin(t * (2.1 + (i % 5) * 0.37) + i * 0.9) + 0.14 * Math.sin(t * 5.3 + i * 1.7)
+        const target = analysis
+          ? levels[i]
+          : 0.3 + 0.22 * Math.sin(t * (2.1 + (i % 5) * 0.37) + i * 0.9) + 0.14 * Math.sin(t * 5.3 + i * 1.7)
         smoothed[i] += (target - smoothed[i]) * 0.35
-        applyRef.current(i, Math.max(0.06, Math.min(1, smoothed[i])))
+        applyRef.current(i, Math.max(0.06, Math.min(1, smoothed[i])), beat)
       }
       frame = requestAnimationFrame(tick)
     }
