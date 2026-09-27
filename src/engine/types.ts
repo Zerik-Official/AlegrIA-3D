@@ -9,7 +9,7 @@ import type { Vector3, Vector3Tuple } from 'three'
 /**
  * Collider attached to an entity, in the entity's local space: `offset` and
  * the dimensions are multiplied by the entity's `scale` and turned by its
- * `rotationY`. A rotated box still collides as its world-space AABB, the only
+ * full rotation. A rotated box still collides as its world-space AABB, the only
  * shape the player resolver understands.
  */
 export interface ColliderSpec {
@@ -42,6 +42,10 @@ export interface EditableEntity {
   position: Vector3Tuple
   /** Y rotation in radians. */
   rotationY: number
+  /** X rotation in radians, optional and `0` when omitted. */
+  rotationX?: number
+  /** Z rotation in radians, optional and `0` when omitted. */
+  rotationZ?: number
   /** Uniform scale. */
   scale: number
   /** Variant or color hint (e.g. `'short'|'medium'|'long'`, a hex color, a shelf width). */
@@ -86,7 +90,7 @@ export interface EngineRenderContext {
 /**
  * Props passed to every entity renderer registered in `engine/entityRegistry`
  * (and any per-scene renderer module it merges in, e.g. `engine/cityIntroRenderers`).
- * The entity's own `position`/`rotationY`/`scale` are already applied by `PhaseEngine`'s
+ * The entity's own `position`/`rotationY`/`rotationX`/`rotationZ`/`scale` are already applied by `PhaseEngine`'s
  * wrapping group, so renderers place their content at the origin.
  */
 export interface EntityRendererProps {
