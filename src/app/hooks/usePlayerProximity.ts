@@ -49,25 +49,15 @@ const PORTAL_RANGE = 2.8
 const PHOTO_RANGE = 2.4
 
 /**
- * "El Poderoso" — the picó/sound system on Phase 2's platform, whose
- * `.glb` looked up its XZ position once from `phase2.json`, so `usePicoAudio`
- * can fade its volume by distance without a position hardcoded here going
- * stale on the next redesign.
+ * World XZ spots whose audio fades by distance. Follows the rendered
+ * entities (see `useExperience`), so moving them in the editor moves the sound.
  */
-const PICO_XZ: [number, number] | null = (() => {
-  const pico = initialPhase2Entities.find((e) => e.type === 'phase2/decorations/el-poderoso')
-  return pico ? [pico.position[0], pico.position[2]] : null
-})()
-
-/**
- * The congas player parked by the fritos stand, whose `.glb` looked up its
- * XZ position once from `phase2.json`, so `useCongasAudio` can fade its
- * drumming loop by distance the same way `usePicoAudio` does for "El Poderoso".
- */
-const CONGAS_XZ: [number, number] | null = (() => {
-  const congas = initialPhase2Entities.find((e) => e.type === 'congas-personaje')
-  return congas ? [congas.position[0], congas.position[2]] : null
-})()
+export interface Phase2AudioSpots {
+  /** XZ of "El Poderoso" (picó), or `null` when the scene has no such entity. */
+  pico: [number, number] | null
+  /** XZ of the congas character, or `null` when the scene has no such entity. */
+  congas: [number, number] | null
+}
 
 /** Public state and updater exposed by {@link usePlayerProximity}. */
 export interface PlayerProximity {
@@ -90,9 +80,16 @@ export interface PlayerProximity {
 /**
  * @param phase - Current game phase, used to gate sepia-photo highlighting to Phase 1
  * @param portalXZOverride - Where the current phase's portal actually is when it's placed at runtime (the Libro de Rosa's summoned portal in the open phases); `null` while it hasn't opened yet, `undefined` to use the phase's authored portal
+ * @param photoSpots - Photo hotspots following the rendered `sepia-photo` entities; defaults to the static catalog
+ * @param audioSpots - Phase 2 audio spots following the rendered entities
  * @returns Proximity flags and the position feed callback
  */
-export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number, number] | null): PlayerProximity {
+export function usePlayerProximity(
+  phase: GamePhase,
+  portalXZOverride?: [number, number] | null,
+  photoSpots: Pick<SepiaPhotoConfig, 'id' | 'position'>[] = sepiaPhotos,
+  audioSpots: Phase2AudioSpots = { pico: null, congas: null },
+): PlayerProximity {
   const [distance, setDistance] = useState(9)
   const [highlightedPhotoId, setHighlightedPhotoId] = useState<string | null>(null)
   const [picoDistance, setPicoDistance] = useState(Infinity)
@@ -108,15 +105,15 @@ export function usePlayerProximity(phase: GamePhase, portalXZOverride?: [number,
       setNearPortal(!!portalXZ && Math.hypot(pos.x - portalXZ[0], pos.z - portalXZ[1]) < PORTAL_RANGE)
       setDistance(Math.hypot(pos.x, pos.z))
       if (phase === 'phase1') {
-        setHighlightedPhotoId(findNearestSepiaPhoto(pos.x, pos.z, sepiaPhotos, PHOTO_RANGE))
+        setHighlightedPhotoId(findNearestSepiaPhoto(pos.x, pos.z, photoSpots, PHOTO_RANGE))
       } else {
         setHighlightedPhotoId(null)
       }
-      setPicoDistance(phase === 'phase2' && PICO_XZ ? Math.hypot(pos.x - PICO_XZ[0], pos.z - PICO_XZ[1]) : Infinity)
-      setCongasDistance(phase === 'phase2' && CONGAS_XZ ? Math.hypot(pos.x - CONGAS_XZ[0], pos.z - CONGAS_XZ[1]) : Infinity)
+      setPicoDistance(phase === 'phase2' && audioSpots.pico ? Math.hypot(pos.x - audioSpots.pico[0], pos.z - audioSpots.pico[1]) : Infinity)
+      setCongasDistance(phase === 'phase2' && audioSpots.congas ? Math.hypot(pos.x - audioSpots.congas[0], pos.z - audioSpots.congas[1]) : Infinity)
       setNearCreditsDoor(phase === 'cityIntro' && Math.hypot(pos.x - CREDITS_DOOR_XZ[0], pos.z - CREDITS_DOOR_XZ[1]) < CREDITS_DOOR_RANGE)
     },
-    [phase, portalXZ]
+    [phase, portalXZ, photoSpots, audioSpots]
   )
 
   return { nearBook, nearPortal, highlightedPhotoId, picoDistance, congasDistance, nearCreditsDoor, handlePosition }
