@@ -105,9 +105,10 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
 
   const [selectedKey, setSelectedKey] = useState<string>(entries[0]?.[0] ?? '')
 
-  const effectiveSelectedKey = filteredEntries.some(([k]) => k === selectedKey) ? selectedKey : (filteredEntries[0]?.[0] ?? selectedKey)
-  const selected = modelRegistry[effectiveSelectedKey]
-  const PreviewComponent = modelPreviews[effectiveSelectedKey]
+  const inFilter = filteredEntries.some(([k]) => k === selectedKey)
+  const effectiveSelectedKey = inFilter ? selectedKey : ''
+  const selected = effectiveSelectedKey ? modelRegistry[effectiveSelectedKey] : undefined
+  const PreviewComponent = effectiveSelectedKey ? modelPreviews[effectiveSelectedKey] : undefined
 
   /**
    * Handles quick-add of the currently previewed model to the edited scene.
@@ -166,8 +167,8 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
         </div>
         <div className="flex flex-1 flex-col">
           <div className="relative flex-1 bg-[#0a0f1e]">
-            {selected && (
-              <Canvas key={selectedKey} camera={{ fov: 42, position: [2.4, 1.8, 2.8] }} shadows>
+            {selected ? (
+              <Canvas camera={{ fov: 42, position: [2.4, 1.8, 2.8] }} shadows>
                 <ambientLight intensity={0.6} />
                 <directionalLight position={[4, 6, 3]} intensity={1.2} castShadow />
                 <Bounds fit clip observe margin={2.4}>
@@ -177,11 +178,16 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
                 </Bounds>
                 <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
               </Canvas>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-[11px] text-parchment/40">
+                <FiBox className="h-6 w-6 text-parchment/20" />
+                El modelo seleccionado quedó fuera del filtro; elige uno de la lista
+              </div>
             )}
           </div>
           <div className="border-t border-gold/10 bg-black/25 px-4 py-3 text-[11px] text-parchment/60">
             <div className="flex items-center gap-2 font-semibold text-parchment">
-              <FiBox className="h-3.5 w-3.5 text-gold" /> {effectiveSelectedKey}
+              <FiBox className="h-3.5 w-3.5 text-gold" /> {effectiveSelectedKey || 'Sin selección en el filtro'}
             </div>
             <div className="mt-1 truncate">
               Ruta: <span className="text-parchment/40">{selected?.path}</span>
