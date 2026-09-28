@@ -54,7 +54,7 @@ export const SceneStage = memo(function SceneStage({ experience }: SceneStagePro
       <color attach="background" args={[visual.background]} />
 
       {!crossedPortal && sceneId === 'cityIntro' && <CityIntroScene editableEntities={editing ? editors.cityIntroEditor.entities : undefined} />}
-      {!crossedPortal && sceneId === 'credits' && <CreditsScene />}
+      {!crossedPortal && sceneId === 'credits' && <CreditsScene editableEntities={editing ? editors.creditsEditor.entities : undefined} />}
       {!crossedPortal && sceneId === 'library' && (
         <LibraryScene
           wormholeActive={inWormhole}
