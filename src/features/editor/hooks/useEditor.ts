@@ -3,6 +3,44 @@ import type { EditableEntity } from '@/features/editor/config/editableEntities'
 import { clearEditorDraft, loadEditorDraft, saveEditorDraft, type DraftSummary, type EditorDraft } from '@/features/editor/state/editorDrafts'
 
 /**
+ * Computes the id for a duplicated entity: incremental within its own
+ * family (`floor-098` → `floor-099`) instead of stacking `-copy` markers.
+ * Copying a copy resolves back to the family root first, so ids never grow
+ * into `floor-094-copy-copy`.
+ * @param sourceId - Id of the entity being duplicated
+ * @param taken - Ids already in use
+ * @returns Free id for the copy
+ */
+function nextDuplicateId(sourceId: string, taken: Set<string>): string {
+  const root = sourceId.replace(/(-copy(-\d+)?)+$/, '')
+  const counter = root.match(/^(.*)-(\d+)$/)
+  if (counter && counter[2].length <= 4) {
+    const [, prefix, digits] = counter
+    const pattern = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}-(\\d+)$`)
+    let max = 0
+    for (const id of taken) {
+      const match = id.match(pattern)
+      if (match) max = Math.max(max, parseInt(match[1], 10))
+    }
+    const width = digits.length
+    let next = max + 1
+    let id = `${prefix}-${String(next).padStart(width, '0')}`
+    while (taken.has(id)) {
+      next += 1
+      id = `${prefix}-${String(next).padStart(width, '0')}`
+    }
+    return id
+  }
+  let suffix = 2
+  let id = `${root}-${suffix}`
+  while (taken.has(id)) {
+    suffix += 1
+    id = `${root}-${suffix}`
+  }
+  return id
+}
+
+/**
  * Hook for editor selection and entity updates.
  *
  * @param initial - Initial entity list
@@ -55,18 +93,11 @@ export function useEditor(initial: EditableEntity[], draftScene?: string) {
   const duplicateSelected = useCallback(() => {
     const source = entities.find((e) => e.id === selectedId) ?? null
     if (!source) return
-    const taken = new Set(entities.map((e) => e.id))
-    let suffix = 1
-    let id = `${source.id}-copy`
-    while (taken.has(id)) {
-      suffix += 1
-      id = `${source.id}-copy-${suffix}`
-    }
     const clone: EditableEntity = structuredClone(source)
-    clone.id = id
+    clone.id = nextDuplicateId(source.id, new Set(entities.map((e) => e.id)))
     clone.position = [source.position[0] + 1.5, source.position[1], source.position[2] + 1.5]
     setEntities((prev) => [...prev, clone])
-    setSelectedId(id)
+    setSelectedId(clone.id)
     stamp()
   }, [entities, selectedId, stamp])
 
