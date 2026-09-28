@@ -5,7 +5,7 @@
  * @module features/editor/utils/preloadModels
  */
 
-import { useGLTF, useProgress } from '@react-three/drei'
+import { useFBX, useGLTF, useProgress } from '@react-three/drei'
 import type { SceneId } from '@/engine/config/entityCatalog'
 import type { EditableEntity } from '@/engine/types'
 import { modelRegistry } from '@/shared/config/models'
@@ -48,14 +48,18 @@ function waitForIdle(): Promise<void> {
 }
 
 /**
- * Loads every model among `urls` that exists into drei's `useGLTF` cache.
+ * Loads every model among `urls` that exists into drei's loader caches.
  * @param urls - Model URLs, duplicates allowed
  * @returns Promise settled when they are all parsed (or the timeout hits)
  */
 export async function preloadModels(urls: string[]): Promise<void> {
   const unique = [...new Set(urls)]
   const present = await Promise.all(unique.map(async (url) => ((await isAvailable(url)) ? url : null)))
-  for (const url of present) if (url) useGLTF.preload(url)
+  for (const url of present) {
+    if (!url) continue
+    if (url.endsWith('.fbx')) useFBX.preload(url)
+    else useGLTF.preload(url)
+  }
   await waitForIdle()
 }
 
