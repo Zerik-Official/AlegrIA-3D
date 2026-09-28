@@ -10,7 +10,6 @@
 import { memo } from 'react'
 import { PhaseEngine } from '@/engine/PhaseEngine'
 import { CreditsRoom } from '@/features/credits/components/CreditsRoom'
-import { JafetDancer } from '@/features/credits/components/JafetDancer'
 import { initialCreditsEntities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
 
@@ -29,7 +28,6 @@ export const CreditsScene = memo(function CreditsScene({ editableEntities }: Cre
     <group>
       <CreditsRoom />
       <PhaseEngine entities={entities} />
-      <JafetDancer />
       <ambientLight intensity={0.55} color="#fff3e0" />
       <hemisphereLight args={['#fff3e0', '#2a2018', 0.5]} />
     </group>
