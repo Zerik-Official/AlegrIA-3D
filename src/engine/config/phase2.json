@@ -6374,7 +6374,7 @@
     "scale": 1.9
   },
   {
-    "id": "floor-098-copy",
+    "id": "floor-117",
     "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
     "position": [
       -20.37518388587123,
@@ -6385,7 +6385,7 @@
     "scale": 1.1
   },
   {
-    "id": "floor-098-copy-copy",
+    "id": "floor-118",
     "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
     "position": [
       -24.718107573439937,
@@ -6396,7 +6396,7 @@
     "scale": 1.1
   },
   {
-    "id": "floor-098-copy-copy-copy",
+    "id": "floor-119",
     "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
     "position": [
       -29.08791094695919,
@@ -6407,7 +6407,7 @@
     "scale": 1.1
   },
   {
-    "id": "floor-094-copy",
+    "id": "floor-120",
     "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
     "position": [
       -31.99468357564144,
@@ -6418,7 +6418,7 @@
     "scale": 1.1
   },
   {
-    "id": "floor-094-copy-copy",
+    "id": "floor-121",
     "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
     "position": [
       -31.99995412026465,
@@ -6429,7 +6429,7 @@
     "scale": 1.1
   },
   {
-    "id": "deco-lamp-11-copy",
+    "id": "deco-lamp-104",
     "type": "phase2/decorations/farol-calle",
     "position": [
       -19.264644554827356,
@@ -6442,7 +6442,7 @@
     "rotationZ": 3.14159265358979
   },
   {
-    "id": "deco-174-copy",
+    "id": "deco-229",
     "type": "phase2/decorations/carrito-frutas-1",
     "position": [
       -22.517353098845273,
@@ -6468,7 +6468,7 @@
     }
   },
   {
-    "id": "deco-008-copy",
+    "id": "deco-230",
     "type": "phase2/decorations/carrito-frutas-2",
     "position": [
       -24.942818554304495,
