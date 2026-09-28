@@ -1,16 +1,15 @@
 /**
- * RIWI's astronaut fox dancing on the concert stage, playing the dance clip
- * baked in `riwi-fox-dancing.py` on loop, retimed to the street party's tempo.
+ * RIWI's astronaut fox dancing on the concert stage
  * @module features/cityIntro/renderers/concert/RiwiFoxDancer
  */
 
 import { memo, Suspense, useEffect, useMemo, useRef } from 'react'
-import { useAnimations, useGLTF } from '@react-three/drei'
+import { useAnimations, useFBX } from '@react-three/drei'
 import * as THREE from 'three'
 import { modelRegistry } from '@/shared/config/models'
 import { CARNIVAL_BPM } from '@/features/cityIntro/config/carnivalLayout'
 
-/** Tempo the dance clip was authored at (`riwi-fox-dancing.py`: a beat every 12 frames at 24 fps). */
+/** Assumed tempo of the Mixamo dance clip, used to retime it to the party. */
 const CLIP_BPM = 120
 
 /**
@@ -26,27 +25,25 @@ interface RiwiFoxDancerProps {
  * @returns Animated fox, feet on its origin
  */
 function FoxModel({ height }: RiwiFoxDancerProps) {
-  const { scene, animations } = useGLTF(modelRegistry['cityIntro/riwi-fox'].path) as unknown as {
-    scene: THREE.Group
+  const fbx = useFBX(modelRegistry['cityIntro/riwi-fox'].path) as unknown as THREE.Group & {
     animations: THREE.AnimationClip[]
   }
   const rigRef = useRef<THREE.Group>(null)
 
   const { model, scale, offset } = useMemo(() => {
-    const c = scene.clone(true)
-    c.traverse((obj) => {
+    fbx.traverse((obj) => {
       const mesh = obj as THREE.Mesh
       if (mesh.isMesh) mesh.castShadow = true
     })
-    c.updateMatrixWorld(true)
-    const box = new THREE.Box3().setFromObject(c)
+    fbx.updateMatrixWorld(true)
+    const box = new THREE.Box3().setFromObject(fbx)
     const size = box.getSize(new THREE.Vector3())
     const center = box.getCenter(new THREE.Vector3())
     const s = size.y > 0 ? height / size.y : 1
-    return { model: c, scale: s, offset: [-center.x * s, -box.min.y * s, -center.z * s] as [number, number, number] }
-  }, [scene, height])
+    return { model: fbx, scale: s, offset: [-center.x * s, -box.min.y * s, -center.z * s] as [number, number, number] }
+  }, [fbx, height])
 
-  const { actions } = useAnimations(animations, rigRef)
+  const { actions } = useAnimations(fbx.animations, rigRef)
 
   useEffect(() => {
     const action = Object.values(actions)[0]
