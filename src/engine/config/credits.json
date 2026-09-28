@@ -331,7 +331,9 @@
       0.49884640317249684
     ],
     "rotationX": -3.141592653589793,
-    "rotationZ": -3.141592653589793
+    "rotationZ": -3.141592653589793,
+    "imageSrc": "/images/credits/mocadevia-canal.png",
+    "videoSrc": "/videos/credits/mocadevia-last-video.mp4"
   },
   {
     "id": "credits-decorators-tablero-1790567315837",
