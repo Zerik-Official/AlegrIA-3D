@@ -79,6 +79,8 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'phase1-scene': GenericModelRenderer,
   'phase1-vehicle': GenericModelRenderer,
   'phase1-model': GenericModelRenderer,
+  'credits-decoration': GenericModelRenderer,
+  'credits-model': GenericModelRenderer,
   collider: ColliderEntityRenderer,
   'walk-area': WalkAreaRenderer,
   ...cityIntroRenderers,
