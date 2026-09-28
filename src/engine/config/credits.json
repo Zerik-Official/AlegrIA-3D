@@ -1,1 +1,968 @@
-[]
+[
+  {
+    "id": "credits-decorators-escritorio-1790565170689",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      4.887901073328306,
+      0,
+      -0.5258266315111549
+    ],
+    "rotationY": -1.565774132912176,
+    "scale": [
+      0.5378754418763108,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-2",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      4.90413631524816,
+      0,
+      -4.0500631644353335
+    ],
+    "rotationY": -1.565774132912176,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-3",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      4.870218561515531,
+      0,
+      2.6280356558948386
+    ],
+    "rotationY": -1.565774132912176,
+    "scale": [
+      0.514239912772796,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-4",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      6.536318185255854,
+      0,
+      -4.049175788585384
+    ],
+    "rotationY": 1.5758185206776174,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-5",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      6.51574195160386,
+      0,
+      -0.5014186698146684
+    ],
+    "rotationY": 1.5758185206776172,
+    "scale": [
+      0.5378754418763108,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-6",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      6.497446494205135,
+      0,
+      2.6449491416175253
+    ],
+    "rotationY": 1.5758185206776172,
+    "scale": [
+      0.514239912772796,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits/decorators/caneca-1790566572959",
+    "type": "credits/decorators/caneca",
+    "position": [
+      2.6747462522719783,
+      0,
+      -5.733816507041501
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.15267453951392745,
+      0.10374113433909056,
+      0.17403858185265203
+    ]
+  },
+  {
+    "id": "credits/decorators/caneca-1790566572959-2",
+    "type": "credits/decorators/caneca",
+    "position": [
+      -9.237174188559429,
+      0,
+      0.8443803425411254
+    ],
+    "rotationY": 1.5707963267948966,
+    "scale": [
+      0.15267453951392745,
+      0.10374113433909056,
+      0.17403858185265203
+    ]
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-7",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -7.549058700374285,
+      0,
+      -1.962556606843667
+    ],
+    "rotationY": -3.1365704597070723,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-8",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -7.540350642093002,
+      0,
+      -3.5980560988077426
+    ],
+    "rotationY": 0.005022193882721071,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-9",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -3.6807198229106124,
+      0,
+      -3.5760457266252663
+    ],
+    "rotationY": 0.005022193882721071,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-10",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -3.682462888778647,
+      0,
+      -1.9392875648381351
+    ],
+    "rotationY": -3.1365704597070723,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-11",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      4.7587494341012135,
+      0,
+      -8.033810281690695
+    ],
+    "rotationY": -3.1365704597070723,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-12",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      4.7606977047451755,
+      0,
+      -9.52675466633629
+    ],
+    "rotationY": 0.005022193882721071,
+    "scale": [
+      0.6449112212882314,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-13",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -3.949281801515418,
+      0,
+      -9.657814861699986
+    ],
+    "rotationY": 0.005022193882721071,
+    "scale": [
+      0.4084922673416028,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-14",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -1.5159238945127949,
+      0,
+      -9.647521974557268
+    ],
+    "rotationY": 0.005022193882721071,
+    "scale": [
+      0.4084922673416028,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-15",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -1.530537167706728,
+      0,
+      -8.0134003653406
+    ],
+    "rotationY": -3.1365704597070723,
+    "scale": [
+      0.4084922673416028,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-escritorio-1790565170689-16",
+    "type": "credits/decorators/escritorio",
+    "position": [
+      -3.9559861717351734,
+      0,
+      -8.025789381682777
+    ],
+    "rotationY": -3.1365704597070723,
+    "scale": [
+      0.4084922673416028,
+      0.32031618834476017,
+      0.5462247319408631
+    ],
+    "rotationX": 3.1415926535897913,
+    "rotationZ": 3.1415926535897913
+  },
+  {
+    "id": "credits-decorators-mesa-corta-1790567121058",
+    "type": "credits/decorators/mesa-corta",
+    "position": [
+      -1.3454194175622494,
+      0,
+      4.922815441052748
+    ],
+    "rotationY": -1.5707963267948966,
+    "scale": [
+      0.1987514036541404,
+      0.32,
+      0.6755516469925232
+    ]
+  },
+  {
+    "id": "credits-decorators-televisor-1790567216101",
+    "type": "credits/decorators/televisor",
+    "position": [
+      -3.6537236066123353,
+      -4.440892098500626e-16,
+      4.961511452758014
+    ],
+    "rotationY": 0.4928792226846688,
+    "scale": [
+      0.4774520996854181,
+      0.43991560350251624,
+      0.49884640317249684
+    ],
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "credits-decorators-tablero-1790567315837",
+    "type": "credits/decorators/tablero",
+    "position": [
+      -5.44136923906452,
+      0,
+      3.52088698413388
+    ],
+    "rotationY": 1.0901879139253738,
+    "scale": [
+      0.43338424287634525,
+      0.3349196825975817,
+      0.3751137053060059
+    ],
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.1049742693665467
+  },
+  {
+    "id": "credits-decorators-ventilador-1790567389572",
+    "type": "credits/decorators/ventilador",
+    "position": [
+      -6.79177612372134,
+      0,
+      2.592863565899171
+    ],
+    "rotationY": 0.7672414125886625,
+    "scale": [
+      0.45933158301763594,
+      0.2240409127451938,
+      0.5421724503894395
+    ],
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "credits-decorators-control-1790567484015",
+    "type": "credits/decorators/control",
+    "position": [
+      -2.0633744702166705,
+      1.1986675508562759,
+      4.737895347656553
+    ],
+    "rotationY": -0.5208484855776032,
+    "scale": [
+      0.0457464812032784,
+      0.08399113319468016,
+      0.03377664278902889
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567593615",
+    "type": "credits/decorators/silla",
+    "position": [
+      -1.4338334966399557,
+      0.0035000001080334187,
+      5.307257686062257
+    ],
+    "rotationY": 0.2553501991188788,
+    "scale": [
+      0.27650470846955905,
+      0.2282998727302182,
+      0.28982009046199175
+    ],
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301",
+    "type": "credits/decorators/silla",
+    "position": [
+      4.213436356706775,
+      0,
+      3.143675342554078
+    ],
+    "rotationY": 1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-2",
+    "type": "credits/decorators/silla",
+    "position": [
+      3.484544753805497,
+      0,
+      1.9112465069355236
+    ],
+    "rotationY": -0.829799664026883,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-3",
+    "type": "credits/decorators/silla",
+    "position": [
+      4.184861339135779,
+      0,
+      0.21458464613070882
+    ],
+    "rotationY": 1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-4",
+    "type": "credits/decorators/silla",
+    "position": [
+      4.158595572231914,
+      0,
+      -0.9086193650818961
+    ],
+    "rotationY": 1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-5",
+    "type": "credits/decorators/silla",
+    "position": [
+      4.3147244326879175,
+      0,
+      -2.9413202854478135
+    ],
+    "rotationY": 1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-6",
+    "type": "credits/decorators/silla",
+    "position": [
+      4.289953393091022,
+      0,
+      -4.534517643794442
+    ],
+    "rotationY": 1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-totem-riwi-1790567858560",
+    "type": "credits/decorators/totem-riwi",
+    "position": [
+      3.266963856201682,
+      0,
+      -5.8182236652132735
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.3721339735252779,
+      0.3245521168489956,
+      0.4319884425852766
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-7",
+    "type": "credits/decorators/silla",
+    "position": [
+      7.101582240870303,
+      0,
+      3.271908961890938
+    ],
+    "rotationY": -1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-8",
+    "type": "credits/decorators/silla",
+    "position": [
+      7.129535652553937,
+      0,
+      2.088277124198143
+    ],
+    "rotationY": -1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-9",
+    "type": "credits/decorators/silla",
+    "position": [
+      7.081204704321263,
+      0,
+      0.257387045848795
+    ],
+    "rotationY": -1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-10",
+    "type": "credits/decorators/silla",
+    "position": [
+      8.87737560739693,
+      0,
+      -0.6831741048593986
+    ],
+    "rotationY": -1.20915637277731,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-totem-alcaldia-1790568121341",
+    "type": "credits/decorators/totem-alcaldia",
+    "position": [
+      -9.2232742385261,
+      0,
+      0.012366542662919755
+    ],
+    "rotationY": 0.6308779180370037,
+    "scale": [
+      0.372,
+      0.325,
+      0.432
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-11",
+    "type": "credits/decorators/silla",
+    "position": [
+      -2.82653082542492,
+      0,
+      -4.120017286190608
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-12",
+    "type": "credits/decorators/silla",
+    "position": [
+      -4.536207851719812,
+      0,
+      -4.143387143093086
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-13",
+    "type": "credits/decorators/silla",
+    "position": [
+      -6.494886488577929,
+      0,
+      -4.094039991767428
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-14",
+    "type": "credits/decorators/silla",
+    "position": [
+      -8.752381468362096,
+      0,
+      -5.347448965443376
+    ],
+    "rotationY": 0.48330051184844675,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-15",
+    "type": "credits/decorators/silla",
+    "position": [
+      -2.782228344988826,
+      0,
+      -1.2895278680159783
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-16",
+    "type": "credits/decorators/silla",
+    "position": [
+      -4.766796877732954,
+      0,
+      -1.3410817340638124
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-17",
+    "type": "credits/decorators/silla",
+    "position": [
+      -6.530752337109696,
+      0,
+      -1.3173157159134905
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-18",
+    "type": "credits/decorators/silla",
+    "position": [
+      -8.87494559665895,
+      0,
+      -0.7419609343169689
+    ],
+    "rotationY": 1.5413766036640901,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ],
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-19",
+    "type": "credits/decorators/silla",
+    "position": [
+      -7.6721151093921085,
+      0,
+      -1.2887607038375988
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-20",
+    "type": "credits/decorators/silla",
+    "position": [
+      -3.681448932515084,
+      0,
+      -1.474173196841425
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-21",
+    "type": "credits/decorators/silla",
+    "position": [
+      7.2793375871586585,
+      0,
+      -3.038670635729153
+    ],
+    "rotationY": -1.5707963267948968,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-22",
+    "type": "credits/decorators/silla",
+    "position": [
+      7.311564857548411,
+      0,
+      -5.057259531328823
+    ],
+    "rotationY": -0.8701929116365024,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-23",
+    "type": "credits/decorators/silla",
+    "position": [
+      -0.9640675402911918,
+      0,
+      -10.117713946792833
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-24",
+    "type": "credits/decorators/silla",
+    "position": [
+      -1.9779821559529869,
+      0,
+      -10.12104629101185
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-25",
+    "type": "credits/decorators/silla",
+    "position": [
+      -3.076008173139776,
+      0,
+      -10.04318606857832
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-26",
+    "type": "credits/decorators/silla",
+    "position": [
+      -4.532119820697167,
+      0,
+      -10.227689766386419
+    ],
+    "rotationY": 0,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-27",
+    "type": "credits/decorators/silla",
+    "position": [
+      -1.0520690169364315,
+      0,
+      -7.376378523331619
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-28",
+    "type": "credits/decorators/silla",
+    "position": [
+      -2.089393495706954,
+      0,
+      -7.418084289823828
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-29",
+    "type": "credits/decorators/silla",
+    "position": [
+      -3.1079165663457324,
+      0,
+      -7.272078353994964
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-30",
+    "type": "credits/decorators/silla",
+    "position": [
+      -4.103186085529976,
+      0,
+      -7.32396011849823
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-31",
+    "type": "credits/decorators/silla",
+    "position": [
+      3.8057715067678455,
+      0,
+      -7.322036931417344
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-32",
+    "type": "credits/decorators/silla",
+    "position": [
+      5.745325757018697,
+      0,
+      -7.270571564308626
+    ],
+    "rotationY": 3.141592653589793,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-33",
+    "type": "credits/decorators/silla",
+    "position": [
+      3.746598628574726,
+      0,
+      -10.02529579618351
+    ],
+    "rotationY": -2.4492935982947064e-16,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-silla-1790567707301-34",
+    "type": "credits/decorators/silla",
+    "position": [
+      5.495593146284694,
+      0,
+      -10.107062363424857
+    ],
+    "rotationY": -2.4492935982947064e-16,
+    "scale": [
+      0.2715457371283371,
+      0.228,
+      0.29
+    ]
+  },
+  {
+    "id": "credits-decorators-cartel-alcaldia-1790588123718",
+    "type": "credits/decorators/cartel-alcaldia",
+    "position": [
+      8.426584815606432,
+      0,
+      5.115763153375767
+    ],
+    "rotationY": -1.0578611343946678,
+    "scale": [
+      0.5793588710935145,
+      0.5243567817532668,
+      1
+    ],
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "jafet",
+    "type": "jafet-dancer",
+    "position": [0.175, 0, -0.5],
+    "rotationY": 0,
+    "scale": 1
+  }
+]
