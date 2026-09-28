@@ -65,6 +65,52 @@ export function registerAudioSource(name: AudioSourceName, element: HTMLMediaEle
   elements.set(name, element)
 }
 
+/** Loop-wrap listeners per element. */
+const loopListeners = new Map<HTMLMediaElement, Set<() => void>>()
+/** Playback tracking per element, spotting seamless loop restarts. */
+const loopState = new WeakMap<HTMLMediaElement, { lastTime: number; lastFire: number }>()
+
+/**
+ * Watches an element for seamless loop restarts and fans them out.
+ * @param element - Audio element to watch
+ */
+function ensureLoopTracking(element: HTMLMediaElement): void {
+  if (loopListeners.has(element)) return
+  loopListeners.set(element, new Set())
+  loopState.set(element, { lastTime: 0, lastFire: 0 })
+  element.addEventListener('loadedmetadata', () => {
+    loopState.set(element, { lastTime: 0, lastFire: 0 })
+  })
+  element.addEventListener('timeupdate', () => {
+    const listeners = loopListeners.get(element)
+    const state = loopState.get(element)
+    if (!listeners?.size || !state) return
+    const current = element.currentTime
+    const wrapped = element.loop && current < 5 && state.lastTime - current > 1 && state.lastTime > 1 && performance.now() - state.lastFire > 5000
+    state.lastTime = current
+    if (!wrapped) return
+    state.lastFire = performance.now()
+    listeners.forEach((listener) => listener())
+  })
+}
+
+/**
+ * Subscribes to a looping source restarting (a `loop=true` track wrapping
+ * around, where `ended` never fires).
+ * @param name - Source name
+ * @param listener - Called on every loop restart
+ * @returns Unsubscriber
+ */
+export function onAudioLoop(name: AudioSourceName, listener: () => void): () => void {
+  const element = elements.get(name)
+  if (!element) return () => {}
+  ensureLoopTracking(element)
+  loopListeners.get(element)?.add(listener)
+  return () => {
+    loopListeners.get(element)?.delete(listener)
+  }
+}
+
 /**
  * @param name - Source name
  * @returns The source's analyser, created on first request, or `null` when nothing is registered or Web Audio is unavailable
