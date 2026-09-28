@@ -35,6 +35,7 @@ import {
   UnknownEntityRenderer,
 } from '@/engine/renderers/coreRenderers'
 import { cityIntroRenderers } from '@/features/cityIntro/renderers'
+import { JafetDancerRenderer } from '@/features/credits/components/JafetDancer'
 import { skyRenderers } from '@/shared/renderers/skyRenderers'
 import { WalkAreaRenderer } from '@/features/player/renderers/WalkAreaRenderer'
 import type { EntityRenderer } from '@/engine/types'
@@ -81,6 +82,7 @@ export const entityRegistry: Record<string, EntityRenderer> = {
   'phase1-model': GenericModelRenderer,
   'credits-decoration': GenericModelRenderer,
   'credits-model': GenericModelRenderer,
+  'jafet-dancer': JafetDancerRenderer,
   collider: ColliderEntityRenderer,
   'walk-area': WalkAreaRenderer,
   ...cityIntroRenderers,
