@@ -16,8 +16,8 @@ import { getEntityRenderer } from '@/engine/entityRegistry'
 import { DEFAULT_BOX_SIZE, DEFAULT_CYLINDER_HEIGHT, DEFAULT_CYLINDER_RADIUS, defaultColliderForType } from '@/engine/colliders'
 import { isCollisionMesh } from '@/models/shared/collisionMesh'
 import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
-import { ColliderSection, NumberField, Vector3Fields } from '@/features/editor/components/EditorFields'
-import type { ColliderSpec, EditableEntity } from '@/engine/types'
+import { ColliderSection, FieldLabel, NumberField, Vector3Fields } from '@/features/editor/components/EditorFields'
+import { resolveEntityScale, packEntityScale, type ColliderSpec, type EditableEntity } from '@/engine/types'
 
 /**
  * Props for {@link ColliderEditorModal}.
@@ -116,7 +116,7 @@ interface AutoFrameProps {
   /** Model group to keep framed. */
   targetRef: MutableRefObject<THREE.Group | null>
   /** Entity scale the model is shown at. */
-  scale: number
+  scale: number | [number, number, number]
   /** Bumped to request a re-frame. */
   frameRequest: number
 }
@@ -134,21 +134,22 @@ function AutoFrame({ targetRef, scale, frameRequest }: AutoFrameProps) {
   const { camera, controls } = useThree()
   const lastSize = useRef(-1)
   const elapsed = useRef(0)
+  const frameScale = Array.isArray(scale) ? Math.max(scale[0], scale[1], scale[2]) : scale
 
   const frame = useCallback(() => {
     const root = targetRef.current
     const orbit = controls as unknown as { target: THREE.Vector3; update: () => void } | null
     if (!root || !orbit) return false
     const box = measureModel(root)
-    const size = box.isEmpty() ? 2 : box.getSize(new THREE.Vector3()).length() * scale
-    const center = box.isEmpty() ? new THREE.Vector3(0, 1, 0) : box.getCenter(new THREE.Vector3()).multiplyScalar(scale)
+    const size = box.isEmpty() ? 2 : box.getSize(new THREE.Vector3()).length() * frameScale
+    const center = box.isEmpty() ? new THREE.Vector3(0, 1, 0) : box.getCenter(new THREE.Vector3()).multiplyScalar(frameScale)
     const distance = Math.max(size, 2) * 1.15
     camera.position.copy(center).add(new THREE.Vector3(1, 0.65, 1).normalize().multiplyScalar(distance))
     orbit.target.copy(center)
     orbit.update()
     lastSize.current = size
     return true
-  }, [camera, controls, scale, targetRef])
+  }, [camera, controls, frameScale, targetRef])
 
   useEffect(() => {
     elapsed.current = 0
@@ -161,7 +162,7 @@ function AutoFrame({ targetRef, scale, frameRequest }: AutoFrameProps) {
     const root = targetRef.current
     if (!root) return
     const box = measureModel(root)
-    const size = box.isEmpty() ? 2 : box.getSize(new THREE.Vector3()).length() * scale
+    const size = box.isEmpty() ? 2 : box.getSize(new THREE.Vector3()).length() * frameScale
     if (Math.abs(size - lastSize.current) > 0.05) frame()
   })
 
@@ -318,8 +319,16 @@ export const ColliderEditorModal = memo(function ColliderEditorModal({ entity, o
             </div>
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               <NumberField label="Rot Y" step={0.05} value={entity.rotationY} onChange={(rotationY) => onUpdate(entity.id, { rotationY })} />
-              <NumberField label="Escala" step={0.05} value={entity.scale} fallback={1} onChange={(scale) => onUpdate(entity.id, { scale: Math.max(0.01, scale) })} />
             </div>
+            <FieldLabel label="Escala" className="mt-2">
+              <Vector3Fields
+                labels={['X', 'Y', 'Z']}
+                value={resolveEntityScale(entity.scale)}
+                onChange={(scale) =>
+                  onUpdate(entity.id, { scale: packEntityScale(Math.max(0.01, scale[0]), Math.max(0.01, scale[1]), Math.max(0.01, scale[2])) })
+                }
+              />
+            </FieldLabel>
           </div>
 
           <ColliderSection entity={entity} onUpdate={onUpdate} />
