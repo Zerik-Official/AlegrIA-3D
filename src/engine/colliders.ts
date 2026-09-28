@@ -11,7 +11,7 @@
 import colliderDefaultsJson from '@/engine/config/colliders.json'
 import * as THREE from 'three'
 import { createBoxSolid, type CollisionCircle, type CollisionSolid } from '@/features/player/collision'
-import type { ColliderSpec, EditableEntity } from '@/engine/types'
+import { resolveEntityScale, type ColliderSpec, type EditableEntity } from '@/engine/types'
 
 /** Default collider per entity type, keyed by exact type or by a prefix ending in `*`. */
 const colliderDefaults = colliderDefaultsJson as unknown as Record<string, ColliderSpec>
@@ -64,25 +64,25 @@ export function isColliderActive(spec: ColliderSpec, activeTags: readonly string
 export function buildColliderShapes(entity: EditableEntity, spec: ColliderSpec): { solids: CollisionSolid[]; circles: CollisionCircle[] } {
   const [px, py, pz] = entity.position
   const [ox, oy, oz] = spec.offset ?? [0, 0, 0]
-  const scale = entity.scale
+  const [svx, svy, svz] = resolveEntityScale(entity.scale)
   const rotation = new THREE.Matrix4().makeRotationFromEuler(
     new THREE.Euler(entity.rotationX ?? 0, entity.rotationY, entity.rotationZ ?? 0),
   )
-  const offset = new THREE.Vector3(ox, oy, oz).applyMatrix4(rotation).multiplyScalar(scale)
+  const offset = new THREE.Vector3(ox * svx, oy * svy, oz * svz).applyMatrix4(rotation)
   const x = px + offset.x
   const y = py + offset.y
   const z = pz + offset.z
 
   if (spec.shape === 'cylinder') {
-    const radius = (spec.radius ?? DEFAULT_CYLINDER_RADIUS) * scale
-    const height = (spec.height ?? DEFAULT_CYLINDER_HEIGHT) * scale
+    const radius = (spec.radius ?? DEFAULT_CYLINDER_RADIUS) * Math.max(svx, svz)
+    const height = (spec.height ?? DEFAULT_CYLINDER_HEIGHT) * svy
     const tilt = Math.max(Math.abs(entity.rotationX ?? 0), Math.abs(entity.rotationZ ?? 0))
     const lean = Math.sin(Math.min(tilt, Math.PI / 2))
     return { solids: [], circles: [{ x, z, radius: radius + (height / 2) * lean, minY: y, maxY: y + height * Math.cos(tilt) }] }
   }
 
   const [sx, sy, sz] = spec.size ?? DEFAULT_BOX_SIZE
-  const half: [number, number, number] = [(sx * scale) / 2, (sy * scale) / 2, (sz * scale) / 2]
+  const half: [number, number, number] = [(sx * svx) / 2, (sy * svy) / 2, (sz * svz) / 2]
   const elements = rotation.elements
   const worldHalfX = Math.abs(elements[0]) * half[0] + Math.abs(elements[4]) * half[1] + Math.abs(elements[8]) * half[2]
   const worldHalfY = Math.abs(elements[1]) * half[0] + Math.abs(elements[5]) * half[1] + Math.abs(elements[9]) * half[2]
