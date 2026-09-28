@@ -8,6 +8,7 @@ import phase1Json from '@/engine/config/phase1.json'
 import libraryJson from '@/engine/config/library.json'
 import phase2Json from '@/engine/config/phase2.json'
 import cityIntroJson from '@/engine/config/cityIntro.json'
+import creditsJson from '@/engine/config/credits.json'
 import { sepiaPhotos } from '@/features/phase1/config/sepiaPhotos'
 import type { EditableEntity } from '@/engine/types'
 
@@ -47,3 +48,9 @@ export const initialLibraryEntities: EditableEntity[] = libraryJson as EditableE
  * Initial Phase 2 entities — source `engine/config/phase2.json`.
  */
 export const initialPhase2Entities: EditableEntity[] = phase2Json as EditableEntity[]
+
+/**
+ * Initial Credits entities — source `engine/config/credits.json`.
+ * Export from the editor overwrites this JSON.
+ */
+export const initialCreditsEntities: EditableEntity[] = creditsJson as EditableEntity[]

@@ -6,7 +6,22 @@
  * @module app/engine/HotkeyRouter
  */
 
+import { isDebugEnabled } from '@/shared/config/debug'
 import type { GamePhase } from '@/shared/types'
+
+/**
+ * Detects keystrokes typed into form fields, where single-letter shortcuts
+ * must not fire (editor inputs, the model browser filter, video URLs...).
+ * @param event - The DOM keydown event
+ * @returns Whether the event target is an editable field
+ */
+function isTypingTarget(event: KeyboardEvent): boolean {
+  const target = event.target as HTMLElement | null
+  if (!target) return false
+  if (target.isContentEditable) return true
+  const tag = target.tagName
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'
+}
 
 /** Everything {@link HotkeyRouter.handle} needs to decide what a keypress should do. */
 export interface HotkeyContext {
@@ -16,18 +31,36 @@ export interface HotkeyContext {
   nearBook: boolean
   /** Whether the player is within interact range of the phase portal. */
   nearPortal: boolean
+  /** Whether the library's `cityIntro` portal has appeared and can be used. */
+  libraryPortalUnlocked: boolean
   /** Whether Phase 1's intro overlay is showing. */
   showPhase1Overlay: boolean
   /** Whether Phase 2's intro overlay is showing. */
   showPhase2Overlay: boolean
   /** Whether `phase` currently resolves to the city intro walk. */
   isCityIntro: boolean
-  /** Whether the scripted city walk has reached the library door. */
-  arrivedAtLibrary: boolean
-  /** Whether `phase` currently resolves to Phase 1 (including the `museum` alias). */
+  /** Whether the finale's scripted walk has handed over to free roaming. */
+  cityFreeRoam: boolean
+  /** Whether the player is riding the finale's mototaxi (`Q` switches its camera instead of the pointer lock). */
+  isRidingMototaxi: boolean
+  /** Whether the mototaxi has arrived and the player can get off (`E`). */
+  canDismountMototaxi: boolean
+  /** Switches the ride between the passenger seat and the chase camera. */
+  toggleRideView: () => void
+  /** Gets off the mototaxi at the end of the ride. */
+  dismountMototaxi: () => void
+  /** Whether `phase` currently resolves to Phase 1. */
   isPhase1: boolean
   /** Whether `phase` currently resolves to Phase 2. */
   isPhase2: boolean
+  /** Whether `phase` currently resolves to the credits scene. */
+  isCredits: boolean
+  /** Whether the player is within interact range of the credits door at RIWI Barranquilla. */
+  nearCreditsDoor: boolean
+  /** Enters the credits scene from the door prompt. */
+  enterCredits: () => void
+  /** Leaves the credits scene, back to `cityIntro`. */
+  exitCredits: () => void
   /** Id of the sepia photo currently highlighted by proximity, if any. */
   highlightedPhotoId: string | null
   /** Whether a photo is currently open in the modal. */
@@ -40,24 +73,42 @@ export interface HotkeyContext {
   closeEditor: () => void
   /** Sets the editor gizmo mode (`W`/`E`/`R`). */
   setEditorMode: (mode: 'translate' | 'rotate' | 'scale') => void
+  /** Whether the editor has an entity selected. */
+  hasEditorSelection: boolean
+  /** Duplicates the editor's selected entity (`C`). */
+  duplicateEditorSelection: () => void
   /** Transitions from `idle` straight into `exploring` (the library), where the experience now starts. */
   startExperience: () => void
-  /** Transitions from `cityIntro` into `exploring`, once the player has reached the library door. */
-  enterLibrary: () => void
-  /** Book interaction in the library: first visit heads to Phase 1, the second (and later) heads to the `cityIntro` finale. */
+  /** Book interaction in the library: first visit heads to Phase 1, the second (and later) returns the book to its shelf once its narration has ended. */
   handleBookInteract: () => void
   /** Starts the wormhole transition into Phase 2 (triggered near the Phase 1 portal). */
   startWormholeToPhase2: () => void
   /** Starts the wormhole transition back to the library (triggered near the Phase 2 portal). */
   startWormholeToLibrary: () => void
+  /** Starts the wormhole transition into the `cityIntro` finale (triggered at the library's unlocked portal). */
+  startWormholeToCityIntro: () => void
   /** Dismisses the Phase 1 intro overlay. */
   dismissPhase1Intro: () => void
   /** Dismisses the Phase 2 intro overlay. */
   dismissPhase2Intro: () => void
   /** Opens the photo modal for the given photo id. */
   selectPhoto: (id: string) => void
+  /** Restored library page under the crosshair, if any. */
+  focusedBookPageId: string | null
+  /** Whether a restored library page is open in the page modal. */
+  hasOpenBookPage: boolean
+  /** Opens the page under the crosshair in the page modal. */
+  openBookPage: () => void
+  /** Closes the page modal. */
+  closeBookPage: () => void
   /** Closes the photo modal (`Escape` or re-pressing interact). */
   closePhoto: () => void
+  /** Skips the Libro de Rosa's ~1-minute wait straight to summoning the portal (`T`), in the open phases. */
+  skipBookWait: () => void
+  /** Whether the Libro de Rosa's post-narration portal wait is counting down, the only time `T` acts. */
+  canSkipBookWait: boolean
+  /** Shows/hides the FPS and memory monitor (`Ñ`, debug builds only). */
+  togglePerfMonitor: () => void
 }
 
 /**
@@ -74,22 +125,58 @@ export class HotkeyRouter {
     const key = event.key.toLowerCase()
 
     if (key === 'q') {
-      this.togglePointerLock(ctx)
+      if (ctx.isRidingMototaxi) ctx.toggleRideView()
+      else this.togglePointerLock(ctx)
+      return
+    }
+
+    if ((key === 'e' || event.key === 'Enter') && ctx.canDismountMototaxi) {
+      ctx.dismountMototaxi()
+      return
+    }
+
+    if (key === 'ñ') {
+      if (isDebugEnabled) ctx.togglePerfMonitor()
+      return
+    }
+
+    if (key === 't') {
+      if (ctx.canSkipBookWait && !ctx.isEditorEnabled) ctx.skipBookWait()
+      return
+    }
+
+    if (key === 'c' && ctx.isCityIntro && ctx.cityFreeRoam && !ctx.isEditorEnabled) {
+      ctx.enterCredits()
       return
     }
 
     if (event.key === 'F2') {
+      if (!isDebugEnabled) return
       ctx.toggleEditor()
       return
     }
 
-    if (ctx.isEditorEnabled && (key === 'w' || key === 'e' || key === 'r')) {
+    if (isDebugEnabled && ctx.isEditorEnabled && (key === 'w' || key === 'e' || key === 'r')) {
       ctx.setEditorMode(key === 'w' ? 'translate' : key === 'e' ? 'rotate' : 'scale')
+      return
+    }
+
+    if (key === 'c' && isDebugEnabled && ctx.isEditorEnabled && ctx.hasEditorSelection && !isTypingTarget(event)) {
+      ctx.duplicateEditorSelection()
       return
     }
 
     const isInteractKey = key === 'e' || event.key === 'Enter'
     const isConfirmKey = isInteractKey || event.key === ' '
+
+    if (ctx.hasOpenBookPage && (isConfirmKey || event.key === 'Escape')) {
+      ctx.closeBookPage()
+      return
+    }
+    if (isInteractKey && ctx.focusedBookPageId && ctx.phase === 'exploring' && !ctx.isEditorEnabled) {
+      ctx.openBookPage()
+      return
+    }
 
     if (isInteractKey && ctx.nearBook && ctx.phase === 'exploring') {
       ctx.handleBookInteract()
@@ -103,12 +190,8 @@ export class HotkeyRouter {
       ctx.dismissPhase2Intro()
       return
     }
-    if (isConfirmKey && ctx.phase === 'idle') {
+    if (key === 'e' && ctx.phase === 'idle') {
       ctx.startExperience()
-      return
-    }
-    if (isConfirmKey && ctx.isCityIntro && ctx.arrivedAtLibrary) {
-      ctx.enterLibrary()
       return
     }
     if (isConfirmKey && ctx.hasSelectedPhoto) {
@@ -125,6 +208,17 @@ export class HotkeyRouter {
     if (isConfirmKey && ctx.isPhase2 && ctx.nearPortal && !ctx.showPhase2Overlay && !ctx.isEditorEnabled) {
       ctx.startWormholeToLibrary()
     }
+    if (isConfirmKey && ctx.phase === 'exploring' && ctx.nearPortal && ctx.libraryPortalUnlocked && !ctx.isEditorEnabled) {
+      ctx.startWormholeToCityIntro()
+    }
+    if (isConfirmKey && ctx.isCityIntro && ctx.nearCreditsDoor && !ctx.isEditorEnabled) {
+      ctx.enterCredits()
+      return
+    }
+    if ((isConfirmKey || event.key === 'Escape') && ctx.isCredits && !ctx.isEditorEnabled) {
+      ctx.exitCredits()
+      return
+    }
 
     if (event.key === 'Escape' && ctx.hasSelectedPhoto) {
       ctx.closePhoto()
@@ -140,7 +234,16 @@ export class HotkeyRouter {
    * @param ctx - Context snapshot
    */
   private togglePointerLock(ctx: HotkeyContext): void {
-    if (ctx.isEditorEnabled || ctx.showPhase1Overlay || ctx.showPhase2Overlay || ctx.phase === 'idle' || ctx.phase === 'wormhole' || ctx.isCityIntro) return
+    if (
+      ctx.isEditorEnabled ||
+      ctx.showPhase1Overlay ||
+      ctx.showPhase2Overlay ||
+      ctx.phase === 'idle' ||
+      ctx.phase === 'wormhole' ||
+      ctx.isCredits ||
+      (ctx.isCityIntro && !ctx.cityFreeRoam)
+    )
+      return
     if (document.pointerLockElement) document.exitPointerLock()
     else document.body.requestPointerLock?.()
   }

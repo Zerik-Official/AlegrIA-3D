@@ -11,8 +11,8 @@ import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { createWeatheredWallTexture } from '@/shared/utils/textures'
 import { hashSeed, createSeededRandom } from '@/shared/utils/random'
-import { Reflector } from '@/features/cityIntro/renderers/Reflector'
 import { ProceduralStreetlight } from '@/features/cityIntro/renderers/StreetlightRenderer'
+import { GlowSprite, GroundGlow } from '@/shared/components/LightGlows'
 
 /** Generates (once) a weathered "BIBLIOTECA" sign texture with a few dead/flickering letters. */
 function useLibrarySignTexture(): THREE.Texture {
@@ -153,7 +153,6 @@ export function ProceduralLibraryFacade() {
 
   return (
     <group>
-      {/* ground floor body */}
           <mesh position={[0, GROUND_HEIGHT / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[FACADE_WIDTH, GROUND_HEIGHT, FACADE_DEPTH]} />
             <meshStandardMaterial color="#8a7238" roughness={0.94} />
@@ -163,7 +162,6 @@ export function ProceduralLibraryFacade() {
             <meshBasicMaterial map={wallWeather} transparent />
           </mesh>
 
-          {/* colonnade */}
           {Array.from({ length: BAY_COUNT + 1 }).map((_, i) => (
             <mesh key={i} position={[-FACADE_WIDTH / 2 + i * BAY_WIDTH, COLUMN_HEIGHT / 2, FRONT_Z + 0.18]} castShadow>
               <cylinderGeometry args={[0.2, 0.24, COLUMN_HEIGHT, 10]} />
@@ -215,13 +213,11 @@ export function ProceduralLibraryFacade() {
             )
           })}
 
-          {/* cornice band */}
           <mesh position={[0, GROUND_HEIGHT + CORNICE_HEIGHT / 2, 0.1]}>
             <boxGeometry args={[FACADE_WIDTH + 0.4, CORNICE_HEIGHT, FACADE_DEPTH + 0.4]} />
             <meshStandardMaterial color="#d8cca8" roughness={0.8} />
           </mesh>
 
-          {/* upper floor body */}
           <mesh position={[0, upperY + UPPER_HEIGHT / 2, 0]} castShadow receiveShadow>
             <boxGeometry args={[FACADE_WIDTH, UPPER_HEIGHT, FACADE_DEPTH]} />
             <meshStandardMaterial color="#8a7238" roughness={0.94} />
@@ -264,7 +260,6 @@ export function ProceduralLibraryFacade() {
             </group>
           ))}
 
-          {/* roof cornice + pediment */}
           <mesh position={[0, roofY + ROOF_CORNICE_HEIGHT / 2, 0.1]}>
             <boxGeometry args={[FACADE_WIDTH + 0.4, ROOF_CORNICE_HEIGHT, FACADE_DEPTH + 0.4]} />
             <meshStandardMaterial color="#d8cca8" roughness={0.8} />
@@ -301,7 +296,6 @@ export function ProceduralLibraryFacade() {
             </group>
           ))}
 
-          {/* rubble at the base */}
           {Array.from({ length: 5 }).map((_, i) => (
             <mesh key={i} position={[-5 + i * 2.5 + (i % 2) * 0.4, 0.04, FRONT_Z + 1.5 + (i % 3) * 0.3]} rotation-y={i}>
               <boxGeometry args={[0.4 + (i % 2) * 0.2, 0.08, 0.35]} />
@@ -309,40 +303,39 @@ export function ProceduralLibraryFacade() {
             </mesh>
           ))}
 
-      <pointLight position={[0, 1.8, FRONT_Z + 1.3]} intensity={1.4} distance={7} color="#ff8a1a" decay={2} />
-      <pointLight position={[0, GROUND_HEIGHT + UPPER_HEIGHT, FRONT_Z + 2]} intensity={0.5} distance={10} color="#8fa8ff" decay={2} />
+      <GroundGlow color="#ff8a1a" radius={2.6} opacity={0.35} position={[0, 0.03, FRONT_Z + 1.3]} />
+      <GlowSprite color="#8fa8ff" size={3} opacity={0.3} position={[0, GROUND_HEIGHT + UPPER_HEIGHT, FRONT_Z + 2]} />
     </group>
   )
 }
 
-/** Ground-level yellow floodlights (x offsets in front of the facade). */
-const FACADE_SPOT_XS = [-15, -5, 5, 15]
-const FACADE_SPOT_COLOR = '#ffd23a'
-
 /**
- * Futuristic lighting rig framing the landmark facade — a pair of the city's
- * streetlight fixtures flanking it, warm floodlights washing the colonnade,
- * and a cool accent glow near the roofline — kept outside the procedural
- * fallback so it lights the real `.glb` too, which has no light sources of
- * its own (its neon sign is emissive-only, it doesn't cast light).
+ * Lighting rig framing the landmark facade — a pair of the city's streetlight
+ * fixtures flanking it, a warm wash on the colonnade and a cool one on the
+ * roofline as the only real lights, and colored pools and halos standing in
+ * for the rest — kept outside the procedural fallback so it lights the real
+ * `.glb` too, which has no light sources of its own (its neon sign is
+ * emissive-only, it doesn't cast light).
  * @returns Light rig elements
  */
 function FacadeLightRig() {
   return (
     <>
-      {FACADE_SPOT_XS.map((x) => (
-        <Reflector key={x} position={[x, 0.45, 15]} aimAt={[x * 0.7, 6, 0]} color={FACADE_SPOT_COLOR} />
-      ))}
       <group position={[-24, 0, 9]}>
-        <ProceduralStreetlight />
+        <ProceduralStreetlight castsLight={false} />
       </group>
       <group position={[24, 0, 9]}>
-        <ProceduralStreetlight />
+        <ProceduralStreetlight castsLight={false} />
       </group>
-      <pointLight position={[-12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
-      <pointLight position={[12, 2.2, 11]} intensity={2.2} distance={26} color="#ff8a1a" decay={2} />
-      <pointLight position={[0, 10.5, 10]} intensity={1.6} distance={22} color="#5ad8ff" decay={2} />
-      <pointLight position={[0, 3.5, 13]} intensity={1.1} distance={18} color="#8fd8ff" decay={2} />
+      <pointLight position={[0, 2.6, 12]} intensity={4.2} distance={34} color="#ff8a1a" decay={2} />
+      <pointLight position={[0, 10.5, 10]} intensity={2} distance={26} color="#5ad8ff" decay={2} />
+      <GroundGlow color="#ff8a1a" radius={5} opacity={0.3} position={[-12, 0.03, 11]} />
+      <GroundGlow color="#ff8a1a" radius={5} opacity={0.3} position={[12, 0.03, 11]} />
+      <GroundGlow color="#8fd8ff" radius={4} opacity={0.22} position={[0, 0.03, 13]} />
+      <GlowSprite color="#ffd23a" size={7} opacity={0.35} position={[-22, 5, 4]} />
+      <GlowSprite color="#ffd23a" size={7} opacity={0.35} position={[22, 5, 4]} />
+      <GroundGlow color="#ffd23a" radius={5} opacity={0.26} position={[-22, 0.03, 4]} />
+      <GroundGlow color="#ffd23a" radius={5} opacity={0.26} position={[22, 0.03, 4]} />
     </>
   )
 }

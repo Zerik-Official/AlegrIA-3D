@@ -43,7 +43,7 @@ export const Modal = memo(function Modal({ open, title, icon, onClose, children,
             {icon}
             <span className="font-cinzel text-[11px] tracking-[0.18em] uppercase">{title}</span>
           </div>
-          <button onClick={onClose} className="rounded-full bg-white/10 p-2 text-parchment transition hover:bg-white/15" aria-label="Close">
+          <button onClick={onClose} className="cursor-pointer rounded-full bg-white/10 p-2 text-parchment transition hover:bg-white/15" aria-label="Close">
             <FiX className="h-4 w-4" />
           </button>
         </div>

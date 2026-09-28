@@ -11,8 +11,8 @@ import { hashSeed } from '@/shared/utils/random'
 import type { EntityRendererProps } from '@/engine/types'
 
 /**
- * Distant rotating planet with a soft colored point light, so it contributes
- * a bit of actual illumination to the sky instead of being purely decorative.
+ * Distant rotating planet, self-lit by its emissive surface and halo — no
+ * point light, which would cost on every lit pixel of the city below.
  * @param props - Entity props
  * @returns Renderer element
  */
@@ -24,10 +24,7 @@ export function PlanetRenderer({ entity }: EntityRendererProps) {
     <ModelLoader
       src={modelRegistry['cityIntro/planet'].path}
       fallback={
-        <group>
-          <ScenePlanet radius={3} color={color} hasRing={hasRing} rotationSpeed={0.04 + (seed % 7) * 0.01} seed={seed} />
-          <pointLight intensity={2.2} distance={140} color={color} decay={2} />
-        </group>
+        <ScenePlanet radius={3} color={color} hasRing={hasRing} rotationSpeed={0.04 + (seed % 7) * 0.01} seed={seed} />
       }
     />
   )

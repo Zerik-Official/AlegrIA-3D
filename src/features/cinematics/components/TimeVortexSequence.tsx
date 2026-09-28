@@ -1,6 +1,10 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(3550)
 
 /**
  * Props for {@link TimeVortexSequence}.
@@ -72,7 +76,6 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
           float n = hash(uv * 5.0 + uTime * 0.4) * 0.14;
           float flick = 0.84 + 0.16 * sin(uTime * 10.0);
           float alpha = (ring * 1.1 + core + n) * flick * smoothstep(0.45, 0.72, uProgress + 0.18);
-          // portal opens only in last third
           float portalGate = smoothstep(0.58, 0.78, uProgress);
           alpha *= portalGate;
           float edge = smoothstep(0.95, 0.88, r) * portalGate;
@@ -93,9 +96,9 @@ export const TimeVortexSequence = memo(function TimeVortexSequence({ progress, a
     const c = 340
     const arr = new Float32Array(c * 3)
     for (let i = 0; i < c; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 18
-      arr[i * 3 + 1] = Math.random() * 4.2
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 18
+      arr[i * 3] = (seededRandom() - 0.5) * 18
+      arr[i * 3 + 1] = seededRandom() * 4.2
+      arr[i * 3 + 2] = (seededRandom() - 0.5) * 18
     }
     return arr
   }, [])

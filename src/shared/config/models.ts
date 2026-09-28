@@ -6,6 +6,9 @@
  * @link https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html
  */
 
+import cityIntroJson from '@/engine/config/cityIntro.json'
+import phase2Json from '@/engine/config/phase2.json'
+import { resolvePublicSrc } from '@/shared/utils/media'
 import type { ModelRegistry } from '@/shared/types'
 
 /**
@@ -17,14 +20,9 @@ const base = import.meta.env.BASE_URL
 
 export const modelRegistry: ModelRegistry = {
   'library/bookshelf': { path: `${base}models/library/bookshelf.glb`, fallback: 'procedural-bookshelf' },
-  'library/scattered-book': { path: `${base}models/library/scattered-book.glb`, fallback: 'procedural-scattered-book' },
   'library/cyber-wall': { path: `${base}models/library/cyber-wall.glb`, fallback: 'procedural-cyber-wall' },
   'pedestal/base': { path: `${base}models/pedestal/pedestal.glb`, fallback: 'procedural-pedestal' },
-  'pedestal/book': { path: `${base}models/pedestal/book.glb`, fallback: 'procedural-book' },
-  'museum/pedestal': { path: `${base}models/museum/pedestal-display.glb`, fallback: 'procedural-museum-pedestal' },
-  'museum/column': { path: `${base}models/museum/column.glb`, fallback: 'procedural-column' },
-  'museum/painting-frame': { path: `${base}models/museum/painting-frame.glb`, fallback: 'procedural-painting' },
-  'wormhole/portal': { path: `${base}models/wormhole/portal.glb`, fallback: 'procedural-portal' },
+  'pedestal/book': { path: `${base}models/shared/libro-historia-barrio-abajo.glb`, fallback: 'procedural-book' },
   'phase1/bahareque-house-short': { path: `${base}models/phase1/bahareque-house-short.glb`, fallback: 'procedural-bahareque-short' },
   'phase1/bahareque-house-medium': { path: `${base}models/phase1/bahareque-house-medium.glb`, fallback: 'procedural-bahareque-medium' },
   'phase1/bahareque-house-long': { path: `${base}models/phase1/bahareque-house-long.glb`, fallback: 'procedural-bahareque-long' },
@@ -32,6 +30,15 @@ export const modelRegistry: ModelRegistry = {
   'phase1/anden-alto': { path: `${base}models/phase1/anden-alto.glb`, fallback: 'procedural-anden-alto' },
   'phase1/sepia-photo': { path: `${base}models/phase1/sepia-photo.glb`, fallback: 'procedural-sepia-photo' },
   'phase1/portal': { path: `${base}models/phase1/portal.glb`, fallback: 'procedural-portal-phase1' },
+  'phase1/houses/casa-tienda': { path: `${base}models/phase1/houses/barrio-abajo-casa-tienda.glb`, fallback: 'procedural-bahareque-house' },
+  'phase1/houses/casa-corredor': { path: `${base}models/phase1/houses/barrio-abajo-casa-corredor.glb`, fallback: 'procedural-bahareque-house' },
+  'phase1/houses/casa-patio': { path: `${base}models/phase1/houses/barrio-abajo-casa-patio.glb`, fallback: 'procedural-bahareque-house' },
+  'phase1/floors/suelo-calle-tierra': { path: `${base}models/phase1/floors/barrio-abajo-suelo-calle-tierra.glb`, fallback: 'procedural-floor' },
+  'phase1/floors/suelo-anden-alto': { path: `${base}models/phase1/floors/barrio-abajo-suelo-anden-alto.glb`, fallback: 'procedural-floor' },
+  'phase1/floors/suelo-anden-escalon': { path: `${base}models/phase1/floors/barrio-abajo-suelo-anden-escalon.glb`, fallback: 'procedural-floor' },
+  'phase1/floors/suelo-empedrado': { path: `${base}models/phase1/floors/barrio-abajo-suelo-empedrado.glb`, fallback: 'procedural-floor' },
+  'phase1/decorators/cerca-cana': { path: `${base}models/phase1/decorators/barrio-abajo-cerca-cana.glb`, fallback: 'procedural-decoration' },
+  'phase1/decorators/arbol-matarraton': { path: `${base}models/phase1/decorators/barrio-abajo-arbol-matarraton.glb`, fallback: 'procedural-decoration' },
   'phase1/scenes/puerto-fluvial': { path: `${base}models/phase1/scenes/puerto-fluvial.glb`, fallback: 'procedural-scene' },
   'phase1/scenes/mini-puerto-barranquilla-1857': { path: `${base}models/phase1/scenes/mini-puerto-barranquilla-1857.glb`, fallback: 'procedural-scene' },
   'phase1/scenes/estacion-montoya': { path: `${base}models/phase1/scenes/estacion-montoya.glb`, fallback: 'procedural-scene' },
@@ -39,7 +46,6 @@ export const modelRegistry: ModelRegistry = {
   'phase1/vehicles/tren-locomotora': { path: `${base}models/phase1/vehicles/tren-locomotora.glb`, fallback: 'procedural-train' },
   'phase1/vehicles/tren-coche': { path: `${base}models/phase1/vehicles/tren-coche.glb`, fallback: 'procedural-train' },
   'phase1/vehicles/tren-vagon': { path: `${base}models/phase1/vehicles/tren-vagon.glb`, fallback: 'procedural-train' },
-  'phase1/floors/rieles': { path: `${base}models/phase1/floors/rieles.glb`, fallback: 'procedural-floor' },
   'phase1/floors/rieles-riel-recta': { path: `${base}models/phase1/floors/rieles-riel-recta.glb`, fallback: 'procedural-floor' },
   'phase1/floors/rieles-riel-recta-media': { path: `${base}models/phase1/floors/rieles-riel-recta-media.glb`, fallback: 'procedural-floor' },
   'phase1/floors/rieles-riel-recta-gastada': { path: `${base}models/phase1/floors/rieles-riel-recta-gastada.glb`, fallback: 'procedural-floor' },
@@ -83,6 +89,7 @@ export const modelRegistry: ModelRegistry = {
   'phase2/bailarin-blanco': { path: `${base}models/phase2/characters/bailarin-blanco-camisa.glb`, fallback: 'procedural-dancer' },
   'phase2/bailarin-blanco-azul': { path: `${base}models/phase2/characters/bailarin-blanco-azul-camisa.glb`, fallback: 'procedural-dancer' },
   'phase2/rey-momo': { path: `${base}models/phase2/characters/rey-momo-sombrero.glb`, fallback: 'procedural-dancer' },
+  'phase2/congas-personaje': { path: `${base}models/phase2/characters/congas-personaje.glb`, fallback: 'procedural-dancer' },
   'phase2/carrosa-riwi': { path: `${base}models/phase2/carrosa-azul-riwi.glb`, fallback: 'procedural-parade-vehicle' },
   'phase2/carrosa-marimonda': { path: `${base}models/phase2/carrosa-marimonda.glb`, fallback: 'procedural-parade-vehicle' },
   'phase2/chiva-rumbera': { path: `${base}models/phase2/chiva-rumbera.glb`, fallback: 'procedural-parade-vehicle' },
@@ -144,12 +151,39 @@ export const modelRegistry: ModelRegistry = {
   'cityIntro/flying-car-retro': { path: `${base}models/cityIntro/flyning-retro-car.glb`, fallback: 'procedural-flying-car' },
   'cityIntro/flying-car-star': { path: `${base}models/cityIntro/star-car.glb`, fallback: 'procedural-flying-car' },
   'cityIntro/flying-car-classic': { path: `${base}models/cityIntro/toyota-corolla.glb`, fallback: 'procedural-flying-car' },
-  'cityIntro/flying-train': { path: `${base}models/cityIntro/flying-train.glb`, fallback: 'procedural-flying-train' },
+  'credits/jafet-futuro': { path: `${base}models/credits/jafet-futuro.glb`, fallback: 'procedural-dancer' },
+  'credits/dancers/break-dance': { path: `${base}models/credits/animated/jafe-break-dance.fbx`, fallback: 'procedural-dancer' },
+  'credits/dancers/flair': { path: `${base}models/credits/animated/jafet-flair.fbx`, fallback: 'procedural-dancer' },
+  'credits/dancers/hip-hop': { path: `${base}models/credits/animated/jafet-hip-hop-dancing.fbx`, fallback: 'procedural-dancer' },
+  'credits/dancers/hip-hop-2': { path: `${base}models/credits/animated/jafet-hip-hope2.fbx`, fallback: 'procedural-dancer' },
+  'credits/buildings/software-factory': { path: `${base}models/credits/buildings/software-factory.glb`, fallback: 'procedural-room' },
+  'credits/decorators/caneca': { path: `${base}models/credits/decorators/riwi-caneca.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/cartel-alcaldia': { path: `${base}models/credits/decorators/riwi-cartel-alcaldia.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/control': { path: `${base}models/credits/decorators/riwi-control.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/escritorio': { path: `${base}models/credits/decorators/riwi-escritorio.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/mesa-corta': { path: `${base}models/credits/decorators/riwi-mesa-corta.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/monitor': { path: `${base}models/credits/decorators/riwi-monitor.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/mouse': { path: `${base}models/credits/decorators/riwi-mouse.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/silla': { path: `${base}models/credits/decorators/riwi-silla.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/tablero': { path: `${base}models/credits/decorators/riwi-tablero.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/teclado': { path: `${base}models/credits/decorators/riwi-teclado.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/televisor': { path: `${base}models/credits/decorators/riwi-televisor.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/torre': { path: `${base}models/credits/decorators/riwi-torre.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/torre-ventilador-led': { path: `${base}models/credits/decorators/riwi-torre-ventilador-led.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/totem-alcaldia': { path: `${base}models/credits/decorators/riwi-totem-alcaldia.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/totem-riwi': { path: `${base}models/credits/decorators/riwi-totem-riwi.glb`, fallback: 'procedural-decoration' },
+  'credits/decorators/ventilador': { path: `${base}models/credits/decorators/riwi-ventilador.glb`, fallback: 'procedural-decoration' },
+  'cityIntro/mototaxi': { path: `${base}models/future/vehicles/mototaxi-barrio-abajo.glb`, fallback: 'procedural-flying-car' },
+  'cityIntro/riwi-fox': { path: `${base}models/future/characters/dancing/riwi-fox-hip-hop.fbx`, fallback: 'procedural-dancer' },
+  'cityIntro/flying-train': { path: `${base}models/future/vehicles/tren-capsula-futurista.glb`, fallback: 'procedural-flying-train' },
   'cityIntro/moon': { path: `${base}models/cityIntro/moon.glb`, fallback: 'procedural-moon' },
   'cityIntro/library-facade': { path: `${base}models/cityIntro/aduana-barranquilla.glb`, fallback: 'procedural-library-facade' },
   'cityIntro/planet': { path: `${base}models/cityIntro/planet.glb`, fallback: 'procedural-planet' },
+  'cityIntro/riwi-barranquilla': { path: `${base}models/future/scenes/riwi-barranquilla.glb`, fallback: 'procedural-riwi-building' },
+  'cityIntro/ad-bus': { path: `${base}models/future/vehicles/bus-anuncio-una-pantalla.glb`, fallback: 'procedural-flying-car' },
   'cityIntro/riwi-building': { path: `${base}models/cityIntro/riwi-edificio-2050.glb`, fallback: 'procedural-riwi-building' },
   'cityIntro/ad-tower': { path: `${base}models/cityIntro/ad-tower.glb`, fallback: 'procedural-ad-tower' },
+  'cityIntro/street-jukebox-car': { path: `${base}models/future/vehicles/riwi-carrosa-future.glb`, fallback: 'procedural-parade-vehicle' },
 }
 
 /**
@@ -163,4 +197,54 @@ export function cityIntroModelUrls(): string[] {
   return Object.entries(modelRegistry)
     .filter(([key]) => key.startsWith('cityIntro/'))
     .map(([, entry]) => entry.path)
+}
+
+/**
+ * Every `videoSrc`/`videoSrcs` URL authored on `cityIntro.json` entities (the
+ * screen-building billboards), resolved against the app base — used to warm
+ * the browser's HTTP cache during the wormhole transition alongside
+ * {@link cityIntroModelUrls}, so playback doesn't stall fetching video bytes
+ * the moment the scene mounts.
+ * @returns Resolved video URLs
+ */
+export function cityIntroVideoUrls(): string[] {
+  return videoUrlsOf(cityIntroJson as Array<{ videoSrc?: string; videoSrcs?: string[] }>)
+}
+
+/**
+ * Every `phase2/*` model URL in the registry — preloaded while the player
+ * crosses Phase 1's portal, so Phase 2 doesn't stall parsing them on arrival.
+ * @returns Model URLs
+ */
+export function phase2ModelUrls(): string[] {
+  return Object.entries(modelRegistry)
+    .filter(([key]) => key.startsWith('phase2/'))
+    .map(([, entry]) => entry.path)
+}
+
+/**
+ * Every `videoSrc`/`videoSrcs` URL authored on `phase2.json` entities (the
+ * parade floats' screens), resolved against the app base — warmed alongside
+ * {@link phase2ModelUrls}.
+ * @returns Resolved video URLs
+ */
+export function phase2VideoUrls(): string[] {
+  return videoUrlsOf(phase2Json as Array<{ videoSrc?: string; videoSrcs?: string[] }>)
+}
+
+/**
+ * @param entities - Authored entities that may carry videos
+ * @returns Their resolved, de-duplicated video URLs
+ */
+function videoUrlsOf(entities: Array<{ videoSrc?: string; videoSrcs?: string[] }>): string[] {
+  const urls = new Set<string>()
+  for (const entity of entities) {
+    const single = resolvePublicSrc(entity.videoSrc)
+    if (single) urls.add(single)
+    for (const src of entity.videoSrcs ?? []) {
+      const resolved = resolvePublicSrc(src)
+      if (resolved) urls.add(resolved)
+    }
+  }
+  return [...urls]
 }

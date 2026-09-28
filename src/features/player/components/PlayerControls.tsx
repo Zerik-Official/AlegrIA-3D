@@ -1,9 +1,12 @@
 import { useEffect, useRef, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { PointerLockControls } from '@react-three/drei'
+import type { PointerLockControls as PointerLockControlsImpl } from 'three-stdlib'
 import * as THREE from 'three'
 import { useKeyboard } from '@/features/player/hooks/useKeyboard'
 import { playerConfig } from '@/shared/config/appConfig'
+import { getCollisionCircles, getCollisionSolids, resolveAgainstCircles, resolveAgainstSolids } from '@/features/player/collision'
+import { getWalkAreas, isInsideWalkAreas } from '@/features/player/walkAreas'
 
 /**
  * Props for {@link PlayerControls}.
@@ -13,26 +16,18 @@ interface PlayerControlsProps {
   enabled: boolean
   /** Callback invoked every frame with the current camera position. */
   onPositionChange: (pos: THREE.Vector3) => void
-  /** Optional movement bounds clamping. */
-  bounds?: { minX: number; maxX: number; minZ: number; maxZ: number }
-  /** Extra ground-level collision circles (e.g. landmark footprints) the player can't walk into. */
-  obstacles?: Array<{ x: number; z: number; radius: number }>
-}
-
-/**
- * Clamps `point` to just outside the circle at `(cx, cz)` when it falls inside it.
- * @param point - Candidate position, mutated in place
- * @param cx - Circle center X
- * @param cz - Circle center Z
- * @param radius - Circle radius
- */
-function pushOutOfCircle(point: THREE.Vector3, cx: number, cz: number, radius: number): void {
-  const dx = point.x - cx
-  const dz = point.z - cz
-  if (Math.hypot(dx, dz) >= radius) return
-  const angle = Math.atan2(dz, dx)
-  point.x = cx + Math.cos(angle) * radius
-  point.z = cz + Math.sin(angle) * radius
+  /**
+   * Whether to resolve movement against the shared collision world (see
+   * `features/player/collision`): `COL_*` proxies of loaded models and the
+   * JSON colliders of the scene's entities, making authored decks, platforms
+   * and stairs solid and walkable. Off by default so scenes that publish no
+   * colliders keep the original flat-ground behavior.
+   */
+  useCollisionWorld?: boolean
+  /** Whether to move the camera to the library's start position on mount; off to keep walking from wherever the camera already is (the finale's free roam). */
+  spawnAtStart?: boolean
+  /** Holds the player in place (mouse-look still works) while a cinematic plays. */
+  movementLocked?: boolean
 }
 
 /** Reusable vectors to avoid per-frame GC. */
@@ -47,19 +42,37 @@ const scratch = {
 }
 
 /**
- * First-person pointer-lock controls with WASD movement, sprint, pedestal collision and synthesized footsteps.
- * Reusable across library and museum by swapping {@link PlayerControlsProps.bounds}.
+ * First-person pointer-lock controls with WASD movement, sprint, collision and synthesized footsteps.
+ * Stays inside the scene's JSON `walk-area` rectangles (see `features/player/walkAreas`).
  *
  * @param props - Control configuration
  * @returns PointerLockControls element
  * @link https://github.com/pmndrs/drei#pointerlockcontrols
  */
-export const PlayerControls = memo(function PlayerControls({ enabled, onPositionChange, bounds, obstacles }: PlayerControlsProps) {
+export const PlayerControls = memo(function PlayerControls({
+  enabled,
+  onPositionChange,
+  useCollisionWorld = false,
+  spawnAtStart = true,
+  movementLocked = false,
+}: PlayerControlsProps) {
   const { camera } = useThree()
   const keys = useKeyboard()
+  const lookRef = useRef<PointerLockControlsImpl>(null)
+
+  useEffect(() => {
+    const sync = (): void => {
+      if (lookRef.current) lookRef.current.isLocked = !!document.pointerLockElement
+    }
+    sync()
+    document.addEventListener('pointerlockchange', sync)
+    return () => document.removeEventListener('pointerlockchange', sync)
+  }, [enabled])
   const audioCtxRef = useRef<AudioContext | null>(null)
   const lastStepRef = useRef(0)
   const stepIdxRef = useRef(0)
+  /** Height of the surface currently underfoot — damped toward the resolver's answer so steps and ramps read smoothly. */
+  const floorRef = useRef(0)
 
   /**
    * Lazily creates and resumes the AudioContext.
@@ -133,12 +146,17 @@ export const PlayerControls = memo(function PlayerControls({ enabled, onPosition
   }, [])
 
   useEffect(() => {
+    if (!spawnAtStart) return
     camera.position.set(playerConfig.startPosition.x, playerConfig.startPosition.y, playerConfig.startPosition.z)
     camera.lookAt(playerConfig.startLookAt.x, playerConfig.startLookAt.y, playerConfig.startLookAt.z)
-  }, [camera])
+  }, [camera, spawnAtStart])
 
-  useFrame((_, delta) => {
+  useFrame(({ camera }, delta) => {
     if (!enabled) return
+    if (movementLocked) {
+      onPositionChange(camera.position)
+      return
+    }
 
     const speed = keys.current.shift ? playerConfig.sprintSpeed : playerConfig.walkSpeed
     const dt = Math.min(delta, 0.05)
@@ -167,16 +185,30 @@ export const PlayerControls = memo(function PlayerControls({ enabled, onPosition
 
     scratch.next.copy(camera.position).add(scratch.move)
 
-    if (bounds) {
-      scratch.next.x = THREE.MathUtils.clamp(scratch.next.x, bounds.minX, bounds.maxX)
-      scratch.next.z = THREE.MathUtils.clamp(scratch.next.z, bounds.minZ, bounds.maxZ)
+    const walkAreas = getWalkAreas()
+    if (walkAreas.length && isInsideWalkAreas(walkAreas, camera.position.x, camera.position.z) && !isInsideWalkAreas(walkAreas, scratch.next.x, scratch.next.z)) {
+      if (isInsideWalkAreas(walkAreas, scratch.next.x, camera.position.z)) scratch.next.z = camera.position.z
+      else if (isInsideWalkAreas(walkAreas, camera.position.x, scratch.next.z)) scratch.next.x = camera.position.x
+      else {
+        scratch.next.x = camera.position.x
+        scratch.next.z = camera.position.z
+      }
     }
 
-    pushOutOfCircle(scratch.next, 0, 0, playerConfig.pedestalRadius)
-    if (obstacles) for (const o of obstacles) pushOutOfCircle(scratch.next, o.x, o.z, o.radius)
+    if (useCollisionWorld) {
+      resolveAgainstCircles(scratch.next, getCollisionCircles(), floorRef.current, playerConfig.bodyHeight)
+      const floor = resolveAgainstSolids(scratch.next, getCollisionSolids(), floorRef.current, {
+        stepUp: playerConfig.stepUpHeight,
+        bodyHeight: playerConfig.bodyHeight,
+        radius: playerConfig.collisionRadius,
+      })
+      floorRef.current = THREE.MathUtils.damp(floorRef.current, floor, playerConfig.floorDamping, dt)
+    } else {
+      floorRef.current = 0
+    }
 
     camera.position.copy(scratch.next)
-    camera.position.y = playerConfig.eyeHeight
+    camera.position.y = floorRef.current + playerConfig.eyeHeight
 
     const isMoving = scratch.move.lengthSq() > 0.00001
     const sprinting = keys.current.shift && isMoving
@@ -192,5 +224,5 @@ export const PlayerControls = memo(function PlayerControls({ enabled, onPosition
     onPositionChange(camera.position)
   })
 
-  return <PointerLockControls enabled={enabled} />
+  return <PointerLockControls ref={lookRef} enabled={enabled} />
 })

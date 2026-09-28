@@ -1,10 +1,21 @@
-import { memo, useCallback, useEffect, useState } from 'react'
-import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap } from 'react-icons/fi'
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
+import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, FiX, FiBox, FiZap, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi'
+import { useProgress } from '@react-three/drei'
+import type { Vector3Tuple } from 'three'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import { resolveEntityScale, packEntityScale } from '@/engine/types'
+import type { DraftSummary } from '@/features/editor/state/editorDrafts'
 import type { EntityCatalogItem, SceneId } from '@/engine/config/entityCatalog'
 import type { GamePhase } from '@/shared/types'
+import type { SpawnResolver } from '@/features/editor/components/EditorSpawnProbe'
 import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import { ModelBrowserModal } from '@/features/editor/components/ModelBrowserModal'
+import { Select } from '@/components/ui/Select'
+import { ColliderSection, FieldLabel, INPUT_CLASS, NumberField, Vector3Fields } from '@/features/editor/components/EditorFields'
+import { ColliderEditorModal } from '@/features/editor/components/ColliderEditorModal'
+import { DEFAULT_AREA_SIZE } from '@/features/player/walkAreas'
+import { setCollisionDebugVisible, useCollisionDebugVisible } from '@/features/editor/state/collisionDebug'
+import { preloadModels, sceneModelUrls } from '@/features/editor/utils/preloadModels'
 
 /**
  * Props for {@link EditorOverlay}.
@@ -32,19 +43,60 @@ interface EditorOverlayProps {
   onRemove: (id: string) => void
   /** Export handler. */
   onExport: () => string
+  /** Restored draft summary, shown once until discarded. */
+  draft: DraftSummary | null
+  /** Discards the restored draft and resets entities to the bundled JSON. */
+  onDiscardDraft: () => void
+  /** When the session was last autosaved, or `null` before the first save. */
+  lastSavedAt: number | null
   /** Close editor. */
   onClose: () => void
-  /** Current game phase, used to highlight the active jump target. */
+  /** Current game phase, shown next to the jump control. */
   currentPhase?: GamePhase
-  /** Handles an instant phase jump without linear walk/wormhole sequencing. */
-  onJumpToPhase?: (phase: GamePhase) => void
+  /** Story checkpoint the experience is at, selected in the jump control. */
+  currentCheckpointId?: string
+  /** Jumps to a story checkpoint without the walk/wormhole sequence. */
+  onJumpToCheckpoint?: (id: string) => void
   /** Scene currently edited, used to filter the model browser to that phase. */
   currentScene?: SceneId
+  /** Resolves where the crosshair would spawn a new element; `null` result means the camera is far from the map. */
+  spawnResolverRef?: MutableRefObject<SpawnResolver | null>
 }
 
 /**
+ * Drops near-zero tilt angles so untouched entities keep no `rotationX`/`rotationZ` keys in exports.
+ * @param value - Angle in radians
+ * @returns The angle, or `undefined` when negligible
+ */
+function cleanAngle(value: number): number | undefined {
+  return Math.abs(value) < 1e-9 ? undefined : value
+}
+
+/**
+ * Wraps an angle to `(-PI, PI]` so quick turns keep clean JSON values.
+ * @param value - Angle in radians
+ * @returns Normalized angle
+ */
+function normalizeAngle(value: number): number {
+  return Math.atan2(Math.sin(value), Math.cos(value))
+}
+
+/**
+ * Snaps an angle to the nearest right angle, fixing manual drifts.
+ * @param value - Angle in radians
+ * @returns Nearest multiple of 90 degrees
+ */
+function snapRightAngle(value: number): number {
+  return normalizeAngle(Math.round(value / (Math.PI / 2)) * (Math.PI / 2))
+}
+
+/** Width of the editor panel; the crosshair sits at the center of the canvas area left of it. */
+const PANEL_WIDTH = '22.5rem'
+
+/**
  * Tailwind overlay for the position editor.
- * Shows list, transform inputs, add/remove and JSON export.
+ * Shows list, transform and collider inputs, add/remove, the collision view
+ * toggle, the spawn crosshair and JSON export.
  *
  * @param props - Overlay state
  * @returns Overlay element
@@ -61,16 +113,58 @@ export const EditorOverlay = memo(function EditorOverlay({
   onAdd,
   onRemove,
   onExport,
+  onDiscardDraft,
+  draft,
+  lastSavedAt,
   onClose,
   currentPhase,
-  onJumpToPhase,
+  currentCheckpointId,
+  onJumpToCheckpoint,
   currentScene,
+  spawnResolverRef,
 }: EditorOverlayProps) {
   const selected = entities.find((e) => e.id === selectedId) ?? null
-  const [addType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
+  const [chosenAddType, setAddType] = useState<string>(catalog[0]?.type ?? 'generic')
+  const addType = catalog.some((c) => c.type === chosenAddType) ? chosenAddType : (catalog[0]?.type ?? chosenAddType)
   const [isModelBrowserOpen, setIsModelBrowserOpen] = useState(false)
+  const [colliderEditorId, setColliderEditorId] = useState<string | null>(null)
+  const colliderEditorEntity = entities.find((e) => e.id === colliderEditorId) ?? null
+  const [loadedScene, setLoadedScene] = useState<SceneId | null>(null)
+  const modelsReady = !currentScene || loadedScene === currentScene
+  const loading = useProgress()
+  const entitiesRef = useRef(entities)
+
+  useEffect(() => {
+    entitiesRef.current = entities
+  }, [entities])
+  const collisionsVisible = useCollisionDebugVisible()
+  const crosshairRef = useRef<HTMLDivElement>(null)
   const jumpTargets = phaseSceneRegistry.listJumpTargets()
-  const hasJump = typeof onJumpToPhase === 'function' && typeof currentPhase === 'string'
+  const hasJump = typeof onJumpToCheckpoint === 'function' && typeof currentPhase === 'string'
+  const colliderCount = entities.filter((e) => e.type === 'collider').length
+  const walkAreaCount = entities.filter((e) => e.type === 'walk-area').length
+
+  const jumpOptions = useMemo(() => jumpTargets.map((target) => ({ value: target.id, label: target.label })), [jumpTargets])
+  const catalogOptions = useMemo(() => catalog.map((item) => ({ value: item.type, label: item.label })), [catalog])
+
+  /**
+   * Where a surface element spawns: what the crosshair points at, below the
+   * camera when it points at nothing, or `fallback` when the camera is far
+   * from the map.
+   * @param fallback - Position used when the camera is far from the map
+   * @returns Spawn position
+   */
+  const resolveSpawnPosition = useCallback(
+    (fallback: Vector3Tuple): Vector3Tuple => {
+      const rect = crosshairRef.current?.getBoundingClientRect()
+      const resolver = spawnResolverRef?.current
+      if (!rect || !resolver) return fallback
+      const spot = resolver(rect.left + rect.width / 2, rect.top + rect.height / 2)
+      if (!spot) return fallback
+      return [spot[0], spot[1] + fallback[1], spot[2]]
+    },
+    [spawnResolverRef]
+  )
 
   /**
    * Handles quick-add from the model browser: creates an entity whose `type`
@@ -80,23 +174,30 @@ export const EditorOverlay = memo(function EditorOverlay({
    */
   const handleModelQuickAdd = useCallback(
     (modelKey: string) => {
-      onAdd({ id: `${modelKey.replace(/\//g, '-')}-${Date.now()}`, type: modelKey, position: [0, 0, 0], rotationY: 0, scale: 1 })
+      onAdd({ id: `${modelKey.replace(/\//g, '-')}-${Date.now()}`, type: modelKey, position: resolveSpawnPosition([0, 0, 0]), rotationY: 0, scale: 1 })
       setIsModelBrowserOpen(false)
     },
-    [onAdd]
+    [onAdd, resolveSpawnPosition]
   )
 
   useEffect(() => {
-    if (catalog.length && !catalog.some((c) => c.type === addType)) {
-      setAddType(catalog[0].type)
+    if (!enabled || !currentScene) return
+    let cancelled = false
+    preloadModels(sceneModelUrls(currentScene, entitiesRef.current)).then(() => {
+      if (!cancelled) setLoadedScene(currentScene)
+    })
+    return () => {
+      cancelled = true
     }
-  }, [catalog, addType])
+  }, [enabled, currentScene])
 
   const handleAdd = useCallback(() => {
     const item = catalog.find((c) => c.type === addType)
-    const base = item?.defaultEntity ?? { position: [0, 0, 0], rotationY: 0, scale: 1 }
+    const base: Omit<EditableEntity, 'id' | 'type'> = structuredClone(item?.defaultEntity ?? { position: [0, 0, 0], rotationY: 0, scale: 1 })
+    if (item?.variantFromScene && currentScene) base.variant = currentScene
+    if (item?.placement !== 'sky') base.position = resolveSpawnPosition(base.position)
     onAdd({ id: `${addType}-${Date.now()}`, type: addType, ...base })
-  }, [addType, catalog, onAdd])
+  }, [addType, catalog, currentScene, onAdd, resolveSpawnPosition])
 
   const handleExport = useCallback(() => {
     const json = onExport()
@@ -105,232 +206,453 @@ export const EditorOverlay = memo(function EditorOverlay({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'phase1-positions.json'
+    a.download = `${currentScene ?? 'phase1'}.json`
     a.click()
     URL.revokeObjectURL(url)
-  }, [onExport])
+  }, [onExport, currentScene])
+
+  const [copied, setCopied] = useState(false)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [armDiscard, setArmDiscard] = useState(false)
+  const discardTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (copyTimer.current) clearTimeout(copyTimer.current)
+      if (discardTimer.current) clearTimeout(discardTimer.current)
+    }
+  }, [])
+
+  /**
+   * Two-step draft discard: the first press arms the button, the second
+   * reverts the session to the bundled JSON. Prevents wiping a session
+   * with a single mistaken click.
+   */
+  const handleDiscard = useCallback(() => {
+    if (!armDiscard) {
+      setArmDiscard(true)
+      if (discardTimer.current) clearTimeout(discardTimer.current)
+      discardTimer.current = setTimeout(() => setArmDiscard(false), 4000)
+      return
+    }
+    if (discardTimer.current) clearTimeout(discardTimer.current)
+    setArmDiscard(false)
+    onDiscardDraft()
+  }, [armDiscard, onDiscardDraft])
+
+  /**
+   * Copies the selected entity's full properties (position, rotation, scale,
+   * variant, collider and optional media fields) to the clipboard.
+   */
+  const handleCopySelected = useCallback(() => {
+    if (!selected) return
+    navigator.clipboard
+      .writeText(JSON.stringify(selected, null, 2))
+      .then(() => {
+        setCopied(true)
+        if (copyTimer.current) clearTimeout(copyTimer.current)
+        copyTimer.current = setTimeout(() => setCopied(false), 1600)
+      })
+      .catch(() => {})
+  }, [selected])
 
   if (!enabled) return null
 
   return (
-    <div className="pointer-events-auto fixed inset-y-0 right-0 z-30 flex w-90 flex-col border-l border-white/10 bg-[#0a0f1e]/92 p-4 text-parchment shadow-[-12px_0_40px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-      <div className="flex items-center justify-between">
-        <div className="font-cinzel text-[11px] tracking-[0.22em] uppercase text-gold">Editor de Posiciones</div>
-        <div className="flex items-center gap-1.5">
-          <button
-            onClick={() => setIsModelBrowserOpen(true)}
-            className="flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] hover:bg-white/15"
-          >
-            <FiBox className="h-3.5 w-3.5" /> Modelos
-          </button>
-          <button onClick={onClose} className="rounded-full bg-white/10 p-1.5 hover:bg-white/15">
-            <FiX className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-      {hasJump && (
-        <div className="mt-3 rounded-lg border border-gold/20 bg-black/25 p-2.5">
-          <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase text-gold/80">
-            <FiZap className="h-3 w-3" /> Salto rápido de fase
-          </div>
-          <div className="mt-2 flex gap-1.5">
-            <select
-              value={jumpTargets.some((t) => t.phase === currentPhase) ? currentPhase : jumpTargets[0]?.phase ?? 'exploring'}
-              onChange={(ev) => onJumpToPhase?.(ev.target.value as GamePhase)}
-              className="flex-1 rounded-md bg-white/10 px-2 py-1.5 text-[11px] text-parchment outline-none focus:bg-white/15"
-            >
-              {jumpTargets.map((target) => (
-                <option key={target.phase} value={target.phase} className="text-black">
-                  {target.label}
-                </option>
-              ))}
-            </select>
-            <span className="inline-flex items-center rounded-md bg-gold/15 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] uppercase text-gold">{currentPhase}</span>
-          </div>
-          <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">Salta sin pasar por cityIntro/wormhole. El editor mantiene la escena elegida.</div>
-        </div>
-      )}
-      <div className="mt-3 flex gap-1.5">
-        <button onClick={() => onModeChange('translate')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === 'translate' ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}>
-          <FiMove className="h-3.5 w-3.5" /> Mover
-        </button>
-        <button onClick={() => onModeChange('rotate')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === 'rotate' ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}>
-          <FiRotateCw className="h-3.5 w-3.5" /> Rotar
-        </button>
-        <button onClick={() => onModeChange('scale')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === 'scale' ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}>
-          <FiMaximize2 className="h-3.5 w-3.5" /> Escala
-        </button>
-      </div>
-      <div className="mt-3 flex gap-1.5">
-        <select
-          value={addType}
-          onChange={(ev) => setAddType(ev.target.value)}
-          className="flex-1 rounded-md bg-white/10 px-2 py-1.5 text-[11px] text-parchment outline-none focus:bg-white/15"
-        >
-          {catalog.map((item) => (
-            <option key={item.type} value={item.type} className="text-black">
-              {item.label}
-            </option>
-          ))}
-        </select>
-        <button
-          onClick={handleAdd}
-          disabled={!catalog.length}
-          className="flex items-center gap-1 rounded-md bg-white/10 px-2.5 py-1.5 text-[11px] hover:bg-white/15 disabled:opacity-40"
-        >
-          <FiPlus className="h-3 w-3" /> Añadir
-        </button>
-      </div>
-      <div className="mt-3 flex-1 overflow-y-auto rounded-lg border border-white/5 bg-black/20 p-2">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-[11px] tracking-[0.12em] uppercase text-parchment/50">Elementos ({entities.length})</span>
-        </div>
-        <div className="flex flex-col gap-1">
-          {entities.map((e) => (
-            <button
-              key={e.id}
-              onClick={() => onSelect(e.id)}
-              className={`flex items-center justify-between rounded-md px-2 py-1.5 text-left text-[12px] ${selectedId === e.id ? 'bg-gold text-[#1a1205]' : 'bg-white/5 hover:bg-white/10 text-parchment/80'}`}
-            >
-              <span className="truncate">{e.id}</span>
-              <span className="text-[10px] opacity-60">{e.type}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      {selected && (
-        <div className="mt-3 rounded-lg border border-white/5 bg-black/20 p-3">
-          <div className="flex items-center justify-between">
-            <span className="font-semibold text-[12px] text-gold">{selected.id}</span>
-            <button onClick={() => onRemove(selected.id)} className="rounded-md bg-red-500/15 p-1.5 text-red-300 hover:bg-red-500/25">
-              <FiTrash2 className="h-3.5 w-3.5" />
-            </button>
-          </div>
-          <div className="mt-2 grid grid-cols-3 gap-1.5">
-            {(['x', 'y', 'z'] as const).map((axis, idx) => (
-              <label key={axis} className="flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-widest text-parchment/50">{axis}</span>
-                <input
-                  type="number"
-                  step={0.1}
-                  value={Number(selected.position[idx].toFixed(2))}
-                  onChange={(ev) => {
-                    const v = parseFloat(ev.target.value) || 0
-                    const next: [number, number, number] = [...selected.position] as [number, number, number]
-                    next[idx] = v
-                    onUpdate(selected.id, { position: next })
-                  }}
-                  className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-                />
-              </label>
-            ))}
-          </div>
-          <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <label className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Rot Y</span>
-              <input
-                type="number"
-                step={0.05}
-                value={Number(selected.rotationY.toFixed(2))}
-                onChange={(ev) => onUpdate(selected.id, { rotationY: parseFloat(ev.target.value) || 0 })}
-                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Scale</span>
-              <input
-                type="number"
-                step={0.05}
-                value={Number(selected.scale.toFixed(2))}
-                onChange={(ev) => onUpdate(selected.id, { scale: parseFloat(ev.target.value) || 1 })}
-                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none"
-              />
-            </label>
-          </div>
-          <label className="mt-2 flex flex-col gap-1">
-            <span className="text-[10px] uppercase tracking-widest text-parchment/50">Variante</span>
-            <input
-              type="text"
-              placeholder="ej. medium, #e85a3a, 5.2"
-              value={selected.variant ?? ''}
-              onChange={(ev) => onUpdate(selected.id, { variant: ev.target.value || undefined })}
-              className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-            />
-          </label>
-          {(selected.type === 'flying-car' || selected.type === 'flying-train') && (
-            <label className="mt-2 flex flex-col gap-1">
-              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Carril de vuelo (opcional)</span>
-              <input
-                type="text"
-                placeholder="ej. carsEast, trainHigh"
-                value={selected.title ?? ''}
-                onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
-                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-              />
-            </label>
-          )}
-          {(selected.type === 'ad-tower' || selected.videoSrc !== undefined) && (
-            <label className="mt-2 flex flex-col gap-1">
-              <span className="text-[10px] uppercase tracking-widest text-parchment/50">Video (URL, opcional)</span>
-              <input
-                type="text"
-                placeholder="/videos/cityIntro/first.mp4"
-                value={selected.videoSrc ?? ''}
-                onChange={(ev) => onUpdate(selected.id, { videoSrc: ev.target.value || undefined })}
-                className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-              />
-            </label>
-          )}
-          {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
-            <>
-              <label className="mt-2 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Imagen (URL)</span>
-                <input
-                  type="text"
-                  placeholder="https://... o /images/placeholders/mi-foto.jpg"
-                  value={selected.imageSrc ?? ''}
-                  onChange={(ev) => onUpdate(selected.id, { imageSrc: ev.target.value || undefined })}
-                  className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-                />
-              </label>
-              <label className="mt-2 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Título</span>
-                <input
-                  type="text"
-                  value={selected.title ?? ''}
-                  onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
-                  className="w-full rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-                />
-              </label>
-              <label className="mt-2 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-widest text-parchment/50">Descripción</span>
-                <textarea
-                  value={selected.description ?? ''}
-                  onChange={(ev) => onUpdate(selected.id, { description: ev.target.value || undefined })}
-                  rows={2}
-                  className="w-full resize-none rounded-md bg-white/10 px-1.5 py-1 text-[12px] text-parchment outline-none focus:bg-white/15"
-                />
-              </label>
-            </>
-          )}
-          <div className="mt-2 flex items-center gap-1.5 text-[10px] text-parchment/40">
-            <FiCopy className="h-3 w-3" />
-            {selected.position.map((n) => n.toFixed(2)).join(', ')} • rY {selected.rotationY.toFixed(2)} • s {selected.scale.toFixed(2)}
+    <>
+      {!modelsReady && (
+        <div className="pointer-events-auto fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-[#05070f]/70 text-parchment backdrop-blur-sm">
+          <FiLoader className="h-8 w-8 animate-spin text-gold" />
+          <div className="font-cinzel text-[12px] tracking-[0.24em] uppercase text-gold">Cargando modelos del editor</div>
+          <div className="text-[11px] text-parchment/50">
+            {loading.total > 0 ? `${loading.loaded} / ${loading.total} archivos` : 'Comprobando modelos…'}
           </div>
         </div>
       )}
-      <div className="mt-3 flex gap-1.5">
-        <button onClick={handleExport} className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1a1205] hover:bg-gold-bright">
-          <FiDownload className="h-3.5 w-3.5" /> Exportar JSON
-        </button>
-      </div>
-      <div className="mt-2 text-[10px] leading-4 text-parchment/30">
-        Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • <span className="text-parchment/60">Alt + clic derecho</span> seleccionar
-        <br />
-        Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
+      <div
+        ref={crosshairRef}
+        className="pointer-events-none fixed top-1/2 z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2"
+        style={{ left: `calc((100vw - ${PANEL_WIDTH}) / 2)` }}
+      >
+        <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/80 shadow-[0_0_4px_rgba(0,0,0,0.8)]" />
+        <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-white/80 shadow-[0_0_4px_rgba(0,0,0,0.8)]" />
       </div>
 
-      <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} currentScene={currentScene} onQuickAdd={handleModelQuickAdd} />
-    </div>
+      <div
+        className="pointer-events-auto fixed inset-y-0 right-0 z-30 flex max-w-full flex-col overflow-x-hidden overflow-y-auto border-l border-white/10 bg-[#0a0f1e]/92 p-4 text-parchment shadow-[-12px_0_40px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+        style={{ width: PANEL_WIDTH }}
+      >
+        <div className="flex shrink-0 items-center justify-between gap-2">
+          <div className="truncate font-cinzel text-[11px] tracking-[0.22em] uppercase text-gold">Editor de Posiciones</div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setIsModelBrowserOpen(true)}
+              className="flex cursor-pointer items-center gap-1 rounded-full bg-white/10 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] hover:bg-white/15"
+            >
+              <FiBox className="h-3.5 w-3.5" /> Modelos
+            </button>
+            <button type="button" onClick={onClose} className="cursor-pointer rounded-full bg-white/10 p-1.5 hover:bg-white/15">
+              <FiX className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        {draft && (
+          <div className="mt-3 shrink-0 rounded-lg border border-gold/30 bg-gold/10 p-2.5">
+            <div className="text-[10px] font-semibold tracking-[0.14em] uppercase text-gold">Borrador restaurado</div>
+            <div className="mt-1 text-[10px] leading-4 text-parchment/60">
+              {new Date(draft.savedAt).toLocaleString()} • {draft.entityCount} elementos
+              {draft.baseCount !== draft.bundleCount
+                ? ` • el JSON del juego trae ${draft.bundleCount}; revisa antes de exportar`
+                : ' • autoguardado al cerrar'}
+            </div>
+            <button
+              type="button"
+              onClick={handleDiscard}
+              className={`mt-1.5 cursor-pointer rounded-md px-2 py-1 text-[10px] ${armDiscard ? 'bg-red-500/25 text-red-200 hover:bg-red-500/35' : 'bg-white/10 hover:bg-white/15'}`}
+            >
+              {armDiscard ? 'Pulsa de nuevo: revierte la sesión al JSON del juego' : 'Descartar borrador'}
+            </button>
+          </div>
+        )}
+        {hasJump && (
+          <div className="mt-3 shrink-0 rounded-lg border border-gold/20 bg-black/25 p-2.5">
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.14em] uppercase text-gold/80">
+              <FiZap className="h-3 w-3" /> Salto rápido de fase
+            </div>
+            <div className="mt-2 flex items-center gap-1.5">
+              <div className="min-w-0 flex-1">
+                <Select
+                  value={jumpTargets.some((t) => t.id === currentCheckpointId) ? (currentCheckpointId ?? '') : (jumpTargets[0]?.id ?? '')}
+                  options={jumpOptions}
+                  onChange={(id) => onJumpToCheckpoint?.(id)}
+                />
+              </div>
+              <span className="inline-flex shrink-0 items-center rounded-md bg-gold/15 px-2 py-1 text-[10px] font-semibold tracking-[0.08em] uppercase text-gold">{currentPhase}</span>
+            </div>
+            <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">Salta a ese punto de la historia sin pasar por el vórtice; el libro y los portales siguen desde ahí.</div>
+          </div>
+        )}
+        <div className="mt-3 flex shrink-0 gap-1.5">
+          {(
+            [
+              ['translate', 'Mover', FiMove],
+              ['rotate', 'Rotar', FiRotateCw],
+              ['scale', 'Escala', FiMaximize2],
+            ] as const
+          ).map(([value, label, Icon]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => onModeChange(value)}
+              className={`flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${mode === value ? 'bg-gold text-[#1a1205]' : 'bg-white/10 hover:bg-white/15'}`}
+            >
+              <Icon className="h-3.5 w-3.5 shrink-0" /> {label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 flex shrink-0 items-center gap-1.5">
+          <div className="min-w-0 flex-1">
+            <Select value={addType} options={catalogOptions} onChange={setAddType} placeholder="Elemento" />
+          </div>
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={!catalog.length}
+            className="flex shrink-0 cursor-pointer items-center gap-1 rounded-md bg-white/10 px-2.5 py-1.5 text-[11px] hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <FiPlus className="h-3 w-3" /> Añadir
+          </button>
+        </div>
+        <div className="mt-1.5 shrink-0 text-[10px] leading-4 text-parchment/40">Se añade donde apunta la cruceta; si no apunta a nada, debajo de la cámara.</div>
+        <button
+          type="button"
+          onClick={() => setCollisionDebugVisible(!collisionsVisible)}
+          className={`mt-3 flex shrink-0 cursor-pointer items-center justify-between gap-2 rounded-md px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] ${
+            collisionsVisible ? 'bg-[#39d0ff] text-[#04121a]' : 'bg-white/10 hover:bg-white/15'
+          }`}
+        >
+          <span className="flex items-center gap-1.5">
+            {collisionsVisible ? <FiEye className="h-3.5 w-3.5" /> : <FiEyeOff className="h-3.5 w-3.5" />} Colisiones y límites
+          </span>
+          <span className="truncate text-[10px] font-normal normal-case tracking-normal opacity-70">
+            {colliderCount} del mundo • {walkAreaCount} zonas
+          </span>
+        </button>
+        {collisionsVisible && (
+          <div className="mt-1.5 flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-parchment/50">
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-sm bg-[#39d0ff]" /> JSON (editable)
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-sm bg-[#7a7f8c]" /> Etiqueta inactiva
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-sm bg-[#ff9a3c]" /> Del modelo (.glb)
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-sm bg-[#5cff8a]" /> Zona caminable
+            </span>
+            {currentScene === 'phase2' && (
+              <span className="flex items-center gap-1">
+                <span className="h-2 w-2 rounded-sm bg-[#ff3cf0]" /> Ruta de carrosas
+              </span>
+            )}
+          </div>
+        )}
+        <div className="mt-3 flex min-h-32 flex-1 flex-col overflow-hidden rounded-lg border border-white/5 bg-black/20">
+          <div className="shrink-0 px-2 pt-2 pb-1 text-[11px] tracking-[0.12em] uppercase text-parchment/50">Elementos ({entities.length})</div>
+          <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-2 pb-2">
+            {entities.map((e) => (
+              <button
+                key={e.id}
+                type="button"
+                onClick={() => onSelect(e.id)}
+                className={`flex w-full min-w-0 shrink-0 cursor-pointer items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-[12px] ${selectedId === e.id ? 'bg-gold text-[#1a1205]' : 'bg-white/5 hover:bg-white/10 text-parchment/80'}`}
+              >
+                <span className="min-w-0 flex-1 truncate">{e.id}</span>
+                <span className="max-w-[55%] shrink-0 truncate text-[10px] opacity-60">{e.type}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        {selected && (
+          <div className="mt-3 max-h-[46vh] shrink-0 overflow-y-auto rounded-lg border border-white/5 bg-black/20 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="min-w-0 truncate font-semibold text-[12px] text-gold">{selected.id}</span>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleCopySelected}
+                  title="Copiar propiedades"
+                  className="cursor-pointer rounded-md bg-white/10 p-1.5 text-parchment/80 hover:bg-white/15"
+                >
+                  <FiCopy className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onRemove(selected.id)}
+                  className="cursor-pointer rounded-md bg-red-500/15 p-1.5 text-red-300 hover:bg-red-500/25"
+                >
+                  <FiTrash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+            {copied && <div className="mt-1.5 text-[10px] text-[#8dffab]">Propiedades copiadas al portapapeles</div>}
+            <div className="mt-2">
+              <Vector3Fields labels={['x', 'y', 'z']} value={selected.position} onChange={(position) => onUpdate(selected.id, { position })} />
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-1.5">
+              <NumberField label="Rot X" step={0.05} value={selected.rotationX ?? 0} onChange={(rotationX) => onUpdate(selected.id, { rotationX: cleanAngle(rotationX) })} />
+              <NumberField label="Rot Y" step={0.05} value={selected.rotationY} onChange={(rotationY) => onUpdate(selected.id, { rotationY })} />
+              <NumberField label="Rot Z" step={0.05} value={selected.rotationZ ?? 0} onChange={(rotationZ) => onUpdate(selected.id, { rotationZ: cleanAngle(rotationZ) })} />
+            </div>
+            <FieldLabel label="Escala" className="mt-2">
+              <Vector3Fields
+                labels={['X', 'Y', 'Z']}
+                value={resolveEntityScale(selected.scale)}
+                onChange={(scale) => onUpdate(selected.id, { scale: packEntityScale(scale[0], scale[1], scale[2]) })}
+              />
+            </FieldLabel>
+            <FieldLabel label="Giro rápido" className="mt-2">
+              <div className="grid grid-cols-4 gap-1.5">
+                <button
+                  type="button"
+                  title="Girar -90°"
+                  onClick={() => onUpdate(selected.id, { rotationY: normalizeAngle(selected.rotationY - Math.PI / 2) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  -90°
+                </button>
+                <button
+                  type="button"
+                  title="Girar +90°"
+                  onClick={() => onUpdate(selected.id, { rotationY: normalizeAngle(selected.rotationY + Math.PI / 2) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  +90°
+                </button>
+                <button
+                  type="button"
+                  title="Media vuelta (180°)"
+                  onClick={() => onUpdate(selected.id, { rotationY: normalizeAngle(selected.rotationY + Math.PI) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  180°
+                </button>
+                <button
+                  type="button"
+                  title="Enderezar al múltiplo de 90° más cercano"
+                  onClick={() => onUpdate(selected.id, { rotationY: snapRightAngle(selected.rotationY) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  Recto
+                </button>
+              </div>
+            </FieldLabel>
+            <FieldLabel label="Variante" className="mt-2">
+              <input
+                type="text"
+                placeholder="ej. medium, #e85a3a, 5.2"
+                value={selected.variant ?? ''}
+                onChange={(ev) => onUpdate(selected.id, { variant: ev.target.value || undefined })}
+                className={INPUT_CLASS}
+              />
+            </FieldLabel>
+            {(selected.type === 'flying-car' || selected.type === 'flying-train') && (
+              <FieldLabel label="Carril de vuelo (opcional)" className="mt-2">
+                <input
+                  type="text"
+                  placeholder="ej. carsEast, trainHigh"
+                  value={selected.title ?? ''}
+                  onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
+                  className={INPUT_CLASS}
+                />
+              </FieldLabel>
+            )}
+            {(selected.type === 'ad-tower' ||
+              selected.type === 'screen-building' ||
+              (selected.type === 'parade-vehicle' && selected.variant === 'carrosa-riwi') ||
+              selected.videoSrc !== undefined ||
+              selected.videoSrcs !== undefined) && (
+              <>
+                <FieldLabel label="Video (URL, opcional — usado si no hay lista)" className="mt-2">
+                  <input
+                    type="text"
+                    placeholder="/videos/cityIntro/first.mp4"
+                    value={selected.videoSrc ?? ''}
+                    onChange={(ev) => onUpdate(selected.id, { videoSrc: ev.target.value || undefined })}
+                    className={INPUT_CLASS}
+                  />
+                </FieldLabel>
+                <div className="mt-2 flex flex-col gap-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate text-[10px] uppercase tracking-widest text-parchment/50">Videos en bucle (lista)</span>
+                    <button
+                      type="button"
+                      onClick={() => onUpdate(selected.id, { videoSrcs: [...(selected.videoSrcs ?? []), ''] })}
+                      className="flex shrink-0 cursor-pointer items-center gap-1 rounded-md bg-white/10 px-2 py-1 text-[10px] hover:bg-white/15"
+                    >
+                      <FiPlus className="h-3 w-3" /> Añadir video
+                    </button>
+                  </div>
+                  {(selected.videoSrcs ?? []).map((src, i) => (
+                    <div key={i} className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="/videos/mocadevia/mocadevia-1.mp4"
+                        value={src}
+                        onChange={(ev) => {
+                          const next = [...(selected.videoSrcs ?? [])]
+                          next[i] = ev.target.value
+                          onUpdate(selected.id, { videoSrcs: next })
+                        }}
+                        className={INPUT_CLASS}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = (selected.videoSrcs ?? []).filter((_, j) => j !== i)
+                          onUpdate(selected.id, { videoSrcs: next.length ? next : undefined })
+                        }}
+                        className="shrink-0 cursor-pointer rounded-md bg-red-500/15 p-1.5 text-red-300 hover:bg-red-500/25"
+                      >
+                        <FiTrash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="text-[10px] leading-4 text-parchment/40">
+                    Se reproducen en orden, muteados; al terminar uno empieza el siguiente y vuelve al primero al final.
+                  </div>
+                </div>
+              </>
+            )}
+            {(selected.type === 'sepia-photo' || selected.imageSrc !== undefined) && (
+              <>
+                <FieldLabel label="Imagen (URL)" className="mt-2">
+                  <input
+                    type="text"
+                    placeholder="https://... o /images/placeholders/mi-foto.jpg"
+                    value={selected.imageSrc ?? ''}
+                    onChange={(ev) => onUpdate(selected.id, { imageSrc: ev.target.value || undefined })}
+                    className={INPUT_CLASS}
+                  />
+                </FieldLabel>
+                <FieldLabel label="Título" className="mt-2">
+                  <input
+                    type="text"
+                    value={selected.title ?? ''}
+                    onChange={(ev) => onUpdate(selected.id, { title: ev.target.value || undefined })}
+                    className={INPUT_CLASS}
+                  />
+                </FieldLabel>
+                <FieldLabel label="Descripción" className="mt-2">
+                  <textarea
+                    value={selected.description ?? ''}
+                    onChange={(ev) => onUpdate(selected.id, { description: ev.target.value || undefined })}
+                    rows={2}
+                    className={`${INPUT_CLASS} resize-none`}
+                  />
+                </FieldLabel>
+              </>
+            )}
+            {selected.type === 'walk-area' ? (
+              <div className="mt-3 rounded-md border border-[#5cff8a]/20 bg-[#5cff8a]/5 p-2">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8dffab]">Zona caminable</div>
+                <div className="mt-2 grid grid-cols-2 gap-1.5">
+                  <NumberField
+                    label="Ancho X"
+                    value={(selected.areaSize ?? DEFAULT_AREA_SIZE)[0]}
+                    fallback={DEFAULT_AREA_SIZE[0]}
+                    onChange={(width) => onUpdate(selected.id, { areaSize: [Math.max(0.5, width), (selected.areaSize ?? DEFAULT_AREA_SIZE)[1]] })}
+                  />
+                  <NumberField
+                    label="Fondo Z"
+                    value={(selected.areaSize ?? DEFAULT_AREA_SIZE)[1]}
+                    fallback={DEFAULT_AREA_SIZE[1]}
+                    onChange={(depth) => onUpdate(selected.id, { areaSize: [(selected.areaSize ?? DEFAULT_AREA_SIZE)[0], Math.max(0.5, depth)] })}
+                  />
+                </div>
+                <div className="mt-1.5 text-[10px] leading-4 text-parchment/40">
+                  El jugador puede andar dentro de la unión de todas las zonas de la escena. Se escala con el elemento; la rotación se ignora.
+                </div>
+              </div>
+            ) : (
+              <ColliderSection entity={selected} onUpdate={onUpdate} onOpenEditor={() => setColliderEditorId(selected.id)} />
+            )}
+            <div className="mt-2 flex min-w-0 items-center gap-1.5 text-[10px] text-parchment/40">
+              <FiCopy className="h-3 w-3 shrink-0" />
+              <span className="truncate">
+                {selected.position.map((n) => n.toFixed(2)).join(', ')} • r {(selected.rotationX ?? 0).toFixed(2)}/
+                {selected.rotationY.toFixed(2)}/{(selected.rotationZ ?? 0).toFixed(2)} • s {resolveEntityScale(selected.scale).map((n) => n.toFixed(2)).join('/')}
+              </span>
+            </div>
+          </div>
+        )}
+        <div className="mt-3 flex shrink-0 gap-1.5">
+          <button
+            type="button"
+            onClick={handleExport}
+            className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1a1205] hover:bg-gold-bright"
+          >
+            <FiDownload className="h-3.5 w-3.5" /> Exportar JSON
+          </button>
+        </div>
+        <div className="mt-2 shrink-0 text-[10px] leading-4 text-parchment/30">
+          Teclas: <span className="text-parchment/60">W/E/R</span> traslación/rotación/escala • <span className="text-parchment/60">F2</span> toggle editor • <span className="text-parchment/60">Alt + clic derecho</span> seleccionar • <span className="text-parchment/60">C</span> duplicar
+          <br />
+          Cámara: <span className="text-parchment/60">WASD</span> mover • <span className="text-parchment/60">Shift/Ctrl</span> subir/bajar • arrastrar para orbitar
+          <br />
+          {lastSavedAt ? (
+            <span className="text-[#8dffab]/70">Borrador autoguardado {new Date(lastSavedAt).toLocaleTimeString()}</span>
+          ) : (
+            <span>Autoguardado del borrador pendiente…</span>
+          )}
+        </div>
+
+        <ColliderEditorModal entity={colliderEditorEntity} onUpdate={onUpdate} onClose={() => setColliderEditorId(null)} />
+        <ModelBrowserModal open={isModelBrowserOpen} onClose={() => setIsModelBrowserOpen(false)} currentScene={currentScene} onQuickAdd={handleModelQuickAdd} />
+      </div>
+    </>
   )
 })

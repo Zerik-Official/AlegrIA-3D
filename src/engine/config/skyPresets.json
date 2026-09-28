@@ -1,0 +1,38 @@
+{
+  "sun": {
+    "phase1": {
+      "color": "#fff4d0",
+      "glowColor": "#ffb84a",
+      "intensity": 1.15,
+      "size": 2.2,
+      "castShadow": true,
+      "disc": true,
+      "hemisphere": { "sky": "#ffecd0", "ground": "#6b4a2a", "intensity": 0.52 },
+      "flareColor": "#ffd9a0"
+    },
+    "phase2": {
+      "color": "#fff4d0",
+      "glowColor": "#ffd27a",
+      "intensity": 1.45,
+      "size": 2.2,
+      "castShadow": true,
+      "disc": true,
+      "hemisphere": { "sky": "#ffecd0", "ground": "#bfa86a", "intensity": 0.52 },
+      "flareColor": "#ffe2a8"
+    },
+    "cityIntro": {
+      "color": "#FF7A3C",
+      "glowColor": "#FFB703",
+      "intensity": 1.25,
+      "size": 2.2,
+      "castShadow": false,
+      "disc": false,
+      "hemisphere": null,
+      "flareColor": "#ffb070"
+    }
+  },
+  "cloud": {
+    "phase1": { "color": "#ffffff", "underColor": "#f0dcc0" },
+    "phase2": { "color": "#fff4e0", "underColor": "#f0c88a" }
+  }
+}

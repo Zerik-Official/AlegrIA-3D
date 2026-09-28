@@ -1,9 +1,10 @@
 import { memo, useLayoutEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
+import { FILLER_CLEAR_ZONES } from '@/features/cityIntro/config/cityStreets'
 
 /** Instance count for the hazy background skyline. */
-const COUNT = 320
+const COUNT = 220
 /** Half-width of the near corridor kept clear so filler never clips the curated JSON buildings. */
 const CLEAR_CORRIDOR_X = 16
 /** Z beyond which the near corridor no longer needs protecting (past the last curated building/library). */
@@ -18,12 +19,18 @@ const SEED = 9182731
  * JSON/editor-driven on purpose — hundreds of individually-editable background
  * silhouettes would defeat the point; only the near "hero" buildings are authored.
  *
+ * "Futurismo Abajero 2050" redesign: most silhouettes are low (the
+ * neighborhood is horizontal, one or two stories tall), and only about one
+ * in six rises as a distant tower; the tint changed from midnight blue to
+ * magenta/brick so the filler blends into the Caribbean sunset instead of
+ * standing out against it.
+ *
  * @returns Instanced filler-building mesh
  */
 export const CityFillerSkyline = memo(function CityFillerSkyline() {
   const meshRef = useRef<THREE.InstancedMesh>(null)
   const geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), [])
-  const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: 0.2, emissive: '#0a0a1e', emissiveIntensity: 0.5 }), [])
+  const material = useMemo(() => new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0.05, emissive: '#3a0f2a', emissiveIntensity: 0.45 }), [])
 
   useLayoutEffect(() => {
     const mesh = meshRef.current
@@ -35,21 +42,22 @@ export const CityFillerSkyline = memo(function CityFillerSkyline() {
     let attempts = 0
     while (placed < COUNT && attempts < COUNT * 6) {
       attempts++
-      const x = (rand() > 0.5 ? 1 : -1) * (18 + rand() * 130)
-      const z = 80 - rand() * 310
+      const x = (rand() > 0.5 ? 1 : -1) * (18 + rand() * 95)
+      const z = 80 - rand() * 230
       if (Math.abs(x) < CLEAR_CORRIDOR_X && z > CLEAR_CORRIDOR_MIN_Z) continue
+      if (FILLER_CLEAR_ZONES.some(([minX, maxX, minZ, maxZ]) => x > minX - 4 && x < maxX + 4 && z > minZ - 4 && z < maxZ + 4)) continue
 
       const width = 3 + rand() * 5
       const depth = 3 + rand() * 5
-      const height = 10 + rand() * 50
+      const height = rand() > 0.82 ? 22 + rand() * 34 : 4 + rand() * 7
       dummy.position.set(x, height / 2, z)
       dummy.scale.set(width, height, depth)
       dummy.rotation.y = rand() * Math.PI
       dummy.updateMatrix()
       mesh.setMatrixAt(placed, dummy.matrix)
 
-      const tone = 0.14 + rand() * 0.2
-      color.setRGB(tone * 0.55, tone * 0.6, tone * 0.95)
+      const tone = 0.16 + rand() * 0.24
+      color.setRGB(tone * 1.05, tone * 0.5, tone * 0.72)
       mesh.setColorAt(placed, color)
       placed++
     }

@@ -8,28 +8,6 @@ import * as THREE from 'three'
 import { createSeededRandom } from '@/shared/utils/random'
 
 /**
- * Soft white-to-transparent radial gradient, used as an `alphaMap` to fade
- * the edges of a flat circular patch (mud, dirt, ...) without a hard cutout.
- * @param size - Texture size in pixels (square)
- * @returns Canvas-based alpha texture
- */
-export function createSoftCircleTexture(size = 128): THREE.Texture {
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext('2d')!
-  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2)
-  gradient.addColorStop(0, 'rgba(255,255,255,1)')
-  gradient.addColorStop(0.55, 'rgba(255,255,255,0.7)')
-  gradient.addColorStop(1, 'rgba(255,255,255,0)')
-  ctx.fillStyle = gradient
-  ctx.fillRect(0, 0, size, size)
-  const texture = new THREE.CanvasTexture(canvas)
-  texture.needsUpdate = true
-  return texture
-}
-
-/**
  * Deterministic grid of lit/unlit windows, used as a night-facade texture for
  * skyscrapers. The same `seed` always produces the same pattern.
  * @param seed - Deterministic seed, e.g. from `hashSeed(entity.id)`
@@ -208,6 +186,106 @@ export function createWeatheredWallTexture(seed: number, size = 256): THREE.Text
   }
 
   const texture = new THREE.CanvasTexture(canvas)
+  texture.needsUpdate = true
+  return texture
+}
+
+/**
+ * Deterministic warm-wood parquet: staggered planks in a few honey/walnut
+ * tones with faint grain and dark seams, tiling seamlessly so a large floor
+ * can repeat it (`wrapS/wrapT` are already set to repeat).
+ * @param seed - Deterministic seed
+ * @param size - Canvas edge length in px
+ * @returns Canvas-based, repeating parquet texture
+ */
+export function createParquetTexture(seed: number, size = 512): THREE.Texture {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const rand = createSeededRandom(seed)
+  const tones = ['#8a5428', '#9c6232', '#7a4620', '#a86c38', '#6e3e1c']
+  const rows = 8
+  const rowH = size / rows
+  const plankW = size / 2
+
+  for (let r = 0; r < rows; r++) {
+    const offset = (r % 2) * (plankW / 2)
+    for (let x = -plankW; x < size + plankW; x += plankW) {
+      const px = x + offset
+      ctx.fillStyle = tones[Math.floor(rand() * tones.length)]
+      ctx.fillRect(px, r * rowH, plankW, rowH)
+      for (let g = 0; g < 6; g++) {
+        const gy = r * rowH + rand() * rowH
+        ctx.strokeStyle = `rgba(40,20,8,${0.06 + rand() * 0.08})`
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(px, gy)
+        ctx.lineTo(px + plankW, gy + (rand() - 0.5) * 4)
+        ctx.stroke()
+      }
+      ctx.fillStyle = 'rgba(30,14,4,0.55)'
+      ctx.fillRect(px, r * rowH, 2, rowH)
+    }
+    ctx.fillStyle = 'rgba(30,14,4,0.55)'
+    ctx.fillRect(0, r * rowH, size, 2)
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
+  texture.colorSpace = THREE.SRGBColorSpace
+  texture.needsUpdate = true
+  return texture
+}
+
+/**
+ * Deterministic puddle mask: soft-edged irregular blobs in white on black,
+ * meant as an `alphaMap` (three.js reads its green channel) so a single wet
+ * plane only shows where water has pooled. Repeats seamlessly enough for a
+ * large ground to tile it (`wrapS/wrapT` are already set to repeat).
+ * @param seed - Deterministic seed
+ * @param size - Canvas edge length in px
+ * @returns Canvas-based, repeating puddle mask texture
+ */
+export function createPuddleMaskTexture(seed: number, size = 512): THREE.Texture {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  const rand = createSeededRandom(seed)
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, size, size)
+
+  const puddles = 9
+  for (let i = 0; i < puddles; i++) {
+    const cx = size * (0.1 + rand() * 0.8)
+    const cy = size * (0.1 + rand() * 0.8)
+    const lobes = 3 + Math.floor(rand() * 3)
+    for (let l = 0; l < lobes; l++) {
+      const x = cx + (rand() - 0.5) * size * 0.08
+      const y = cy + (rand() - 0.5) * size * 0.08
+      const rx = size * (0.025 + rand() * 0.045)
+      const ry = rx * (0.5 + rand() * 0.5)
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.rotate(rand() * Math.PI)
+      ctx.scale(1, ry / rx)
+      const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, rx)
+      gradient.addColorStop(0, 'rgba(255,255,255,1)')
+      gradient.addColorStop(0.72, 'rgba(255,255,255,0.9)')
+      gradient.addColorStop(1, 'rgba(255,255,255,0)')
+      ctx.fillStyle = gradient
+      ctx.beginPath()
+      ctx.arc(0, 0, rx, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.RepeatWrapping
   texture.needsUpdate = true
   return texture
 }

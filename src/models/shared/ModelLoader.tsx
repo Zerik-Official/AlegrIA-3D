@@ -4,9 +4,12 @@
  * @module models/shared/ModelLoader
  */
 
-import { Suspense, useEffect, useState, useMemo } from 'react'
+import { Suspense, useContext, useEffect, useRef, useState, useMemo, Component, type ErrorInfo, type ReactNode } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
+import { extractBoundsSolid, extractCollisionSolids, registerCollisionSolids, unregisterCollisionSolids } from '@/features/player/collision'
+import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
+import { isCollisionMesh } from '@/models/shared/collisionMesh'
 
 /**
  * Props for {@link ModelLoader}.
@@ -32,31 +35,39 @@ export interface ModelLoaderProps {
   targetSize?: number
   /** Whether loaded meshes cast/receive shadows. Disable for small, fast-moving background props where shadow cost isn't worth it. Defaults to `true`. */
   castShadow?: boolean
-}
-
-/**
- * Whether a mesh is a Blender-authored collision proxy, not meant to be
- * rendered: the Python export scripts (`.vscode/scripts/*.py`) name these
- * `COL_*` and paint them with a "Colision" placeholder material (flat
- * magenta, `[1, 0, 1, 0.25]`), for a future physics pass rather than display.
- * Filtered out here at load time — the same `.glb` a physics system would
- * later read the `COL_*` nodes from stays visually correct without a re-export.
- * @param mesh - Candidate mesh from a loaded glTF scene graph
- * @returns Whether this mesh should stay hidden
- */
-export function isCollisionMesh(mesh: THREE.Mesh): boolean {
-  if (mesh.name.startsWith('COL_')) return true
-  const material = mesh.material as THREE.Material | THREE.Material[] | undefined
-  const materials = Array.isArray(material) ? material : material ? [material] : []
-  return materials.some((mat) => mat.name === 'Colision')
+  /**
+   * When set, this model's `COL_*` proxy meshes (see {@link isCollisionMesh})
+   * are published to the shared collision world under this id, making the
+   * asset solid — and its decks, platforms and stairs walkable — for
+   * `PlayerControls`. Use a stable, unique id such as the entity's own id.
+   */
+  collisionId?: string
+  /**
+   * What to publish when the model ships no `COL_*` proxies: nothing by
+   * default, or one collider covering its whole bounding box. Only set
+   * `'bounds'` for box-shaped assets (houses), never for sprawling set pieces
+   * where a single AABB would wall off open ground. Requires {@link collisionId}.
+   */
+  collisionFallback?: 'none' | 'bounds'
 }
 
 /**
  * Internal glTF scene renderer.
  * Isolated to allow Suspense to work correctly.
  */
-function GltfScene({ src, scale, position, rotation, targetSize, castShadow = true }: Omit<ModelLoaderProps, 'fallback'>) {
+function GltfScene({
+  src,
+  scale,
+  position,
+  rotation,
+  targetSize,
+  castShadow = true,
+  collisionId,
+  collisionFallback = 'none',
+}: Omit<ModelLoaderProps, 'fallback'>) {
   const { scene } = useGLTF(src) as unknown as { scene: THREE.Group }
+  const rootRef = useRef<THREE.Object3D>(null)
+  const publishCollisions = useContext(CollisionPublishContext)
 
   const cloned = useMemo(() => {
     const c = scene.clone(true)
@@ -85,7 +96,68 @@ function GltfScene({ src, scale, position, rotation, targetSize, castShadow = tr
     return Array.isArray(base) ? (base.map((v) => v * normalizedScale) as [number, number, number]) : base * normalizedScale
   }, [scale, normalizedScale])
 
-  return <primitive object={cloned} scale={finalScale} position={position} rotation={rotation} />
+  useEffect(() => {
+    if (!collisionId || !publishCollisions) return
+    const root = rootRef.current
+    if (!root) return
+    const proxies = extractCollisionSolids(root, isCollisionMesh)
+    if (proxies.length === 0 && collisionFallback === 'bounds') {
+      const bounds = extractBoundsSolid(root, isCollisionMesh)
+      if (bounds) proxies.push(bounds)
+    }
+    registerCollisionSolids(collisionId, proxies)
+    return () => unregisterCollisionSolids(collisionId)
+  }, [collisionId, collisionFallback, cloned, finalScale, position, rotation, publishCollisions])
+
+  return <primitive ref={rootRef} object={cloned} scale={finalScale} position={position} rotation={rotation} />
+}
+
+/**
+ * Props for {@link ModelErrorBoundary}.
+ */
+interface ModelErrorBoundaryProps {
+  /** Content attempting to load the model. */
+  children: ReactNode
+  /** Shown when the model fails to load. */
+  fallback: ReactNode
+}
+
+/** State for {@link ModelErrorBoundary}. */
+interface ModelErrorBoundaryState {
+  /** Whether a load error was caught. */
+  failed: boolean
+}
+
+/**
+ * Catches `useGLTF` load failures (missing or corrupt `.glb`, e.g. a
+ * registry entry whose file was never added to `public/models`) and falls
+ * back to the procedural placeholder instead of unmounting the Canvas.
+ */
+class ModelErrorBoundary extends Component<ModelErrorBoundaryProps, ModelErrorBoundaryState> {
+  state: ModelErrorBoundaryState = { failed: false }
+
+  /**
+   * @param error - Load error thrown while rendering the model
+   * @returns Error info for logging
+   */
+  componentDidCatch(error: Error, info: ErrorInfo): void {
+    console.warn(`[ModelLoader] Falling back to procedural placeholder: ${error.message}`, info.componentStack)
+  }
+
+  /**
+   * @returns Fallback state once a load error is caught
+   */
+  static getDerivedStateFromError(): ModelErrorBoundaryState {
+    return { failed: true }
+  }
+
+  /**
+   * @returns Children, or the fallback after a load error
+   */
+  render(): ReactNode {
+    if (this.state.failed) return this.props.fallback
+    return this.props.children
+  }
 }
 
 /**
@@ -100,8 +172,23 @@ function GltfScene({ src, scale, position, rotation, targetSize, castShadow = tr
  * ```
  * @link https://github.com/pmndrs/drei#usegltf
  */
-export function ModelLoader({ src, fallback, scale, position, rotation, targetSize, castShadow }: ModelLoaderProps) {
+export function ModelLoader({
+  src,
+  fallback,
+  scale,
+  position,
+  rotation,
+  targetSize,
+  castShadow,
+  collisionId,
+  collisionFallback,
+}: ModelLoaderProps) {
   const [available, setAvailable] = useState<boolean | null>(null)
+  const [checkedSrc, setCheckedSrc] = useState(src)
+  if (checkedSrc !== src) {
+    setCheckedSrc(src)
+    setAvailable(null)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -124,21 +211,19 @@ export function ModelLoader({ src, fallback, scale, position, rotation, targetSi
   if (available === null) return <>{fallback}</>
 
   return (
-    <Suspense fallback={fallback}>
-      <GltfScene src={src} scale={scale} position={position ?? [0, 0, 0]} rotation={rotation ?? [0, 0, 0]} targetSize={targetSize} castShadow={castShadow} />
-    </Suspense>
+    <ModelErrorBoundary key={src} fallback={fallback}>
+      <Suspense fallback={fallback}>
+        <GltfScene
+          src={src}
+          scale={scale}
+          position={position ?? [0, 0, 0]}
+          rotation={rotation ?? [0, 0, 0]}
+          targetSize={targetSize}
+          castShadow={castShadow}
+          collisionId={collisionId}
+          collisionFallback={collisionFallback}
+        />
+      </Suspense>
+    </ModelErrorBoundary>
   )
-}
-
-/**
- * Preloads a model for faster first render.
- * Safe to call even when the asset does not exist.
- * @param src - Model URL
- */
-export function preloadModel(src: string): void {
-  try {
-    useGLTF.preload(src)
-  } catch {
-    // ignore missing asset
-  }
 }

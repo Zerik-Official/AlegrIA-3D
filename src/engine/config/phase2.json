@@ -1,564 +1,6522 @@
 [
-  {"id":"parroquia","type":"parroquia","position":[-27.5,0,-27.5],"rotationY":0.785,"scale":1},
-  {"id":"dancer-01","type":"dancer","position":[0,0,6.3],"rotationY":3.14,"scale":1,"variant":"bailarina-amarilla"},
-  {"id":"dancer-02","type":"dancer","position":[5.46,0,3.15],"rotationY":-2.09,"scale":1,"variant":"bailarin-blanco"},
-  {"id":"dancer-03","type":"dancer","position":[5.46,0,-3.15],"rotationY":-1.05,"scale":1,"variant":"bailarina-azul"},
-  {"id":"dancer-04","type":"dancer","position":[0,0,-6.3],"rotationY":0,"scale":1,"variant":"bailarin-blanco-azul"},
-  {"id":"dancer-05","type":"dancer","position":[-5.46,0,-3.15],"rotationY":1.05,"scale":1,"variant":"bailarina-roja"},
-  {"id":"dancer-06","type":"dancer","position":[-5.46,0,3.15],"rotationY":2.09,"scale":1,"variant":"bailarina-verde"},
-  {"id":"vehicle-chiva","type":"parade-vehicle","position":[16,0,-9],"rotationY":0,"scale":1,"variant":"chiva-rumbera"},
-  {"id":"vehicle-carrosa-riwi","type":"parade-vehicle","position":[16,0,0],"rotationY":0,"scale":1,"variant":"carrosa-riwi"},
-  {"id":"vehicle-carrosa-marimonda","type":"parade-vehicle","position":[16,0,9],"rotationY":0,"scale":1,"variant":"carrosa-marimonda"},
-  {"id":"casa-carnavalera","type":"carnival-house","position":[0,0,-39],"rotationY":0,"scale":1},
-  {"id":"plaza","type":"phase2/scenes/plaza-baile-carnaval","position":[0,0,0],"rotationY":0,"scale":1.1},
-  {"id":"floor-001","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-37.1,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-002","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-10.9,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-003","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-5.1,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-004","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[5.1,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-005","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[10.9,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-006","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[21.1,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-007","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[26.9,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-008","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[37.1,0,-32],"rotationY":0,"scale":1.46},
-  {"id":"floor-009","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,-37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-010","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,-10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-011","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,-5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-012","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-013","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-014","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-015","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-016","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-32,0,37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-017","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-37.1,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-018","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-26.9,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-019","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-21.1,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-020","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-10.9,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-021","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-5.1,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-022","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[5.1,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-023","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[10.9,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-024","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[21.1,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-025","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[26.9,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-026","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[37.1,0,-16],"rotationY":0,"scale":1.46},
-  {"id":"floor-027","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,-37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-028","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,-26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-029","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,-21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-030","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,-10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-031","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,-5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-032","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-033","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-034","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-035","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-036","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-16,0,37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-037","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-37.1,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-038","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-26.9,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-039","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-21.1,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-040","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-10.9,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-041","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[10.9,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-042","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[21.1,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-043","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[26.9,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-044","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[37.1,0,0],"rotationY":0,"scale":1.46},
-  {"id":"floor-045","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,-37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-046","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,-26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-047","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,-21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-048","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,-10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-049","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-050","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-051","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-052","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[0,0,37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-053","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-37.1,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-054","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-26.9,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-055","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-21.1,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-056","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-10.9,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-057","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-5.1,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-058","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[5.1,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-059","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[10.9,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-060","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[21.1,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-061","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[26.9,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-062","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[37.1,0,16],"rotationY":0,"scale":1.46},
-  {"id":"floor-063","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,-37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-064","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,-26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-065","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,-21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-066","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,-10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-067","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,-5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-068","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-069","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-070","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-071","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-072","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[16,0,37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-073","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-37.1,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-074","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-26.9,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-075","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-21.1,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-076","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-10.9,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-077","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[-5.1,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-078","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[5.1,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-079","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[10.9,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-080","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[21.1,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-081","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[26.9,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-082","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[37.1,0,32],"rotationY":0,"scale":1.46},
-  {"id":"floor-083","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,-37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-084","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,-26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-085","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,-21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-086","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,-10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-087","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,-5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-088","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,5.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-089","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,10.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-090","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,21.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-091","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,26.9],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-092","type":"phase2/floors/suelo-calles-adoquin-calle-recta","position":[32,0,37.1],"rotationY":1.57,"scale":1.46},
-  {"id":"floor-093","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-32,0,-32],"rotationY":0,"scale":1.1},
-  {"id":"floor-094","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-32,0,-16],"rotationY":0,"scale":1.1},
-  {"id":"floor-095","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-32,0,0],"rotationY":0,"scale":1.1},
-  {"id":"floor-096","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-32,0,16],"rotationY":0,"scale":1.1},
-  {"id":"floor-097","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-32,0,32],"rotationY":0,"scale":1.1},
-  {"id":"floor-098","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-16,0,-32],"rotationY":0,"scale":1.1},
-  {"id":"floor-099","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-16,0,-16],"rotationY":0,"scale":1.1},
-  {"id":"floor-100","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-16,0,0],"rotationY":0,"scale":1.1},
-  {"id":"floor-101","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-16,0,16],"rotationY":0,"scale":1.1},
-  {"id":"floor-102","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[-16,0,32],"rotationY":0,"scale":1.1},
-  {"id":"floor-103","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[0,0,-32],"rotationY":0,"scale":1.1},
-  {"id":"floor-104","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[0,0,-16],"rotationY":0,"scale":1.1},
-  {"id":"floor-105","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[0,0,16],"rotationY":0,"scale":1.1},
-  {"id":"floor-106","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[0,0,32],"rotationY":0,"scale":1.1},
-  {"id":"floor-107","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[16,0,-32],"rotationY":0,"scale":1.1},
-  {"id":"floor-108","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[16,0,-16],"rotationY":0,"scale":1.1},
-  {"id":"floor-109","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[16,0,0],"rotationY":0,"scale":1.1},
-  {"id":"floor-110","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[16,0,16],"rotationY":0,"scale":1.1},
-  {"id":"floor-111","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[16,0,32],"rotationY":0,"scale":1.1},
-  {"id":"floor-112","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[32,0,-32],"rotationY":0,"scale":1.1},
-  {"id":"floor-113","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[32,0,-16],"rotationY":0,"scale":1.1},
-  {"id":"floor-114","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[32,0,0],"rotationY":0,"scale":1.1},
-  {"id":"floor-115","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[32,0,16],"rotationY":0,"scale":1.1},
-  {"id":"floor-116","type":"phase2/floors/suelo-calles-adoquin-calle-cruce","position":[32,0,32],"rotationY":0,"scale":1.1},
-  {"id":"house-01","type":"phase2/houses/casa-balcones-rojos","position":[-37.5,0,-10.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-02","type":"phase2/houses/casa-verde","position":[-37.5,0,-5.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-03","type":"phase2/houses/casa-marron-premium","position":[-37.5,0,5.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-04","type":"phase2/houses/casa-balcones-rojos","position":[-37.5,0,10.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-05","type":"phase2/houses/casita-coral-plana","position":[-37.5,0,21.25],"rotationY":1.57,"scale":1.5},
-  {"id":"house-06","type":"phase2/houses/casa-verde","position":[-37.5,0,26.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-07","type":"phase2/houses/casa-celeste-l-teja","position":[-37.5,0,-38],"rotationY":1.57,"scale":1.3},
-  {"id":"house-08","type":"phase2/houses/casa-marron-premium","position":[-37.5,0,38],"rotationY":1.57,"scale":1.3},
-  {"id":"house-09","type":"phase2/houses/casa-cyan","position":[-26.5,0,-10.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-10","type":"phase2/houses/casa-olivo-portal-arcos","position":[-26.5,0,-5.25],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-11","type":"phase2/houses/casa-cafe","position":[-26.5,0,5.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-12","type":"phase2/houses/casa-verde","position":[-26.5,0,10.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-13","type":"phase2/houses/casa-esquina-amarilla","position":[-26.5,0,21.25],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-14","type":"phase2/houses/casita-coral-plana","position":[-26.5,0,26.75],"rotationY":-1.57,"scale":1.5},
-  {"id":"house-15","type":"phase2/houses/casa-verde","position":[-21.5,0,-10.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-16","type":"phase2/houses/casa-balcones-rojos","position":[-21.5,0,-5.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-17","type":"phase2/houses/casa-cyan","position":[-21.5,0,5.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-18","type":"phase2/houses/casa-rosa-hastial","position":[-21.5,0,10.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-19","type":"phase2/houses/casa-esquina-amarilla","position":[-21.5,0,21.25],"rotationY":1.57,"scale":1.25},
-  {"id":"house-20","type":"phase2/houses/casa-celeste-l-teja","position":[-21.5,0,26.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-21","type":"phase2/houses/casa-cyan","position":[-10.5,0,-26.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-22","type":"phase2/houses/casa-marron-premium","position":[-10.5,0,-21.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-23","type":"phase2/houses/casa-rosa-hastial","position":[-10.5,0,21.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-24","type":"phase2/houses/casa-balcones-rojos","position":[-10.5,0,26.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-25","type":"phase2/houses/casa-cyan","position":[-5.5,0,-26.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-26","type":"phase2/houses/casa-esquina-amarilla","position":[-5.5,0,-21.25],"rotationY":1.57,"scale":1.25},
-  {"id":"house-27","type":"phase2/houses/casa-olivo-portal-arcos","position":[-5.5,0,21.25],"rotationY":1.57,"scale":1.25},
-  {"id":"house-28","type":"phase2/houses/casa-balcones-rojos","position":[-5.5,0,26.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-29","type":"phase2/houses/casa-verde","position":[5.5,0,-26.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-30","type":"phase2/houses/casita-coral-plana","position":[5.5,0,-21.25],"rotationY":-1.57,"scale":1.5},
-  {"id":"house-31","type":"phase2/houses/casa-celeste-l-teja","position":[5.5,0,21.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-32","type":"phase2/houses/casa-cafe","position":[5.5,0,26.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-33","type":"phase2/houses/casa-esquina-amarilla","position":[10.5,0,-26.75],"rotationY":1.57,"scale":1.25},
-  {"id":"house-34","type":"phase2/houses/puesto-fruteria","position":[10.5,0,-21.25],"rotationY":1.57,"scale":1.2},
-  {"id":"house-35","type":"phase2/houses/casa-marron-premium","position":[10.5,0,21.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-36","type":"phase2/houses/casita-coral-plana","position":[10.5,0,26.75],"rotationY":1.57,"scale":1.5},
-  {"id":"house-37","type":"phase2/houses/casa-balcones-rojos","position":[21.5,0,-26.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-38","type":"phase2/houses/casa-olivo-portal-arcos","position":[21.5,0,-21.25],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-39","type":"phase2/houses/casa-rosa-hastial","position":[21.5,0,-10.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-40","type":"phase2/houses/puesto-fruteria","position":[21.5,0,-5.25],"rotationY":-1.57,"scale":1.2},
-  {"id":"house-41","type":"phase2/houses/casa-marron-premium","position":[21.5,0,5.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-42","type":"phase2/houses/casa-cafe","position":[21.5,0,10.75],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-43","type":"phase2/houses/casa-rosa-hastial","position":[21.5,0,21.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-44","type":"phase2/houses/puesto-fruteria","position":[21.5,0,26.75],"rotationY":-1.57,"scale":1.2},
-  {"id":"house-45","type":"phase2/houses/casa-verde","position":[26.5,0,-26.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-46","type":"phase2/houses/casa-cyan","position":[26.5,0,-21.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-47","type":"phase2/houses/casa-esquina-amarilla","position":[26.5,0,-10.75],"rotationY":1.57,"scale":1.25},
-  {"id":"house-48","type":"phase2/houses/casa-balcones-rojos","position":[26.5,0,-5.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-49","type":"phase2/houses/puesto-fruteria","position":[26.5,0,5.25],"rotationY":1.57,"scale":1.2},
-  {"id":"house-50","type":"phase2/houses/casita-coral-plana","position":[26.5,0,10.75],"rotationY":1.57,"scale":1.5},
-  {"id":"house-51","type":"phase2/houses/casa-marron-premium","position":[26.5,0,21.25],"rotationY":1.57,"scale":1.3},
-  {"id":"house-52","type":"phase2/houses/casa-balcones-rojos","position":[26.5,0,26.75],"rotationY":1.57,"scale":1.3},
-  {"id":"house-53","type":"phase2/houses/casa-olivo-portal-arcos","position":[37.5,0,-26.75],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-54","type":"phase2/houses/puesto-fruteria","position":[37.5,0,-21.25],"rotationY":-1.57,"scale":1.2},
-  {"id":"house-55","type":"phase2/houses/casa-esquina-amarilla","position":[37.5,0,-10.75],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-56","type":"phase2/houses/casa-olivo-portal-arcos","position":[37.5,0,-5.25],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-57","type":"phase2/houses/casa-celeste-l-teja","position":[37.5,0,5.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-58","type":"phase2/houses/casita-coral-plana","position":[37.5,0,10.75],"rotationY":-1.57,"scale":1.5},
-  {"id":"house-59","type":"phase2/houses/casa-verde","position":[37.5,0,21.25],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-60","type":"phase2/houses/puesto-fruteria","position":[37.5,0,26.75],"rotationY":-1.57,"scale":1.2},
-  {"id":"house-61","type":"phase2/houses/casa-rosa-hastial","position":[37.5,0,-38],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-62","type":"phase2/houses/casa-celeste-l-teja","position":[37.5,0,38],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-63","type":"phase2/houses/casa-cyan","position":[-10.75,0,-37.5],"rotationY":0,"scale":1.3},
-  {"id":"house-64","type":"phase2/houses/casa-balcones-rojos","position":[-5.25,0,-37.5],"rotationY":0,"scale":1.3},
-  {"id":"house-65","type":"phase2/houses/casita-coral-plana","position":[5.25,0,-37.5],"rotationY":0,"scale":1.5},
-  {"id":"house-66","type":"phase2/houses/casa-cafe","position":[10.75,0,-37.5],"rotationY":0,"scale":1.3},
-  {"id":"house-67","type":"phase2/houses/casa-marron-premium","position":[21.25,0,-37.5],"rotationY":0,"scale":1.3},
-  {"id":"house-68","type":"phase2/houses/casa-esquina-amarilla","position":[26.75,0,-37.5],"rotationY":0,"scale":1.25},
-  {"id":"house-69","type":"phase2/houses/casa-verde","position":[-26.75,0,37.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-70","type":"phase2/houses/casa-celeste-l-teja","position":[-21.25,0,37.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-71","type":"phase2/houses/casa-cafe","position":[-10.75,0,37.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-72","type":"phase2/houses/casa-verde","position":[-5.25,0,37.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-73","type":"phase2/houses/casa-esquina-amarilla","position":[5.25,0,37.5],"rotationY":3.14,"scale":1.25},
-  {"id":"house-74","type":"phase2/houses/puesto-fruteria","position":[10.75,0,37.5],"rotationY":3.14,"scale":1.2},
-  {"id":"house-75","type":"phase2/houses/casa-cafe","position":[21.25,0,37.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-76","type":"phase2/houses/casa-rosa-hastial","position":[26.75,0,37.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-77","type":"phase2/houses/casa-esquina-amarilla","position":[-32,0,-42.5],"rotationY":0,"scale":1.25},
-  {"id":"house-78","type":"phase2/houses/casa-verde","position":[-42.5,0,-32],"rotationY":1.57,"scale":1.3},
-  {"id":"house-79","type":"phase2/houses/casita-coral-plana","position":[-32,0,42.5],"rotationY":3.14,"scale":1.5},
-  {"id":"house-80","type":"phase2/houses/casa-olivo-portal-arcos","position":[42.5,0,-32],"rotationY":-1.57,"scale":1.25},
-  {"id":"house-81","type":"phase2/houses/casa-celeste-l-teja","position":[-16,0,-42.5],"rotationY":0,"scale":1.3},
-  {"id":"house-82","type":"phase2/houses/casa-marron-premium","position":[-42.5,0,-16],"rotationY":1.57,"scale":1.3},
-  {"id":"house-83","type":"phase2/houses/casa-cyan","position":[-16,0,42.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-84","type":"phase2/houses/puesto-fruteria","position":[42.5,0,-16],"rotationY":-1.57,"scale":1.2},
-  {"id":"house-85","type":"phase2/houses/casa-esquina-amarilla","position":[-42.5,0,0],"rotationY":1.57,"scale":1.25},
-  {"id":"house-86","type":"phase2/houses/casa-cafe","position":[0,0,42.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-87","type":"phase2/houses/puesto-fruteria","position":[42.5,0,0],"rotationY":-1.57,"scale":1.2},
-  {"id":"house-88","type":"phase2/houses/casa-olivo-portal-arcos","position":[16,0,-42.5],"rotationY":0,"scale":1.25},
-  {"id":"house-89","type":"phase2/houses/casa-marron-premium","position":[-42.5,0,16],"rotationY":1.57,"scale":1.3},
-  {"id":"house-90","type":"phase2/houses/casita-coral-plana","position":[16,0,42.5],"rotationY":3.14,"scale":1.5},
-  {"id":"house-91","type":"phase2/houses/casa-celeste-l-teja","position":[42.5,0,16],"rotationY":-1.57,"scale":1.3},
-  {"id":"house-92","type":"phase2/houses/casa-cyan","position":[32,0,-42.5],"rotationY":0,"scale":1.3},
-  {"id":"house-93","type":"phase2/houses/casa-cafe","position":[-42.5,0,32],"rotationY":1.57,"scale":1.3},
-  {"id":"house-94","type":"phase2/houses/casa-rosa-hastial","position":[32,0,42.5],"rotationY":3.14,"scale":1.3},
-  {"id":"house-95","type":"phase2/houses/casita-coral-plana","position":[42.5,0,32],"rotationY":-1.57,"scale":1.5},
-  {"id":"deco-001","type":"phase2/decorations/planta-palma-maceta","position":[-34.4,0,-12.65],"rotationY":0,"scale":1.2},
-  {"id":"deco-002","type":"phase2/decorations/pila-cajas-pinas","position":[-34.4,0,-9.05],"rotationY":1.41,"scale":0.6},
-  {"id":"deco-003","type":"phase2/decorations/puestos","position":[-34.4,0,-8.15],"rotationY":2.61,"scale":1.4},
-  {"id":"deco-004","type":"phase2/decorations/silla-banquito","position":[-34.4,0,-10.15],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-005","type":"phase2/decorations/planta-flores-maceta","position":[-34.4,0,-7.15],"rotationY":0,"scale":1.1},
-  {"id":"deco-006","type":"phase2/decorations/silla-banquito","position":[-34.4,0,-3.55],"rotationY":1.1,"scale":0.8},
-  {"id":"deco-007","type":"phase2/decorations/canasta-mixta","position":[-34.4,0,-2.65],"rotationY":1.77,"scale":0.55},
-  {"id":"deco-008","type":"phase2/decorations/carrito-frutas-2","position":[-34,0,-5.45],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-009","type":"phase2/decorations/planta-palma-maceta","position":[-34.4,0,8.85],"rotationY":0,"scale":1.2},
-  {"id":"deco-010","type":"phase2/decorations/canasta-naranjas","position":[-34.4,0,12.45],"rotationY":2.06,"scale":0.55},
-  {"id":"deco-011","type":"phase2/decorations/canasta-mixta","position":[-34.4,0,13.35],"rotationY":4.54,"scale":0.55},
-  {"id":"deco-012","type":"phase2/decorations/silla-banquito","position":[-34.4,0,11.35],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-013","type":"phase2/decorations/planta-flores-maceta","position":[-34.4,0,19.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-014","type":"phase2/decorations/canasta-naranjas","position":[-34.4,0,22.95],"rotationY":1.57,"scale":0.55},
-  {"id":"deco-015","type":"phase2/decorations/caja-limas-tomates","position":[-34.4,0,23.85],"rotationY":1.59,"scale":0.55},
-  {"id":"deco-016","type":"phase2/decorations/planta-hojas-maceta","position":[-34.4,0,24.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-017","type":"phase2/decorations/planta-palma-maceta","position":[-34.4,0,-39.9],"rotationY":0,"scale":1.2},
-  {"id":"deco-018","type":"phase2/decorations/carrito-frutas-1","position":[-34,0,-38.2],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-019","type":"phase2/decorations/silla-banquito","position":[-34.4,0,-37.4],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-020","type":"phase2/decorations/planta-hojas-maceta","position":[-29.6,0,-8.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-021","type":"phase2/decorations/caja-mangos-papayas","position":[-29.6,0,-12.45],"rotationY":-1.56,"scale":0.55},
-  {"id":"deco-022","type":"phase2/decorations/caja-naranjas","position":[-29.6,0,-12.75],"rotationY":3.78,"scale":0.55},
-  {"id":"deco-023","type":"phase2/decorations/planta-palma-maceta","position":[-29.6,0,-3.35],"rotationY":0,"scale":1.2},
-  {"id":"deco-024","type":"phase2/decorations/silla-banquito","position":[-29.6,0,-5.85],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-025","type":"phase2/decorations/planta-flores-maceta","position":[-29.6,0,7.15],"rotationY":0,"scale":1.1},
-  {"id":"deco-026","type":"phase2/decorations/planta-hojas-maceta","position":[-29.6,0,12.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-027","type":"phase2/decorations/carrito-frutas-3","position":[-30,0,10.95],"rotationY":0,"scale":1.4},
-  {"id":"deco-028","type":"phase2/decorations/pila-cajas-pinas","position":[-29.6,0,19.55],"rotationY":-1.7,"scale":0.6},
-  {"id":"deco-029","type":"phase2/decorations/caja-naranjas","position":[-29.6,0,19.25],"rotationY":3.43,"scale":0.55},
-  {"id":"deco-030","type":"phase2/decorations/silla-banquito","position":[-29.6,0,20.65],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-031","type":"phase2/decorations/planta-flores-maceta","position":[-29.6,0,28.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-032","type":"phase2/decorations/caja-naranjas","position":[-29.6,0,25.05],"rotationY":-1.56,"scale":0.55},
-  {"id":"deco-033","type":"phase2/decorations/puestos","position":[-29.6,0,24.75],"rotationY":2.36,"scale":1.4},
-  {"id":"deco-034","type":"phase2/decorations/planta-hojas-maceta","position":[-18.4,0,-12.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-035","type":"phase2/decorations/pila-cajas-pinas","position":[-18.4,0,-9.05],"rotationY":1.9,"scale":0.6},
-  {"id":"deco-036","type":"phase2/decorations/pila-cajas-pinas","position":[-18.4,0,-8.15],"rotationY":1.44,"scale":0.6},
-  {"id":"deco-037","type":"phase2/decorations/planta-palma-maceta","position":[-18.4,0,-7.15],"rotationY":0,"scale":1.2},
-  {"id":"deco-038","type":"phase2/decorations/caja-naranjas","position":[-18.4,0,-3.55],"rotationY":1.38,"scale":0.55},
-  {"id":"deco-039","type":"phase2/decorations/puestos","position":[-18.4,0,-2.65],"rotationY":4.15,"scale":1.4},
-  {"id":"deco-040","type":"phase2/decorations/silla-banquito","position":[-18.4,0,-4.65],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-041","type":"phase2/decorations/planta-flores-maceta","position":[-18.4,0,3.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-042","type":"phase2/decorations/carrito-frutas-2","position":[-18,0,5.05],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-043","type":"phase2/decorations/canasta-mixta","position":[-18.4,0,12.45],"rotationY":1.51,"scale":0.55},
-  {"id":"deco-044","type":"phase2/decorations/pila-cajas-pinas","position":[-18.4,0,13.35],"rotationY":0.08,"scale":0.6},
-  {"id":"deco-045","type":"phase2/decorations/planta-palma-maceta","position":[-18.4,0,19.35],"rotationY":0,"scale":1.2},
-  {"id":"deco-046","type":"phase2/decorations/silla-banquito","position":[-18.4,0,21.85],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-047","type":"phase2/decorations/planta-flores-maceta","position":[-18.4,0,24.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-048","type":"phase2/decorations/planta-hojas-maceta","position":[-13.6,0,-24.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-049","type":"phase2/decorations/pila-cajas-pinas","position":[-13.6,0,-28.45],"rotationY":-1.58,"scale":0.6},
-  {"id":"deco-050","type":"phase2/decorations/canasta-naranjas","position":[-13.6,0,-28.75],"rotationY":0.05,"scale":0.55},
-  {"id":"deco-051","type":"phase2/decorations/planta-palma-maceta","position":[-13.6,0,-19.35],"rotationY":0,"scale":1.2},
-  {"id":"deco-052","type":"phase2/decorations/carrito-frutas-1","position":[-14,0,-21.05],"rotationY":0,"scale":1.4},
-  {"id":"deco-053","type":"phase2/decorations/silla-banquito","position":[-13.6,0,-21.85],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-054","type":"phase2/decorations/planta-hojas-maceta","position":[-13.6,0,28.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-055","type":"phase2/decorations/planta-palma-maceta","position":[-2.4,0,-28.65],"rotationY":0,"scale":1.2},
-  {"id":"deco-056","type":"phase2/decorations/caja-naranjas","position":[-2.4,0,-25.05],"rotationY":1.44,"scale":0.55},
-  {"id":"deco-057","type":"phase2/decorations/canasta-mixta","position":[-2.4,0,-24.15],"rotationY":5.99,"scale":0.55},
-  {"id":"deco-058","type":"phase2/decorations/silla-banquito","position":[-2.4,0,-26.15],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-059","type":"phase2/decorations/planta-flores-maceta","position":[-2.4,0,-23.15],"rotationY":0,"scale":1.1},
-  {"id":"deco-060","type":"phase2/decorations/planta-hojas-maceta","position":[-2.4,0,19.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-061","type":"phase2/decorations/carrito-frutas-3","position":[-2,0,21.05],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-062","type":"phase2/decorations/canasta-mixta","position":[-2.4,0,28.45],"rotationY":1.68,"scale":0.55},
-  {"id":"deco-063","type":"phase2/decorations/puestos","position":[-2.4,0,29.35],"rotationY":1.89,"scale":1.4},
-  {"id":"deco-064","type":"phase2/decorations/silla-banquito","position":[-2.4,0,27.35],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-065","type":"phase2/decorations/planta-flores-maceta","position":[2.4,0,-24.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-066","type":"phase2/decorations/caja-mangos-papayas","position":[2.4,0,-28.45],"rotationY":-1.11,"scale":0.55},
-  {"id":"deco-067","type":"phase2/decorations/pila-cajas-pinas","position":[2.4,0,-28.75],"rotationY":0.43,"scale":0.6},
-  {"id":"deco-068","type":"phase2/decorations/planta-hojas-maceta","position":[2.4,0,-19.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-069","type":"phase2/decorations/planta-palma-maceta","position":[2.4,0,23.15],"rotationY":0,"scale":1.2},
-  {"id":"deco-070","type":"phase2/decorations/silla-banquito","position":[2.4,0,20.65],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-071","type":"phase2/decorations/planta-flores-maceta","position":[2.4,0,28.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-072","type":"phase2/decorations/carrito-frutas-2","position":[2,0,26.95],"rotationY":0,"scale":1.4},
-  {"id":"deco-073","type":"phase2/decorations/planta-palma-maceta","position":[13.6,0,-23.15],"rotationY":0,"scale":1.2},
-  {"id":"deco-074","type":"phase2/decorations/caja-naranjas","position":[13.6,0,-19.55],"rotationY":1.98,"scale":0.55},
-  {"id":"deco-075","type":"phase2/decorations/canasta-naranjas","position":[13.6,0,-18.65],"rotationY":0.83,"scale":0.55},
-  {"id":"deco-076","type":"phase2/decorations/silla-banquito","position":[13.6,0,-20.65],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-077","type":"phase2/decorations/planta-flores-maceta","position":[13.6,0,19.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-078","type":"phase2/decorations/planta-hojas-maceta","position":[13.6,0,24.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-079","type":"phase2/decorations/canasta-naranjas","position":[13.6,0,28.45],"rotationY":1.91,"scale":0.55},
-  {"id":"deco-080","type":"phase2/decorations/caja-naranjas","position":[13.6,0,29.35],"rotationY":3.37,"scale":0.55},
-  {"id":"deco-081","type":"phase2/decorations/planta-palma-maceta","position":[18.4,0,-24.85],"rotationY":0,"scale":1.2},
-  {"id":"deco-082","type":"phase2/decorations/carrito-frutas-1","position":[18,0,-26.55],"rotationY":0,"scale":1.4},
-  {"id":"deco-083","type":"phase2/decorations/silla-banquito","position":[18.4,0,-27.35],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-084","type":"phase2/decorations/planta-hojas-maceta","position":[18.4,0,-8.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-085","type":"phase2/decorations/planta-palma-maceta","position":[18.4,0,-3.35],"rotationY":0,"scale":1.2},
-  {"id":"deco-086","type":"phase2/decorations/caja-naranjas","position":[18.4,0,-6.95],"rotationY":-1.32,"scale":0.55},
-  {"id":"deco-087","type":"phase2/decorations/pila-cajas-pinas","position":[18.4,0,-7.25],"rotationY":0.58,"scale":0.6},
-  {"id":"deco-088","type":"phase2/decorations/silla-banquito","position":[18.4,0,-5.85],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-089","type":"phase2/decorations/planta-flores-maceta","position":[18.4,0,7.15],"rotationY":0,"scale":1.1},
-  {"id":"deco-090","type":"phase2/decorations/planta-hojas-maceta","position":[18.4,0,12.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-091","type":"phase2/decorations/carrito-frutas-3","position":[18,0,10.95],"rotationY":0,"scale":1.4},
-  {"id":"deco-092","type":"phase2/decorations/caja-limas-tomates","position":[18.4,0,19.55],"rotationY":-1.57,"scale":0.55},
-  {"id":"deco-093","type":"phase2/decorations/caja-limas-tomates","position":[18.4,0,19.25],"rotationY":0.5,"scale":0.55},
-  {"id":"deco-094","type":"phase2/decorations/silla-banquito","position":[18.4,0,20.65],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-095","type":"phase2/decorations/planta-flores-maceta","position":[18.4,0,28.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-096","type":"phase2/decorations/planta-hojas-maceta","position":[29.6,0,-28.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-097","type":"phase2/decorations/planta-palma-maceta","position":[29.6,0,-23.15],"rotationY":0,"scale":1.2},
-  {"id":"deco-098","type":"phase2/decorations/silla-banquito","position":[29.6,0,-20.65],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-099","type":"phase2/decorations/planta-flores-maceta","position":[29.6,0,-12.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-100","type":"phase2/decorations/carrito-frutas-2","position":[30,0,-10.95],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-101","type":"phase2/decorations/planta-palma-maceta","position":[29.6,0,3.35],"rotationY":0,"scale":1.2},
-  {"id":"deco-102","type":"phase2/decorations/silla-banquito","position":[29.6,0,5.85],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-103","type":"phase2/decorations/planta-flores-maceta","position":[29.6,0,8.85],"rotationY":0,"scale":1.1},
-  {"id":"deco-104","type":"phase2/decorations/puestos","position":[29.6,0,12.45],"rotationY":1.54,"scale":1.4},
-  {"id":"deco-105","type":"phase2/decorations/canasta-naranjas","position":[29.6,0,13.35],"rotationY":4.18,"scale":0.55},
-  {"id":"deco-106","type":"phase2/decorations/planta-hojas-maceta","position":[29.6,0,19.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-107","type":"phase2/decorations/planta-palma-maceta","position":[29.6,0,24.85],"rotationY":0,"scale":1.2},
-  {"id":"deco-108","type":"phase2/decorations/pila-cajas-pinas","position":[29.6,0,28.45],"rotationY":1.09,"scale":0.6},
-  {"id":"deco-109","type":"phase2/decorations/caja-mangos-papayas","position":[29.6,0,29.35],"rotationY":5.94,"scale":0.55},
-  {"id":"deco-110","type":"phase2/decorations/carrito-frutas-1","position":[30,0,26.55],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-111","type":"phase2/decorations/silla-banquito","position":[29.6,0,27.35],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-112","type":"phase2/decorations/planta-hojas-maceta","position":[34.4,0,-19.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-113","type":"phase2/decorations/planta-palma-maceta","position":[34.4,0,-8.85],"rotationY":0,"scale":1.2},
-  {"id":"deco-114","type":"phase2/decorations/silla-banquito","position":[34.4,0,-11.35],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-115","type":"phase2/decorations/planta-flores-maceta","position":[34.4,0,-3.35],"rotationY":0,"scale":1.1},
-  {"id":"deco-116","type":"phase2/decorations/silla-banquito","position":[34.4,0,-6.95],"rotationY":-1.56,"scale":0.8},
-  {"id":"deco-117","type":"phase2/decorations/caja-naranjas","position":[34.4,0,-7.25],"rotationY":3.07,"scale":0.55},
-  {"id":"deco-118","type":"phase2/decorations/planta-hojas-maceta","position":[34.4,0,7.15],"rotationY":0,"scale":1.1},
-  {"id":"deco-119","type":"phase2/decorations/carrito-frutas-3","position":[34,0,5.45],"rotationY":0,"scale":1.4},
-  {"id":"deco-120","type":"phase2/decorations/silla-banquito","position":[34.4,0,10.15],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-121","type":"phase2/decorations/planta-flores-maceta","position":[34.4,0,23.15],"rotationY":0,"scale":1.1},
-  {"id":"deco-122","type":"phase2/decorations/planta-hojas-maceta","position":[34.4,0,28.65],"rotationY":0,"scale":1.1},
-  {"id":"deco-123","type":"phase2/decorations/caja-naranjas","position":[34.4,0,25.05],"rotationY":-1.27,"scale":0.55},
-  {"id":"deco-124","type":"phase2/decorations/caja-naranjas","position":[34.4,0,24.75],"rotationY":0.24,"scale":0.55},
-  {"id":"deco-125","type":"phase2/decorations/planta-palma-maceta","position":[34.4,0,-36.1],"rotationY":0,"scale":1.2},
-  {"id":"deco-126","type":"phase2/decorations/silla-banquito","position":[34.4,0,-38.6],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-127","type":"phase2/decorations/planta-flores-maceta","position":[34.4,0,39.9],"rotationY":0,"scale":1.1},
-  {"id":"deco-128","type":"phase2/decorations/puestos","position":[34.4,0,36.3],"rotationY":-1.72,"scale":1.4},
-  {"id":"deco-129","type":"phase2/decorations/caja-mangos-papayas","position":[34.4,0,36],"rotationY":5.35,"scale":0.55},
-  {"id":"deco-130","type":"phase2/decorations/carrito-frutas-2","position":[34,0,38.2],"rotationY":0,"scale":1.4},
-  {"id":"deco-131","type":"phase2/decorations/caja-mangos-papayas","position":[-12.45,0,-34.4],"rotationY":-0.08,"scale":0.55},
-  {"id":"deco-132","type":"phase2/decorations/caja-mangos-papayas","position":[-13.05,0,-34.1],"rotationY":5.77,"scale":0.55},
-  {"id":"deco-133","type":"phase2/decorations/planta-palma-maceta","position":[-3.35,0,-34.4],"rotationY":0,"scale":1.2},
-  {"id":"deco-134","type":"phase2/decorations/silla-banquito","position":[-5.85,0,-34.4],"rotationY":3.14,"scale":0.8},
-  {"id":"deco-135","type":"phase2/decorations/planta-flores-maceta","position":[7.15,0,-34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-136","type":"phase2/decorations/canasta-mixta","position":[3.55,0,-34.4],"rotationY":0.12,"scale":0.55},
-  {"id":"deco-137","type":"phase2/decorations/canasta-naranjas","position":[2.95,0,-34.1],"rotationY":0.62,"scale":0.55},
-  {"id":"deco-138","type":"phase2/decorations/planta-hojas-maceta","position":[12.65,0,-34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-139","type":"phase2/decorations/silla-banquito","position":[9.05,0,-34.4],"rotationY":-0.39,"scale":0.8},
-  {"id":"deco-140","type":"phase2/decorations/pila-cajas-pinas","position":[8.45,0,-34.1],"rotationY":4.11,"scale":0.6},
-  {"id":"deco-141","type":"phase2/decorations/planta-palma-maceta","position":[23.15,0,-34.4],"rotationY":0,"scale":1.2},
-  {"id":"deco-142","type":"phase2/decorations/canasta-mixta","position":[19.55,0,-34.4],"rotationY":-0.12,"scale":0.55},
-  {"id":"deco-143","type":"phase2/decorations/canasta-naranjas","position":[18.95,0,-34.1],"rotationY":5.67,"scale":0.55},
-  {"id":"deco-144","type":"phase2/decorations/carrito-frutas-1","position":[21.45,0,-34],"rotationY":1.57,"scale":1.4},
-  {"id":"deco-145","type":"phase2/decorations/silla-banquito","position":[20.65,0,-34.4],"rotationY":3.14,"scale":0.8},
-  {"id":"deco-146","type":"phase2/decorations/canasta-naranjas","position":[25.05,0,-34.4],"rotationY":0.37,"scale":0.55},
-  {"id":"deco-147","type":"phase2/decorations/pila-cajas-pinas","position":[24.45,0,-34.1],"rotationY":3.42,"scale":0.6},
-  {"id":"deco-148","type":"phase2/decorations/planta-hojas-maceta","position":[-28.65,0,34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-149","type":"phase2/decorations/caja-mangos-papayas","position":[-25.05,0,34.4],"rotationY":3.62,"scale":0.55},
-  {"id":"deco-150","type":"phase2/decorations/canasta-naranjas","position":[-24.45,0,34.7],"rotationY":4.45,"scale":0.55},
-  {"id":"deco-151","type":"phase2/decorations/planta-palma-maceta","position":[-23.15,0,34.4],"rotationY":0,"scale":1.2},
-  {"id":"deco-152","type":"phase2/decorations/silla-banquito","position":[-20.65,0,34.4],"rotationY":6.28,"scale":0.8},
-  {"id":"deco-153","type":"phase2/decorations/planta-flores-maceta","position":[-12.65,0,34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-154","type":"phase2/decorations/caja-limas-tomates","position":[-9.05,0,34.4],"rotationY":3.61,"scale":0.55},
-  {"id":"deco-155","type":"phase2/decorations/canasta-naranjas","position":[-8.45,0,34.7],"rotationY":3.48,"scale":0.55},
-  {"id":"deco-156","type":"phase2/decorations/planta-hojas-maceta","position":[-7.15,0,34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-157","type":"phase2/decorations/carrito-frutas-3","position":[-5.45,0,34],"rotationY":4.71,"scale":1.4},
-  {"id":"deco-158","type":"phase2/decorations/silla-banquito","position":[5.85,0,34.4],"rotationY":6.28,"scale":0.8},
-  {"id":"deco-159","type":"phase2/decorations/planta-flores-maceta","position":[8.85,0,34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-160","type":"phase2/decorations/planta-hojas-maceta","position":[19.35,0,34.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-161","type":"phase2/decorations/caja-mangos-papayas","position":[22.95,0,34.4],"rotationY":3.43,"scale":0.55},
-  {"id":"deco-162","type":"phase2/decorations/caja-naranjas","position":[23.55,0,34.7],"rotationY":2.81,"scale":0.55},
-  {"id":"deco-163","type":"phase2/decorations/planta-palma-maceta","position":[24.85,0,34.4],"rotationY":0,"scale":1.2},
-  {"id":"deco-164","type":"phase2/decorations/silla-banquito","position":[27.35,0,34.4],"rotationY":6.28,"scale":0.8},
-  {"id":"deco-165","type":"phase2/decorations/planta-flores-maceta","position":[-30.1,0,-39.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-166","type":"phase2/decorations/carrito-frutas-2","position":[-31.8,0,-39],"rotationY":1.57,"scale":1.4},
-  {"id":"deco-167","type":"phase2/decorations/planta-palma-maceta","position":[-33.9,0,39.4],"rotationY":0,"scale":1.2},
-  {"id":"deco-168","type":"phase2/decorations/silla-banquito","position":[-31.4,0,39.4],"rotationY":6.28,"scale":0.8},
-  {"id":"deco-169","type":"phase2/decorations/planta-flores-maceta","position":[39.4,0,-30.1],"rotationY":0,"scale":1.1},
-  {"id":"deco-170","type":"phase2/decorations/caja-mangos-papayas","position":[39.4,0,-33.7],"rotationY":-1.12,"scale":0.55},
-  {"id":"deco-171","type":"phase2/decorations/caja-naranjas","position":[39.4,0,-34],"rotationY":0.77,"scale":0.55},
-  {"id":"deco-172","type":"phase2/decorations/planta-hojas-maceta","position":[-14.1,0,-39.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-173","type":"phase2/decorations/planta-palma-maceta","position":[-39.4,0,-17.9],"rotationY":0,"scale":1.2},
-  {"id":"deco-174","type":"phase2/decorations/carrito-frutas-1","position":[-39,0,-16.2],"rotationY":3.14,"scale":1.4},
-  {"id":"deco-175","type":"phase2/decorations/silla-banquito","position":[-39.4,0,-15.4],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-176","type":"phase2/decorations/planta-hojas-maceta","position":[39.4,0,-14.1],"rotationY":0,"scale":1.1},
-  {"id":"deco-177","type":"phase2/decorations/caja-mangos-papayas","position":[39.4,0,-17.7],"rotationY":-1.37,"scale":0.55},
-  {"id":"deco-178","type":"phase2/decorations/pila-cajas-pinas","position":[39.4,0,-18],"rotationY":5.08,"scale":0.6},
-  {"id":"deco-179","type":"phase2/decorations/planta-palma-maceta","position":[-39.4,0,-1.9],"rotationY":0,"scale":1.2},
-  {"id":"deco-180","type":"phase2/decorations/caja-limas-tomates","position":[-39.4,0,1.7],"rotationY":1.99,"scale":0.55},
-  {"id":"deco-181","type":"phase2/decorations/caja-limas-tomates","position":[-39.4,0,2.6],"rotationY":1.6,"scale":0.55},
-  {"id":"deco-182","type":"phase2/decorations/silla-banquito","position":[-39.4,0,0.6],"rotationY":4.71,"scale":0.8},
-  {"id":"deco-183","type":"phase2/decorations/planta-flores-maceta","position":[-1.9,0,39.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-184","type":"phase2/decorations/pila-cajas-pinas","position":[1.7,0,39.4],"rotationY":2.71,"scale":0.6},
-  {"id":"deco-185","type":"phase2/decorations/pila-cajas-pinas","position":[2.3,0,39.7],"rotationY":2.34,"scale":0.6},
-  {"id":"deco-186","type":"phase2/decorations/planta-hojas-maceta","position":[39.4,0,1.9],"rotationY":0,"scale":1.1},
-  {"id":"deco-187","type":"phase2/decorations/canasta-naranjas","position":[39.4,0,-1.7],"rotationY":-2.06,"scale":0.55},
-  {"id":"deco-188","type":"phase2/decorations/puestos","position":[39.4,0,-2],"rotationY":2.35,"scale":1.4},
-  {"id":"deco-189","type":"phase2/decorations/carrito-frutas-3","position":[39,0,0.2],"rotationY":0,"scale":1.4},
-  {"id":"deco-190","type":"phase2/decorations/caja-limas-tomates","position":[14.3,0,-39.4],"rotationY":0.04,"scale":0.55},
-  {"id":"deco-191","type":"phase2/decorations/caja-naranjas","position":[13.7,0,-39.1],"rotationY":4.13,"scale":0.55},
-  {"id":"deco-192","type":"phase2/decorations/silla-banquito","position":[15.4,0,-39.4],"rotationY":3.14,"scale":0.8},
-  {"id":"deco-193","type":"phase2/decorations/planta-flores-maceta","position":[-39.4,0,14.1],"rotationY":0,"scale":1.1},
-  {"id":"deco-194","type":"phase2/decorations/caja-mangos-papayas","position":[-39.4,0,17.7],"rotationY":1.73,"scale":0.55},
-  {"id":"deco-195","type":"phase2/decorations/pila-cajas-pinas","position":[-39.4,0,18.6],"rotationY":3.93,"scale":0.6},
-  {"id":"deco-196","type":"phase2/decorations/planta-hojas-maceta","position":[14.1,0,39.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-197","type":"phase2/decorations/pila-cajas-pinas","position":[17.7,0,39.4],"rotationY":3.6,"scale":0.6},
-  {"id":"deco-198","type":"phase2/decorations/pila-cajas-pinas","position":[18.3,0,39.7],"rotationY":0.73,"scale":0.6},
-  {"id":"deco-199","type":"phase2/decorations/planta-palma-maceta","position":[39.4,0,17.9],"rotationY":0,"scale":1.2},
-  {"id":"deco-200","type":"phase2/decorations/silla-banquito","position":[39.4,0,14.3],"rotationY":-2,"scale":0.8},
-  {"id":"deco-201","type":"phase2/decorations/caja-naranjas","position":[39.4,0,14],"rotationY":0.58,"scale":0.55},
-  {"id":"deco-202","type":"phase2/decorations/silla-banquito","position":[39.4,0,15.4],"rotationY":1.57,"scale":0.8},
-  {"id":"deco-203","type":"phase2/decorations/planta-flores-maceta","position":[33.9,0,-39.4],"rotationY":0,"scale":1.1},
-  {"id":"deco-204","type":"phase2/decorations/carrito-frutas-2","position":[32.2,0,-39],"rotationY":1.57,"scale":1.4},
-  {"id":"deco-205","type":"phase2/decorations/planta-palma-maceta","position":[30.1,0,39.4],"rotationY":0,"scale":1.2},
-  {"id":"deco-206","type":"phase2/decorations/silla-banquito","position":[32.6,0,39.4],"rotationY":6.28,"scale":0.8},
-  {"id":"deco-207","type":"phase2/decorations/planta-flores-maceta","position":[39.4,0,33.9],"rotationY":0,"scale":1.1},
-  {"id":"deco-208","type":"phase2/decorations/canasta-naranjas","position":[39.4,0,30.3],"rotationY":-2.06,"scale":0.55},
-  {"id":"deco-209","type":"phase2/decorations/puestos","position":[39.4,0,30],"rotationY":1.46,"scale":1.4},
-  {"id":"deco-lamp-1","type":"phase2/decorations/farol-calle","position":[-35.3,0,-35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-2","type":"phase2/decorations/farol-calle","position":[-28.7,0,-12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-3","type":"phase2/decorations/farol-calle","position":[-35.3,0,-19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-4","type":"phase2/decorations/farol-calle","position":[-28.7,0,3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-5","type":"phase2/decorations/farol-calle","position":[-35.3,0,-3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-6","type":"phase2/decorations/farol-calle","position":[-28.7,0,19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-7","type":"phase2/decorations/farol-calle","position":[-35.3,0,12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-8","type":"phase2/decorations/farol-calle","position":[-28.7,0,35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-9","type":"phase2/decorations/farol-calle","position":[-35.3,0,28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-10","type":"phase2/decorations/farol-calle","position":[-12.7,0,-28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-11","type":"phase2/decorations/farol-calle","position":[-19.3,0,-35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-12","type":"phase2/decorations/farol-calle","position":[-12.7,0,-12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-13","type":"phase2/decorations/farol-calle","position":[-19.3,0,-19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-14","type":"phase2/decorations/farol-calle","position":[-12.7,0,3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-15","type":"phase2/decorations/farol-calle","position":[-19.3,0,-3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-16","type":"phase2/decorations/farol-calle","position":[-12.7,0,19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-17","type":"phase2/decorations/farol-calle","position":[-19.3,0,12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-18","type":"phase2/decorations/farol-calle","position":[-12.7,0,35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-19","type":"phase2/decorations/farol-calle","position":[-19.3,0,28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-20","type":"phase2/decorations/farol-calle","position":[3.3,0,-28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-21","type":"phase2/decorations/farol-calle","position":[-3.3,0,-35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-22","type":"phase2/decorations/farol-calle","position":[3.3,0,-12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-23","type":"phase2/decorations/farol-calle","position":[-3.3,0,-19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-24","type":"phase2/decorations/farol-calle","position":[3.3,0,19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-25","type":"phase2/decorations/farol-calle","position":[-3.3,0,12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-26","type":"phase2/decorations/farol-calle","position":[3.3,0,35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-27","type":"phase2/decorations/farol-calle","position":[-3.3,0,28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-28","type":"phase2/decorations/farol-calle","position":[19.3,0,-28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-29","type":"phase2/decorations/farol-calle","position":[12.7,0,-35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-30","type":"phase2/decorations/farol-calle","position":[19.3,0,-12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-31","type":"phase2/decorations/farol-calle","position":[12.7,0,-19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-32","type":"phase2/decorations/farol-calle","position":[19.3,0,3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-33","type":"phase2/decorations/farol-calle","position":[12.7,0,-3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-34","type":"phase2/decorations/farol-calle","position":[19.3,0,19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-35","type":"phase2/decorations/farol-calle","position":[12.7,0,12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-36","type":"phase2/decorations/farol-calle","position":[19.3,0,35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-37","type":"phase2/decorations/farol-calle","position":[12.7,0,28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-38","type":"phase2/decorations/farol-calle","position":[35.3,0,-28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-39","type":"phase2/decorations/farol-calle","position":[28.7,0,-35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-40","type":"phase2/decorations/farol-calle","position":[35.3,0,-12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-41","type":"phase2/decorations/farol-calle","position":[28.7,0,-19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-42","type":"phase2/decorations/farol-calle","position":[35.3,0,3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-43","type":"phase2/decorations/farol-calle","position":[28.7,0,-3.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-44","type":"phase2/decorations/farol-calle","position":[35.3,0,19.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-45","type":"phase2/decorations/farol-calle","position":[28.7,0,12.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-46","type":"phase2/decorations/farol-calle","position":[35.3,0,35.3],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-47","type":"phase2/decorations/farol-calle","position":[28.7,0,28.7],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-48","type":"phase2/decorations/farol-calle","position":[-28.9,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-49","type":"phase2/decorations/farol-calle","position":[-35.1,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-50","type":"phase2/decorations/farol-calle","position":[-8,0,-28.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-51","type":"phase2/decorations/farol-calle","position":[-28.9,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-52","type":"phase2/decorations/farol-calle","position":[-35.1,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-53","type":"phase2/decorations/farol-calle","position":[8,0,-28.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-54","type":"phase2/decorations/farol-calle","position":[-28.9,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-55","type":"phase2/decorations/farol-calle","position":[-35.1,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-56","type":"phase2/decorations/farol-calle","position":[24,0,-28.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-57","type":"phase2/decorations/farol-calle","position":[-12.9,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-58","type":"phase2/decorations/farol-calle","position":[-24,0,-12.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-59","type":"phase2/decorations/farol-calle","position":[-12.9,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-60","type":"phase2/decorations/farol-calle","position":[-19.1,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-61","type":"phase2/decorations/farol-calle","position":[-8,0,-12.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-62","type":"phase2/decorations/farol-calle","position":[-12.9,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-63","type":"phase2/decorations/farol-calle","position":[-19.1,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-64","type":"phase2/decorations/farol-calle","position":[8,0,-12.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-65","type":"phase2/decorations/farol-calle","position":[-12.9,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-66","type":"phase2/decorations/farol-calle","position":[-19.1,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-67","type":"phase2/decorations/farol-calle","position":[24,0,-12.9],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-68","type":"phase2/decorations/farol-calle","position":[3.1,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-69","type":"phase2/decorations/farol-calle","position":[-3.1,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-70","type":"phase2/decorations/farol-calle","position":[-24,0,3.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-71","type":"phase2/decorations/farol-calle","position":[3.1,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-72","type":"phase2/decorations/farol-calle","position":[-3.1,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-73","type":"phase2/decorations/farol-calle","position":[-8,0,3.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-74","type":"phase2/decorations/farol-calle","position":[3.1,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-75","type":"phase2/decorations/farol-calle","position":[-3.1,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-76","type":"phase2/decorations/farol-calle","position":[8,0,3.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-77","type":"phase2/decorations/farol-calle","position":[3.1,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-78","type":"phase2/decorations/farol-calle","position":[-3.1,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-79","type":"phase2/decorations/farol-calle","position":[24,0,3.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-80","type":"phase2/decorations/farol-calle","position":[19.1,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-81","type":"phase2/decorations/farol-calle","position":[12.9,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-82","type":"phase2/decorations/farol-calle","position":[-24,0,19.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-83","type":"phase2/decorations/farol-calle","position":[19.1,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-84","type":"phase2/decorations/farol-calle","position":[12.9,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-85","type":"phase2/decorations/farol-calle","position":[-8,0,19.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-86","type":"phase2/decorations/farol-calle","position":[19.1,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-87","type":"phase2/decorations/farol-calle","position":[12.9,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-88","type":"phase2/decorations/farol-calle","position":[8,0,19.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-89","type":"phase2/decorations/farol-calle","position":[19.1,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-90","type":"phase2/decorations/farol-calle","position":[12.9,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-91","type":"phase2/decorations/farol-calle","position":[24,0,19.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-92","type":"phase2/decorations/farol-calle","position":[35.1,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-93","type":"phase2/decorations/farol-calle","position":[28.9,0,-24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-94","type":"phase2/decorations/farol-calle","position":[-24,0,35.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-95","type":"phase2/decorations/farol-calle","position":[35.1,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-96","type":"phase2/decorations/farol-calle","position":[28.9,0,-8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-97","type":"phase2/decorations/farol-calle","position":[-8,0,35.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-98","type":"phase2/decorations/farol-calle","position":[35.1,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-99","type":"phase2/decorations/farol-calle","position":[28.9,0,8],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-100","type":"phase2/decorations/farol-calle","position":[8,0,35.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-101","type":"phase2/decorations/farol-calle","position":[35.1,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-102","type":"phase2/decorations/farol-calle","position":[28.9,0,24],"rotationY":0,"scale":1.9},
-  {"id":"deco-lamp-103","type":"phase2/decorations/farol-calle","position":[24,0,35.1],"rotationY":0,"scale":1.9},
-  {"id":"deco-210","type":"phase2/decorations/planta-hojas-maceta","position":[-35.2,0,-39],"rotationY":0,"scale":1.3},
-  {"id":"deco-211","type":"phase2/decorations/planta-hojas-maceta","position":[-39,0,-35.2],"rotationY":0,"scale":1.3},
-  {"id":"deco-212","type":"phase2/decorations/planta-hojas-maceta","position":[-28.8,0,39],"rotationY":0,"scale":1.3},
-  {"id":"deco-213","type":"phase2/decorations/planta-hojas-maceta","position":[39,0,-28.8],"rotationY":0,"scale":1.3},
-  {"id":"deco-214","type":"phase2/decorations/planta-flores-maceta","position":[-19.2,0,-39],"rotationY":0,"scale":1.3},
-  {"id":"deco-215","type":"phase2/decorations/planta-palma-maceta","position":[-39,0,-19.2],"rotationY":0,"scale":1.3},
-  {"id":"deco-216","type":"phase2/decorations/planta-hojas-maceta","position":[-12.8,0,39],"rotationY":0,"scale":1.3},
-  {"id":"deco-217","type":"phase2/decorations/planta-flores-maceta","position":[39,0,-12.8],"rotationY":0,"scale":1.3},
-  {"id":"deco-218","type":"phase2/decorations/planta-palma-maceta","position":[-3.2,0,-39],"rotationY":0,"scale":1.3},
-  {"id":"deco-219","type":"phase2/decorations/planta-palma-maceta","position":[-39,0,-3.2],"rotationY":0,"scale":1.3},
-  {"id":"deco-220","type":"phase2/decorations/planta-hojas-maceta","position":[3.2,0,39],"rotationY":0,"scale":1.3},
-  {"id":"deco-221","type":"phase2/decorations/planta-palma-maceta","position":[39,0,3.2],"rotationY":0,"scale":1.3},
-  {"id":"deco-222","type":"phase2/decorations/planta-flores-maceta","position":[12.8,0,-39],"rotationY":0,"scale":1.3},
-  {"id":"deco-223","type":"phase2/decorations/planta-hojas-maceta","position":[-39,0,12.8],"rotationY":0,"scale":1.3},
-  {"id":"deco-224","type":"phase2/decorations/planta-hojas-maceta","position":[19.2,0,39],"rotationY":0,"scale":1.3},
-  {"id":"deco-225","type":"phase2/decorations/planta-hojas-maceta","position":[39,0,19.2],"rotationY":0,"scale":1.3},
-  {"id":"deco-226","type":"phase2/decorations/planta-flores-maceta","position":[28.8,0,-39],"rotationY":0,"scale":1.3},
-  {"id":"deco-227","type":"phase2/decorations/planta-palma-maceta","position":[-39,0,28.8],"rotationY":0,"scale":1.3},
-  {"id":"deco-228","type":"phase2/decorations/planta-hojas-maceta","position":[35.2,0,39],"rotationY":0,"scale":1.3},
-  {"id":"deco-229","type":"phase2/decorations/planta-palma-maceta","position":[39,0,35.2],"rotationY":0,"scale":1.3},
-  {"id":"plaza-deco-1","type":"phase2/decorations/mesa-corona","position":[-9.5,0,6.5],"rotationY":2.17,"scale":0.8},
-  {"id":"plaza-deco-2","type":"phase2/decorations/mesa-corona","position":[9.5,0,-6.5],"rotationY":-0.97,"scale":0.8},
-  {"id":"plaza-deco-3","type":"phase2/decorations/vitrina-super-fritos","position":[-9.5,0,-6.5],"rotationY":0.97,"scale":1.1},
-  {"id":"plaza-deco-4","type":"phase2/decorations/vitrina-super-fritos","position":[9.5,0,6.5],"rotationY":-2.17,"scale":1.1},
-  {"id":"plaza-el-poderoso","type":"phase2/decorations/el-poderoso","position":[-3,0,0],"rotationY":1.57,"scale":1.5},
-  {"id":"plaza-rey-momo","type":"rey-momo","position":[3,0,0],"rotationY":-1.57,"scale":1},
-  {"id":"portal-to-library","type":"portal","position":[0,1.05,-16],"rotationY":0,"scale":1.55}
+  {
+    "id": "parroquia",
+    "type": "parroquia",
+    "position": [
+      -22.085381543169838,
+      -0.283,
+      -22.067369504156108
+    ],
+    "rotationY": 0.785,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.80170353025244,
+        8.317718292482951,
+        -6.534031442891237
+      ],
+      "size": [
+        9.778057508009054,
+        16.402995058918393,
+        13.2248712616587
+      ]
+    }
+  },
+  {
+    "id": "dancer-01",
+    "type": "dancer",
+    "position": [
+      0,
+      0,
+      6.3
+    ],
+    "rotationY": 3.14,
+    "scale": 1,
+    "variant": "bailarina-amarilla"
+  },
+  {
+    "id": "dancer-02",
+    "type": "dancer",
+    "position": [
+      5.46,
+      0,
+      3.15
+    ],
+    "rotationY": -2.09,
+    "scale": 1,
+    "variant": "bailarin-blanco"
+  },
+  {
+    "id": "dancer-03",
+    "type": "dancer",
+    "position": [
+      5.46,
+      0,
+      -3.15
+    ],
+    "rotationY": -1.05,
+    "scale": 1,
+    "variant": "bailarina-azul"
+  },
+  {
+    "id": "dancer-04",
+    "type": "dancer",
+    "position": [
+      0,
+      0,
+      -6.3
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "bailarin-blanco-azul"
+  },
+  {
+    "id": "dancer-05",
+    "type": "dancer",
+    "position": [
+      -5.46,
+      0,
+      -3.15
+    ],
+    "rotationY": 1.05,
+    "scale": 1,
+    "variant": "bailarina-roja"
+  },
+  {
+    "id": "dancer-06",
+    "type": "dancer",
+    "position": [
+      -5.46,
+      0,
+      3.15
+    ],
+    "rotationY": 2.09,
+    "scale": 1,
+    "variant": "bailarina-verde"
+  },
+  {
+    "id": "vehicle-chiva",
+    "type": "parade-vehicle",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "chiva-rumbera"
+  },
+  {
+    "id": "vehicle-carrosa-riwi",
+    "type": "parade-vehicle",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carrosa-riwi",
+    "videoSrcs": [
+      "/videos/mocadevia/mocadevia-1.mp4",
+      "/videos/mocadevia/mocadevia-2.mp4"
+    ]
+  },
+  {
+    "id": "vehicle-carrosa-marimonda",
+    "type": "parade-vehicle",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carrosa-marimonda"
+  },
+  {
+    "id": "casa-carnavalera",
+    "type": "carnival-house",
+    "position": [
+      0,
+      0,
+      -39
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.301404231124454,
+        0
+      ],
+      "size": [
+        6.825674228947146,
+        2.9583640231026544,
+        3.7119496177715323
+      ]
+    }
+  },
+  {
+    "id": "plaza",
+    "type": "phase2/scenes/plaza-baile-carnaval",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-002",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -10.9,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-003",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -5.1,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-004",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      5.1,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-005",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      10.9,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-006",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      21.1,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-007",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      26.9,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-008",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      37.1,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-010",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      -10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-011",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      -5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-012",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-013",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-014",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-015",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-016",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -32,
+      0,
+      37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-017",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -37.1,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-018",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -26.9,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-019",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -21.1,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-020",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -10.9,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-021",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -5.1,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-022",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      5.1,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-023",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      10.9,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-024",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      21.1,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-025",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      26.9,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-026",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      37.1,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-027",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      -37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-028",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      -26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-029",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      -21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-030",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      -10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-031",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      -5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-032",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-033",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-034",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-035",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-036",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -16,
+      0,
+      37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-037",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -37.1,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-038",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -26.9,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-039",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -21.1,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-040",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -10.9,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-041",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      10.9,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-042",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      21.1,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-043",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      26.9,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-044",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      37.1,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-045",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      -37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-046",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      -26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-047",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      -21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-048",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      -10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-049",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-050",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-051",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-052",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      0,
+      0,
+      37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-053",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -37.1,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-054",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -26.9,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-055",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -21.1,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-056",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -10.9,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-057",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -5.1,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-058",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      5.1,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-059",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      10.9,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-060",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      21.1,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-061",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      26.9,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-062",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      37.1,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-063",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      -37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-064",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      -26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-065",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      -21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-066",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      -10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-067",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      -5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-068",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-069",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-070",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-071",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-072",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      16,
+      0,
+      37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-073",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -37.1,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-074",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -26.9,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-075",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -21.1,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-076",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -10.9,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-077",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      -5.1,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-078",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      5.1,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-079",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      10.9,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-080",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      21.1,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-081",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      26.9,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-082",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      37.1,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-083",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      -37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-084",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      -26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-085",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      -21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-086",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      -10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-087",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      -5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-088",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      5.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-089",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      10.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-090",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      21.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-091",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      26.9
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-092",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-recta",
+    "position": [
+      32,
+      0,
+      37.1
+    ],
+    "rotationY": 1.57,
+    "scale": 1.46
+  },
+  {
+    "id": "floor-094",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -32,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-095",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -32,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-096",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -32,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-097",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -32,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-098",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -16,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-099",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -16,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-100",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -16,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-101",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -16,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-102",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -16,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-103",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      0,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-104",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      0,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-105",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      0,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-106",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      0,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-107",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      16,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-108",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      16,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-109",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      16,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-110",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      16,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-111",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      16,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-112",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      32,
+      0,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-113",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      32,
+      0,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-114",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      32,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-115",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      32,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-116",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      32,
+      0,
+      32
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "house-01",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      -40.41744261185551,
+      0,
+      -15.673967370145775
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.344262751651588,
+        6,
+        3.8051061681811964
+      ]
+    }
+  },
+  {
+    "id": "house-02",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      -37.5,
+      0,
+      -5.25
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        4.853218209883853
+      ]
+    }
+  },
+  {
+    "id": "house-03",
+    "type": "phase2/houses/casa-marron-premium",
+    "position": [
+      -37.5,
+      0,
+      5.25
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.9999999999999996,
+        -2.144955973592655
+      ],
+      "size": [
+        5.347698539159632,
+        5.999999999999999,
+        4.401142223990306
+      ]
+    }
+  },
+  {
+    "id": "house-04",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      -37.5,
+      0,
+      10.75
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.790754108108769,
+        6,
+        3.485732434975988
+      ]
+    }
+  },
+  {
+    "id": "house-05",
+    "type": "phase2/houses/casita-coral-plana",
+    "position": [
+      -37.5,
+      0,
+      21.25
+    ],
+    "rotationY": 1.57,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        1.7792430329066633e-7,
+        2.000000018533781,
+        -2.132462693870027
+      ],
+      "size": [
+        5.999999999999999,
+        4.074626871978659,
+        4.456919212713245
+      ]
+    }
+  },
+  {
+    "id": "house-06",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      -37.5,
+      0,
+      26.879763929526202
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        4.875361741184241
+      ]
+    }
+  },
+  {
+    "id": "house-07",
+    "type": "phase2/houses/casa-celeste-l-teja",
+    "position": [
+      -27.442648846370123,
+      0,
+      -33.55173116271937
+    ],
+    "rotationY": 0.9965260881372837,
+    "scale": 1.3
+  },
+  {
+    "id": "house-08",
+    "type": "phase2/houses/casa-marron-premium",
+    "position": [
+      -37.5,
+      0,
+      37.72381198348034
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.9999999999999996,
+        -2.144955973592655
+      ],
+      "size": [
+        5.347698539159632,
+        5.999999999999999,
+        4.41964684366475
+      ]
+    }
+  },
+  {
+    "id": "house-12",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      -26.5,
+      0.022643491516737724,
+      10.75
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        5.999999999999999
+      ]
+    }
+  },
+  {
+    "id": "house-14",
+    "type": "phase2/houses/casita-coral-plana",
+    "position": [
+      -24.3054575570089,
+      0,
+      27.799932960104247
+    ],
+    "rotationY": 0.014102696458308273,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        1.7792430329066633e-7,
+        2.000000018533781,
+        -2.5141809945506735
+      ],
+      "size": [
+        5.999999999999999,
+        4.074626871978659,
+        4.876423269277069
+      ]
+    }
+  },
+  {
+    "id": "house-16",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      -23.413633003128858,
+      0,
+      -4.710746582621056
+    ],
+    "rotationY": 0.018976140704572993,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.790754108108769,
+        6,
+        4.647201952023607
+      ]
+    }
+  },
+  {
+    "id": "house-17",
+    "type": "phase2/houses/casa-cyan",
+    "position": [
+      -20.373429662285822,
+      0,
+      5.442544668381668
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -2.1715541385408113
+      ],
+      "size": [
+        3.4604104453714775,
+        6,
+        5.334310608633428
+      ]
+    }
+  },
+  {
+    "id": "house-21",
+    "type": "phase2/houses/casa-cyan",
+    "position": [
+      -10.5,
+      0,
+      -26.75
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -2.1715541385408113
+      ],
+      "size": [
+        3.4604104453714775,
+        6,
+        4.54637275536483
+      ]
+    }
+  },
+  {
+    "id": "house-22",
+    "type": "phase2/houses/casa-marron-premium",
+    "position": [
+      -8.242,
+      0,
+      -19.612005631648675
+    ],
+    "rotationY": -0.005402587187126844,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.9999999999999996,
+        -2.144955973592655
+      ],
+      "size": [
+        5.347698539159632,
+        5.999999999999999,
+        5.7590598359175775
+      ]
+    }
+  },
+  {
+    "id": "house-28",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      -8.0375879171322,
+      0,
+      25.83611508753194
+    ],
+    "rotationY": -0.016641797177836756,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.790754108108769,
+        6,
+        3.4305889275248034
+      ]
+    }
+  },
+  {
+    "id": "house-32",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      7.754824206003843,
+      0,
+      26.87846601995535
+    ],
+    "rotationY": -0.005120969928023833,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        4.067796652589976,
+        5.537452738142335,
+        5.389815079391263
+      ]
+    }
+  },
+  {
+    "id": "house-33",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      8.195550277472382,
+      0,
+      -28.919959892748366
+    ],
+    "rotationY": 0.00412563740436702,
+    "scale": 0.9185363182679279,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        4.579016699266218,
+        5.889319806652268,
+        4.720188472283118
+      ]
+    },
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "house-34",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      8.41,
+      0,
+      -19.562052963792247
+    ],
+    "rotationY": 0.01000625404263066,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        6,
+        3.958506557797416,
+        2.9773647174777773
+      ]
+    }
+  },
+  {
+    "id": "house-37",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      24.585309555258263,
+      0,
+      -18.7550772656645
+    ],
+    "rotationY": 0.017463351978265818,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.790754108108769,
+        6,
+        4.647201952023607
+      ]
+    }
+  },
+  {
+    "id": "house-40",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      23.905355127904535,
+      0,
+      -3.2642452064606475
+    ],
+    "rotationY": -0.007351918528188152,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        4.483835174369515,
+        2.9582151569707413,
+        3.760561049253068
+      ]
+    }
+  },
+  {
+    "id": "house-42",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      20.785824922445435,
+      0,
+      11.231305306764554
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        3.879022789243601,
+        5.537452738142335,
+        4.881127487548394
+      ]
+    }
+  },
+  {
+    "id": "house-43",
+    "type": "phase2/houses/casa-rosa-hastial",
+    "position": [
+      20.90691053362466,
+      0,
+      21.25
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.642891756640001,
+        -2.50843370420733
+      ],
+      "size": [
+        4.185267344623383,
+        5.285783513280002,
+        4.850218063430723
+      ]
+    }
+  },
+  {
+    "id": "house-44",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      23.729438176404805,
+      -0.020938593788451754,
+      28.737807010397937
+    ],
+    "rotationY": -0.032411384230671206,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        5.107645920681496,
+        3.958506557797416,
+        3.321948927753673
+      ]
+    }
+  },
+  {
+    "id": "house-45",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      26.5,
+      0.1425912142479948,
+      -26.493286208751666
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        5.999999999999999
+      ]
+    }
+  },
+  {
+    "id": "house-47",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      23.403253043390585,
+      0,
+      -13.094980873611405
+    ],
+    "rotationY": -0.023709529921010154,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        5.749023662015564,
+        5.889319806652268,
+        5.3808940064168285
+      ]
+    },
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "house-49",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      23.675791676886202,
+      0,
+      3.533963150257782
+    ],
+    "rotationY": 0.0077888294340966654,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        5.21390842462723,
+        3.958506557797416,
+        2.856227102781744
+      ]
+    },
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "house-53",
+    "type": "phase2/houses/casa-olivo-portal-arcos",
+    "position": [
+      39.07622885828562,
+      0,
+      -27.937403252518727
+    ],
+    "rotationY": -1.3137085852687775,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.528248333898773,
+        -2.0819207071054477
+      ],
+      "size": [
+        6,
+        5.056496667797546,
+        3.1524590409293403
+      ]
+    }
+  },
+  {
+    "id": "house-54",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      37.5,
+      0,
+      -21.25
+    ],
+    "rotationY": -1.57,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        6,
+        3.958506557797416,
+        2.7886898419430626
+      ]
+    }
+  },
+  {
+    "id": "house-55",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      39.350416262741234,
+      0,
+      -13.44488761246395
+    ],
+    "rotationY": -0.7710314328184411,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        6.000000000000001,
+        5.889319806652268,
+        5.708737257974489
+      ]
+    }
+  },
+  {
+    "id": "house-56",
+    "type": "phase2/houses/casa-olivo-portal-arcos",
+    "position": [
+      37.5,
+      0,
+      -8.38889240421156
+    ],
+    "rotationY": -1.57,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.528248333898773,
+        -2.0819207071054477
+      ],
+      "size": [
+        6,
+        5.056496667797546,
+        2.8749143508832593
+      ]
+    }
+  },
+  {
+    "id": "house-57",
+    "type": "phase2/houses/casa-celeste-l-teja",
+    "position": [
+      37.5,
+      0,
+      4.566767071925437
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.032667716739722685,
+        2.5617062947602096,
+        -2.662431927788332
+      ],
+      "size": [
+        4.725953400394799,
+        5.123412589520419,
+        5.431385189877663
+      ]
+    }
+  },
+  {
+    "id": "house-58",
+    "type": "phase2/houses/casita-coral-plana",
+    "position": [
+      37.5,
+      0,
+      10.75
+    ],
+    "rotationY": -1.57,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        1.7792430329066633e-7,
+        2.000000018533781,
+        -2.132462693870027
+      ],
+      "size": [
+        5.999999999999999,
+        4.074626871978659,
+        4.328889622263862
+      ]
+    }
+  },
+  {
+    "id": "house-59",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      37.5,
+      0,
+      21.25
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        4.744853625772577
+      ]
+    }
+  },
+  {
+    "id": "house-60",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      37.5,
+      0,
+      27.195126509502426
+    ],
+    "rotationY": -1.57,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        6,
+        3.958506557797416,
+        3.3105577526263885
+      ]
+    }
+  },
+  {
+    "id": "house-61",
+    "type": "phase2/houses/casa-rosa-hastial",
+    "position": [
+      36.25745587186463,
+      0,
+      -38
+    ],
+    "rotationY": -0.6999927378285256,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.642891756640001,
+        -2.50843370420733
+      ],
+      "size": [
+        4.805887778611509,
+        5.285783513280002,
+        5.197790509499602
+      ]
+    }
+  },
+  {
+    "id": "house-62",
+    "type": "phase2/houses/casa-celeste-l-teja",
+    "position": [
+      37.208510952618305,
+      0,
+      32.87420912872268
+    ],
+    "rotationY": -1.0913579788739933,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.032667716739722685,
+        2.5617062947602096,
+        -2.662431927788332
+      ],
+      "size": [
+        4.725953400394799,
+        5.123412589520419,
+        5.063091043855833
+      ]
+    },
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "house-63",
+    "type": "phase2/houses/casa-cyan",
+    "position": [
+      -10.75,
+      0,
+      -37.5
+    ],
+    "rotationY": 0,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -2.1715541385408113
+      ],
+      "size": [
+        3.4604104453714775,
+        6,
+        4.307952890683581
+      ]
+    }
+  },
+  {
+    "id": "house-64",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      -5.25,
+      0,
+      -37.5
+    ],
+    "rotationY": 0,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.790754108108769,
+        6,
+        3.516613950650152
+      ]
+    }
+  },
+  {
+    "id": "house-65",
+    "type": "phase2/houses/casita-coral-plana",
+    "position": [
+      5.25,
+      0,
+      -37.5
+    ],
+    "rotationY": 0,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        1.7792430329066633e-7,
+        2.000000018533781,
+        -2.132462693870027
+      ],
+      "size": [
+        5.999999999999999,
+        4.074626871978659,
+        4.273585853611633
+      ]
+    }
+  },
+  {
+    "id": "house-66",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      10.75,
+      0,
+      -37.5
+    ],
+    "rotationY": 0,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        4.067796652589976,
+        5.537452738142335,
+        4.9579862416267515
+      ]
+    }
+  },
+  {
+    "id": "house-67",
+    "type": "phase2/houses/casa-marron-premium",
+    "position": [
+      21.25,
+      0,
+      -37.5
+    ],
+    "rotationY": 0,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.9999999999999996,
+        -2.144955973592655
+      ],
+      "size": [
+        5.347698539159632,
+        5.999999999999999,
+        4.2755982286029885
+      ]
+    }
+  },
+  {
+    "id": "house-68",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      26.75,
+      0,
+      -37.5
+    ],
+    "rotationY": 0,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        5.607782918982771,
+        5.889319806652268,
+        4.658720369698111
+      ]
+    }
+  },
+  {
+    "id": "house-69",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      -26.500516377609138,
+      -0.02879825146850834,
+      37.5
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        4.942525867111401
+      ]
+    }
+  },
+  {
+    "id": "house-70",
+    "type": "phase2/houses/casa-celeste-l-teja",
+    "position": [
+      -20.88677878708617,
+      0,
+      38.665178005883966
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.032667716739722685,
+        2.5617062947602096,
+        -2.662431927788332
+      ],
+      "size": [
+        4.725953400394799,
+        5.123412589520419,
+        5.611038898634682
+      ]
+    }
+  },
+  {
+    "id": "house-71",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      -10.862955737862997,
+      0,
+      37.5
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        4.067796652589976,
+        5.537452738142335,
+        4.7579804651398
+      ]
+    }
+  },
+  {
+    "id": "house-72",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      -5.659781719808294,
+      0,
+      37.73505880730555
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3936443817344082,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6172975076211467,
+        -2.3513513513513513
+      ],
+      "size": [
+        4.216216216216216,
+        5.234595015242293,
+        4.837881355935893
+      ]
+    }
+  },
+  {
+    "id": "house-73",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      5.25,
+      0,
+      37.5
+    ],
+    "rotationY": 3.14,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        4.978437990714579,
+        5.889319806652268,
+        4.843264438599818
+      ]
+    }
+  },
+  {
+    "id": "house-74",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      10.75,
+      0,
+      37.5
+    ],
+    "rotationY": 3.14,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        5.339647726268964,
+        3.958506557797416,
+        3.0273861898155494
+      ]
+    }
+  },
+  {
+    "id": "house-75",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      21.25,
+      0,
+      37.5
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        3.9401305569936027,
+        5.537452738142335,
+        5.087362996450663
+      ]
+    }
+  },
+  {
+    "id": "house-76",
+    "type": "phase2/houses/casa-rosa-hastial",
+    "position": [
+      26.75,
+      0,
+      37.5
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.642891756640001,
+        -2.50843370420733
+      ],
+      "size": [
+        4.364174263799266,
+        5.285783513280002,
+        5.162938123744382
+      ]
+    }
+  },
+  {
+    "id": "house-77",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      -22.571904189817246,
+      0,
+      -34.65835811873755
+    ],
+    "rotationY": 0,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        4.934745322631945,
+        5.889319806652268,
+        4.371161741937755
+      ]
+    }
+  },
+  {
+    "id": "house-78",
+    "type": "phase2/houses/casa-verde",
+    "position": [
+      -35.29223205661858,
+      0,
+      -26.301511059209375
+    ],
+    "rotationY": 0.5478713498049503,
+    "scale": 1.3
+  },
+  {
+    "id": "house-79",
+    "type": "phase2/houses/casita-coral-plana",
+    "position": [
+      -33.04141930811541,
+      0,
+      40.09575920758843
+    ],
+    "rotationY": 3.14,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        1.7792430329066633e-7,
+        2.000000018533781,
+        -2.132462693870027
+      ],
+      "size": [
+        5.999999999999999,
+        4.074626871978659,
+        4.193996504748197
+      ]
+    }
+  },
+  {
+    "id": "house-80",
+    "type": "phase2/houses/casa-olivo-portal-arcos",
+    "position": [
+      39.37276131388187,
+      0,
+      -33.350703498600545
+    ],
+    "rotationY": -0.9184800938738218,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.528248333898773,
+        -2.0819207071054477
+      ],
+      "size": [
+        6,
+        5.056496667797546,
+        3.665971885884094
+      ]
+    }
+  },
+  {
+    "id": "house-81",
+    "type": "phase2/houses/casa-celeste-l-teja",
+    "position": [
+      -16,
+      0,
+      -40.21794770042094
+    ],
+    "rotationY": 0,
+    "scale": 1.3,
+    "collider": {
+      "shape": "cylinder",
+      "radius": 3,
+      "height": 5.123412589520419,
+      "offset": [
+        -0.032667716739722685,
+        0,
+        -2.662431927788332
+      ]
+    }
+  },
+  {
+    "id": "house-82",
+    "type": "phase2/houses/casa-marron-premium",
+    "position": [
+      -37.50808698367578,
+      0,
+      -20.933852013345984
+    ],
+    "rotationY": 0.7695805758730414,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.9999999999999996,
+        -2.144955973592655
+      ],
+      "size": [
+        5.188681308256816,
+        5.999999999999999,
+        4.3375580434001
+      ]
+    }
+  },
+  {
+    "id": "house-83",
+    "type": "phase2/houses/casa-cyan",
+    "position": [
+      -15.805280156691566,
+      0,
+      38.75405197142489
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -2.1715541385408113
+      ],
+      "size": [
+        3.4604104453714775,
+        6,
+        4.43485983048612
+      ]
+    }
+  },
+  {
+    "id": "house-85",
+    "type": "phase2/houses/casa-esquina-amarilla",
+    "position": [
+      -41.15549248502931,
+      0,
+      1.9187254415582702
+    ],
+    "rotationY": 0.9253347093024624,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.14563119740700614,
+        2.944659903326134,
+        -2.3300968321950437
+      ],
+      "size": [
+        5.054274401434228,
+        5.889319806652268,
+        4.560976375627346
+      ]
+    }
+  },
+  {
+    "id": "house-86",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      -0.4395858831895616,
+      0,
+      38.26029876796977
+    ],
+    "rotationY": 3.14,
+    "scale": 1.3236085743326835,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        4.067796652589976,
+        5.294422090765412,
+        5.084032198844889
+      ]
+    }
+  },
+  {
+    "id": "house-87",
+    "type": "phase2/houses/puesto-fruteria",
+    "position": [
+      38.620642579064814,
+      0,
+      -1.5800076928852715
+    ],
+    "rotationY": -1.57,
+    "scale": 1.2,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        1.979253278898708,
+        -2.00259341433432
+      ],
+      "size": [
+        6,
+        3.958506557797416,
+        3.8686994389301623
+      ]
+    }
+  },
+  {
+    "id": "house-88",
+    "type": "phase2/houses/casa-olivo-portal-arcos",
+    "position": [
+      15.848099945462568,
+      0.2652496823854795,
+      -37.903832219303396
+    ],
+    "rotationY": 0,
+    "scale": 1.25,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.528248333898773,
+        -2.0819207071054477
+      ],
+      "size": [
+        6,
+        5.056496667797546,
+        3.281932234461332
+      ]
+    }
+  },
+  {
+    "id": "house-89",
+    "type": "phase2/houses/casa-marron-premium",
+    "position": [
+      -36.60945362089594,
+      0,
+      16
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.9999999999999996,
+        -2.144955973592655
+      ],
+      "size": [
+        5.347698539159632,
+        5.999999999999999,
+        4.233244617039187
+      ]
+    }
+  },
+  {
+    "id": "house-90",
+    "type": "phase2/houses/casita-coral-plana",
+    "position": [
+      18.103245718861753,
+      0,
+      38.60131640522079
+    ],
+    "rotationY": 3.14,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        1.7792430329066633e-7,
+        2.000000018533781,
+        -2.132462693870027
+      ],
+      "size": [
+        5.560682437828625,
+        4.074626871978659,
+        4.523552689736314
+      ]
+    }
+  },
+  {
+    "id": "house-91",
+    "type": "phase2/houses/casa-celeste-l-teja",
+    "position": [
+      37.73006469421621,
+      0,
+      16.267201325567576
+    ],
+    "rotationY": -1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.032667716739722685,
+        2.5617062947602096,
+        -2.662431927788332
+      ],
+      "size": [
+        4.725953400394799,
+        5.123412589520419,
+        6
+      ]
+    }
+  },
+  {
+    "id": "house-92",
+    "type": "phase2/houses/casa-cyan",
+    "position": [
+      32.3143685231982,
+      0,
+      -39.779050587208204
+    ],
+    "rotationY": 0,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        3,
+        -2.1715541385408113
+      ],
+      "size": [
+        3.4604104453714775,
+        6,
+        4.46086985648654
+      ]
+    }
+  },
+  {
+    "id": "house-93",
+    "type": "phase2/houses/casa-cafe",
+    "position": [
+      -37.636047559279824,
+      0,
+      31.894450867166235
+    ],
+    "rotationY": 1.57,
+    "scale": 1.3,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.7687263690711674,
+        -2.429196255480287
+      ],
+      "size": [
+        4.067796652589976,
+        5.537452738142335,
+        5.081939052326431
+      ]
+    }
+  },
+  {
+    "id": "deco-001",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -34.4,
+      0,
+      -12.65
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-002",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -34.4,
+      0,
+      -9.05
+    ],
+    "rotationY": 1.41,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-004",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -36.158467007609104,
+      0,
+      -12.582430445531958
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-007",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      -34.4,
+      0,
+      -2.65
+    ],
+    "rotationY": 1.77,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-008",
+    "type": "phase2/decorations/carrito-frutas-2",
+    "position": [
+      -34.45793172265934,
+      0,
+      -5.00992061980456
+    ],
+    "rotationY": 1.4617608223151861,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-009",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -34.924754891822296,
+      0,
+      3.2727966399343584
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-010",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      -34.4,
+      0,
+      12.45
+    ],
+    "rotationY": 2.06,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-011",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      -34.4,
+      0,
+      13.35
+    ],
+    "rotationY": 4.54,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-012",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -34.4,
+      0,
+      11.35
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-013",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -34.4,
+      0,
+      19.35
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-014",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      -34.4,
+      0,
+      22.95
+    ],
+    "rotationY": 1.57,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-015",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      -34.4,
+      0,
+      23.85
+    ],
+    "rotationY": 1.59,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-016",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -35.2179137670022,
+      0,
+      29.386315208265614
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-020",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -28.558648986260714,
+      0,
+      -11.894571576959978
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-021",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      -29.6,
+      0,
+      -12.45
+    ],
+    "rotationY": -1.56,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-022",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      -29.6,
+      0,
+      -12.75
+    ],
+    "rotationY": 3.78,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-023",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -29.6,
+      0,
+      -3.35
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-025",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -29.174888216131514,
+      0,
+      2.7112917806209804
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-026",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -29.42116479734905,
+      0,
+      13.39872872921499
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-027",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      -28.397234330578076,
+      0,
+      7.906885277240521
+    ],
+    "rotationY": -1.5648001510942438,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-028",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -29.6,
+      0,
+      19.55
+    ],
+    "rotationY": -1.7,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-029",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      -29.6,
+      0,
+      19.25
+    ],
+    "rotationY": 3.43,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-030",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -29.6,
+      0,
+      20.65
+    ],
+    "rotationY": 1.57,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-031",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -29.6,
+      0,
+      28.65
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-032",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      -29.40334697218686,
+      0,
+      25.05
+    ],
+    "rotationY": -1.56,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-035",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -18.4,
+      0,
+      -9.05
+    ],
+    "rotationY": 1.9,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-036",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -18.4,
+      0,
+      -8.15
+    ],
+    "rotationY": 1.44,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-037",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -18.92743418622986,
+      0,
+      -5.831039112287355
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-038",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      -18.4,
+      0,
+      -3.55
+    ],
+    "rotationY": 1.38,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-040",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -20.65426345885893,
+      0,
+      -12.326953036698603
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-042",
+    "type": "phase2/decorations/carrito-frutas-2",
+    "position": [
+      -20.469845345645513,
+      0,
+      1.7392031321486812
+    ],
+    "rotationY": 3.14,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-043",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      -18.4,
+      0,
+      12.45
+    ],
+    "rotationY": 1.51,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-044",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -18.4,
+      0,
+      13.35
+    ],
+    "rotationY": 0.08,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-045",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -18.4,
+      0,
+      19.35
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-046",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -18.867244975835828,
+      0,
+      24.517542279996565
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-047",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -18.926344750399533,
+      0,
+      29.20311006832639
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-048",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -18.61599205590863,
+      0,
+      -18.79615813390168
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-049",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -13.6,
+      0,
+      -27.61462644088981
+    ],
+    "rotationY": -1.58,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-050",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      -13.430424345094808,
+      0,
+      -29.347960159390706
+    ],
+    "rotationY": 0.05,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-051",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -13.267950988350972,
+      0,
+      -18.51011049633048
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-052",
+    "type": "phase2/decorations/carrito-frutas-1",
+    "position": [
+      -13.141947428428661,
+      0,
+      -21.05
+    ],
+    "rotationY": -1.289909423744008,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-054",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -13.288500485828884,
+      0,
+      29.18677485584957
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-055",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -2.880808820708843,
+      0,
+      -29.16561125861206
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-056",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      -2.4,
+      0,
+      -25.05
+    ],
+    "rotationY": 1.44,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-057",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      -2.4,
+      0,
+      -24.15
+    ],
+    "rotationY": 5.99,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-058",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -2.4,
+      0,
+      -26.15
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-059",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -2.8059927611597897,
+      0,
+      -18.526825726402937
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-060",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -2.4,
+      0,
+      19.35
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-061",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      -2.879844398486566,
+      0,
+      21.05
+    ],
+    "rotationY": 1.5153946133473113,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-062",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      -2.4,
+      0,
+      28.45
+    ],
+    "rotationY": 1.68,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-064",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -2.4,
+      0,
+      27.35
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-065",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      2.4,
+      0,
+      -24.85
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-066",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      2.4,
+      0,
+      -28.45
+    ],
+    "rotationY": -1.11,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-067",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      2.4,
+      0,
+      -28.75
+    ],
+    "rotationY": 0.43,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-068",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      2.4,
+      0,
+      -19.35
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-069",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      3.0040033743729744,
+      0,
+      18.676845905483265
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-070",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      3.4518245384665214,
+      0,
+      20.65
+    ],
+    "rotationY": 1.57,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-071",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      2.704659468438804,
+      0,
+      29.19112545563482
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-072",
+    "type": "phase2/decorations/carrito-frutas-2",
+    "position": [
+      2.7272103185081527,
+      0,
+      26.95
+    ],
+    "rotationY": -1.5199250169712162,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-073",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      13.6,
+      0,
+      -23.15
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-074",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      13.6,
+      0,
+      -19.55
+    ],
+    "rotationY": 1.98,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-075",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      13.6,
+      0,
+      -18.65
+    ],
+    "rotationY": 0.83,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-076",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      13.6,
+      0,
+      -20.65
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-077",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      13.020829993767821,
+      0,
+      18.847681646340224
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-079",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      13.421007275314224,
+      0,
+      28.45
+    ],
+    "rotationY": 1.91,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-080",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      13.325166695027185,
+      0,
+      29.35
+    ],
+    "rotationY": 3.37,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-081",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      18.546734678574172,
+      0,
+      -18.876894322078495
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-082",
+    "type": "phase2/decorations/carrito-frutas-1",
+    "position": [
+      18.65910603778892,
+      0,
+      -27.74462880728036
+    ],
+    "rotationY": -1.4837140553214063,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-084",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      18.668031200787826,
+      0,
+      -13.341152861440811
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-085",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      18.763039075369488,
+      0,
+      -2.692332902560919
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-086",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      19.59474341948114,
+      0.018944553644038298,
+      -6.95
+    ],
+    "rotationY": -1.32,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-087",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      19.59062505780523,
+      0,
+      -8.001394082327092
+    ],
+    "rotationY": -1.554271540661201,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-089",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      18.79637579682991,
+      0,
+      2.8181389009789948
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-090",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      18.4,
+      0,
+      12.65
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-091",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      18.705635768955478,
+      0,
+      10.95
+    ],
+    "rotationY": -1.5444321019373262,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-092",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      18.4,
+      0,
+      19.55
+    ],
+    "rotationY": -1.57,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-093",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      18.4,
+      0,
+      19.25
+    ],
+    "rotationY": 0.5,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-094",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      18.4,
+      0,
+      20.65
+    ],
+    "rotationY": 1.57,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-095",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      18.875387901907832,
+      -0.06982585789299589,
+      29.160701017567167
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-096",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      29.445522929729297,
+      0.018146943362532197,
+      -27.584752129300774
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-097",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      29.6,
+      0,
+      -19.736302321232397
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-099",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      29.6,
+      0,
+      -12.65
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-100",
+    "type": "phase2/decorations/carrito-frutas-2",
+    "position": [
+      29.209034637441142,
+      0,
+      -10.95
+    ],
+    "rotationY": 1.4475476186082368,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-101",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      29.6,
+      0,
+      3.35
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-102",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      29.6,
+      0,
+      5.85
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-103",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      29.193000148420836,
+      -0.1297356319514158,
+      8.707517762569918
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-104",
+    "type": "phase2/decorations/puestos",
+    "position": [
+      29.6,
+      0,
+      12.45
+    ],
+    "rotationY": 1.54,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-105",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      29.6,
+      0,
+      13.35
+    ],
+    "rotationY": 4.18,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-106",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      29.274685964608082,
+      0,
+      18.803939961840367
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-107",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      29.49419237260265,
+      0.036236023705674913,
+      24.85
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-108",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      30.24447973550552,
+      0.11885645040413684,
+      28.855252862619196
+    ],
+    "rotationY": 1.09,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-109",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      29.6,
+      0.09963516281126938,
+      29.85401508390497
+    ],
+    "rotationY": -0.12053010953974935,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-110",
+    "type": "phase2/decorations/carrito-frutas-1",
+    "position": [
+      30,
+      0.09130043226599582,
+      26.55
+    ],
+    "rotationY": 1.4568762963413961,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-111",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      28.00718149058502,
+      -0.40515082997856244,
+      27.835012872364576
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-112",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.67950058692305,
+      0,
+      -19.880050681326512
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-113",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      34.4,
+      0,
+      -8.85
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-114",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      35.12357800273352,
+      -0.01681544570060134,
+      -11.35
+    ],
+    "rotationY": 1.57,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-115",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      34.865019044690456,
+      0,
+      -3.9602770734299537
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-116",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      35.084487307046686,
+      0,
+      -6.0278592253986005
+    ],
+    "rotationY": -1.56,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-117",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      34.83315306150355,
+      0,
+      -7.25
+    ],
+    "rotationY": 3.07,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-118",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.520904136374284,
+      0,
+      13.164840467355509
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-119",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      34.67733129637554,
+      0,
+      5.45
+    ],
+    "rotationY": -1.5223806127679216,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-120",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      35.07165355578031,
+      -0.021284721796807293,
+      8.035801146375697
+    ],
+    "rotationY": 1.57,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-121",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      34.79803387660833,
+      0,
+      18.834905322974077
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-122",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.65903175461405,
+      0,
+      29.25510918214687
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-123",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      34.4,
+      0,
+      25.05
+    ],
+    "rotationY": -1.27,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-124",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      34.4,
+      0,
+      24.75
+    ],
+    "rotationY": 0.24,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-125",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      34.4,
+      0,
+      -36.1
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-126",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      36.8765843996134,
+      0,
+      -34.95706337159555
+    ],
+    "rotationY": 1.57,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-130",
+    "type": "phase2/decorations/carrito-frutas-2",
+    "position": [
+      34.43037928120381,
+      0.08476485559475355,
+      31.48106138352278
+    ],
+    "rotationY": -0.80668410222053,
+    "scale": 1.4,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-131",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      -12.45,
+      0,
+      -34.64386488215971
+    ],
+    "rotationY": -0.08,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-132",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      -11.489482251721938,
+      0,
+      -34.49973000299798
+    ],
+    "rotationY": 5.77,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-135",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      7.15,
+      0,
+      -34.4
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-136",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      3.55,
+      0,
+      -34.4
+    ],
+    "rotationY": 0.12,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-137",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      2.95,
+      0,
+      -34.1
+    ],
+    "rotationY": 0.62,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-138",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      12.65,
+      0,
+      -34.4
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-139",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      9.05,
+      0,
+      -34.4
+    ],
+    "rotationY": -0.39,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-140",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      8.45,
+      0,
+      -34.1
+    ],
+    "rotationY": 4.11,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-142",
+    "type": "phase2/decorations/canasta-mixta",
+    "position": [
+      19.41997355789021,
+      0.057792567593215716,
+      -34.58384788619453
+    ],
+    "rotationY": -0.12,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-143",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      18.546246515858073,
+      0.035996437726886155,
+      -34.57014577981639
+    ],
+    "rotationY": 5.67,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-144",
+    "type": "phase2/decorations/carrito-frutas-1",
+    "position": [
+      22.01140600529248,
+      0,
+      -34.66581758398247
+    ],
+    "rotationY": -0.13825697589330874,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-147",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      20.273092810993134,
+      0,
+      -34.65920726941434
+    ],
+    "rotationY": 3.42,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-148",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -29.088707795535694,
+      0,
+      34.778958049185725
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-149",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      -25.05,
+      0,
+      34.4
+    ],
+    "rotationY": 3.62,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-150",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      -23.439753431994983,
+      0,
+      35.579347637440414
+    ],
+    "rotationY": 4.45,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-151",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -18.611240987589824,
+      0,
+      35.20470163603467
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-153",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -12.65,
+      0,
+      34.4
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-154",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      -9.05,
+      0,
+      34.4
+    ],
+    "rotationY": 3.61,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-155",
+    "type": "phase2/decorations/canasta-naranjas",
+    "position": [
+      -8.45,
+      0,
+      34.7
+    ],
+    "rotationY": 3.48,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-156",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -7.15,
+      0,
+      34.4
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-157",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      -5.45,
+      0,
+      34
+    ],
+    "rotationY": 4.71,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-158",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      5.85,
+      0,
+      34.4
+    ],
+    "rotationY": 6.28,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-159",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      8.85,
+      0,
+      34.4
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-160",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      18.987963311599053,
+      0,
+      34.773909991722576
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-161",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      22.95,
+      0,
+      34.4
+    ],
+    "rotationY": 3.43,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-162",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      23.55,
+      0,
+      34.7
+    ],
+    "rotationY": 2.81,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-163",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      24.85,
+      0,
+      34.4
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-164",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      27.155996142274155,
+      0,
+      34.81385424099053
+    ],
+    "rotationY": 6.28,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-167",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -34.511547281774,
+      0,
+      34.60437831029394
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-168",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -35.46703732616311,
+      0,
+      36.941633043260815
+    ],
+    "rotationY": 6.28,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-169",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      35.44935331624082,
+      0,
+      -29.249905194532143
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-170",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      37.057567733161804,
+      1.2801535991909505,
+      -34.93860323917567
+    ],
+    "rotationY": -1.12,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-171",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      37.42367406851578,
+      0,
+      -29.23033430833084
+    ],
+    "rotationY": 0.77,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-172",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -13.423004202820747,
+      0,
+      -34.59859085842149
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-174",
+    "type": "phase2/decorations/carrito-frutas-1",
+    "position": [
+      -32.31845946843622,
+      0,
+      -18.738106456252876
+    ],
+    "rotationY": -0.01922393996224084,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-176",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.737525547225665,
+      0,
+      -13.365852543297116
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-177",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      35.12526165361275,
+      0,
+      -18.703025687413447
+    ],
+    "rotationY": -1.37,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-178",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      36.20806897287604,
+      0,
+      -18.664270263195657
+    ],
+    "rotationY": 5.08,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-179",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -39.4,
+      0,
+      -1.9
+    ],
+    "rotationY": 0,
+    "scale": 1.2
+  },
+  {
+    "id": "deco-180",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      -39.4,
+      1.2560945920289948,
+      0.6590829138821086
+    ],
+    "rotationY": 1.99,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-181",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      -39.4,
+      0,
+      2.6
+    ],
+    "rotationY": 1.6,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-182",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      -39.4,
+      0,
+      0.6
+    ],
+    "rotationY": 4.71,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-185",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      2.3,
+      0,
+      39.7
+    ],
+    "rotationY": 2.34,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-186",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.73639158914126,
+      0.0607695839597574,
+      2.670454980398805
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-189",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      35.70212462121483,
+      0.05842631342928628,
+      -2.840430606075996
+    ],
+    "rotationY": -1.025245946110409,
+    "scale": 1.4
+  },
+  {
+    "id": "deco-190",
+    "type": "phase2/decorations/caja-limas-tomates",
+    "position": [
+      14.3,
+      0.04880129966263336,
+      -34.28892376329357
+    ],
+    "rotationY": 0.04,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-191",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      13.7,
+      0.08987949055794275,
+      -33.562814604500545
+    ],
+    "rotationY": 4.13,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-194",
+    "type": "phase2/decorations/caja-mangos-papayas",
+    "position": [
+      -39.4,
+      0,
+      17.7
+    ],
+    "rotationY": 1.73,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-195",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      -39.4,
+      0,
+      18.6
+    ],
+    "rotationY": 3.93,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-196",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      13.424363416325038,
+      0,
+      37.16815394018613
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-197",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      17.7,
+      0,
+      37.10171098387475
+    ],
+    "rotationY": 3.6,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-198",
+    "type": "phase2/decorations/pila-cajas-pinas",
+    "position": [
+      18.3,
+      0,
+      37.15094866384289
+    ],
+    "rotationY": 0.73,
+    "scale": 0.6
+  },
+  {
+    "id": "deco-200",
+    "type": "phase2/decorations/silla-banquito",
+    "position": [
+      39.4,
+      0,
+      14.3
+    ],
+    "rotationY": -2,
+    "scale": 0.8
+  },
+  {
+    "id": "deco-201",
+    "type": "phase2/decorations/caja-naranjas",
+    "position": [
+      39.4,
+      0,
+      14
+    ],
+    "rotationY": 0.58,
+    "scale": 0.55
+  },
+  {
+    "id": "deco-203",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      34.732873081446066,
+      0,
+      -34.77223661707119
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-lamp-1",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -34.55356330438478,
+      0,
+      -34.08361999510515
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-2",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.7,
+      0,
+      -12.7
+    ],
+    "rotationY": 0.07751487068647099,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-3",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.3,
+      0,
+      -19.3
+    ],
+    "rotationY": -0.8511117054396272,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-4",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.7,
+      0,
+      3.3
+    ],
+    "rotationY": -0.003054337181627571,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-5",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.3,
+      0,
+      -3.3
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-6",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.7,
+      0,
+      19.3
+    ],
+    "rotationY": 0.005278684503933903,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-7",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.3,
+      0,
+      12.7
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-8",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.7,
+      0,
+      35.3
+    ],
+    "rotationY": 1.530742856522189,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-9",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.3,
+      0,
+      28.7
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-10",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.7,
+      0,
+      -28.7
+    ],
+    "rotationY": 1.4576003765873202,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-11",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.3,
+      0,
+      -35.3
+    ],
+    "rotationY": -0.7436825875048618,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-12",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.68636827541593,
+      0,
+      -12.7
+    ],
+    "rotationY": 0.054881054388559856,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-13",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.3,
+      0,
+      -19.3
+    ],
+    "rotationY": -0.7231632827790074,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-14",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.7,
+      0,
+      3.2382093474873033
+    ],
+    "rotationY": 0.058553088376618725,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-15",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.3,
+      0,
+      -3.3
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-16",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.7,
+      0,
+      19.3
+    ],
+    "rotationY": 1.567775432325395,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-17",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.3,
+      0,
+      12.7
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-18",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.7,
+      0,
+      35.3
+    ],
+    "rotationY": 1.5048156818502756,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-19",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.3,
+      0,
+      28.7
+    ],
+    "rotationY": -1.4872393783332423,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-20",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.3,
+      0,
+      -28.7
+    ],
+    "rotationY": -0.09619058958436802,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-21",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.3,
+      0,
+      -35.3
+    ],
+    "rotationY": -1.5463393767789435,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-22",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.3,
+      0,
+      -12.7
+    ],
+    "rotationY": 1.4734860571226083,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-23",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.3,
+      0,
+      -19.3
+    ],
+    "rotationY": -1.5289481276853139,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-24",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.3,
+      0,
+      19.3
+    ],
+    "rotationY": 1.5469836610443217,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-25",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.3,
+      0,
+      12.7
+    ],
+    "rotationY": -1.5224930178987983,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-26",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.3,
+      0,
+      35.3
+    ],
+    "rotationY": 1.4988984027789765,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-27",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.3,
+      0,
+      28.7
+    ],
+    "rotationY": -1.5663327108939955,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-28",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.3,
+      0,
+      -28.7
+    ],
+    "rotationY": 1.459576852649375,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-29",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.7,
+      0,
+      -35.3
+    ],
+    "rotationY": -1.5511232158422648,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-30",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.3,
+      0,
+      -12.7
+    ],
+    "rotationY": -0.03162841735312026,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-31",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.7,
+      0,
+      -19.3
+    ],
+    "rotationY": -1.5316198040021036,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-32",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.3,
+      0,
+      3.3
+    ],
+    "rotationY": -0.005383438607488118,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-33",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.7,
+      0,
+      -3.3
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-34",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.3,
+      0,
+      19.3
+    ],
+    "rotationY": 0.8083306803988748,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-35",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.7,
+      0,
+      12.7
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-36",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.3,
+      0,
+      35.3
+    ],
+    "rotationY": 1.5384604946089302,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-37",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.7,
+      0,
+      28.7
+    ],
+    "rotationY": -1.5416470868248762,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-38",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.3,
+      0,
+      -28.7
+    ],
+    "rotationY": -0.06669049601503683,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-39",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.7,
+      0,
+      -35.3
+    ],
+    "rotationY": -0.9926418414367864,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-40",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.3,
+      0,
+      -12.7
+    ],
+    "rotationY": 0.05288224646025907,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-41",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      29.114194457803492,
+      0,
+      -19.3
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-42",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.3,
+      0,
+      3.3
+    ],
+    "rotationY": 0.01946830250544595,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-43",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.7,
+      0,
+      -3.3
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-44",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.3,
+      0,
+      19.3
+    ],
+    "rotationY": -0.0237084853951116,
+    "scale": 1.9,
+    "rotationX": 3.1296060487028736,
+    "rotationZ": 3.1373148443407084
+  },
+  {
+    "id": "deco-lamp-45",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.7,
+      0,
+      12.7
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-46",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.331917703087804,
+      0,
+      35.242803530876074
+    ],
+    "rotationY": 1.1441950478880878,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-47",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.7,
+      0,
+      28.7
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-48",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.9,
+      0,
+      -3.2999237994141524
+    ],
+    "rotationY": -0.016173223216313218,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-49",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.23950980469924,
+      0,
+      -12.71232184462441
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-50",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.0434409941846114,
+      0,
+      -28.646198391572533
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-51",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.80647863297282,
+      0,
+      12.766178102058664
+    ],
+    "rotationY": 0.033818097697044816,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-52",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.58503261304593,
+      0,
+      3.705902072937884
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-54",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -28.9,
+      0,
+      28.82571388656581
+    ],
+    "rotationY": -1.5442972567583715,
+    "scale": 1.9,
+    "rotationX": 3.1415926535897887,
+    "rotationZ": 3.1415926535897887
+  },
+  {
+    "id": "deco-lamp-55",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.1,
+      0.1777583656623607,
+      19.463862527964473
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-57",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.731110678717355,
+      0,
+      -19.553275393595488
+    ],
+    "rotationY": -1.5457848532346936,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-59",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.773571453669394,
+      0,
+      -3.2277147993100206
+    ],
+    "rotationY": -0.023152804980512462,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-60",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.25795199291177,
+      0,
+      -12.591098044515046
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-61",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.2646040984700284,
+      0,
+      -12.725072490808225
+    ],
+    "rotationY": 1.5700981797154956,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-62",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.797350591452725,
+      0,
+      12.778516801711126
+    ],
+    "rotationY": -0.027061809030510472,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-63",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.1,
+      0,
+      3.145979889120957
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-64",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.725988289511104,
+      0,
+      -12.752121783226842
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-65",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.670926146954852,
+      0,
+      28.63892960197498
+    ],
+    "rotationY": -1.5284237330897488,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-66",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.37179791202518,
+      0,
+      19.341021650753568
+    ],
+    "rotationY": 0.7869473667551887,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-67",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.542493559222176,
+      0,
+      -12.9
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-68",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.242432006552408,
+      0,
+      -19.488456610015515
+    ],
+    "rotationY": -1.4229720258362806,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-71",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      9.685615598493596,
+      0,
+      -7.817206672899843
+    ],
+    "rotationY": -0.850675569911555,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-72",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -9.81608051879315,
+      0,
+      -7.821478327453992
+    ],
+    "rotationY": -0.6688890196720795,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-74",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      9.750704277783786,
+      0,
+      7.80487189807277
+    ],
+    "rotationY": 0.9077256442683369,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-75",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -9.827072957539379,
+      0,
+      7.869432556052699
+    ],
+    "rotationY": 0.757946100174974,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-76",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.332631989953696,
+      0,
+      12.530213701471363
+    ],
+    "rotationY": -1.5146151584331442,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-77",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.2816768560236347,
+      0,
+      28.78182597777553
+    ],
+    "rotationY": -1.4894218741463223,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-80",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.405850848454953,
+      0,
+      -19.292955527091557
+    ],
+    "rotationY": -0.5073292550496764,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-81",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.773810298698493,
+      0,
+      -28.789855468344754
+    ],
+    "rotationY": 1.5059956038499156,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-83",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.256484457170348,
+      0,
+      -3.2497052488115945
+    ],
+    "rotationY": 0.018862732603074302,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-85",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.3644134699267627,
+      0,
+      19.22310338560888
+    ],
+    "rotationY": 1.5417370779314752,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-86",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.335573665497886,
+      0,
+      12.800759861721676
+    ],
+    "rotationY": -0.03808589917199903,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-87",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.9,
+      0,
+      3.1336032102929963
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-89",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.197326508721545,
+      0,
+      28.504392097569863
+    ],
+    "rotationY": -1.5145178377685797,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-90",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.532511910965328,
+      0,
+      19.50857505455117
+    ],
+    "rotationY": 1.5552242287072637,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-91",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      24,
+      0,
+      19.1
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-92",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.20365422124024,
+      0,
+      -19.309435154672688
+    ],
+    "rotationY": 0.025479660814690653,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-93",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      29.316601440232624,
+      0,
+      -29.2457701766013
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-94",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.27865435582393,
+      0,
+      35.251745831577686
+    ],
+    "rotationY": 1.5424852390700097,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-95",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.282396480848284,
+      0,
+      -3.6491823937862495
+    ],
+    "rotationY": 0.003281331026529044,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-97",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -3.317552809314061,
+      0,
+      35.263758519387615
+    ],
+    "rotationY": 1.5440847773956885,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-98",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.22263399326358,
+      0,
+      12.657624505430334
+    ],
+    "rotationY": -0.08190022962943734,
+    "scale": 1.9,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "deco-lamp-99",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.820461958840276,
+      0,
+      3.2714149861967297
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-100",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      12.684786660257577,
+      0,
+      35.274958309936636
+    ],
+    "rotationY": 1.5148906376400713,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-101",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      35.1,
+      0,
+      28.651952114228692
+    ],
+    "rotationY": 0.09457161340205641,
+    "scale": 1.9,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "deco-lamp-102",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.798636682529047,
+      0,
+      19.17495016959427
+    ],
+    "rotationY": 0,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-lamp-103",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      28.99538517360623,
+      -0.30417275527094656,
+      35.1
+    ],
+    "rotationY": 1.5054237683867049,
+    "scale": 1.9
+  },
+  {
+    "id": "deco-212",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -34.66294697199832,
+      0,
+      39
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-213",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.59420084776815,
+      0,
+      -28.363365159806722
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-214",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      -18.779289592808905,
+      0,
+      -34.82755918530792
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-215",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -34.7723453096229,
+      0,
+      -19.03293760267898
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-217",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      37.804240974410185,
+      0,
+      -13.079521973064532
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-218",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -3.2,
+      0,
+      -39
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-219",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -39,
+      0,
+      -3.2
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-220",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      3.2,
+      0,
+      39
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-221",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      39,
+      0,
+      3.2
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-223",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      -39,
+      0,
+      12.8
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-225",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      39,
+      0,
+      19.2
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-226",
+    "type": "phase2/decorations/planta-flores-maceta",
+    "position": [
+      28.8,
+      0,
+      -39
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-227",
+    "type": "phase2/decorations/planta-palma-maceta",
+    "position": [
+      -39,
+      0,
+      28.8
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "deco-228",
+    "type": "phase2/decorations/planta-hojas-maceta",
+    "position": [
+      34.51447202754004,
+      0,
+      34.62115526728913
+    ],
+    "rotationY": 0,
+    "scale": 1.3
+  },
+  {
+    "id": "plaza-deco-1",
+    "type": "phase2/decorations/mesa-corona",
+    "position": [
+      -9.235456469271478,
+      0.08354853966693288,
+      7.259913357570868
+    ],
+    "rotationY": 2.17,
+    "scale": 0.8,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "radius": 0.6873453837932306,
+      "height": 1.6
+    }
+  },
+  {
+    "id": "plaza-deco-2",
+    "type": "phase2/decorations/mesa-corona",
+    "position": [
+      8.807478021349754,
+      0.08315824695795862,
+      -6.83229299109943
+    ],
+    "rotationY": -0.97,
+    "scale": 0.8,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0,
+        0,
+        0
+      ],
+      "radius": 0.6873453837932306,
+      "height": 1.6
+    }
+  },
+  {
+    "id": "plaza-deco-3",
+    "type": "phase2/decorations/vitrina-super-fritos",
+    "position": [
+      -8.52456685056878,
+      0,
+      -6.5
+    ],
+    "rotationY": 0.97,
+    "scale": 1.1,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.8026286254890036,
+        0.012387337794319359
+      ],
+      "size": [
+        1.428616489602245,
+        1.6,
+        0.744453718282825
+      ]
+    }
+  },
+  {
+    "id": "plaza-deco-4",
+    "type": "phase2/decorations/vitrina-super-fritos",
+    "position": [
+      8.505777437989604,
+      0,
+      6.291398473701349
+    ],
+    "rotationY": -2.17,
+    "scale": 1.1,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.8026286254890036,
+        0.012387337794319359
+      ],
+      "size": [
+        1.428616489602245,
+        1.6,
+        0.744453718282825
+      ]
+    }
+  },
+  {
+    "id": "plaza-congas-personaje",
+    "type": "congas-personaje",
+    "position": [
+      9.42180489258066,
+      0,
+      6.807252503002278
+    ],
+    "rotationY": -2.17,
+    "scale": 1
+  },
+  {
+    "id": "plaza-el-poderoso",
+    "type": "phase2/decorations/el-poderoso",
+    "position": [
+      -3,
+      0,
+      0
+    ],
+    "rotationY": 1.57,
+    "scale": 1.5,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0.007428649461773322,
+        0.7999989956352256,
+        -0.21459480482480645
+      ],
+      "size": [
+        1.0102951758537164,
+        1.6812246321518585,
+        0.4749901493614249
+      ]
+    }
+  },
+  {
+    "id": "plaza-rey-momo",
+    "type": "rey-momo",
+    "position": [
+      3,
+      0,
+      0
+    ],
+    "rotationY": -1.57,
+    "scale": 1
+  },
+  {
+    "id": "portal-to-library",
+    "type": "portal",
+    "position": [
+      0,
+      1.05,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1.55
+  },
+  {
+    "id": "sun",
+    "type": "sun",
+    "position": [
+      -13.51954437133569,
+      24,
+      4
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-01",
+    "type": "cloud",
+    "position": [
+      -21.85,
+      23.18,
+      -34.71
+    ],
+    "rotationY": 0,
+    "scale": 1.15,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-02",
+    "type": "cloud",
+    "position": [
+      -9.4,
+      19.17,
+      -22.91
+    ],
+    "rotationY": 0,
+    "scale": 1.83,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-03",
+    "type": "cloud",
+    "position": [
+      -26,
+      18.65,
+      -35.73
+    ],
+    "rotationY": 0,
+    "scale": 1.71,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-04",
+    "type": "cloud",
+    "position": [
+      21.81,
+      21.55,
+      -25.52
+    ],
+    "rotationY": 0,
+    "scale": 1.72,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-05",
+    "type": "cloud",
+    "position": [
+      23.37,
+      21.97,
+      -19.4
+    ],
+    "rotationY": 0,
+    "scale": 1.36,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-06",
+    "type": "cloud",
+    "position": [
+      -20.85,
+      23.3,
+      -30.26
+    ],
+    "rotationY": 0,
+    "scale": 1.92,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-07",
+    "type": "cloud",
+    "position": [
+      -4.33,
+      22.57,
+      -14.8
+    ],
+    "rotationY": 0,
+    "scale": 1.78,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-08",
+    "type": "cloud",
+    "position": [
+      25.52,
+      22.56,
+      -19.42
+    ],
+    "rotationY": 0,
+    "scale": 1.66,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-09",
+    "type": "cloud",
+    "position": [
+      1.92,
+      20.16,
+      -21.6
+    ],
+    "rotationY": 0,
+    "scale": 2.06,
+    "variant": "phase2"
+  },
+  {
+    "id": "cloud-phase2-10",
+    "type": "cloud",
+    "position": [
+      -5.6,
+      19.09,
+      -23.47
+    ],
+    "rotationY": 0,
+    "scale": 2,
+    "variant": "phase2"
+  },
+  {
+    "id": "phase2-casa-carnavalera-1790430383062",
+    "type": "phase2/casa-carnavalera",
+    "position": [
+      -40.146830075998665,
+      0.0020000000000003734,
+      -9.6814086295913
+    ],
+    "rotationY": 1.2930602549704655,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.9760531733433405,
+        0
+      ],
+      "size": [
+        6,
+        2.2187730173269906,
+        3.6666666666666665
+      ]
+    },
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793
+  },
+  {
+    "id": "phase2-decorations-farol-calle-1790457837438",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      19.167628284965215,
+      0.07426899770895641,
+      -35.0773077334299
+    ],
+    "rotationY": -1.5598902640176453,
+    "scale": 1.9
+  },
+  {
+    "id": "phase2/decorations/farol-calle-1790458380229",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -12.738577466094934,
+      0.07146210074424744,
+      -35.184568845228725
+    ],
+    "rotationY": -1.5681500489449292,
+    "scale": 1.9
+  },
+  {
+    "id": "phase2/decorations/farol-calle-1790468691891",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -35.2728466515131,
+      0.05505292426882412,
+      35.26279161557602
+    ],
+    "rotationY": 0.8500392203810878,
+    "scale": 1.9
+  },
+  {
+    "id": "phase2-houses-casa-balcones-rojos-1790469613885",
+    "type": "phase2/houses/casa-balcones-rojos",
+    "position": [
+      31.865637210529478,
+      0.0009999999999917282,
+      37.50201718261357
+    ],
+    "rotationY": -0.40016671832503753,
+    "scale": 1.701785505082984,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.5868656814986126,
+        -1.8126520909444874
+      ],
+      "size": [
+        5.790754108108769,
+        5.073896501026658,
+        3.815870635805501
+      ]
+    }
+  },
+  {
+    "id": "phase2/decorations/farol-calle-1790470360000",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      3.259929188110989,
+      0.07464185446500778,
+      -35.192459487321194
+    ],
+    "rotationY": -1.5493199252203715,
+    "scale": 1.9
+  },
+  {
+    "id": "floor-117",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -20.37518388587123,
+      0,
+      -32.021497958095416
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-118",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -24.718107573439937,
+      0,
+      -32.00723463599778
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-119",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -29.08791094695919,
+      0,
+      -31.97909795806573
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-120",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -31.99468357564144,
+      0,
+      -20.36878177758098
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "floor-121",
+    "type": "phase2/floors/suelo-calles-adoquin-calle-cruce",
+    "position": [
+      -31.99995412026465,
+      0,
+      -24.7375028827118
+    ],
+    "rotationY": 0,
+    "scale": 1.1
+  },
+  {
+    "id": "deco-lamp-104",
+    "type": "phase2/decorations/farol-calle",
+    "position": [
+      -19.264644554827356,
+      0,
+      -28.73931847116488
+    ],
+    "rotationY": 1.5675632641486283,
+    "scale": 1.9,
+    "rotationX": -3.14159265358979,
+    "rotationZ": 3.14159265358979
+  },
+  {
+    "id": "deco-229",
+    "type": "phase2/decorations/carrito-frutas-1",
+    "position": [
+      -22.517353098845273,
+      0,
+      -12.568759768925384
+    ],
+    "rotationY": -0.061466660642699435,
+    "scale": 1.4,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.04851314619549765,
+        0.6058666825294495,
+        0.04277933197132211
+      ],
+      "size": [
+        1.183845409843775,
+        1.2576000293095906,
+        0.4169669149566716
+      ]
+    }
+  },
+  {
+    "id": "deco-230",
+    "type": "phase2/decorations/carrito-frutas-2",
+    "position": [
+      -24.942818554304495,
+      0,
+      -12.573862411832712
+    ],
+    "rotationY": -0.03377323982708703,
+    "scale": 1.4,
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.0773247793286013,
+        0.6618123539187768,
+        0.025336177598149823
+      ],
+      "size": [
+        1.2967160946950307,
+        1.372075408941377,
+        0.37213497882126007
+      ]
+    }
+  },
+  {
+    "id": "phase2-decorations-carrito-frutas-3-1790512425899",
+    "type": "phase2/decorations/carrito-frutas-3",
+    "position": [
+      -27.13586027217075,
+      0.017398415529113476,
+      -12.489078228514304
+    ],
+    "rotationY": -0.05468640567821893,
+    "scale": 1.4,
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.09876544079804306,
+        0.7742611322526167,
+        0
+      ],
+      "size": [
+        1.0596807589477466,
+        1.6,
+        0.4311239252970987
+      ]
+    }
+  }
 ]

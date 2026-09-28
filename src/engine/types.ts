@@ -7,6 +7,27 @@ import type { ReactNode } from 'react'
 import type { Vector3, Vector3Tuple } from 'three'
 
 /**
+ * Collider attached to an entity, in the entity's local space: `offset` and
+ * the dimensions are multiplied by the entity's `scale` and turned by its
+ * full rotation. A rotated box still collides as its world-space AABB, the only
+ * shape the player resolver understands.
+ */
+export interface ColliderSpec {
+  /** `box` becomes a walkable solid, `cylinder` a blocking circle, `none` disables the type's default collider. */
+  shape: 'box' | 'cylinder' | 'none'
+  /** Local offset of the collider's center (box) or base center (cylinder). */
+  offset?: Vector3Tuple
+  /** Box extents along local X, Y and Z. */
+  size?: Vector3Tuple
+  /** Cylinder radius. */
+  radius?: number
+  /** Cylinder height. */
+  height?: number
+  /** When set, the collider only takes part in collision while the scene lists this tag as active (see {@link EngineRenderContext.colliderTags}). */
+  tag?: string
+}
+
+/**
  * Editable entity record — the single JSON-serializable unit the engine renders.
  * `type` is intentionally an open string keyed against `engine/entityRegistry`'s
  * renderer map and `engine/config/entityCatalog`'s editor palette, so new scene
@@ -21,8 +42,12 @@ export interface EditableEntity {
   position: Vector3Tuple
   /** Y rotation in radians. */
   rotationY: number
-  /** Uniform scale. */
-  scale: number
+  /** X rotation in radians, optional and `0` when omitted. */
+  rotationX?: number
+  /** Z rotation in radians, optional and `0` when omitted. */
+  rotationZ?: number
+  /** Uniform scale, or per-axis `[x, y, z]` scale. */
+  scale: number | [number, number, number]
   /** Variant or color hint (e.g. `'short'|'medium'|'long'`, a hex color, a shelf width). */
   variant?: string
   /** Image URL carried by picture-like entities (e.g. sepia photo frames, posters). */
@@ -33,18 +58,17 @@ export interface EditableEntity {
   description?: string
   /** Video URL carried by screen-like entities (e.g. `ad-tower`), looped and muted. */
   videoSrc?: string
-}
-
-/**
- * Phase configuration driven by JSON.
- */
-export interface PhaseConfig {
-  /** Phase identifier. */
-  id: string
-  /** Human readable name. */
-  name: string
-  /** Entities to render in this phase. */
-  entities: EditableEntity[]
+  /**
+   * Video playlist carried by screen-like entities — plays each URL in order,
+   * advancing to the next when one ends and looping back to the first after
+   * the last, muted throughout. Takes priority over {@link videoSrc} when set
+   * and non-empty; a single-item array behaves like `videoSrc`.
+   */
+  videoSrcs?: string[]
+  /** Collider override; when absent the type's default from `engine/config/colliders.json` applies. */
+  collider?: ColliderSpec
+  /** Footprint `[width along X, depth along Z]` of area-like entities (`walk-area`), multiplied by `scale`; rotation is ignored, areas stay axis-aligned. */
+  areaSize?: [number, number]
 }
 
 /**
@@ -57,12 +81,16 @@ export interface EngineRenderContext {
   ritualProgress?: number
   /** Named `cityIntro` flight-lane waypoints (see `features/cityIntro/renderers/flightLane`), keyed by lane id. */
   flightLanes?: Record<string, Vector3[]>
+  /** World positions of the scene's `rail-tunnel` mouths, which bound the train's line. */
+  railTunnels?: Vector3Tuple[]
+  /** Tags of the tagged colliders that currently collide; tagged colliders are ignored when this is omitted. */
+  colliderTags?: string[]
 }
 
 /**
  * Props passed to every entity renderer registered in `engine/entityRegistry`
  * (and any per-scene renderer module it merges in, e.g. `engine/cityIntroRenderers`).
- * The entity's own `position`/`rotationY`/`scale` are already applied by `PhaseEngine`'s
+ * The entity's own `position`/`rotationY`/`rotationX`/`rotationZ`/`scale` are already applied by `PhaseEngine`'s
  * wrapping group, so renderers place their content at the origin.
  */
 export interface EntityRendererProps {
@@ -74,3 +102,27 @@ export interface EntityRendererProps {
 
 /** A component that renders one entity type. */
 export type EntityRenderer = (props: EntityRendererProps) => ReactNode
+
+/**
+ * Expands an entity scale into per-axis components.
+ * @param scale - Uniform number or `[x, y, z]` tuple
+ * @returns Per-axis scale, defaulting to `1`
+ */
+export function resolveEntityScale(scale: EditableEntity['scale'] | undefined): [number, number, number] {
+  if (Array.isArray(scale)) return scale
+  const uniform = scale ?? 1
+  return [uniform, uniform, uniform]
+}
+
+/**
+ * Packs per-axis components back into an entity scale, keeping a plain
+ * number when the three axes match so exports stay clean.
+ * @param x - X scale
+ * @param y - Y scale
+ * @param z - Z scale
+ * @returns Uniform number or `[x, y, z]` tuple
+ */
+export function packEntityScale(x: number, y: number, z: number): EditableEntity['scale'] {
+  if (Math.abs(x - y) < 1e-4 && Math.abs(x - z) < 1e-4) return x
+  return [x, y, z]
+}

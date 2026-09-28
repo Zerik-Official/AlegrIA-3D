@@ -3,7 +3,7 @@
  * @module features/phase1/components/parts/Arroyo/ArroyoWater
  */
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { buildLoftGeometry } from '@/features/phase1/components/parts/Arroyo/riverPath'
@@ -45,12 +45,15 @@ export function ArroyoWater({ curve, width, y }: ArroyoWaterProps) {
     []
   )
 
+  const waterRef = useRef<THREE.Mesh>(null)
+
   useFrame(({ clock }) => {
-    material.uniforms.uTime.value = clock.elapsedTime
+    const water = waterRef.current
+    if (water) (water.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime
   })
 
   return (
-    <mesh geometry={geometry} receiveShadow frustumCulled={false}>
+    <mesh ref={waterRef} geometry={geometry} receiveShadow frustumCulled={false}>
       <primitive object={material} attach="material" />
     </mesh>
   )

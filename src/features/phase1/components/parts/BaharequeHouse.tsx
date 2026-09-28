@@ -38,7 +38,7 @@ export const BaharequeHouse = memo(function BaharequeHouse({
   roofColor = '#5a3a18',
   variant = 'medium',
 }: BaharequeHouseProps) {
-  const dims = variant === 'short' ? ([2.1, 1.7, 1.9] as const) : variant === 'long' ? ([3.9, 1.7, 2.2] as const) : ([2.8, 1.7, 2.2] as const)
+  const dims: [number, number, number] = variant === 'short' ? [2.1, 1.7, 1.9] : variant === 'long' ? [3.9, 1.7, 2.2] : [2.8, 1.7, 2.2]
   const roofDims: [number, number, number] = variant === 'short' ? [2.4, 0.18, 2.2] : variant === 'long' ? [4.2, 0.18, 2.5] : [3.1, 0.18, 2.5]
   return (
     <group position={position} rotation-y={rotationY} scale={scale}>

@@ -5,7 +5,7 @@
  */
 
 import { useEditor } from '@/features/editor/hooks/useEditor'
-import { initialCityIntroEntities, initialPhase1Entities, initialLibraryEntities, initialPhase2Entities } from '@/features/editor/config/editableEntities'
+import { initialCityIntroEntities, initialPhase1Entities, initialLibraryEntities, initialPhase2Entities, initialCreditsEntities } from '@/features/editor/config/editableEntities'
 import { phaseSceneRegistry } from '@/app/engine/PhaseSceneRegistry'
 import type { SceneId } from '@/engine/config/entityCatalog'
 import type { GamePhase } from '@/shared/types'
@@ -27,6 +27,8 @@ export interface SceneEditors {
   phase1Editor: SceneEditor
   /** Phase 2 editor, needed directly by `Phase2Scene`. */
   phase2Editor: SceneEditor
+  /** Credits editor, needed directly by `CreditsScene`. */
+  creditsEditor: SceneEditor
 }
 
 /**
@@ -34,14 +36,23 @@ export interface SceneEditors {
  * @returns The four scene editors plus the one active for `phase`
  */
 export function useSceneEditors(phase: GamePhase): SceneEditors {
-  const cityIntroEditor = useEditor(initialCityIntroEntities)
-  const libraryEditor = useEditor(initialLibraryEntities)
-  const phase1Editor = useEditor(initialPhase1Entities)
-  const phase2Editor = useEditor(initialPhase2Entities)
+  const cityIntroEditor = useEditor(initialCityIntroEntities, 'cityIntro')
+  const libraryEditor = useEditor(initialLibraryEntities, 'library')
+  const phase1Editor = useEditor(initialPhase1Entities, 'phase1')
+  const phase2Editor = useEditor(initialPhase2Entities, 'phase2')
+  const creditsEditor = useEditor(initialCreditsEntities, 'credits')
 
   const currentScene = phaseSceneRegistry.resolveScene(phase)
   const currentEditor =
-    currentScene === 'cityIntro' ? cityIntroEditor : currentScene === 'library' ? libraryEditor : currentScene === 'phase1' ? phase1Editor : phase2Editor
+    currentScene === 'cityIntro'
+      ? cityIntroEditor
+      : currentScene === 'library'
+        ? libraryEditor
+        : currentScene === 'phase1'
+          ? phase1Editor
+          : currentScene === 'credits'
+            ? creditsEditor
+            : phase2Editor
 
-  return { currentScene, currentEditor, cityIntroEditor, libraryEditor, phase1Editor, phase2Editor }
+  return { currentScene, currentEditor, cityIntroEditor, libraryEditor, phase1Editor, phase2Editor, creditsEditor }
 }

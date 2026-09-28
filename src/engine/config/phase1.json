@@ -1,108 +1,1454 @@
 [
-  {"id": "house-01", "type": "bahareque-house", "position": [-60, 0, -70], "rotationY": 0.22, "scale": 0.62, "variant": "medium"},
-  {"id": "house-02", "type": "bahareque-house", "position": [-45, 0, -55], "rotationY": -0.35, "scale": 0.62, "variant": "short"},
-  {"id": "house-03", "type": "bahareque-house", "position": [-30, 0, -80], "rotationY": 0.48, "scale": 0.62, "variant": "long"},
-  {"id": "house-04", "type": "bahareque-house", "position": [-65, 0, -20], "rotationY": -0.18, "scale": 0.62, "variant": "medium"},
-  {"id": "house-05", "type": "bahareque-house", "position": [-50, 0, -5], "rotationY": 0.31, "scale": 0.62, "variant": "short"},
-  {"id": "house-06", "type": "bahareque-house", "position": [-35, 0, -25], "rotationY": -0.44, "scale": 0.62, "variant": "long"},
-  {"id": "house-07", "type": "bahareque-house", "position": [-70, 0, 20], "rotationY": 0.6, "scale": 0.62, "variant": "medium"},
-  {"id": "house-08", "type": "bahareque-house", "position": [-55, 0, 40], "rotationY": -0.26, "scale": 0.62, "variant": "short"},
-  {"id": "house-09", "type": "bahareque-house", "position": [-40, 0, 55], "rotationY": 0.14, "scale": 0.62, "variant": "long"},
-  {"id": "house-10", "type": "bahareque-house", "position": [-25, 0, 35], "rotationY": -0.52, "scale": 0.62, "variant": "medium"},
-  {"id": "house-11", "type": "bahareque-house", "position": [-60, 0, 70], "rotationY": 0.36, "scale": 0.62, "variant": "short"},
-  {"id": "house-12", "type": "bahareque-house", "position": [-45, 0, 85], "rotationY": -0.2, "scale": 0.62, "variant": "long"},
-  {"id": "house-13", "type": "bahareque-house", "position": [-20, 0, -45], "rotationY": 0.4, "scale": 0.62, "variant": "medium"},
-  {"id": "house-14", "type": "bahareque-house", "position": [-18, 0, 60], "rotationY": -0.3, "scale": 0.62, "variant": "short"},
-  {"id": "house-15", "type": "bahareque-house", "position": [-72, 0, -45], "rotationY": 0.5, "scale": 0.62, "variant": "long"},
-  {"id": "house-16", "type": "bahareque-house", "position": [-30, 0, 10], "rotationY": -0.15, "scale": 0.62, "variant": "medium"},
-
-  {"id": "anden-01", "type": "phase1/anden-alto", "position": [-48, 0, -52], "rotationY": 0, "scale": 0.9},
-  {"id": "anden-02", "type": "phase1/anden-alto", "position": [-35, 0, -22], "rotationY": 1.5708, "scale": 0.9},
-  {"id": "anden-03", "type": "phase1/anden-alto", "position": [-55, 0, 38], "rotationY": 0, "scale": 0.9},
-  {"id": "anden-04", "type": "phase1/anden-alto", "position": [-22, 0, 58], "rotationY": 1.5708, "scale": 0.9},
-
-  {"id": "photo-1857-declaratoria", "type": "sepia-photo", "position": [-1.2, 1.85, 3.8], "rotationY": 0.22, "scale": 1},
-  {"id": "photo-aduana", "type": "sepia-photo", "position": [1.6, 1.92, 4.4], "rotationY": -0.18, "scale": 1},
-  {"id": "photo-estacion-montoya", "type": "sepia-photo", "position": [0.2, 2.05, 5.8], "rotationY": 0.08, "scale": 1},
-  {"id": "photo-andenes-altos", "type": "sepia-photo", "position": [3.4, 1.78, 7.2], "rotationY": -0.32, "scale": 1},
-
-  {"id": "scene-estacion-montoya", "type": "phase1/scenes/estacion-montoya", "position": [28, 0, -60], "rotationY": 0, "scale": 1},
-  {"id": "scene-puerto-fluvial", "type": "phase1/scenes/puerto-fluvial", "position": [35, 0, 10], "rotationY": -1.5708, "scale": 1},
-  {"id": "scene-mini-puerto", "type": "phase1/scenes/mini-puerto-barranquilla-1857", "position": [40, 0, 70], "rotationY": -1.5708, "scale": 1},
-
-  {"id": "rail-b01", "type": "phase1/floors/rieles-riel-recta", "position": [0, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b02", "type": "phase1/floors/rieles-riel-recta", "position": [8, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b03", "type": "phase1/floors/rieles-riel-recta", "position": [16, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b04", "type": "phase1/floors/rieles-riel-recta-gastada", "position": [24, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b05", "type": "phase1/floors/rieles-riel-recta", "position": [32, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b06", "type": "phase1/floors/rieles-riel-recta", "position": [40, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b07", "type": "phase1/floors/rieles-riel-recta", "position": [48, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-b08", "type": "phase1/floors/rieles-riel-recta", "position": [56, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-t01", "type": "phase1/floors/rieles-riel-recta", "position": [0, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t02", "type": "phase1/floors/rieles-riel-recta", "position": [8, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t03", "type": "phase1/floors/rieles-riel-recta", "position": [16, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t04", "type": "phase1/floors/rieles-riel-recta", "position": [24, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t05", "type": "phase1/floors/rieles-riel-recta-media", "position": [32, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t06", "type": "phase1/floors/rieles-riel-recta", "position": [40, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t07", "type": "phase1/floors/rieles-riel-recta", "position": [48, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-t08", "type": "phase1/floors/rieles-riel-recta", "position": [56, 0, -44], "rotationY": 0, "scale": 1},
-  {"id": "rail-l01", "type": "phase1/floors/rieles-riel-recta", "position": [-4, 0, -72], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-l02", "type": "phase1/floors/rieles-riel-recta", "position": [-4, 0, -64], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-l03", "type": "phase1/floors/rieles-riel-recta", "position": [-4, 0, -56], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-l04", "type": "phase1/floors/rieles-riel-recta", "position": [-4, 0, -48], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-r01", "type": "phase1/floors/rieles-riel-recta", "position": [60, 0, -72], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-r02", "type": "phase1/floors/rieles-riel-recta", "position": [60, 0, -64], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-r03", "type": "phase1/floors/rieles-riel-recta", "position": [60, 0, -56], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-r04", "type": "phase1/floors/rieles-riel-recta", "position": [60, 0, -48], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-corner-sw", "type": "phase1/floors/rieles-riel-curva", "position": [-4, 0, -76], "rotationY": 0, "scale": 1},
-  {"id": "rail-corner-se", "type": "phase1/floors/rieles-riel-curva", "position": [60, 0, -76], "rotationY": 1.5708, "scale": 1},
-  {"id": "rail-corner-ne", "type": "phase1/floors/rieles-riel-curva", "position": [60, 0, -44], "rotationY": 3.1416, "scale": 1},
-  {"id": "rail-corner-nw", "type": "phase1/floors/rieles-riel-curva", "position": [-4, 0, -44], "rotationY": 4.7124, "scale": 1},
-
-  {"id": "train-01", "type": "phase1-train", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "phase1/vehicles/tren-completo"},
-
-  {"id": "deco-ancla", "type": "phase1/decorators/decorativos-ancla", "position": [42, 0, 15], "rotationY": 0.4, "scale": 1},
-  {"id": "deco-barril-01", "type": "phase1/decorators/decorativos-barril", "position": [31, 0, 4], "rotationY": 0.2, "scale": 1},
-  {"id": "deco-barril-02", "type": "phase1/decorators/decorativos-barril", "position": [30, 0, 6], "rotationY": 1.4, "scale": 1},
-  {"id": "deco-barril-03", "type": "phase1/decorators/decorativos-barril", "position": [41, 0, -6], "rotationY": 2.1, "scale": 1},
-  {"id": "deco-barril-04", "type": "phase1/decorators/decorativos-barril", "position": [32, 0, -70], "rotationY": 0.6, "scale": 1},
-  {"id": "deco-barriles-trio", "type": "phase1/decorators/decorativos-barriles-trio", "position": [29, 0, 18], "rotationY": -0.6, "scale": 1},
-  {"id": "deco-cajon-a", "type": "phase1/decorators/decorativos-cajon-a", "position": [32, 0, 2], "rotationY": 0.3, "scale": 1},
-  {"id": "deco-cajon-b", "type": "phase1/decorators/decorativos-cajon-b", "position": [33, 0, 3], "rotationY": -1.2, "scale": 1},
-  {"id": "deco-cajon-c", "type": "phase1/decorators/decorativos-cajon-c", "position": [34, 0, 4], "rotationY": 2.6, "scale": 1},
-  {"id": "deco-cajon-station", "type": "phase1/decorators/decorativos-cajon-a", "position": [24, 0, -70], "rotationY": 0.9, "scale": 1},
-  {"id": "deco-costal-01", "type": "phase1/decorators/decorativos-costal", "position": [30, 0, 12], "rotationY": 1.6, "scale": 1},
-  {"id": "deco-costal-02", "type": "phase1/decorators/decorativos-costal", "position": [40, 0, -4], "rotationY": -2.2, "scale": 1},
-  {"id": "deco-costal-03", "type": "phase1/decorators/decorativos-costal", "position": [42, 0, 65], "rotationY": 0.7, "scale": 1},
-  {"id": "deco-fardo-01", "type": "phase1/decorators/decorativos-fardo", "position": [29, 0, 22], "rotationY": 0.9, "scale": 1},
-  {"id": "deco-fardo-02", "type": "phase1/decorators/decorativos-fardo", "position": [41, 0, 24], "rotationY": -1.8, "scale": 1},
-  {"id": "deco-palma-01", "type": "phase1/decorators/decorativos-palma-coco", "position": [44, 0, 55], "rotationY": 0, "scale": 1},
-  {"id": "deco-palma-02", "type": "phase1/decorators/decorativos-palma-coco", "position": [45, 0, 80], "rotationY": 0, "scale": 1},
-  {"id": "deco-palma-03", "type": "phase1/decorators/decorativos-palma-coco", "position": [44, 0, 60], "rotationY": 0, "scale": 1},
-  {"id": "deco-palma-04", "type": "phase1/decorators/decorativos-palma-coco", "position": [36, 0, 85], "rotationY": 0, "scale": 1},
-  {"id": "deco-palma-05", "type": "phase1/decorators/decorativos-palma-coco", "position": [26, 0, -14], "rotationY": 0, "scale": 1},
-  {"id": "deco-pila-cajas", "type": "phase1/decorators/decorativos-pila-cajas", "position": [31, 0, 26], "rotationY": -0.5, "scale": 1},
-  {"id": "deco-pila-costales", "type": "phase1/decorators/decorativos-pila-costales", "position": [39, 0, -8], "rotationY": 0.6, "scale": 1},
-  {"id": "deco-pila-tablones", "type": "phase1/decorators/decorativos-pila-tablones", "position": [30, 0, -2], "rotationY": 1.2, "scale": 1},
-  {"id": "deco-tarima-01", "type": "phase1/decorators/decorativos-tarima", "position": [33, 0, 28], "rotationY": 0, "scale": 1},
-  {"id": "deco-tarima-02", "type": "phase1/decorators/decorativos-tarima", "position": [41, 0, 10], "rotationY": 1.57, "scale": 1},
-  {"id": "deco-tarima-03", "type": "phase1/decorators/decorativos-tarima", "position": [37, 0, 78], "rotationY": 0, "scale": 1},
-  {"id": "deco-tarima-station", "type": "phase1/decorators/decorativos-tarima", "position": [26, 0, -46], "rotationY": 0, "scale": 1},
-  {"id": "deco-tinaja-01", "type": "phase1/decorators/decorativos-tinaja", "position": [29, 0, 8], "rotationY": 0, "scale": 1},
-  {"id": "deco-tinaja-02", "type": "phase1/decorators/decorativos-tinaja", "position": [40, 0, 20], "rotationY": 0, "scale": 1},
-  {"id": "deco-canasto-01", "type": "phase1/decorators/decorativos-canasto", "position": [32, 0, 24], "rotationY": 0.7, "scale": 1},
-  {"id": "deco-canasto-02", "type": "phase1/decorators/decorativos-canasto", "position": [38, 0, -10], "rotationY": -0.4, "scale": 1},
-  {"id": "deco-canasto-03", "type": "phase1/decorators/decorativos-canasto", "position": [43, 0, 72], "rotationY": 0.5, "scale": 1},
-  {"id": "deco-poste-amarre-01", "type": "phase1/decorators/decorativos-poste-amarre", "position": [43, 0, 0], "rotationY": 0, "scale": 1},
-  {"id": "deco-poste-amarre-02", "type": "phase1/decorators/decorativos-poste-amarre", "position": [43, 0, 15], "rotationY": 0, "scale": 1},
-  {"id": "deco-poste-amarre-03", "type": "phase1/decorators/decorativos-poste-amarre", "position": [43, 0, 30], "rotationY": 0, "scale": 1},
-  {"id": "deco-poste-amarre-04", "type": "phase1/decorators/decorativos-poste-amarre", "position": [47, 0, 60], "rotationY": 0, "scale": 1},
-  {"id": "deco-poste-amarre-05", "type": "phase1/decorators/decorativos-poste-amarre", "position": [47, 0, 80], "rotationY": 0, "scale": 1},
-
-  {"id": "deco-bote-canoa", "type": "phase1/decorators/decorativos-bote-canoa", "position": [44, 0.05, -2], "rotationY": 1.1, "scale": 1},
-  {"id": "deco-bote-chalupa-01", "type": "phase1/decorators/decorativos-bote-chalupa", "position": [44, 0.05, 26], "rotationY": -0.9, "scale": 1},
-  {"id": "deco-bote-chalupa-02", "type": "phase1/decorators/decorativos-bote-chalupa", "position": [48, 0.05, 68], "rotationY": 1.9, "scale": 1},
-  {"id": "deco-vapor-fluvial", "type": "phase1/decorators/decorativos-vapor-fluvial", "position": [0, 0, 0], "rotationY": 0, "scale": 1},
-
-  {"id": "portal-phase1", "type": "portal", "position": [0, 1.05, 15.8], "rotationY": 0, "scale": 1.55}
+  {
+    "id": "house-02",
+    "type": "bahareque-house",
+    "position": [
+      -45,
+      0,
+      -55
+    ],
+    "rotationY": -0.35,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-04",
+    "type": "bahareque-house",
+    "position": [
+      -65,
+      0,
+      -20
+    ],
+    "rotationY": -0.18,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "house-05",
+    "type": "bahareque-house",
+    "position": [
+      -50,
+      0,
+      -5
+    ],
+    "rotationY": 0.31,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-06",
+    "type": "bahareque-house",
+    "position": [
+      -35,
+      0,
+      -25
+    ],
+    "rotationY": -0.44,
+    "scale": 0.62,
+    "variant": "long"
+  },
+  {
+    "id": "house-07",
+    "type": "bahareque-house",
+    "position": [
+      -70,
+      0,
+      20
+    ],
+    "rotationY": 0.6,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "house-08",
+    "type": "bahareque-house",
+    "position": [
+      -55,
+      0,
+      40
+    ],
+    "rotationY": -0.26,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-09",
+    "type": "bahareque-house",
+    "position": [
+      -40,
+      0,
+      55
+    ],
+    "rotationY": 0.14,
+    "scale": 0.62,
+    "variant": "long"
+  },
+  {
+    "id": "house-10",
+    "type": "bahareque-house",
+    "position": [
+      -25,
+      0,
+      35
+    ],
+    "rotationY": -0.52,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "house-11",
+    "type": "bahareque-house",
+    "position": [
+      -60,
+      0,
+      70
+    ],
+    "rotationY": 0.36,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-12",
+    "type": "bahareque-house",
+    "position": [
+      -45,
+      0,
+      85
+    ],
+    "rotationY": -0.2,
+    "scale": 0.62,
+    "variant": "long"
+  },
+  {
+    "id": "house-13",
+    "type": "bahareque-house",
+    "position": [
+      -20,
+      0,
+      -57.66393791269094
+    ],
+    "rotationY": 0.4,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "house-14",
+    "type": "bahareque-house",
+    "position": [
+      -18,
+      0,
+      60
+    ],
+    "rotationY": -0.3,
+    "scale": 0.62,
+    "variant": "short"
+  },
+  {
+    "id": "house-15",
+    "type": "bahareque-house",
+    "position": [
+      -64.48476319754072,
+      0,
+      -45
+    ],
+    "rotationY": 0.5,
+    "scale": 0.62,
+    "variant": "long"
+  },
+  {
+    "id": "house-16",
+    "type": "bahareque-house",
+    "position": [
+      -30,
+      0,
+      10
+    ],
+    "rotationY": -0.15,
+    "scale": 0.62,
+    "variant": "medium"
+  },
+  {
+    "id": "anden-01",
+    "type": "phase1/anden-alto",
+    "position": [
+      -48,
+      0,
+      -52
+    ],
+    "rotationY": 0,
+    "scale": 0.9
+  },
+  {
+    "id": "anden-02",
+    "type": "phase1/anden-alto",
+    "position": [
+      -35,
+      0,
+      -22
+    ],
+    "rotationY": 1.5708,
+    "scale": 0.9
+  },
+  {
+    "id": "anden-03",
+    "type": "phase1/anden-alto",
+    "position": [
+      -55,
+      0,
+      38
+    ],
+    "rotationY": 0,
+    "scale": 0.9
+  },
+  {
+    "id": "anden-04",
+    "type": "phase1/anden-alto",
+    "position": [
+      -22,
+      0,
+      58
+    ],
+    "rotationY": 1.5708,
+    "scale": 0.9
+  },
+  {
+    "id": "photo-1857-declaratoria",
+    "type": "sepia-photo",
+    "position": [
+      35.12179201871242,
+      1.85,
+      -20.056973666329775
+    ],
+    "rotationY": -0.4437562088336439,
+    "scale": 1,
+    "imageSrc": "/AlegrIA-3D/images/placeholders/declaratoria-1857.jpg",
+    "title": "1857 — Declaratoria de Ciudad",
+    "description": "Barranquilla es elevada a ciudad. Primer trazo urbano cerca del Magdalena.",
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "photo-aduana",
+    "type": "sepia-photo",
+    "position": [
+      30.72746816104277,
+      1.92,
+      12.602867407714038
+    ],
+    "rotationY": -1.5599855711620354,
+    "scale": 1,
+    "imageSrc": "/AlegrIA-3D/images/placeholders/aduana-puerto-fluvial.png",
+    "title": "Aduana y Puerto Fluvial",
+    "description": "Auge portuario. Bodegas y muelles que dieron nombre a Barrio Abajo."
+  },
+  {
+    "id": "photo-estacion-montoya",
+    "type": "sepia-photo",
+    "position": [
+      17.597732306357805,
+      2.3081561019833114,
+      -45.77240847587539
+    ],
+    "rotationY": 0.08,
+    "scale": 1,
+    "imageSrc": "/AlegrIA-3D/images/placeholders/estacion-montoya.png",
+    "title": "Estación Montoya",
+    "description": "Nodo ferroviario y comercial. Llegada de inmigrantes y mercancías."
+  },
+  {
+    "id": "photo-andenes-altos",
+    "type": "sepia-photo",
+    "position": [
+      51.74737464167086,
+      2.08040242623616,
+      -24.100162587607485
+    ],
+    "rotationY": -1.4218664169518034,
+    "scale": 1,
+    "imageSrc": "/AlegrIA-3D/images/placeholders/andenes-altos.png",
+    "title": "Andenes Altos",
+    "description": "Arquitectura vernácula elevada para resistir los arroyos."
+  },
+  {
+    "id": "scene-estacion-montoya",
+    "type": "phase1/scenes/estacion-montoya",
+    "position": [
+      18,
+      0,
+      -60
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "scene-puerto-fluvial",
+    "type": "phase1/scenes/puerto-fluvial",
+    "position": [
+      35,
+      0,
+      10
+    ],
+    "rotationY": -1.5708,
+    "scale": 1
+  },
+  {
+    "id": "scene-mini-puerto",
+    "type": "phase1/scenes/mini-puerto-barranquilla-1857",
+    "position": [
+      59.456543971649126,
+      -0.8237078782968297,
+      -23.909376639540028
+    ],
+    "rotationY": -1.5708,
+    "scale": 1
+  },
+  {
+    "id": "rail-01",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      -28,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-02",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      -20,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-03",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      -12,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-04",
+    "type": "phase1/floors/rieles-riel-recta-gastada",
+    "position": [
+      -4,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-05",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      4,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-06",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      12,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-07",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      20,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-08",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      28,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-09",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      36,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-10",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      44,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "rail-11",
+    "type": "phase1/floors/rieles-riel-recta",
+    "position": [
+      52,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "tunnel-oeste",
+    "type": "rail-tunnel",
+    "position": [
+      -24,
+      0,
+      -52.4
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "tunnel-rio",
+    "type": "rail-tunnel",
+    "position": [
+      50,
+      0,
+      -52.4
+    ],
+    "rotationY": 3.1416,
+    "scale": 1
+  },
+  {
+    "id": "train-01",
+    "type": "phase1-train",
+    "position": [
+      7.4,
+      0,
+      -52.4
+    ],
+    "rotationY": 3.1416,
+    "scale": 1,
+    "variant": "phase1/vehicles/tren-completo"
+  },
+  {
+    "id": "deco-ancla",
+    "type": "phase1/decorators/decorativos-ancla",
+    "position": [
+      63.4274982386561,
+      0.13157986981709213,
+      6.682226382938872
+    ],
+    "rotationY": 0.39999999999999997,
+    "scale": 1,
+    "rotationX": -1.538777035998985
+  },
+  {
+    "id": "deco-barril-01",
+    "type": "phase1/decorators/decorativos-barril",
+    "position": [
+      31,
+      0,
+      4
+    ],
+    "rotationY": 0.2,
+    "scale": 1
+  },
+  {
+    "id": "deco-barril-02",
+    "type": "phase1/decorators/decorativos-barril",
+    "position": [
+      30,
+      0,
+      6
+    ],
+    "rotationY": 1.4,
+    "scale": 1
+  },
+  {
+    "id": "deco-barril-03",
+    "type": "phase1/decorators/decorativos-barril",
+    "position": [
+      31.5,
+      0,
+      -6
+    ],
+    "rotationY": 2.1,
+    "scale": 1
+  },
+  {
+    "id": "deco-barril-04",
+    "type": "phase1/decorators/decorativos-barril",
+    "position": [
+      32,
+      0,
+      -70
+    ],
+    "rotationY": 0.6,
+    "scale": 1
+  },
+  {
+    "id": "deco-barriles-trio",
+    "type": "phase1/decorators/decorativos-barriles-trio",
+    "position": [
+      29,
+      0,
+      18
+    ],
+    "rotationY": -0.6,
+    "scale": 1
+  },
+  {
+    "id": "deco-cajon-a",
+    "type": "phase1/decorators/decorativos-cajon-a",
+    "position": [
+      32,
+      0,
+      2
+    ],
+    "rotationY": 0.3,
+    "scale": 1
+  },
+  {
+    "id": "deco-cajon-b",
+    "type": "phase1/decorators/decorativos-cajon-b",
+    "position": [
+      33,
+      0,
+      3
+    ],
+    "rotationY": -1.2,
+    "scale": 1
+  },
+  {
+    "id": "deco-cajon-c",
+    "type": "phase1/decorators/decorativos-cajon-c",
+    "position": [
+      32.4,
+      0,
+      5.4
+    ],
+    "rotationY": 2.6,
+    "scale": 1
+  },
+  {
+    "id": "deco-cajon-station",
+    "type": "phase1/decorators/decorativos-cajon-a",
+    "position": [
+      14,
+      0,
+      -70
+    ],
+    "rotationY": 0.9,
+    "scale": 1
+  },
+  {
+    "id": "deco-costal-01",
+    "type": "phase1/decorators/decorativos-costal",
+    "position": [
+      30,
+      0,
+      12
+    ],
+    "rotationY": 1.6,
+    "scale": 1
+  },
+  {
+    "id": "deco-costal-02",
+    "type": "phase1/decorators/decorativos-costal",
+    "position": [
+      30.2,
+      0,
+      -4.6
+    ],
+    "rotationY": -2.2,
+    "scale": 1
+  },
+  {
+    "id": "deco-fardo-01",
+    "type": "phase1/decorators/decorativos-fardo",
+    "position": [
+      29,
+      0,
+      22
+    ],
+    "rotationY": 0.9,
+    "scale": 1
+  },
+  {
+    "id": "deco-fardo-02",
+    "type": "phase1/decorators/decorativos-fardo",
+    "position": [
+      30,
+      0,
+      21.6
+    ],
+    "rotationY": -1.8,
+    "scale": 1
+  },
+  {
+    "id": "deco-pila-cajas",
+    "type": "phase1/decorators/decorativos-pila-cajas",
+    "position": [
+      31,
+      0,
+      26
+    ],
+    "rotationY": -0.5,
+    "scale": 1
+  },
+  {
+    "id": "deco-pila-costales",
+    "type": "phase1/decorators/decorativos-pila-costales",
+    "position": [
+      31,
+      0,
+      -9.5
+    ],
+    "rotationY": 0.6,
+    "scale": 1
+  },
+  {
+    "id": "deco-pila-tablones",
+    "type": "phase1/decorators/decorativos-pila-tablones",
+    "position": [
+      30,
+      0,
+      -2
+    ],
+    "rotationY": 1.2,
+    "scale": 1
+  },
+  {
+    "id": "deco-tarima-01",
+    "type": "phase1/decorators/decorativos-tarima",
+    "position": [
+      33,
+      0,
+      28
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "deco-tarima-02",
+    "type": "phase1/decorators/decorativos-tarima",
+    "position": [
+      31.2,
+      0,
+      16
+    ],
+    "rotationY": 1.57,
+    "scale": 1
+  },
+  {
+    "id": "deco-tarima-station",
+    "type": "phase1/decorators/decorativos-tarima",
+    "position": [
+      15.131155598770102,
+      0.6134133378638345,
+      -47.828670154594356
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "deco-tinaja-01",
+    "type": "phase1/decorators/decorativos-tinaja",
+    "position": [
+      29,
+      0,
+      8
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "deco-tinaja-02",
+    "type": "phase1/decorators/decorativos-tinaja",
+    "position": [
+      30.4,
+      0,
+      19.5
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "deco-canasto-01",
+    "type": "phase1/decorators/decorativos-canasto",
+    "position": [
+      32,
+      0,
+      24
+    ],
+    "rotationY": 0.7,
+    "scale": 1
+  },
+  {
+    "id": "deco-canasto-02",
+    "type": "phase1/decorators/decorativos-canasto",
+    "position": [
+      29.4,
+      0,
+      -8
+    ],
+    "rotationY": -0.4,
+    "scale": 1
+  },
+  {
+    "id": "deco-poste-amarre-01",
+    "type": "phase1/decorators/decorativos-poste-amarre",
+    "position": [
+      67.64731447227088,
+      -1.4265769714334753,
+      0.3698792765309955
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "deco-poste-amarre-02",
+    "type": "phase1/decorators/decorativos-poste-amarre",
+    "position": [
+      58.00052211311316,
+      0,
+      15
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "deco-poste-amarre-03",
+    "type": "phase1/decorators/decorativos-poste-amarre",
+    "position": [
+      59.35946697250972,
+      0,
+      18.26182272808988
+    ],
+    "rotationY": 0.6735361725634245,
+    "scale": 1
+  },
+  {
+    "id": "deco-bote-canoa",
+    "type": "phase1/decorators/decorativos-bote-canoa",
+    "position": [
+      69.92284415991854,
+      -1.5053465385197708,
+      -0.8207400347282092
+    ],
+    "rotationY": 1.1,
+    "scale": 1
+  },
+  {
+    "id": "deco-bote-chalupa-01",
+    "type": "phase1/decorators/decorativos-bote-chalupa",
+    "position": [
+      72.1052305998098,
+      -1.6192078028957204,
+      5.37026780086768
+    ],
+    "rotationY": -0.9,
+    "scale": 1
+  },
+  {
+    "id": "deco-vapor-fluvial",
+    "type": "phase1/decorators/decorativos-vapor-fluvial",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-01",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      -8,
+      0.02,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-02",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      0,
+      0.02,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-03",
+    "type": "phase1/floors/suelo-anden-escalon",
+    "position": [
+      8,
+      0.02,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-04",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      16,
+      0.02,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-05",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      24,
+      0.02,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-tierra-01",
+    "type": "phase1/floors/suelo-calle-tierra",
+    "position": [
+      -8,
+      0.02,
+      -8
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-tierra-02",
+    "type": "phase1/floors/suelo-calle-tierra",
+    "position": [
+      0,
+      0.02,
+      -8
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-tierra-03",
+    "type": "phase1/floors/suelo-calle-tierra",
+    "position": [
+      8,
+      0.02,
+      -8
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-tierra-04",
+    "type": "phase1/floors/suelo-calle-tierra",
+    "position": [
+      16,
+      0.02,
+      -8
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-tierra-05",
+    "type": "phase1/floors/suelo-calle-tierra",
+    "position": [
+      24,
+      0.02,
+      -8
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "plazoleta-02",
+    "type": "phase1/floors/suelo-empedrado",
+    "position": [
+      -8,
+      0.02,
+      28
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "plazoleta-03",
+    "type": "phase1/floors/suelo-empedrado",
+    "position": [
+      -16,
+      0.02,
+      36
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "plazoleta-04",
+    "type": "phase1/floors/suelo-empedrado",
+    "position": [
+      -8,
+      0.02,
+      36
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "casa-tienda-01",
+    "type": "phase1/houses/casa-tienda",
+    "position": [
+      -14,
+      0,
+      16
+    ],
+    "rotationY": 3.1416,
+    "scale": 1
+  },
+  {
+    "id": "casa-patio-01",
+    "type": "phase1/houses/casa-patio",
+    "position": [
+      -26,
+      0,
+      16
+    ],
+    "rotationY": 3.1416,
+    "scale": 1
+  },
+  {
+    "id": "casa-corredor-01",
+    "type": "phase1/houses/casa-corredor",
+    "position": [
+      14,
+      0,
+      16
+    ],
+    "rotationY": 3.1416,
+    "scale": 1
+  },
+  {
+    "id": "casa-corredor-02",
+    "type": "phase1/houses/casa-corredor",
+    "position": [
+      -12,
+      0,
+      -18
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "casa-tienda-02",
+    "type": "phase1/houses/casa-tienda",
+    "position": [
+      14,
+      0,
+      -18
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "cerca-01",
+    "type": "phase1/decorators/cerca-cana",
+    "position": [
+      -24,
+      0,
+      20
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "cerca-02",
+    "type": "phase1/decorators/cerca-cana",
+    "position": [
+      -16,
+      0,
+      20
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "arbol-01",
+    "type": "phase1/decorators/arbol-matarraton",
+    "position": [
+      26,
+      0,
+      26
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "arbol-02",
+    "type": "phase1/decorators/arbol-matarraton",
+    "position": [
+      -20,
+      0,
+      -26
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "arbol-03",
+    "type": "phase1/decorators/arbol-matarraton",
+    "position": [
+      22,
+      0,
+      -30
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "portal-phase1",
+    "type": "portal",
+    "position": [
+      0,
+      1.05,
+      15.8
+    ],
+    "rotationY": 0,
+    "scale": 1.55
+  },
+  {
+    "id": "sun",
+    "type": "sun",
+    "position": [
+      18,
+      31.87834290871237,
+      -12
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-01",
+    "type": "cloud",
+    "position": [
+      5.81,
+      11.02,
+      -9.62
+    ],
+    "rotationY": 0,
+    "scale": 1.23,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-02",
+    "type": "cloud",
+    "position": [
+      -16.87,
+      9.35,
+      -18.68
+    ],
+    "rotationY": 0,
+    "scale": 1.26,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-03",
+    "type": "cloud",
+    "position": [
+      -13.32,
+      11.66,
+      -13.07
+    ],
+    "rotationY": 0,
+    "scale": 1.69,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-04",
+    "type": "cloud",
+    "position": [
+      1.78,
+      11.96,
+      -9.04
+    ],
+    "rotationY": 0,
+    "scale": 1.66,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-05",
+    "type": "cloud",
+    "position": [
+      15.18,
+      11.78,
+      -14.59
+    ],
+    "rotationY": 0,
+    "scale": 1.82,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-06",
+    "type": "cloud",
+    "position": [
+      9.99,
+      11.93,
+      -14.84
+    ],
+    "rotationY": 0,
+    "scale": 1.43,
+    "variant": "phase1"
+  },
+  {
+    "id": "cloud-phase1-07",
+    "type": "cloud",
+    "position": [
+      -2.38,
+      9.55,
+      -23.53
+    ],
+    "rotationY": 0,
+    "scale": 1.93,
+    "variant": "phase1"
+  },
+  {
+    "id": "deco-palma-01",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      57.45504786985521,
+      -0.9316456421996853,
+      -12.999277470924891
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-02",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      57.89918980185656,
+      -1.4311610277437492,
+      -29.962038842038936
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-03",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      62.330145475647555,
+      -1.9222707630004432,
+      -45.1852886701762
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-04",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      64.38967144657164,
+      -1.4763695057390935,
+      -2.4206855037592074
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-05",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      59.31782210382915,
+      -1.6212549023502045,
+      0.8974332336223467
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-06",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      59.644693474470614,
+      -0.6360116439931309,
+      7.475682025772917
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-07",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      68.32924654798023,
+      -2.0962371338668575,
+      3.124159196603438
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "deco-palma-08",
+    "type": "phase1/decorators/decorativos-palma-coco",
+    "position": [
+      65.51738357498853,
+      -0.5790528491581102,
+      14.84300109146883
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "cylinder",
+      "offset": [
+        0.07219861272659434,
+        -0.018370166420936584,
+        0.019064784049987793
+      ],
+      "radius": 0.8086460837916148,
+      "height": 8.931294932961464
+    }
+  },
+  {
+    "id": "house-17",
+    "type": "bahareque-house",
+    "position": [
+      -11.25922918808324,
+      0,
+      -58.22754654696164
+    ],
+    "rotationY": -0.7128958182303939,
+    "scale": 0.62,
+    "variant": "medium",
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "calle-anden-06",
+    "type": "phase1/floors/suelo-anden-escalon",
+    "position": [
+      18.062048075470702,
+      0.02,
+      -48.723069162660416
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-07",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      10.054536677369224,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-08",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      26.03049760390946,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-09",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      34.016500064507625,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-10",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      42.06280797412073,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-11",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      47.48748275960427,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-12",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      2.059287640318397,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-13",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      -5.936268524271592,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-14",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      -13.886038557145648,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "calle-anden-15",
+    "type": "phase1/floors/suelo-anden-alto",
+    "position": [
+      -21.902910695707604,
+      0.02,
+      -48.723
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "plazoleta-05",
+    "type": "phase1/floors/suelo-empedrado",
+    "position": [
+      -15.991914859693065,
+      0.02,
+      28.07736338804453
+    ],
+    "rotationY": 0,
+    "scale": 1
+  }
 ]

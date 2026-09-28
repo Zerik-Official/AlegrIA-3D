@@ -1,0 +1,126 @@
+/**
+ * `culture-mural` — Digital Cultural Mural: the piece that replaces the
+ * scene's generic billboard. A holographic screen mounted on the side
+ * wall/structure that projects Carnival of Barranquilla art (marimonda,
+ * garabato, and drums) with scan lines, flicker, and magenta/cyan/solar-yellow
+ * color spill.
+ *
+ * The motif comes from `entity.variant`, and the dominant spill color comes
+ * from `entity.title` (optional hex), allowing the mural to be rethemed from
+ * JSON without touching the shader.
+ * @module features/cityIntro/renderers/CultureMuralRenderer
+ */
+
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+import { createMuralTexture } from '@/features/cityIntro/renderers/muralTexture'
+import { NEON_CYAN, NEON_MAGENTA, SOLAR_YELLOW } from '@/features/cityIntro/config/colorPalette'
+import type { EntityRendererProps } from '@/engine/types'
+import { GroundGlow } from '@/shared/components/LightGlows'
+
+/** Width and height (world units) of the panel at `scale: 1`. */
+const PANEL_W = 7.2
+const PANEL_H = 4.4
+
+const MURAL_VERTEX = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`
+
+/**
+ * Takes the Carnival drawing as an intensity map and recolors it between two
+ * neons based on height, then adds scan lines, a looping descending glitch
+ * band, and slow flicker. Together, these make it read as a holographic
+ * projection rather than a decal.
+ */
+const MURAL_FRAGMENT = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform float uTime;
+  uniform vec3 uTintA;
+  uniform vec3 uTintB;
+  uniform vec3 uSpark;
+  varying vec2 vUv;
+
+  void main() {
+    vec3 art = texture2D(uMap, vUv).rgb;
+    float lum = dot(art, vec3(0.299, 0.587, 0.114));
+
+    vec3 tint = mix(uTintA, uTintB, vUv.y);
+    vec3 color = art * 0.55 + tint * lum * 1.35;
+
+    float scan = 0.82 + 0.18 * sin((vUv.y + uTime * 0.06) * 620.0);
+    color *= scan;
+
+    float band = smoothstep(0.035, 0.0, abs(fract(vUv.y + uTime * 0.11) - 0.5));
+    color += uSpark * band * 0.35;
+
+    float flicker = 0.9 + 0.1 * sin(uTime * 7.3) * sin(uTime * 2.1);
+    color *= flicker;
+
+    vec2 edge = smoothstep(0.0, 0.06, vUv) * smoothstep(0.0, 0.06, 1.0 - vUv);
+    float mask = edge.x * edge.y;
+
+    float alpha = clamp(0.28 + lum * 1.4 + band * 0.3, 0.0, 1.0) * mask;
+    gl_FragColor = vec4(color, alpha);
+  }
+`
+
+/**
+ * @param props - Entity props (`variant` = motif, `title` = spill hex)
+ * @returns Holographic mural with its structure and light
+ */
+export function CultureMuralRenderer({ entity }: EntityRendererProps) {
+  const materialRef = useRef<THREE.ShaderMaterial>(null)
+  const texture = useMemo(() => createMuralTexture(entity.variant), [entity.variant])
+  const spark = entity.title?.startsWith('#') ? entity.title : SOLAR_YELLOW
+
+  const uniforms = useMemo(
+    () => ({
+      uMap: { value: texture },
+      uTime: { value: 0 },
+      uTintA: { value: new THREE.Color(NEON_MAGENTA) },
+      uTintB: { value: new THREE.Color(NEON_CYAN) },
+      uSpark: { value: new THREE.Color(spark) },
+    }),
+    [texture, spark]
+  )
+
+  useFrame(({ clock }) => {
+    if (materialRef.current) materialRef.current.uniforms.uTime.value = clock.elapsedTime
+  })
+
+  return (
+    <group>
+      <mesh position={[0, PANEL_H / 2 + 0.6, -0.22]} castShadow receiveShadow>
+        <boxGeometry args={[PANEL_W + 0.9, PANEL_H + 1.4, 0.4]} />
+        <meshStandardMaterial color="#2a1a2e" roughness={0.9} metalness={0.05} />
+      </mesh>
+
+      <mesh position={[0, PANEL_H / 2 + 0.6, -0.01]}>
+        <boxGeometry args={[PANEL_W + 0.34, PANEL_H + 0.34, 0.08]} />
+        <meshStandardMaterial color="#120a18" emissive={NEON_MAGENTA} emissiveIntensity={1.1} roughness={0.4} />
+      </mesh>
+
+      <mesh position={[0, PANEL_H / 2 + 0.6, 0.06]}>
+        <planeGeometry args={[PANEL_W, PANEL_H]} />
+        <shaderMaterial
+          ref={materialRef}
+          uniforms={uniforms}
+          vertexShader={MURAL_VERTEX}
+          fragmentShader={MURAL_FRAGMENT}
+          transparent
+          toneMapped={false}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      <pointLight position={[0, PANEL_H / 2 + 0.6, 2.4]} intensity={3.2} distance={16} decay={2} color={NEON_MAGENTA} />
+      <GroundGlow color={spark} radius={3.2} opacity={0.35} position={[0, 0.03, 1.8]} />
+    </group>
+  )
+}

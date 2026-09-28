@@ -6,12 +6,15 @@
 import * as THREE from 'three'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
+import { GlowSprite, GroundGlow } from '@/shared/components/LightGlows'
 
 /**
- * Pole + warm lamp head with a soft glow halo and matching point light.
+ * Pole + warm lamp head with a soft glow halo, and either a real point light
+ * or, where the scene is short on light budget, a pool of light on the floor.
+ * @param props - Whether the lamp casts real light
  * @returns Streetlight group
  */
-export function ProceduralStreetlight() {
+export function ProceduralStreetlight({ castsLight = true }: { castsLight?: boolean }) {
   return (
     <group>
       <mesh position={[0, 1.6, 0]} castShadow>
@@ -30,7 +33,14 @@ export function ProceduralStreetlight() {
         <sphereGeometry args={[0.26, 10, 10]} />
         <meshBasicMaterial color="#ffcf6b" transparent opacity={0.16} depthWrite={false} blending={THREE.AdditiveBlending} />
       </mesh>
-      <pointLight position={[0, 3.0, 0.52]} intensity={1.15} distance={6.5} color="#ffcf6b" decay={2} />
+      {castsLight ? (
+        <pointLight position={[0, 3.0, 0.52]} intensity={1.15} distance={6.5} color="#ffcf6b" decay={2} />
+      ) : (
+        <>
+          <GlowSprite color="#ffcf6b" size={1.6} opacity={0.5} position={[0, 3.02, 0.52]} />
+          <GroundGlow color="#ffcf6b" radius={2.4} opacity={0.3} position={[0, 0.03, 0.52]} />
+        </>
+      )}
     </group>
   )
 }

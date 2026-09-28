@@ -1,6 +1,7 @@
 import { memo, type ReactNode } from 'react'
-import { FiEye, FiMove, FiBookOpen, FiClock, FiArrowRight, FiRotateCcw, FiZap, FiMousePointer, FiLoader } from 'react-icons/fi'
+import { FiEye, FiMove, FiBookOpen, FiClock, FiCompass, FiZap, FiMousePointer } from 'react-icons/fi'
 import { LuOrbit } from 'react-icons/lu'
+import { NarrationIndicator } from '@/features/ui/components/NarrationIndicator'
 
 /**
  * Props for {@link HUD}.
@@ -14,6 +15,14 @@ interface HUDProps {
   onInteract: () => void
   /** Which scene's title/date labels to show. */
   variant: 'library' | 'phase1' | 'phase2' | 'cityIntro'
+  /** Seconds remaining in the current narration/dialogue; `null` to hide the countdown. */
+  audioRemainingSec?: number | null
+  /** Label of the book interaction prompt — waking the book on the first visit, returning it on the second. */
+  interactLabel?: string
+  /** Seconds left until the Libro de Rosa opens the portal, shown where the dialogue countdown sits once the narration is over; `null` to hide. */
+  portalCountdownSec?: number | null
+  /** Whether the HUD draws the countdown pill itself; off where it's docked under the Libro de Rosa instead (see `StoryBookOverlay`). */
+  showIndicator?: boolean
 }
 
 /** Title-area copy per {@link HUDProps.variant}. */
@@ -63,7 +72,7 @@ const VARIANT_COPY: Record<HUDProps['variant'], { eyebrow: string; title: string
  * @param props - HUD state
  * @returns HUD overlay
  */
-export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant }: HUDProps) {
+export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, variant, audioRemainingSec, interactLabel = 'Despertar el Libro de Rosa', portalCountdownSec, showIndicator = true }: HUDProps) {
   const copy = VARIANT_COPY[variant]
   return (
     <>
@@ -109,7 +118,7 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
               <span className="flex h-7 items-center justify-center rounded-md bg-parchment px-2.5 text-[13px] font-bold text-[#1a1205] shadow-[0_2px_0_#b89a4a]">E</span>
               <span className="flex items-center gap-2 text-[13px] font-semibold tracking-[0.14em] uppercase text-parchment">
                 <FiBookOpen className="h-4 w-4 text-gold-bright" />
-                Despertar el Libro de Rosa
+                {interactLabel}
               </span>
             </button>
           )}
@@ -127,6 +136,12 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
         {wormholeActive ? <span className="text-[#a8c8ff]">Vórtice del Tiempo • Sincronizando</span> : copy.clock}
       </div>
 
+      {showIndicator && (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-10">
+          <NarrationIndicator audioRemainingSec={audioRemainingSec} portalCountdownSec={portalCountdownSec} />
+        </div>
+      )}
+
       <div
         className={`pointer-events-none fixed inset-0 z-15 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.85)_80%)] transition-opacity duration-700 ${wormholeActive ? 'opacity-100' : 'opacity-0'}`}
       />
@@ -135,76 +150,10 @@ export const HUD = memo(function HUD({ nearBook, wormholeActive, onInteract, var
 })
 
 /**
- * Props for {@link StartOverlay}.
- */
-interface StartOverlayProps {
-  /** Starts the city walk. */
-  onStart: () => void
-  /** Whether the city scene is warming up before reveal — disables the button and shows a spinner. */
-  loading?: boolean
-}
-
-/**
- * Full-screen start screen prompting the user to begin the city walk.
- *
- * @param props - Overlay actions and loading state
- * @returns Start overlay
- */
-export const StartOverlay = memo(function StartOverlay({ onStart, loading = false }: StartOverlayProps) {
-  const handleStart = (): void => {
-    if (!loading) onStart()
-  }
-  return (
-    <div
-      onClick={handleStart}
-      className={`fixed inset-0 z-20 flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_center,rgba(10,10,22,0.94)_0%,rgba(4,4,10,0.98)_70%)] p-8 text-center backdrop-blur-xs ${loading ? 'cursor-progress' : 'cursor-pointer'}`}
-    >
-      <div className="max-w-2xl">
-        <div className="font-cinzel text-[11px] tracking-[0.42em] uppercase text-parchment/60">Escena -1 — Año 2050</div>
-        <h1 className="font-cinzel mt-3 text-[clamp(28px,6vw,54px)] leading-[1.1] tracking-[0.14em] uppercase text-parchment drop-shadow-[0_0_40px_rgba(120,180,255,0.4)]">
-          La Biblioteca
-          <span className="block bg-linear-to-r from-[#7ad8ff] to-[#a8a0ff] bg-clip-text text-transparent">Abandonada</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-140 text-[14px] leading-7 tracking-[0.04em] text-parchment/70">
-          Año 2050. Despiertas entre estanterías polvorientas, iluminadas por antorchas que no deberían seguir ardiendo.
-          <br />
-          En el centro de la sala flota <span className="text-gold-bright font-semibold">El Libro de Rosa</span>, guardián del Vórtice del
-          Tiempo.
-          <br />
-          Acércate y despiértalo para cruzar hacia el pasado.
-        </p>
-        <p className="mx-auto mt-4 flex items-center justify-center gap-2 text-[12px] tracking-[0.08em] text-parchment/45">
-          <FiEye className="h-3.5 w-3.5" /> WASD — moverse · mouse — mirar alrededor
-        </p>
-
-        <button
-          onClick={handleStart}
-          disabled={loading}
-          className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-gold-bright to-[#ffb400] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#1a1205] shadow-[0_8px_30px_rgba(255,180,40,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] transition hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(255,180,40,0.55)] disabled:cursor-progress disabled:opacity-80 disabled:hover:translate-y-0 disabled:hover:scale-100"
-        >
-          {loading ? (
-            <>
-              <FiLoader className="h-4 w-4 animate-spin" />
-              Despertando la Biblioteca…
-            </>
-          ) : (
-            <>
-              <FiArrowRight className="h-4 w-4" />
-              Entrar a la Biblioteca
-            </>
-          )}
-        </button>
-        <p className="mt-4 text-[11px] tracking-wide text-parchment/35">Click para activar controles y sonido — ESC para salir</p>
-      </div>
-    </div>
-  )
-})
-
-/**
  * Props for {@link PastOverlay}.
  */
 interface PastOverlayProps {
-  /** Dismisses the museum intro. */
+  /** Dismisses the Phase 1 intro and starts exploring Barrio Abajo. */
   onReturn: () => void
 }
 
@@ -228,10 +177,10 @@ export const PastOverlay = memo(function PastOverlay({ onReturn }: PastOverlayPr
       </p>
       <button
         onClick={onReturn}
-        className="mt-9 inline-flex items-center gap-3 rounded-full bg-linear-to-b from-[#a8c8ff] to-[#5b8def] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#0a1020] shadow-[0_8px_30px_rgba(90,140,255,0.35)] transition hover:-translate-y-0.5 hover:scale-[1.02]"
+        className="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-linear-to-b from-[#a8c8ff] to-[#5b8def] px-8 py-4 text-[13px] font-bold tracking-[0.18em] uppercase text-[#0a1020] shadow-[0_8px_30px_rgba(90,140,255,0.35)] transition hover:-translate-y-0.5 hover:scale-[1.02]"
       >
-        <FiRotateCcw className="h-4 w-4" />
-        Volver a la biblioteca
+        <FiCompass className="h-4 w-4" />
+        Explorar Barrio Abajo
       </button>
     </div>
   )

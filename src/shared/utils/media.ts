@@ -18,3 +18,13 @@ export function resolvePublicSrc(src: string | undefined): string | undefined {
   if (/^(https?:)?\/\//.test(src) || src.startsWith(base)) return src
   return `${base}${src.replace(/^\//, '')}`
 }
+
+/**
+ * Resolves each entry of a JSON-authored media path list against the app's base URL.
+ * @param srcs - Root-relative public paths, absolute URLs, or `undefined`
+ * @returns Base-prefixed paths, or `undefined` when `srcs` is empty/undefined
+ */
+export function resolvePublicSrcs(srcs: string[] | undefined): string[] | undefined {
+  if (!srcs || srcs.length === 0) return undefined
+  return srcs.map((s) => resolvePublicSrc(s)!).filter(Boolean)
+}

@@ -13,7 +13,12 @@ import type { SepiaPhotoConfig } from '@/features/phase1/config/sepiaPhotos'
  * @param maxDistance - Photos farther than this are ignored
  * @returns Id of the nearest photo in range, or null
  */
-export function findNearestSepiaPhoto(x: number, z: number, photos: SepiaPhotoConfig[], maxDistance: number): string | null {
+export function findNearestSepiaPhoto(
+  x: number,
+  z: number,
+  photos: Pick<SepiaPhotoConfig, 'id' | 'position'>[],
+  maxDistance: number,
+): string | null {
   let nearest: string | null = null
   let min = maxDistance
   for (const photo of photos) {

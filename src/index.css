@@ -28,3 +28,92 @@ html, body, #root {
 }
 
 canvas { display: block; }
+
+@keyframes storybook-flash {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes library-burst {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  45% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Credits roll: leaders' names shimmer in gold while written, instead of plain parchment. */
+@keyframes credits-leader-shine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Credits roll: a blinking caret at the end of the line currently being typed. */
+@keyframes credits-caret-blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes start-rise {
+  0% { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes start-float {
+  0% { opacity: 0; transform: translate(0, 0); }
+  12% { opacity: 1; }
+  85% { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(var(--start-drift-x, 0px), -110vh); }
+}
+
+@keyframes start-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6vw, -4vh) scale(1.15); }
+}
+
+@keyframes start-halo {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes start-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes start-ring {
+  0% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.25, 1.6); }
+}
+
+@keyframes start-sheen {
+  0% { transform: translateX(0) skewX(-20deg); }
+  45%, 100% { transform: translateX(420%) skewX(-20deg); }
+}
+
+@keyframes credits-slam {
+  0% { opacity: 0; transform: translateX(70vw) rotateY(-55deg) scaleX(1.8); filter: blur(10px); }
+  55% { opacity: 1; transform: translateX(-14px) rotateY(8deg) scaleX(0.86); filter: blur(0); }
+  78% { transform: translateX(5px) rotateY(-3deg) scaleX(1.04); }
+  100% { opacity: 1; transform: translateX(0) rotateY(0) scaleX(1); filter: blur(0); }
+}
+
+@keyframes credits-impact {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 2px); }
+  40% { transform: translate(5px, -2px); }
+  60% { transform: translate(-3px, 1px); }
+  80% { transform: translate(2px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes credits-slam-out {
+  0% { opacity: 1; transform: translateX(0) scaleX(1); filter: blur(0); }
+  100% { opacity: 0; transform: translateX(-45vw) scaleX(1.6); filter: blur(12px); }
+}
+
+@keyframes credits-role-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

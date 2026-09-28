@@ -1,96 +1,1556 @@
 [
-  { "id": "path-0", "type": "path-point", "position": [0, 0, 22], "rotationY": 0, "scale": 1, "variant": "0" },
-  { "id": "path-1", "type": "path-point", "position": [2.2, 0, 12], "rotationY": 0, "scale": 1, "variant": "1" },
-  { "id": "path-2", "type": "path-point", "position": [-1.4, 0, 2], "rotationY": 0, "scale": 1, "variant": "2" },
-  { "id": "path-3", "type": "path-point", "position": [1.8, 0, -8], "rotationY": 0, "scale": 1, "variant": "3" },
-  { "id": "path-4", "type": "path-point", "position": [-1.2, 0, -18], "rotationY": 0, "scale": 1, "variant": "4" },
-  { "id": "path-5", "type": "path-point", "position": [0.6, 0, -28], "rotationY": 0, "scale": 1, "variant": "5" },
-  { "id": "path-6", "type": "path-point", "position": [0, 0, -32], "rotationY": 0, "scale": 1, "variant": "6" },
-
-  { "id": "streetlight-01", "type": "streetlight", "position": [-3.6, 0, 18], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-02", "type": "streetlight", "position": [5.8, 0, 15], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-03", "type": "streetlight", "position": [-4.8, 0, 7], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-04", "type": "streetlight", "position": [4.6, 0, 4], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-05", "type": "streetlight", "position": [-4.6, 0, -3], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-06", "type": "streetlight", "position": [5.0, 0, -6], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-07", "type": "streetlight", "position": [-4.2, 0, -13], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-08", "type": "streetlight", "position": [4.8, 0, -16], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-09", "type": "streetlight", "position": [-4.0, 0, -23], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-10", "type": "streetlight", "position": [4.4, 0, -26], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-11", "type": "streetlight", "position": [-3.8, 0, -32], "rotationY": 0, "scale": 1 },
-  { "id": "streetlight-12", "type": "streetlight", "position": [4.0, 0, -34], "rotationY": 0, "scale": 1 },
-
-  { "id": "skyscraper-06", "type": "skyscraper", "position": [14.5, 0, -8], "rotationY": -0.1, "scale": 1, "variant": "#3a4a6a" },
-  { "id": "skyscraper-08", "type": "mesh-tower", "position": [15.2, 0, -18], "rotationY": -0.14, "scale": 1, "variant": "#4a4a6a" },
-  { "id": "skyscraper-10", "type": "needle-tower", "position": [14, 0, -28], "rotationY": -0.07, "scale": 1, "variant": "#2f4a6a" },
-  { "id": "skyscraper-11", "type": "mesh-tower", "position": [-14.5, 0, -34], "rotationY": 0.11, "scale": 1, "variant": "#4a3a4a" },
-  { "id": "skyscraper-12", "type": "skyscraper", "position": [13.6, 0, -36], "rotationY": -0.05, "scale": 1, "variant": "#3a4a5a" },
-  { "id": "skyscraper-14", "type": "mesh-tower", "position": [21, 0, -12], "rotationY": -0.22, "scale": 1.4, "variant": "#20283f" },
-
-
-  { "id": "screen-building-east", "type": "screen-building", "position": [15.5, 0, 8], "rotationY": -1.5708, "scale": 0.35, "videoSrc": "/videos/cityIntro/first.mp4" },
-  { "id": "screen-building-west", "type": "screen-building", "position": [-15.5, 0, -12], "rotationY": 1.5708, "scale": 0.35, "videoSrc": "/videos/cityIntro/second.mp4" },
-  { "id": "ad-tower-03", "type": "ad-tower", "position": [21, 0, -23], "rotationY": -0.08, "scale": 1, "variant": "#ffcf3d" },
-
-  { "id": "flight-lane-carsEast-0", "type": "flight-lane-point", "position": [7.4, 6.2, 24], "rotationY": 0, "scale": 1, "variant": "carsEast:0" },
-  { "id": "flight-lane-carsEast-1", "type": "flight-lane-point", "position": [8.6, 7.0, 6], "rotationY": 0, "scale": 1, "variant": "carsEast:1" },
-  { "id": "flight-lane-carsEast-2", "type": "flight-lane-point", "position": [7.8, 6.6, -12], "rotationY": 0, "scale": 1, "variant": "carsEast:2" },
-  { "id": "flight-lane-carsEast-3", "type": "flight-lane-point", "position": [9.2, 7.4, -32], "rotationY": 0, "scale": 1, "variant": "carsEast:3" },
-  { "id": "flight-lane-carsEast-4", "type": "flight-lane-point", "position": [11.4, 7.8, -14], "rotationY": 0, "scale": 1, "variant": "carsEast:4" },
-  { "id": "flight-lane-carsEast-5", "type": "flight-lane-point", "position": [10.6, 7.0, 10], "rotationY": 0, "scale": 1, "variant": "carsEast:5" },
-
-  { "id": "flight-lane-carsWest-0", "type": "flight-lane-point", "position": [-7.6, 5.6, 22], "rotationY": 0, "scale": 1, "variant": "carsWest:0" },
-  { "id": "flight-lane-carsWest-1", "type": "flight-lane-point", "position": [-8.8, 6.2, 4], "rotationY": 0, "scale": 1, "variant": "carsWest:1" },
-  { "id": "flight-lane-carsWest-2", "type": "flight-lane-point", "position": [-7.6, 5.8, -14], "rotationY": 0, "scale": 1, "variant": "carsWest:2" },
-  { "id": "flight-lane-carsWest-3", "type": "flight-lane-point", "position": [-9.4, 6.6, -34], "rotationY": 0, "scale": 1, "variant": "carsWest:3" },
-  { "id": "flight-lane-carsWest-4", "type": "flight-lane-point", "position": [-11.6, 7.2, -16], "rotationY": 0, "scale": 1, "variant": "carsWest:4" },
-  { "id": "flight-lane-carsWest-5", "type": "flight-lane-point", "position": [-10.6, 6.4, 8], "rotationY": 0, "scale": 1, "variant": "carsWest:5" },
-
-  { "id": "flight-lane-trainHigh-0", "type": "flight-lane-point", "position": [-2, 11.5, 22], "rotationY": 0, "scale": 1, "variant": "trainHigh:0" },
-  { "id": "flight-lane-trainHigh-1", "type": "flight-lane-point", "position": [-2, 12.2, 6], "rotationY": 0, "scale": 1, "variant": "trainHigh:1" },
-  { "id": "flight-lane-trainHigh-2", "type": "flight-lane-point", "position": [-1.5, 12.8, -12], "rotationY": 0, "scale": 1, "variant": "trainHigh:2" },
-  { "id": "flight-lane-trainHigh-3", "type": "flight-lane-point", "position": [-1, 13.5, -30], "rotationY": 0, "scale": 1, "variant": "trainHigh:3" },
-  { "id": "flight-lane-trainHigh-4", "type": "flight-lane-point", "position": [3, 14.2, -40], "rotationY": 0, "scale": 1, "variant": "trainHigh:4" },
-  { "id": "flight-lane-trainHigh-5", "type": "flight-lane-point", "position": [5, 13.2, -20], "rotationY": 0, "scale": 1, "variant": "trainHigh:5" },
-  { "id": "flight-lane-trainHigh-6", "type": "flight-lane-point", "position": [5, 12.0, 0], "rotationY": 0, "scale": 1, "variant": "trainHigh:6" },
-  { "id": "flight-lane-trainHigh-7", "type": "flight-lane-point", "position": [4, 11.2, 18], "rotationY": 0, "scale": 1, "variant": "trainHigh:7" },
-
-  { "id": "flying-car-01", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#ff6a3a", "title": "carsEast" },
-  { "id": "flying-car-02", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#7ad8ff", "title": "carsWest" },
-  { "id": "flying-car-03", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#c97aff", "title": "carsEast" },
-  { "id": "flying-car-04", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#7affb0", "title": "carsWest" },
-  { "id": "flying-car-05", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#ffd27a", "title": "carsEast" },
-  { "id": "flying-car-06", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#7ad8ff", "title": "carsWest" },
-  { "id": "flying-car-07", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#ff6a3a", "title": "carsEast" },
-  { "id": "flying-car-08", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#ffcf6b", "title": "carsWest" },
-  { "id": "flying-car-09", "type": "flying-car", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#ff5fa8", "title": "carsEast" },
-
-  { "id": "flying-train-01", "type": "flying-train", "position": [0, 0, 0], "rotationY": 0, "scale": 1, "variant": "#7ad8ff", "title": "trainHigh" },
-  { "id": "flying-train-02", "type": "flying-train", "position": [0, 0, 0], "rotationY": 0, "scale": 1.1, "variant": "#ffb0e0", "title": "trainHigh" },
-
-  { "id": "moon", "type": "moon", "position": [-30, 34, -70], "rotationY": 0, "scale": 1 },
-
-  { "id": "planet-01", "type": "planet", "position": [48, 50, -110], "rotationY": 0, "scale": 4.5, "variant": "#c9855a" },
-  { "id": "planet-02", "type": "planet", "position": [-55, 40, -150], "rotationY": 0, "scale": 3, "variant": "#7aa8c9" },
-  { "id": "planet-03", "type": "planet", "position": [20, 60, -190], "rotationY": 0, "scale": 6, "variant": "#c9a877" },
-  { "id": "planet-04", "type": "planet", "position": [-85, 38, -35], "rotationY": 0, "scale": 2.6, "variant": "#b07ac9" },
-  { "id": "planet-05", "type": "planet", "position": [75, 62, -55], "rotationY": 0, "scale": 3.4, "variant": "#7ac9b8" },
-  { "id": "planet-06", "type": "planet", "position": [15, 48, 65], "rotationY": 0, "scale": 2.8, "variant": "#d8c8a0" },
-  { "id": "planet-07", "type": "planet", "position": [-40, 72, 95], "rotationY": 0, "scale": 5, "variant": "#c97a7a" },
-  { "id": "planet-08", "type": "planet", "position": [90, 30, 30], "rotationY": 0, "scale": 2.2, "variant": "#8aa8ff" },
-
-  { "id": "bench-01", "type": "neon-bench", "position": [-4.9, 0, 10.5], "rotationY": 1.5708, "scale": 1 },
-  { "id": "bench-02", "type": "neon-bench", "position": [4.9, 0, -9.5], "rotationY": -1.5708, "scale": 1 },
-  { "id": "bench-03", "type": "neon-bench", "position": [-4.9, 0, -19], "rotationY": 1.5708, "scale": 1 },
-  { "id": "bench-04", "type": "neon-bench", "position": [4.9, 0, -29], "rotationY": -1.5708, "scale": 1 },
-  { "id": "bench-05", "type": "neon-bench", "position": [-4.9, 0, -38], "rotationY": 1.5708, "scale": 1 },
-  { "id": "planter-01", "type": "neon-planter", "position": [4.7, 0, 12.5], "rotationY": -1.5708, "scale": 1 },
-  { "id": "planter-02", "type": "neon-planter", "position": [-4.7, 0, -0.5], "rotationY": 1.5708, "scale": 1 },
-  { "id": "planter-03", "type": "neon-planter", "position": [4.7, 0, -11.5], "rotationY": -1.5708, "scale": 1 },
-  { "id": "planter-04", "type": "neon-planter", "position": [-4.7, 0, -8], "rotationY": 1.5708, "scale": 1 },
-  { "id": "planter-05", "type": "neon-planter", "position": [4.7, 0, -21], "rotationY": -1.5708, "scale": 1 },
-  { "id": "planter-06", "type": "neon-planter", "position": [-4.7, 0, -27.5], "rotationY": 1.5708, "scale": 1 },
-  { "id": "planter-07", "type": "neon-planter", "position": [4.7, 0, -40], "rotationY": -1.5708, "scale": 1 },
-  { "id": "riwi-building", "type": "riwi-building", "position": [-20.4, 0, 17], "rotationY": 1.5708, "scale": 0.85 },
-  { "id": "library-facade", "type": "library-facade", "position": [0, 0, -54], "rotationY": 0, "scale": 1 }
+  {
+    "id": "path-0",
+    "type": "path-point",
+    "position": [
+      0,
+      0,
+      22
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "0"
+  },
+  {
+    "id": "path-1",
+    "type": "path-point",
+    "position": [
+      2.2,
+      0,
+      12
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "1"
+  },
+  {
+    "id": "path-2",
+    "type": "path-point",
+    "position": [
+      -1.4,
+      0,
+      2
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "2"
+  },
+  {
+    "id": "path-3",
+    "type": "path-point",
+    "position": [
+      1.8,
+      0,
+      -8
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "3"
+  },
+  {
+    "id": "path-4",
+    "type": "path-point",
+    "position": [
+      -1.2,
+      0,
+      -18
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "4"
+  },
+  {
+    "id": "path-5",
+    "type": "path-point",
+    "position": [
+      0.6,
+      0,
+      -28
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "5"
+  },
+  {
+    "id": "path-6",
+    "type": "path-point",
+    "position": [
+      1.2,
+      0,
+      -33.8
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "6"
+  },
+  {
+    "id": "path-7",
+    "type": "path-point",
+    "position": [
+      6.5,
+      0,
+      -35.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "7"
+  },
+  {
+    "id": "path-8",
+    "type": "path-point",
+    "position": [
+      14.5,
+      0,
+      -35.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "8"
+  },
+  {
+    "id": "path-9",
+    "type": "path-point",
+    "position": [
+      23,
+      0,
+      -35.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "9"
+  },
+  {
+    "id": "farol-calle-01",
+    "type": "floating-farol",
+    "position": [
+      14,
+      0,
+      -30.8
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703"
+  },
+  {
+    "id": "farol-calle-02",
+    "type": "floating-farol",
+    "position": [
+      29.5,
+      0,
+      -30.8
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FF007F"
+  },
+  {
+    "id": "roble-calle-01",
+    "type": "roble-amarillo",
+    "position": [
+      33,
+      0,
+      -30.8
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "riwi-barranquilla",
+    "type": "riwi-barranquilla",
+    "position": [
+      24,
+      0,
+      -21.56
+    ],
+    "rotationY": 3.1416,
+    "scale": 1
+  },
+  {
+    "id": "bus-anuncio",
+    "type": "ad-bus",
+    "position": [
+      4.4,
+      0,
+      -14.2
+    ],
+    "rotationY": 3.1416,
+    "scale": 1
+  },
+  {
+    "id": "street-jukebox-car",
+    "type": "street-jukebox-car",
+    "position": [
+      -3.3,
+      0,
+      7
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        -0.0020708315084263518,
+        1.9887754731317178,
+        -0.0010503342177070607
+      ],
+      "size": [
+        3.0843387788906345,
+        3.376900150616161,
+        7.213954911659748
+      ]
+    }
+  },
+  {
+    "id": "concierto-riwi",
+    "type": "concert-stage",
+    "position": [
+      39.5,
+      0,
+      -35.5
+    ],
+    "rotationY": -1.5708,
+    "scale": 1
+  },
+  {
+    "id": "casa-este-01",
+    "type": "neo-heritage-house",
+    "position": [
+      13.279006301150712,
+      0,
+      24.823137433129137
+    ],
+    "rotationY": -1.2107106604691626,
+    "scale": 1,
+    "variant": "#FFB703",
+    "title": "#FF007F",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        8.960554092851,
+        5.509999990463257,
+        7.15549712932679
+      ]
+    },
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793
+  },
+  {
+    "id": "casa-este-03",
+    "type": "neo-heritage-house",
+    "position": [
+      11.5,
+      0,
+      -3
+    ],
+    "rotationY": -1.5708,
+    "scale": 1,
+    "variant": "#E63946",
+    "title": "#5AD8FF",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        6.816528715977105,
+        5.509999990463257,
+        7.649935426371102
+      ]
+    }
+  },
+  {
+    "id": "casa-oeste-01",
+    "type": "neo-heritage-house",
+    "position": [
+      -11.770214900905973,
+      0,
+      32.279214604722725
+    ],
+    "rotationY": 0.2855908789417997,
+    "scale": 1,
+    "variant": "#E63946",
+    "title": "#FFB703",
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        9.085036707633595,
+        5.509999990463257,
+        5.4590863268714225
+      ]
+    }
+  },
+  {
+    "id": "casa-oeste-03",
+    "type": "neo-heritage-house",
+    "position": [
+      -11.5,
+      0,
+      4
+    ],
+    "rotationY": 1.5708,
+    "scale": 1,
+    "variant": "#1E8C86",
+    "title": "#FFB703",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        8.865976339427483,
+        5.509999990463257,
+        7.254083855488659
+      ]
+    }
+  },
+  {
+    "id": "mural-marimonda",
+    "type": "culture-mural",
+    "position": [
+      11.2,
+      0,
+      -24
+    ],
+    "rotationY": -1.5708,
+    "scale": 1,
+    "variant": "marimonda",
+    "title": "#FFB703",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.8000000000000007,
+        -0.3825655443392444
+      ],
+      "size": [
+        8.100000381469727,
+        5.800000190734863,
+        1.0693691572842867
+      ]
+    }
+  },
+  {
+    "id": "mural-tambores",
+    "type": "culture-mural",
+    "position": [
+      -6.936530131790683,
+      0,
+      -30.75584052288595
+    ],
+    "rotationY": 1.5708,
+    "scale": 1,
+    "variant": "tambores",
+    "title": "#00B4D8",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.8000000000000007,
+        -0.3638100403468978
+      ],
+      "size": [
+        8.100000381469727,
+        5.800000190734863,
+        1.0019275191052954
+      ]
+    }
+  },
+  {
+    "id": "farol-01",
+    "type": "floating-farol",
+    "position": [
+      -3.2,
+      0,
+      18
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFD08A"
+  },
+  {
+    "id": "farol-02",
+    "type": "floating-farol",
+    "position": [
+      3.2,
+      0,
+      13
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703"
+  },
+  {
+    "id": "farol-03",
+    "type": "floating-farol",
+    "position": [
+      -3.2,
+      0,
+      7
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFD08A"
+  },
+  {
+    "id": "farol-04",
+    "type": "floating-farol",
+    "position": [
+      3.2,
+      0,
+      1
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FF007F"
+  },
+  {
+    "id": "farol-05",
+    "type": "floating-farol",
+    "position": [
+      -3.2,
+      0,
+      -5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFD08A"
+  },
+  {
+    "id": "farol-07",
+    "type": "floating-farol",
+    "position": [
+      -3.2,
+      0,
+      -17
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#00B4D8"
+  },
+  {
+    "id": "farol-08",
+    "type": "floating-farol",
+    "position": [
+      3.2,
+      0,
+      -23
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFD08A"
+  },
+  {
+    "id": "farol-09",
+    "type": "floating-farol",
+    "position": [
+      -3.2,
+      0,
+      -29
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703"
+  },
+  {
+    "id": "farol-10",
+    "type": "floating-farol",
+    "position": [
+      3.2,
+      0,
+      -34
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFD08A"
+  },
+  {
+    "id": "farol-11",
+    "type": "floating-farol",
+    "position": [
+      -3.2,
+      0,
+      -40
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FF007F"
+  },
+  {
+    "id": "farol-12",
+    "type": "floating-farol",
+    "position": [
+      0,
+      0,
+      -46
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFD08A"
+  },
+  {
+    "id": "anden-oeste-01",
+    "type": "anden-bordillo",
+    "position": [
+      -4.85,
+      0,
+      20
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "7",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.17,
+        0
+      ],
+      "size": [
+        2.1,
+        0.34,
+        7
+      ]
+    }
+  },
+  {
+    "id": "anden-este-01",
+    "type": "anden-bordillo",
+    "position": [
+      4.85,
+      0,
+      10.5
+    ],
+    "rotationY": 3.1416,
+    "scale": 1,
+    "variant": "7",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.17,
+        0
+      ],
+      "size": [
+        2.1,
+        0.34,
+        7
+      ]
+    }
+  },
+  {
+    "id": "anden-oeste-02",
+    "type": "anden-bordillo",
+    "position": [
+      -4.85,
+      0,
+      -9.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "7",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.17,
+        0
+      ],
+      "size": [
+        2.1,
+        0.34,
+        7
+      ]
+    }
+  },
+  {
+    "id": "anden-este-02",
+    "type": "anden-bordillo",
+    "position": [
+      4.85,
+      0,
+      -19
+    ],
+    "rotationY": 3.1416,
+    "scale": 1,
+    "variant": "7",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.17,
+        0
+      ],
+      "size": [
+        2.1,
+        0.34,
+        7
+      ]
+    }
+  },
+  {
+    "id": "anden-oeste-03",
+    "type": "anden-bordillo",
+    "position": [
+      -4.85,
+      0,
+      -29
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "7",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        0.17,
+        0
+      ],
+      "size": [
+        2.1,
+        0.34,
+        7
+      ]
+    }
+  },
+  {
+    "id": "roble-oeste-01",
+    "type": "roble-amarillo",
+    "position": [
+      -5.2,
+      0,
+      16
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "roble-oeste-02",
+    "type": "roble-amarillo",
+    "position": [
+      -5.2,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "roble-oeste-03",
+    "type": "roble-amarillo",
+    "position": [
+      -5.2,
+      0,
+      -14
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703"
+  },
+  {
+    "id": "roble-oeste-04",
+    "type": "roble-amarillo",
+    "position": [
+      -5.2,
+      0,
+      -26
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "roble-este-01",
+    "type": "roble-amarillo",
+    "position": [
+      5.2,
+      0,
+      22
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "roble-este-02",
+    "type": "roble-amarillo",
+    "position": [
+      5.2,
+      0,
+      5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703"
+  },
+  {
+    "id": "roble-este-03",
+    "type": "roble-amarillo",
+    "position": [
+      5.2,
+      0,
+      -5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "roble-este-04",
+    "type": "roble-amarillo",
+    "position": [
+      5.2,
+      0,
+      -23.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E"
+  },
+  {
+    "id": "screen-building-east",
+    "type": "screen-building",
+    "position": [
+      15.34717968046278,
+      0,
+      10.590178843419105
+    ],
+    "rotationY": -1.5708,
+    "scale": 0.35,
+    "videoSrc": "/videos/cityIntro/first.mp4",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        14.500525510979589,
+        -10.000000000000004
+      ],
+      "size": [
+        76.00000000000001,
+        28.795543835992266,
+        40.00000000000001
+      ]
+    }
+  },
+  {
+    "id": "screen-building-west",
+    "type": "screen-building",
+    "position": [
+      -16.5,
+      0,
+      -12
+    ],
+    "rotationY": 1.5708,
+    "scale": 0.35,
+    "videoSrc": "/videos/cityIntro/second.mp4",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        20.028382432740937,
+        -5.707523273870929
+      ],
+      "size": [
+        61.26880409984662,
+        37.986657680824074,
+        19.01851213638682
+      ]
+    }
+  },
+  {
+    "id": "flight-lane-carsEast-0",
+    "type": "flight-lane-point",
+    "position": [
+      7.4,
+      6.2,
+      24
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsEast: 0"
+  },
+  {
+    "id": "flight-lane-carsEast-1",
+    "type": "flight-lane-point",
+    "position": [
+      8.6,
+      7,
+      6
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsEast: 1"
+  },
+  {
+    "id": "flight-lane-carsEast-2",
+    "type": "flight-lane-point",
+    "position": [
+      7.8,
+      6.6,
+      -12
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsEast: 2"
+  },
+  {
+    "id": "flight-lane-carsEast-3",
+    "type": "flight-lane-point",
+    "position": [
+      9.2,
+      7.4,
+      -32
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsEast: 3"
+  },
+  {
+    "id": "flight-lane-carsEast-4",
+    "type": "flight-lane-point",
+    "position": [
+      11.4,
+      7.8,
+      -14
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsEast: 4"
+  },
+  {
+    "id": "flight-lane-carsEast-5",
+    "type": "flight-lane-point",
+    "position": [
+      10.6,
+      7,
+      10
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsEast: 5"
+  },
+  {
+    "id": "flight-lane-carsWest-0",
+    "type": "flight-lane-point",
+    "position": [
+      -7.6,
+      5.6,
+      22
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsWest: 0"
+  },
+  {
+    "id": "flight-lane-carsWest-1",
+    "type": "flight-lane-point",
+    "position": [
+      -8.8,
+      6.2,
+      4
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsWest: 1"
+  },
+  {
+    "id": "flight-lane-carsWest-2",
+    "type": "flight-lane-point",
+    "position": [
+      -7.6,
+      5.8,
+      -14
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsWest: 2"
+  },
+  {
+    "id": "flight-lane-carsWest-3",
+    "type": "flight-lane-point",
+    "position": [
+      -9.4,
+      6.6,
+      -34
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsWest: 3"
+  },
+  {
+    "id": "flight-lane-carsWest-4",
+    "type": "flight-lane-point",
+    "position": [
+      -11.6,
+      7.2,
+      -16
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsWest: 4"
+  },
+  {
+    "id": "flight-lane-carsWest-5",
+    "type": "flight-lane-point",
+    "position": [
+      -10.6,
+      6.4,
+      8
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "carsWest: 5"
+  },
+  {
+    "id": "flight-lane-trainHigh-0",
+    "type": "flight-lane-point",
+    "position": [
+      -2,
+      11.5,
+      22
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 0"
+  },
+  {
+    "id": "flight-lane-trainHigh-1",
+    "type": "flight-lane-point",
+    "position": [
+      -2,
+      12.2,
+      6
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 1"
+  },
+  {
+    "id": "flight-lane-trainHigh-2",
+    "type": "flight-lane-point",
+    "position": [
+      -1.5,
+      12.8,
+      -12
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 2"
+  },
+  {
+    "id": "flight-lane-trainHigh-3",
+    "type": "flight-lane-point",
+    "position": [
+      -1,
+      13.5,
+      -30
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 3"
+  },
+  {
+    "id": "flight-lane-trainHigh-4",
+    "type": "flight-lane-point",
+    "position": [
+      3,
+      14.2,
+      -40
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 4"
+  },
+  {
+    "id": "flight-lane-trainHigh-5",
+    "type": "flight-lane-point",
+    "position": [
+      5,
+      13.2,
+      -20
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 5"
+  },
+  {
+    "id": "flight-lane-trainHigh-6",
+    "type": "flight-lane-point",
+    "position": [
+      5,
+      12,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 6"
+  },
+  {
+    "id": "flight-lane-trainHigh-7",
+    "type": "flight-lane-point",
+    "position": [
+      4,
+      11.2,
+      18
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "trainHigh: 7"
+  },
+  {
+    "id": "flying-car-01",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FF007F",
+    "title": "carsEast"
+  },
+  {
+    "id": "flying-car-02",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#00B4D8",
+    "title": "carsWest"
+  },
+  {
+    "id": "flying-car-03",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703",
+    "title": "carsEast"
+  },
+  {
+    "id": "flying-car-04",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#E63946",
+    "title": "carsWest"
+  },
+  {
+    "id": "flying-car-05",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#F2C14E",
+    "title": "carsEast"
+  },
+  {
+    "id": "flying-car-06",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#00B4D8",
+    "title": "carsWest"
+  },
+  {
+    "id": "flying-car-07",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#1E8C86",
+    "title": "carsEast"
+  },
+  {
+    "id": "flying-car-08",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FFB703",
+    "title": "carsWest"
+  },
+  {
+    "id": "flying-car-09",
+    "type": "flying-car",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#FF007F",
+    "title": "carsEast"
+  },
+  {
+    "id": "flying-train-01",
+    "type": "flying-train",
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "#00B4D8",
+    "title": "trainHigh"
+  },
+  {
+    "id": "moon",
+    "type": "moon",
+    "position": [
+      -30,
+      34,
+      -70
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "planet-02",
+    "type": "planet",
+    "position": [
+      -55,
+      40,
+      -150
+    ],
+    "rotationY": 0,
+    "scale": 1.6,
+    "variant": "#7aa8c9"
+  },
+  {
+    "id": "planet-03",
+    "type": "planet",
+    "position": [
+      20,
+      60,
+      -190
+    ],
+    "rotationY": 0,
+    "scale": 2.6,
+    "variant": "#c9a877"
+  },
+  {
+    "id": "riwi-building",
+    "type": "riwi-building",
+    "position": [
+      -21.5,
+      0,
+      17
+    ],
+    "rotationY": 1.5708,
+    "scale": 0.85,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        6.470000267028809,
+        0
+      ],
+      "size": [
+        24.843262839139584,
+        13.940000534057617,
+        15.600810684932199
+      ]
+    }
+  },
+  {
+    "id": "library-facade",
+    "type": "library-facade",
+    "position": [
+      0,
+      0,
+      -54
+    ],
+    "rotationY": 0,
+    "scale": 1
+  },
+  {
+    "id": "sun",
+    "type": "sun",
+    "position": [
+      -67.2,
+      16,
+      -160
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "variant": "cityIntro"
+  },
+  {
+    "id": "col-stall-01",
+    "type": "collider",
+    "position": [
+      -5.25,
+      1.25,
+      26
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "size": [
+        1.2,
+        2.5,
+        2.7
+      ]
+    }
+  },
+  {
+    "id": "col-stall-02",
+    "type": "collider",
+    "position": [
+      5.25,
+      1.25,
+      18
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "size": [
+        1.2,
+        2.5,
+        2.7
+      ]
+    }
+  },
+  {
+    "id": "col-stall-03",
+    "type": "collider",
+    "position": [
+      5.25,
+      1.25,
+      -28
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "size": [
+        1.2,
+        2.5,
+        2.7
+      ]
+    }
+  },
+  {
+    "id": "col-stall-04",
+    "type": "collider",
+    "position": [
+      -5.25,
+      1.25,
+      -35.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "collider": {
+      "shape": "box",
+      "size": [
+        1.2,
+        2.5,
+        2.7
+      ]
+    }
+  },
+  {
+    "id": "walk-avenida",
+    "type": "walk-area",
+    "position": [
+      0,
+      0,
+      -5.1
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "areaSize": [
+      11.6,
+      70.2
+    ]
+  },
+  {
+    "id": "walk-calle-aduana",
+    "type": "walk-area",
+    "position": [
+      19.975,
+      0,
+      -35.05
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "areaSize": [
+      32.05,
+      10.3
+    ]
+  },
+  {
+    "id": "walk-plaza-01",
+    "type": "walk-area",
+    "position": [
+      -9,
+      0,
+      15
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "areaSize": [
+      6.8,
+      10.4
+    ]
+  },
+  {
+    "id": "walk-plaza-02",
+    "type": "walk-area",
+    "position": [
+      -9.1,
+      0,
+      -13.1
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "areaSize": [
+      7,
+      23
+    ]
+  },
+  {
+    "id": "walk-plaza-03",
+    "type": "walk-area",
+    "position": [
+      9.1,
+      0,
+      8.5
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "areaSize": [
+      7,
+      11.4
+    ]
+  },
+  {
+    "id": "walk-plaza-04",
+    "type": "walk-area",
+    "position": [
+      23.7,
+      0,
+      -24.75
+    ],
+    "rotationY": 0,
+    "scale": 1,
+    "areaSize": [
+      8.8,
+      9.7
+    ]
+  },
+  {
+    "id": "casa-oeste-04",
+    "type": "neo-heritage-house",
+    "position": [
+      -31.783641260811795,
+      0,
+      -36.10267271207275
+    ],
+    "rotationY": 1.5708,
+    "scale": 1,
+    "variant": "#1E8C86",
+    "title": "#FFB703",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        7.472308515457173,
+        5.509999990463257,
+        6.029292212147226
+      ]
+    }
+  },
+  {
+    "id": "casa-oeste-06",
+    "type": "neo-heritage-house",
+    "position": [
+      -28.571006633105338,
+      0,
+      -18.412996676417407
+    ],
+    "rotationY": 1.0544004276166397,
+    "scale": 1,
+    "variant": "#E63946",
+    "title": "#FFB703",
+    "rotationX": -3.141592653589793,
+    "rotationZ": -3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        8.155434604013381,
+        5.509999990463257,
+        6.105517268617548
+      ]
+    }
+  },
+  {
+    "id": "casa-oeste-07",
+    "type": "neo-heritage-house",
+    "position": [
+      -31.591196352202846,
+      0,
+      -27.952734351059583
+    ],
+    "rotationY": 1.5708,
+    "scale": 1,
+    "variant": "#1E8C86",
+    "title": "#FFB703",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        7.472308515457173,
+        5.509999990463257,
+        6.029292212147226
+      ]
+    }
+  },
+  {
+    "id": "casa-este-05",
+    "type": "neo-heritage-house",
+    "position": [
+      -2.516340060930253,
+      0,
+      34.80376729940162
+    ],
+    "rotationY": 3.14158898038469,
+    "scale": 1,
+    "variant": "#FFB703",
+    "title": "#FF007F",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        8.960554092851,
+        5.509999990463257,
+        7.15549712932679
+      ]
+    }
+  },
+  {
+    "id": "casa-oeste-08",
+    "type": "neo-heritage-house",
+    "position": [
+      6.933094674630684,
+      0,
+      32.921477878258486
+    ],
+    "rotationY": -0.45972854525587864,
+    "scale": 1,
+    "variant": "#1E8C86",
+    "title": "#FFB703",
+    "rotationX": 3.141592653589793,
+    "rotationZ": 3.141592653589793,
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        7.472308515457173,
+        5.509999990463257,
+        6.029292212147226
+      ]
+    }
+  },
+  {
+    "id": "casa-este-06",
+    "type": "neo-heritage-house",
+    "position": [
+      12.02956176520867,
+      0,
+      -10.37161927056537
+    ],
+    "rotationY": -1.5708,
+    "scale": 1,
+    "variant": "#E63946",
+    "title": "#5AD8FF",
+    "collider": {
+      "shape": "box",
+      "offset": [
+        0,
+        2.6449999809265137,
+        0
+      ],
+      "size": [
+        6.816528715977105,
+        5.509999990463257,
+        7.649935426371102
+      ]
+    }
+  }
 ]

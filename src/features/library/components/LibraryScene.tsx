@@ -4,14 +4,49 @@ import * as THREE from 'three'
 import { Bookshelf } from '@/features/library/components/Bookshelf'
 import { Pedestal } from '@/features/pedestal/components/Pedestal'
 import { LevitatingBook } from '@/features/pedestal/components/LevitatingBook'
+import { PedestalAwakening } from '@/features/pedestal/components/PedestalAwakening'
 import { Wormhole } from '@/features/wormhole/components/Wormhole'
 import { TimeVortexParticles } from '@/features/wormhole/components/TimeVortexParticles'
 import { CyberWall } from '@/features/library/components/CyberWall'
 import { ScatteredBooks } from '@/features/library/components/ScatteredBooks'
+import { PendantLamp } from '@/features/library/components/PendantLamp'
+import { ReadingTable, SectionSign, ToppledShelf } from '@/features/library/components/LibraryFurnishings'
 import { TimeVortexSequence } from '@/features/cinematics/components/TimeVortexSequence'
+import { RestoredLibrary } from '@/features/library/components/RestoredLibrary'
+import { LightBurst } from '@/features/library/components/LightBurst'
+import { ProceduralPortal } from '@/shared/components/ReusableModels'
+import { PortalOpening } from '@/shared/components/PortalOpening'
+import {
+  AISLE_SHELVES,
+  BOOK_SHELF_SLOT,
+  CEILING_Y,
+  LIBRARY_PORTAL_POSITION,
+  LIBRARY_PORTAL_RADIUS,
+  LAMPS,
+  READING_TABLES,
+  SECTION_SIGNS,
+  SHELF_HEIGHT,
+  TOPPLED_SHELVES,
+  WALL_SHELVES,
+} from '@/features/library/config/libraryLayout'
 
 import { PhaseEngine } from '@/engine/PhaseEngine'
+import { initialLibraryEntities } from '@/features/editor/config/editableEntities'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import type { LibraryBookStage } from '@/app/hooks/usePhaseFlow'
+
+/**
+ * The hall's JSON colliders (shelving, tables, planters, the pedestal) and
+ * walkable area, which outside the editor are the only `library.json`
+ * entities `PhaseEngine` renders — the furnishings themselves are drawn by
+ * the components below.
+ */
+const LIBRARY_BOUNDARY_ENTITIES = initialLibraryEntities.filter((e) => e.type === 'collider' || e.type === 'walk-area')
+
+/** Collider tags active in the abandoned hall. */
+const RUINED_COLLIDER_TAGS = ['ruined']
+/** Collider tags active once the hall is restored. */
+const RESTORED_COLLIDER_TAGS = ['restored']
 
 /**
  * Props for {@link FlickeringTorch}.
@@ -81,6 +116,41 @@ const WallTorchFixture = memo(function WallTorchFixture({ position }: WallTorchF
 })
 
 /**
+ * Props for {@link BookGlowLights}.
+ */
+interface BookGlowLightsProps {
+  /** Target power `[0,1]` — `0` while the pedestal is still switched off. */
+  power: number
+}
+
+/**
+ * The warm key light hugging the book and the spot pouring down on it, eased
+ * between dark and full strength along with the pedestal they belong to.
+ *
+ * @param props - Power level
+ * @returns Lights
+ */
+const BookGlowLights = memo(function BookGlowLights({ power }: BookGlowLightsProps) {
+  const pointRef = useRef<THREE.PointLight>(null)
+  const spotRef = useRef<THREE.SpotLight>(null)
+  const current = useRef(power)
+  useFrame((_, delta) => {
+    current.current = THREE.MathUtils.damp(current.current, power, 1.4, Math.min(delta, 0.05))
+    if (pointRef.current) pointRef.current.intensity = 2.4 * current.current
+    if (spotRef.current) spotRef.current.intensity = 3.2 * current.current
+  })
+  return (
+    <>
+      <pointLight ref={pointRef} position={[0, 1.82, 0]} intensity={2.4 * power} distance={5.2} color="#ffcc66" decay={2} />
+      <spotLight ref={spotRef} position={[0, 4.8, 0]} angle={0.5} penumbra={0.62} intensity={3.2 * power} color="#ffe9a0" distance={11} />
+    </>
+  )
+})
+
+/** Default page-focus handler for when nobody listens (the editor, the first visit). */
+const NO_PAGE_FOCUS = (): void => {}
+
+/**
  * Props for {@link LibraryScene}.
  */
 interface LibrarySceneProps {
@@ -88,8 +158,22 @@ interface LibrarySceneProps {
   wormholeActive: boolean
   /** Wormhole progress in [0,1]. */
   wormholeProgress: number
+  /** Book/portal choreography stage — see {@link LibraryBookStage}. Defaults to `'ready'` (book always present, no portal), matching the first visit. */
+  bookStage?: LibraryBookStage
+  /** Whether the returned book has remade the hall — swaps the abandoned library for {@link RestoredLibrary} and removes the pedestal. */
+  libraryRestored?: boolean
+  /** Whether the `cityIntro` portal has appeared and can be used. */
+  libraryPortalUnlocked?: boolean
+  /** Which cinematic the running wormhole plays: the book's ritual over the pedestal is drawn here; a portal crossing is drawn by the stage (see `PortalCrossing`). */
+  crossingMode?: 'book' | 'portal'
   /** Optional engine-driven entities for editor. */
   editableEntities?: EditableEntity[]
+  /** Whether the restored hall's displayed pages can be picked up with the crosshair. */
+  pagesInteractive?: boolean
+  /** Page under the crosshair, if any. */
+  focusedPageId?: string | null
+  /** Reports the page under the crosshair as it changes. */
+  onPageFocus?: (id: string | null) => void
 }
 
 /**
@@ -100,8 +184,24 @@ interface LibrarySceneProps {
  * @param props - Scene state
  * @returns Library group
  */
-export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormholeProgress, editableEntities }: LibrarySceneProps) {
+export const LibraryScene = memo(function LibraryScene({
+  wormholeActive,
+  wormholeProgress,
+  bookStage = 'ready',
+  libraryRestored = false,
+  libraryPortalUnlocked = false,
+  crossingMode = 'book',
+  editableEntities,
+  pagesInteractive = false,
+  focusedPageId = null,
+  onPageFocus = NO_PAGE_FOCUS,
+}: LibrarySceneProps) {
   const libraryRef = useRef<THREE.Group>(null)
+  const bookGone = bookStage === 'dormant' || bookStage === 'igniting' || bookStage === 'hidden' || bookStage === 'transforming' || bookStage === 'restored'
+  const pedestalPower = bookStage === 'dormant' ? 0 : 1
+  const bookAppear = bookGone ? 0 : 1
+  const bookShelved = bookStage === 'returning' || bookStage === 'transforming' || bookStage === 'restored' ? 1 : 0
+  const showRestored = libraryRestored && !editableEntities
 
   useFrame(() => {
     if (!libraryRef.current) return
@@ -109,7 +209,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
     const fade = 1 - voidProgress
     libraryRef.current.traverse((obj) => {
       const mesh = obj as THREE.Mesh
-      if (mesh.isMesh && mesh.material) {
+      if (mesh.isMesh && mesh.material && !mesh.userData.ownsOpacity) {
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
         mats.forEach((m) => {
           const mat = m as THREE.MeshStandardMaterial & { transparent?: boolean; opacity?: number }
@@ -122,18 +222,21 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
     })
   })
 
+  const colliderTags = showRestored ? RESTORED_COLLIDER_TAGS : RUINED_COLLIDER_TAGS
+
+  /**
+   * Emergency wall lighting, thinned out now that the pendant lamps carry the
+   * room — the fixtures on the walls still all glow (`torchMeshes`), but only
+   * these few contribute a real light, keeping the hall's total light count
+   * within what forward rendering handles comfortably.
+   */
   const torchLights = useMemo(
     () =>
       [
         [-10.6, 2.2, -6],
-        [-10.6, 2.2, 0],
         [-10.6, 2.2, 6],
         [10.6, 2.2, -6],
-        [10.6, 2.2, 0],
         [10.6, 2.2, 6],
-        [-5, 2.2, -10.6],
-        [0, 2.2, -10.6],
-        [5, 2.2, -10.6],
       ] as const,
     [],
   )
@@ -154,6 +257,10 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
   return (
     <group>
       <group ref={libraryRef}>
+        {showRestored ? (
+          <RestoredLibrary pagesInteractive={pagesInteractive} focusedPageId={focusedPageId} onPageFocus={onPageFocus} />
+        ) : (
+          <>
         <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]} receiveShadow>
           <planeGeometry args={[22, 22]} />
           <meshStandardMaterial color="#080a12" roughness={0.92} metalness={0.06} transparent opacity={1} />
@@ -173,7 +280,7 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       ))}
 
       {editableEntities ? (
-        <PhaseEngine entities={editableEntities.filter((e) => e.type !== 'book')} />
+        <PhaseEngine entities={editableEntities.filter((e) => e.type !== 'book')} context={{ colliderTags }} />
       ) : (
         <>
           <CyberWall position={[0, 2.6, -11]} size={[22, 5.2, 0.45]} missingIndex={5} />
@@ -193,22 +300,48 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
           <CyberWall position={[-11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={Math.PI / 2} missingIndex={2} />
           <CyberWall position={[11, 2.6, 0]} size={[22, 5.2, 0.45]} rotationY={-Math.PI / 2} missingIndex={7} />
 
-          <Bookshelf position={[-7.2, 1.6, -10.05]} width={5.2} />
-          <Bookshelf position={[0, 1.6, -10.05]} width={5.2} />
-          <Bookshelf position={[7.2, 1.6, -10.05]} width={5.2} />
+          {[...WALL_SHELVES, ...AISLE_SHELVES].map((shelf) => (
+            <Bookshelf
+              key={`shelf-${shelf.position[0]}-${shelf.position[1]}`}
+              position={[shelf.position[0], SHELF_HEIGHT / 2, shelf.position[1]]}
+              rotationY={shelf.rotationY}
+              width={shelf.width}
+            />
+          ))}
 
-          <Bookshelf position={[-10.05, 1.6, -6]} rotationY={Math.PI / 2} width={5} />
-          <Bookshelf position={[-10.05, 1.6, 0]} rotationY={Math.PI / 2} width={5} />
-          <Bookshelf position={[-10.05, 1.6, 6]} rotationY={Math.PI / 2} width={5} />
+          {TOPPLED_SHELVES.map((shelf) => (
+            <ToppledShelf
+              key={`toppled-${shelf.position[0]}-${shelf.position[1]}`}
+              position={shelf.position}
+              rotationY={shelf.rotationY}
+              tilt={shelf.tilt}
+              width={shelf.width}
+            />
+          ))}
 
-          <Bookshelf position={[10.05, 1.6, -6]} rotationY={-Math.PI / 2} width={5} />
-          <Bookshelf position={[10.05, 1.6, 0]} rotationY={-Math.PI / 2} width={5} />
-          <Bookshelf position={[10.05, 1.6, 6]} rotationY={-Math.PI / 2} width={5} />
+          {READING_TABLES.map((table) => (
+            <ReadingTable key={`table-${table.position[0]}-${table.position[1]}`} position={table.position} rotationY={table.rotationY} />
+          ))}
+
+          {SECTION_SIGNS.map((sign) => (
+            <SectionSign key={sign.label} position={sign.position} rotationY={sign.rotationY} label={sign.label} ceilingY={CEILING_Y} />
+          ))}
 
           <ScatteredBooks />
-          <Pedestal />
+          <Pedestal power={pedestalPower} />
         </>
       )}
+
+      {LAMPS.map((lamp, i) => (
+        <PendantLamp
+          key={`lamp-${lamp.position[0]}-${lamp.position[1]}`}
+          position={lamp.position}
+          ceilingY={CEILING_Y}
+          drop={lamp.drop}
+          flicker={lamp.flicker}
+          phase={i * 2.37}
+        />
+      ))}
 
       {torchLights.map((p) => (
         <FlickeringTorch key={`torch-light-${p[0]}-${p[1]}-${p[2]}`} position={p} />
@@ -216,23 +349,42 @@ export const LibraryScene = memo(function LibraryScene({ wormholeActive, wormhol
       {torchMeshes.map((p, i) => (
         <WallTorchFixture key={`torch-mesh-${i}`} position={p} />
       ))}
+          </>
+        )}
       </group>
 
+      {!editableEntities && <PhaseEngine entities={LIBRARY_BOUNDARY_ENTITIES} context={{ colliderTags }} />}
       {editableEntities ? (
         <PhaseEngine entities={editableEntities.filter((e) => e.type === 'book')} context={{ ritualProgress: wormholeProgress }} />
       ) : (
-        <LevitatingBook ritualProgress={wormholeProgress} />
+        <LevitatingBook ritualProgress={crossingMode === 'book' ? wormholeProgress : 0} appear={bookAppear} shelved={bookShelved} />
       )}
-      <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
+      <PedestalAwakening active={bookStage === 'awakening'} />
+      <LightBurst active={bookStage === 'transforming'} origin={BOOK_SHELF_SLOT} />
+      {libraryPortalUnlocked && (
+        <group position={LIBRARY_PORTAL_POSITION}>
+          <PortalOpening radius={LIBRARY_PORTAL_RADIUS} accentColor="#ffcc33" glowColor="#5ad8ff">
+            <ProceduralPortal position={[0, 0, 0]} radius={LIBRARY_PORTAL_RADIUS} accentColor="#ffcc33" glowColor="#5ad8ff" />
+          </PortalOpening>
+        </group>
+      )}
 
-      <Wormhole active={wormholeActive} progress={wormholeProgress} />
-      <TimeVortexParticles active={wormholeActive} progress={wormholeProgress} />
+      {crossingMode === 'book' && (
+        <>
+          <TimeVortexSequence active={wormholeActive} progress={wormholeProgress} />
+          <Wormhole active={wormholeActive} progress={wormholeProgress} />
+          <TimeVortexParticles active={wormholeActive} progress={wormholeProgress} />
+        </>
+      )}
 
-      <ambientLight intensity={0.18} color="#7ab8ff" />
-      <hemisphereLight args={['#0a1a2e', '#020508', 0.38]} />
-      <pointLight position={[0, 1.82, 0]} intensity={2.4} distance={5.2} color="#ffcc66" decay={2} />
-      <spotLight position={[0, 4.8, 0]} angle={0.5} penumbra={0.62} intensity={3.2} color="#ffe9a0" distance={11} />
-      <spotLight position={[0, 4, 12]} angle={0.5} penumbra={0.7} intensity={1.15} color="#0ab8ff" distance={18} />
+      {!showRestored && (
+        <>
+          <ambientLight intensity={0.18} color="#7ab8ff" />
+          <hemisphereLight args={['#0a1a2e', '#020508', 0.38]} />
+          <BookGlowLights power={pedestalPower} />
+          <spotLight position={[0, 4, 12]} angle={0.5} penumbra={0.7} intensity={1.15} color="#0ab8ff" distance={18} />
+        </>
+      )}
     </group>
   )
 })

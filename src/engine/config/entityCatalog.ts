@@ -9,7 +9,7 @@
 import type { EditableEntity } from '@/engine/types'
 
 /** Scenes that own an editor instance (see `App.tsx`'s `useEditor` calls). */
-export type SceneId = 'cityIntro' | 'library' | 'phase1' | 'phase2'
+export type SceneId = 'cityIntro' | 'library' | 'phase1' | 'phase2' | 'credits'
 
 /**
  * One addable element: its renderer `type`, a human label for the editor UI,
@@ -24,6 +24,14 @@ export interface EntityCatalogItem {
   scenes: SceneId[]
   /** Fields merged onto a fresh entity (besides the generated `id` and `type`, which come from this item). */
   defaultEntity: Omit<EditableEntity, 'id' | 'type'>
+  /**
+   * Where a fresh entity is spawned: `surface` (default) at what the editor's
+   * crosshair points at, `sky` at `defaultEntity.position`, for elements that
+   * live far overhead.
+   */
+  placement?: 'surface' | 'sky'
+  /** Whether a fresh entity's `variant` is the current scene id, for elements whose look is a per-scene preset. */
+  variantFromScene?: boolean
 }
 
 /**
@@ -36,6 +44,36 @@ export const entityCatalog: EntityCatalogItem[] = [
     label: 'Punto de Camino',
     scenes: ['cityIntro'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '0' },
+  },
+  {
+    type: 'neo-heritage-house',
+    label: 'Casa neopatrimonial (abajera 2050)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#FFB703', title: '#FF007F' },
+  },
+  {
+    type: 'culture-mural',
+    label: 'Mural cultural holográfico',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'marimonda', title: '#FFB703' },
+  },
+  {
+    type: 'floating-farol',
+    label: 'Farol flotante (La Guacherna)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#FFD08A' },
+  },
+  {
+    type: 'anden-bordillo',
+    label: 'Andén con bordillo amarillo',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '6' },
+  },
+  {
+    type: 'roble-amarillo',
+    label: 'Roble amarillo en flor',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: '#F2C14E' },
   },
   {
     type: 'skyscraper',
@@ -70,6 +108,30 @@ export const entityCatalog: EntityCatalogItem[] = [
   {
     type: 'riwi-building',
     label: 'Edificio riwi 2050',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'riwi-barranquilla',
+    label: 'Sede RIWI Barranquilla',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'ad-bus',
+    label: 'Bus flotante con pantalla (video con sonido)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, videoSrc: '/videos/future/barrio-abajo-tour.mp4' },
+  },
+  {
+    type: 'street-jukebox-car',
+    label: 'Carro-picó riwi (avenida)',
+    scenes: ['cityIntro'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'concert-stage',
+    label: 'Concierto (tarima RIWI)',
     scenes: ['cityIntro'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
@@ -114,12 +176,14 @@ export const entityCatalog: EntityCatalogItem[] = [
     label: 'Luna',
     scenes: ['cityIntro'],
     defaultEntity: { position: [-20, 26, -60], rotationY: 0, scale: 1 },
+    placement: 'sky',
   },
   {
     type: 'planet',
     label: 'Planeta',
     scenes: ['cityIntro'],
     defaultEntity: { position: [45, 48, -100], rotationY: 0, scale: 4, variant: '#c9a877' },
+    placement: 'sky',
   },
   {
     type: 'library-facade',
@@ -794,9 +858,151 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 1.05, 0], rotationY: 0, scale: 1.5 },
   },
   {
+    type: 'rail-tunnel',
+    label: 'Túnel de tren',
+    scenes: ['phase1'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'sun',
+    label: 'Sol',
+    scenes: ['cityIntro', 'phase1', 'phase2'],
+    defaultEntity: { position: [18, 14, -12], rotationY: 0, scale: 1 },
+    placement: 'sky',
+    variantFromScene: true,
+  },
+  {
+    type: 'cloud',
+    label: 'Nube',
+    scenes: ['phase1', 'phase2'],
+    defaultEntity: { position: [0, 10, -18], rotationY: 0, scale: 1.6 },
+    placement: 'sky',
+    variantFromScene: true,
+  },
+  {
+    type: 'collider',
+    label: 'Colisión',
+    scenes: ['cityIntro', 'library', 'phase1', 'phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, collider: { shape: 'box', offset: [0, 1, 0], size: [2, 2, 2] } },
+  },
+  {
+    type: 'walk-area',
+    label: 'Zona caminable',
+    scenes: ['cityIntro', 'library', 'phase1', 'phase2'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, areaSize: [10, 10] },
+  },
+  {
     type: 'generic',
     label: 'Genérico (placeholder)',
-    scenes: ['cityIntro', 'library', 'phase1', 'phase2'],
+    scenes: ['cityIntro', 'library', 'phase1', 'phase2', 'credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits-model',
+    label: 'Modelo Créditos (cualquiera)',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'credits/decorators/silla' },
+  },
+  {
+    type: 'jafet-dancer',
+    label: 'Jafet (baila)',
+    scenes: ['credits'],
+    defaultEntity: { position: [0.175, 0, -0.5], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/caneca',
+    label: 'Caneca',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/cartel-alcaldia',
+    label: 'Cartel alcaldía',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/control',
+    label: 'Control',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/escritorio',
+    label: 'Escritorio',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/mesa-corta',
+    label: 'Mesa corta',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/monitor',
+    label: 'Monitor',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/mouse',
+    label: 'Mouse',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/silla',
+    label: 'Silla',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/tablero',
+    label: 'Tablero',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/teclado',
+    label: 'Teclado',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/televisor',
+    label: 'Televisor',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/torre',
+    label: 'Torre PC',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/torre-ventilador-led',
+    label: 'Torre con ventilador LED',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/totem-alcaldia',
+    label: 'Tótem alcaldía',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/totem-riwi',
+    label: 'Tótem Riwi',
+    scenes: ['credits'],
+    defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
+  },
+  {
+    type: 'credits/decorators/ventilador',
+    label: 'Ventilador',
+    scenes: ['credits'],
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1 },
   },
 ]

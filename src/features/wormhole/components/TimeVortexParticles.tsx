@@ -1,6 +1,13 @@
 import { memo, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(77631)
+
+/** Where the effect sits unless told otherwise: over the pedestal's levitating book. */
+const DEFAULT_CENTER: [number, number, number] = [0, 1.68, 0]
 
 /**
  * Props for {@link TimeVortexParticles}.
@@ -10,6 +17,8 @@ interface TimeVortexParticlesProps {
   active: boolean
   /** Normalized progress in [0,1]. */
   progress: number
+  /** World position the effect is centered on — the pedestal's book by default, the portal when crossing it. */
+  center?: [number, number, number]
 }
 
 /**
@@ -20,7 +29,7 @@ interface TimeVortexParticlesProps {
  * @param props - Portal state
  * @returns Vortex group
  */
-export const TimeVortexParticles = memo(function TimeVortexParticles({ active, progress }: TimeVortexParticlesProps) {
+export const TimeVortexParticles = memo(function TimeVortexParticles({ active, progress, center = DEFAULT_CENTER }: TimeVortexParticlesProps) {
   const groupRef = useRef<THREE.Group>(null)
   const pointsRef = useRef<THREE.Points>(null)
   const discRef = useRef<THREE.Mesh>(null)
@@ -33,14 +42,14 @@ export const TimeVortexParticles = memo(function TimeVortexParticles({ active, p
     const spd = new Float32Array(count)
     const sz = new Float32Array(count)
     for (let i = 0; i < count; i++) {
-      const r = 0.22 + Math.pow(Math.random(), 1.35) * 2.8
-      const theta = Math.random() * Math.PI * 2
-      const z = (Math.random() - 0.5) * 6.5
+      const r = 0.22 + Math.pow(seededRandom(), 1.35) * 2.8
+      const theta = seededRandom() * Math.PI * 2
+      const z = (seededRandom() - 0.5) * 6.5
       pos[i * 3] = Math.cos(theta) * r
       pos[i * 3 + 1] = Math.sin(theta) * r
       pos[i * 3 + 2] = z
-      spd[i] = 0.22 + Math.random() * 0.68
-      sz[i] = 0.012 + Math.random() * 0.038
+      spd[i] = 0.22 + seededRandom() * 0.68
+      sz[i] = 0.012 + seededRandom() * 0.038
     }
     return { positions: pos, speeds: spd, sizes: sz }
   }, [])
@@ -148,7 +157,7 @@ export const TimeVortexParticles = memo(function TimeVortexParticles({ active, p
   if (!active && progress === 0) return null
 
   return (
-    <group ref={groupRef} position={[0, 1.68, 0]}>
+    <group ref={groupRef} position={center}>
       <points ref={pointsRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[positions, 3]} />

@@ -1,12 +1,16 @@
-import { memo, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Bounds, Center } from '@react-three/drei'
-import { FiBox, FiFilter, FiPlus } from 'react-icons/fi'
+import { FiBox, FiFilter, FiLoader, FiPlus } from 'react-icons/fi'
 import { Modal } from '@/shared/components/Modal'
 import { ModelLoader } from '@/models/shared/ModelLoader'
 import { modelRegistry } from '@/shared/config/models'
 import { modelPreviews } from '@/features/editor/config/modelPreviews'
 import type { SceneId } from '@/engine/config/entityCatalog'
+import { allModelUrls, preloadModels } from '@/features/editor/utils/preloadModels'
+
+/** Whether every registry model has been loaded this session, shared by every modal instance. */
+let allModelsLoaded = false
 
 /**
  * Props for {@link ModelBrowserModal}.
@@ -58,6 +62,20 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
   const entries = useMemo(() => Object.entries(modelRegistry), [])
   const [onlyCurrentPhase, setOnlyCurrentPhase] = useState<boolean>(!!currentScene)
   const [search, setSearch] = useState<string>('')
+  const [allReady, setAllReady] = useState(allModelsLoaded)
+  const loadingAll = open && !onlyCurrentPhase && !allReady
+
+  useEffect(() => {
+    if (!loadingAll) return
+    let cancelled = false
+    preloadModels(allModelUrls()).then(() => {
+      allModelsLoaded = true
+      if (!cancelled) setAllReady(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [loadingAll])
 
   const filteredEntries = useMemo(() => {
     let list = entries
@@ -87,9 +105,10 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
 
   const [selectedKey, setSelectedKey] = useState<string>(entries[0]?.[0] ?? '')
 
-  const effectiveSelectedKey = filteredEntries.some(([k]) => k === selectedKey) ? selectedKey : (filteredEntries[0]?.[0] ?? selectedKey)
-  const selected = modelRegistry[effectiveSelectedKey]
-  const PreviewComponent = modelPreviews[effectiveSelectedKey]
+  const inFilter = filteredEntries.some(([k]) => k === selectedKey)
+  const effectiveSelectedKey = inFilter ? selectedKey : ''
+  const selected = effectiveSelectedKey ? modelRegistry[effectiveSelectedKey] : undefined
+  const PreviewComponent = effectiveSelectedKey ? modelPreviews[effectiveSelectedKey] : undefined
 
   /**
    * Handles quick-add of the currently previewed model to the edited scene.
@@ -107,7 +126,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setOnlyCurrentPhase((v) => !v)}
-                className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${onlyCurrentPhase ? 'bg-gold text-[#1a1205]' : 'bg-white/10 text-parchment/70 hover:bg-white/15'}`}
+                className={`flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase ${onlyCurrentPhase ? 'bg-gold text-[#1a1205]' : 'bg-white/10 text-parchment/70 hover:bg-white/15'}`}
               >
                 <FiFilter className="h-3 w-3" /> {onlyCurrentPhase ? `Solo ${currentScene ?? 'fase'}` : 'Todos'}
               </button>
@@ -120,7 +139,13 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
             />
             <div className="mt-1 text-[10px] text-parchment/35">{filteredEntries.length} modelos</div>
           </div>
-          <div className="flex-1 overflow-y-auto p-2">
+          <div className="relative flex-1 overflow-y-auto p-2">
+            {loadingAll && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0f1e]/85 text-[11px] text-parchment/70">
+                <FiLoader className="h-5 w-5 animate-spin text-gold" />
+                Cargando modelos de todas las fases…
+              </div>
+            )}
             {groups.map(([group, keys]) => (
               <div key={group} className="mb-2">
                 <div className="px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-parchment/40">{group}</div>
@@ -128,7 +153,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
                   <button
                     key={key}
                     onClick={() => setSelectedKey(key)}
-                    className={`block w-full truncate rounded-md px-2 py-1.5 text-left text-[12px] ${
+                    className={`block w-full cursor-pointer truncate rounded-md px-2 py-1.5 text-left text-[12px] ${
                       effectiveSelectedKey === key ? 'bg-gold text-[#1a1205]' : 'text-parchment/75 hover:bg-white/10'
                     }`}
                   >
@@ -142,8 +167,8 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
         </div>
         <div className="flex flex-1 flex-col">
           <div className="relative flex-1 bg-[#0a0f1e]">
-            {selected && (
-              <Canvas key={selectedKey} camera={{ fov: 42, position: [2.4, 1.8, 2.8] }} shadows>
+            {selected ? (
+              <Canvas camera={{ fov: 42, position: [2.4, 1.8, 2.8] }} shadows>
                 <ambientLight intensity={0.6} />
                 <directionalLight position={[4, 6, 3]} intensity={1.2} castShadow />
                 <Bounds fit clip observe margin={2.4}>
@@ -153,11 +178,16 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
                 </Bounds>
                 <OrbitControls makeDefault enableDamping dampingFactor={0.12} />
               </Canvas>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-[11px] text-parchment/40">
+                <FiBox className="h-6 w-6 text-parchment/20" />
+                El modelo seleccionado quedó fuera del filtro; elige uno de la lista
+              </div>
             )}
           </div>
           <div className="border-t border-gold/10 bg-black/25 px-4 py-3 text-[11px] text-parchment/60">
             <div className="flex items-center gap-2 font-semibold text-parchment">
-              <FiBox className="h-3.5 w-3.5 text-gold" /> {effectiveSelectedKey}
+              <FiBox className="h-3.5 w-3.5 text-gold" /> {effectiveSelectedKey || 'Sin selección en el filtro'}
             </div>
             <div className="mt-1 truncate">
               Ruta: <span className="text-parchment/40">{selected?.path}</span>
@@ -170,7 +200,7 @@ export const ModelBrowserModal = memo(function ModelBrowserModal({ open, onClose
               <button
                 onClick={handleQuickAdd}
                 disabled={!effectiveSelectedKey}
-                className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1a1205] hover:bg-gold-bright disabled:opacity-40"
+                className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md bg-gold px-3 py-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#1a1205] hover:bg-gold-bright disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <FiPlus className="h-3.5 w-3.5" /> Añadir a escena
               </button>

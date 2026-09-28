@@ -2,6 +2,13 @@ import { useRef, useMemo, memo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { wormholeConfig } from '@/shared/config/appConfig'
+import { createSeededRandom } from '@/shared/utils/random'
+
+/** Deterministic random source for this module's procedural layout, so render stays pure. */
+const seededRandom = createSeededRandom(15130)
+
+/** Where the effect sits unless told otherwise: over the pedestal's levitating book. */
+const DEFAULT_CENTER: [number, number, number] = [0, 1.65, 0]
 
 /**
  * Props for {@link Wormhole}.
@@ -11,6 +18,8 @@ interface WormholeProps {
   active: boolean
   /** Normalized progress in [0,1]. */
   progress: number
+  /** World position the effect is centered on — the pedestal's book by default, the portal when crossing it. */
+  center?: [number, number, number]
 }
 
 /** Reused quaternion instances to avoid per-frame allocations. */
@@ -24,7 +33,7 @@ const targetQuat = new THREE.Quaternion()
  * @param props - Wormhole state
  * @returns Wormhole group or null when inactive
  */
-export const Wormhole = memo(function Wormhole({ active, progress }: WormholeProps) {
+export const Wormhole = memo(function Wormhole({ active, progress, center = DEFAULT_CENTER }: WormholeProps) {
   const groupRef = useRef<THREE.Group>(null)
   const starsRef = useRef<THREE.Points>(null)
   const ringRefs = useRef<THREE.Mesh[]>([])
@@ -50,9 +59,9 @@ export const Wormhole = memo(function Wormhole({ active, progress }: WormholePro
   const starPositions = useMemo(() => {
     const arr = new Float32Array(starCount * 3)
     for (let i = 0; i < starCount; i++) {
-      const r = 0.25 + Math.random() * 3.1
-      const theta = Math.random() * Math.PI * 2
-      const z = -Math.random() * 52
+      const r = 0.25 + seededRandom() * 3.1
+      const theta = seededRandom() * Math.PI * 2
+      const z = -seededRandom() * 52
       arr[i * 3] = Math.cos(theta) * r
       arr[i * 3 + 1] = Math.sin(theta) * r
       arr[i * 3 + 2] = z
@@ -62,7 +71,7 @@ export const Wormhole = memo(function Wormhole({ active, progress }: WormholePro
 
   const starSpeeds = useMemo(() => {
     const arr = new Float32Array(starCount)
-    for (let i = 0; i < starCount; i++) arr[i] = 0.18 + Math.random() * 0.55
+    for (let i = 0; i < starCount; i++) arr[i] = 0.18 + seededRandom() * 0.55
     return arr
   }, [starCount])
 
@@ -113,7 +122,7 @@ export const Wormhole = memo(function Wormhole({ active, progress }: WormholePro
   if (!active && progress === 0) return null
 
   return (
-    <group ref={groupRef} position={[0, 1.65, 0]}>
+    <group ref={groupRef} position={center}>
       <mesh position={[0, 0, -count * 0.58]}>
         <sphereGeometry args={[0.85 + progress * 3.1, 32, 32]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0.92} depthWrite={false} />

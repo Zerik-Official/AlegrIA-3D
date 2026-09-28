@@ -1,0 +1,7 @@
+{
+  "roble-amarillo": { "shape": "cylinder", "radius": 0.5, "height": 6 },
+  "ad-bus": { "shape": "box", "offset": [0, 2, 0], "size": [3.4, 4, 12.8] },
+  "parroquia": { "shape": "cylinder", "radius": 8.3, "height": 20 },
+  "phase2/houses/*": { "shape": "cylinder", "radius": 2, "height": 6 },
+  "rail-tunnel": { "shape": "box", "offset": [-6.5, 3.1, 0], "size": [13, 6.2, 14] }
+}
