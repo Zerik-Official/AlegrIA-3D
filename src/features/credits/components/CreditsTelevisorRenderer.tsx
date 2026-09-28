@@ -1,18 +1,9 @@
 /**
  * `credits/decorators/televisor` renderer — the RIWI room's TV on its rolling
- * stand (see `.vscode/scripts/riwi-televisor.py`). Its screen mesh (Blender
- * material `TV_Pantalla`) shows the `mocadevia-canal.png` poster as an unlit
- * material while `mocadevia-last-video.mp4` buffers, then swaps to the video
- * texture once it can play through — muted and looping from there on.
- *
- * Bypasses `ModelLoader` (no material-swap hook there) the same way
- * `ScreenBuildingRenderer` and `CarrozaRiwiRenderer` do for their own
- * screens, keeping the HEAD-check/Suspense/error-boundary contract for the
- * `.glb` itself while the poster/video load independently outside Suspense.
  * @module features/credits/components/CreditsTelevisorRenderer
  */
 
-import { Component, Suspense, useEffect, useMemo, useState, type ErrorInfo, type ReactNode } from 'react'
+import { Component, Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type ErrorInfo, type ReactNode } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { modelRegistry } from '@/shared/config/models'
@@ -31,6 +22,14 @@ const DEFAULT_POSTER_SRC = '/images/credits/mocadevia-canal.png'
 
 /** Feature video played muted on loop once buffered. */
 const DEFAULT_VIDEO_SRC = '/videos/credits/mocadevia-last-video.mp4'
+
+/**
+ * Size bucket matching `GenericModelRenderer`'s fallback for this key (not a
+ * floor/decoration/scene, so `6`): the `.glb` is authored in meters (~1.7 m
+ * tall) and `credits.json` scales were tuned under that normalization, so the
+ * renderer re-applies it to keep the TV at its arranged size.
+ */
+const MODEL_TARGET_SIZE = 6
 
 /**
  * Loads `src` as an sRGB texture without Suspense, so the TV mounts
@@ -154,8 +153,18 @@ function TelevisorFallback({ texture }: TelevisorFallbackProps) {
 
   useEffect(() => () => screenGeometry.dispose(), [screenGeometry])
 
+  const groupRef = useRef<THREE.Group>(null)
+  const [fitScale, setFitScale] = useState(1)
+
+  useLayoutEffect(() => {
+    if (!groupRef.current) return
+    const size = new THREE.Box3().setFromObject(groupRef.current).getSize(new THREE.Vector3())
+    const maxDim = Math.max(size.x, size.y, size.z)
+    if (maxDim > 0) setFitScale(MODEL_TARGET_SIZE / maxDim)
+  }, [])
+
   return (
-    <group>
+    <group ref={groupRef} scale={fitScale}>
       <mesh position={[0, 0, 1.38]} castShadow>
         <boxGeometry args={[1.45, 0.028, 0.835]} />
         <meshStandardMaterial color="#121315" roughness={0.35} />
@@ -231,7 +240,17 @@ function TelevisorBody({ poster, videoTexture, videoReady }: TelevisorBodyProps)
     })
   }, [cloned, screenMaterial])
 
-  return <primitive object={cloned} />
+  const fitScale = useMemo(() => {
+    const size = new THREE.Box3().setFromObject(cloned).getSize(new THREE.Vector3())
+    const maxDim = Math.max(size.x, size.y, size.z)
+    return maxDim > 0 ? MODEL_TARGET_SIZE / maxDim : 1
+  }, [cloned])
+
+  return (
+    <group scale={fitScale}>
+      <primitive object={cloned} />
+    </group>
+  )
 }
 
 /**
