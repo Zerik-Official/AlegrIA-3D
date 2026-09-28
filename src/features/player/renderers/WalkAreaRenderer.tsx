@@ -10,7 +10,7 @@ import * as THREE from 'three'
 import { DEFAULT_AREA_SIZE, registerWalkArea, unregisterWalkArea } from '@/features/player/walkAreas'
 import { CollisionPublishContext } from '@/features/player/CollisionPublishContext'
 import { useCollisionDebugVisible } from '@/features/editor/state/collisionDebug'
-import type { EntityRendererProps } from '@/engine/types'
+import { resolveEntityScale, type EntityRendererProps } from '@/engine/types'
 
 /** Height of the debug walls marking the area's edges. */
 const WALL_HEIGHT = 2.5
@@ -27,16 +27,16 @@ export function WalkAreaRenderer({ entity }: EntityRendererProps) {
   const debugVisible = useCollisionDebugVisible()
   const [width, depth] = entity.areaSize ?? DEFAULT_AREA_SIZE
   const [x, , z] = entity.position
-  const scale = entity.scale
+  const [svx, , svz] = resolveEntityScale(entity.scale)
   const publish = useContext(CollisionPublishContext)
 
   useEffect(() => {
     if (!publish) return
-    const halfX = (width * scale) / 2
-    const halfZ = (depth * scale) / 2
+    const halfX = (width * svx) / 2
+    const halfZ = (depth * svz) / 2
     registerWalkArea(entity.id, { minX: x - halfX, maxX: x + halfX, minZ: z - halfZ, maxZ: z + halfZ })
     return () => unregisterWalkArea(entity.id)
-  }, [entity.id, x, z, width, depth, scale, publish])
+  }, [entity.id, x, z, width, depth, svx, svz, publish])
 
   if (!debugVisible) return null
   return (
