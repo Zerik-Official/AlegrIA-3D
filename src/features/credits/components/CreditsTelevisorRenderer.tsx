@@ -187,14 +187,13 @@ function TelevisorFallback({ texture }: TelevisorFallbackProps) {
 }
 
 /**
- * Gives the screen mesh planar UVs projected on its local X/Z plane.
- * @param mesh - Screen mesh to unwrap, cloned in place when it lacks UVs
+ * Gives the screen mesh planar UVs projected on its local X/Y plane.
+ * @param mesh - Screen mesh to unwrap; its geometry is cloned before writing
  */
 function ensureScreenUVs(mesh: THREE.Mesh): void {
   const geometry = mesh.geometry as THREE.BufferGeometry
   if (geometry.getAttribute('uv')) return
-  const position = geometry.getAttribute('position') as THREE.BufferAttribute | undefined
-  if (!position) return
+  if (!geometry.getAttribute('position')) return
 
   const unwrapped = geometry.clone()
   const points = unwrapped.getAttribute('position') as THREE.BufferAttribute
@@ -202,12 +201,12 @@ function ensureScreenUVs(mesh: THREE.Mesh): void {
   const box = unwrapped.boundingBox
   if (!box) return
   const width = box.max.x - box.min.x || 1
-  const height = box.max.z - box.min.z || 1
+  const height = box.max.y - box.min.y || 1
 
   const uv = new Float32Array(points.count * 2)
   for (let i = 0; i < points.count; i += 1) {
     uv[i * 2] = (points.getX(i) - box.min.x) / width
-    uv[i * 2 + 1] = (box.max.z - points.getZ(i)) / height
+    uv[i * 2 + 1] = (box.max.y - points.getY(i)) / height
   }
   unwrapped.setAttribute('uv', new THREE.BufferAttribute(uv, 2))
   mesh.geometry = unwrapped
