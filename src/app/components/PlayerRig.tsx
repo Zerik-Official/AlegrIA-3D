@@ -12,6 +12,7 @@ import { PlayerControls } from '@/features/player/components/PlayerControls'
 import { CinematicLookAt } from '@/app/components/CinematicLookAt'
 import { CreditsCamera } from '@/app/components/CreditsCamera'
 import { appConfig } from '@/shared/config/appConfig'
+import { initialCreditsEntities } from '@/features/editor/config/editableEntities'
 import type { Experience } from '@/app/hooks/useExperience'
 
 /** Where the book hovers over the pedestal — what the awakening cinematic turns the camera towards. */
@@ -33,8 +34,12 @@ interface PlayerRigProps {
  * @returns Controls elements
  */
 export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps) {
-  const { phaseFlow, proximity, city, library, photo, editor, bookPages } = experience
+  const { phaseFlow, proximity, city, library, photo, editor, editors, bookPages } = experience
   if (editor.isEditorEnabled) return null
+
+  const creditsEntities = editor.isEditorEnabled ? editors.creditsEditor.entities : initialCreditsEntities
+  const jafet = creditsEntities.find((e) => e.type === 'jafet-dancer')
+  const jafetFocus: [number, number] | null = jafet ? [jafet.position[0], jafet.position[2]] : null
 
   return (
     <>
@@ -78,7 +83,7 @@ export const PlayerRig = memo(function PlayerRig({ experience }: PlayerRigProps)
           useCollisionWorld
         />
       )}
-      <CreditsCamera active={phaseFlow.isCredits} />
+      <CreditsCamera active={phaseFlow.isCredits} focus={jafetFocus} />
     </>
   )
 })
