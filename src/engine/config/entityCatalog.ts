@@ -904,6 +904,12 @@ export const entityCatalog: EntityCatalogItem[] = [
     defaultEntity: { position: [0, 0, 0], rotationY: 0, scale: 1, variant: 'credits/decorators/silla' },
   },
   {
+    type: 'jafet-dancer',
+    label: 'Jafet (baila)',
+    scenes: ['credits'],
+    defaultEntity: { position: [0.175, 0, -0.5], rotationY: 0, scale: 1 },
+  },
+  {
     type: 'credits/decorators/caneca',
     label: 'Caneca',
     scenes: ['credits'],
