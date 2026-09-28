@@ -15,6 +15,7 @@ import { CollisionDebugLayer } from '@/features/editor/components/CollisionDebug
 import { ParadeLoopGuide } from '@/features/editor/components/ParadeLoopGuide'
 import { EditorTargetFinder } from '@/app/components/EditorTargetFinder'
 import { EditorSelectionPicker } from '@/app/components/EditorSelectionPicker'
+import { packEntityScale } from '@/engine/types'
 import type { Experience } from '@/app/hooks/useExperience'
 
 /**
@@ -61,7 +62,7 @@ export const EditorRig = memo(function EditorRig({ experience }: EditorRigProps)
         rotationX: cleanAngle(target.rotation.x),
         rotationY: target.rotation.y,
         rotationZ: cleanAngle(target.rotation.z),
-        scale: target.scale.x,
+        scale: packEntityScale(target.scale.x, target.scale.y, target.scale.z),
       })
     }
   }, [])
@@ -88,7 +89,7 @@ export const EditorRig = memo(function EditorRig({ experience }: EditorRigProps)
             rotationX: cleanAngle(rotation[0]),
             rotationY: rotation[1],
             rotationZ: cleanAngle(rotation[2]),
-            scale,
+            scale: packEntityScale(scale[0], scale[1], scale[2]),
           })
         }}
       />
