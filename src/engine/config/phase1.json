@@ -1149,7 +1149,7 @@
     "variant": "phase1"
   },
   {
-    "id": "deco-palma-04-copy",
+    "id": "deco-palma-01",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       57.45504786985521,
@@ -1170,7 +1170,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy",
+    "id": "deco-palma-02",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       57.89918980185656,
@@ -1191,7 +1191,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy-copy",
+    "id": "deco-palma-03",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       62.330145475647555,
@@ -1212,7 +1212,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy-2",
+    "id": "deco-palma-04",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       64.38967144657164,
@@ -1233,7 +1233,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy-2-copy",
+    "id": "deco-palma-05",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       59.31782210382915,
@@ -1254,7 +1254,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy-2-copy-copy",
+    "id": "deco-palma-06",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       59.644693474470614,
@@ -1275,7 +1275,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy-2-copy-2",
+    "id": "deco-palma-07",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       68.32924654798023,
@@ -1296,7 +1296,7 @@
     }
   },
   {
-    "id": "deco-palma-04-copy-copy-2-copy-copy-copy",
+    "id": "deco-palma-08",
     "type": "phase1/decorators/decorativos-palma-coco",
     "position": [
       65.51738357498853,
@@ -1317,7 +1317,7 @@
     }
   },
   {
-    "id": "house-13-copy",
+    "id": "house-17",
     "type": "bahareque-house",
     "position": [
       -11.25922918808324,
@@ -1331,7 +1331,7 @@
     "rotationZ": 3.141592653589793
   },
   {
-    "id": "calle-anden-03-copy",
+    "id": "calle-anden-06",
     "type": "phase1/floors/suelo-anden-escalon",
     "position": [
       18.062048075470702,
@@ -1342,7 +1342,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy",
+    "id": "calle-anden-07",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       10.054536677369224,
@@ -1353,7 +1353,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy",
+    "id": "calle-anden-08",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       26.03049760390946,
@@ -1364,7 +1364,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-copy",
+    "id": "calle-anden-09",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       34.016500064507625,
@@ -1375,7 +1375,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-copy-copy",
+    "id": "calle-anden-10",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       42.06280797412073,
@@ -1386,7 +1386,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-copy-copy-copy",
+    "id": "calle-anden-11",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       47.48748275960427,
@@ -1397,7 +1397,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-2",
+    "id": "calle-anden-12",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       2.059287640318397,
@@ -1408,7 +1408,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-2-copy",
+    "id": "calle-anden-13",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       -5.936268524271592,
@@ -1419,7 +1419,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-2-copy-copy",
+    "id": "calle-anden-14",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       -13.886038557145648,
@@ -1430,7 +1430,7 @@
     "scale": 1
   },
   {
-    "id": "calle-anden-02-copy-copy-2-copy-copy-copy",
+    "id": "calle-anden-15",
     "type": "phase1/floors/suelo-anden-alto",
     "position": [
       -21.902910695707604,
@@ -1441,7 +1441,7 @@
     "scale": 1
   },
   {
-    "id": "plazoleta-02-copy",
+    "id": "plazoleta-05",
     "type": "phase1/floors/suelo-empedrado",
     "position": [
       -15.991914859693065,
