@@ -41,8 +41,8 @@ export const CREDITS_PORTAL_ACCENT = '#ffd27a'
 /** Visible credits portal's cool glow color (inner ring, vortex, ground light). */
 export const CREDITS_PORTAL_GLOW = '#a855ff'
 
-/** World point the credits scene's room is built around — between its two columns, where Jafet dances. */
-export const CREDITS_CENTER: [number, number, number] = [0, 0, 0]
+/** World point the credits scene's room is built around — the gap between the central and east pillars, where Jafet dances. */
+export const CREDITS_CENTER: [number, number, number] = [2.25, 0, 0]
 /** Height the orbiting camera looks at (roughly Jafet's chest/head). */
 export const CREDITS_LOOK_HEIGHT = 1.35
 
