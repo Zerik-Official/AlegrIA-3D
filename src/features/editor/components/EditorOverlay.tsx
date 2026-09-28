@@ -3,6 +3,7 @@ import { FiCopy, FiMove, FiRotateCw, FiMaximize2, FiPlus, FiTrash2, FiDownload, 
 import { useProgress } from '@react-three/drei'
 import type { Vector3Tuple } from 'three'
 import type { EditableEntity } from '@/features/editor/config/editableEntities'
+import { resolveEntityScale, packEntityScale } from '@/engine/types'
 import type { DraftSummary } from '@/features/editor/state/editorDrafts'
 import type { EntityCatalogItem, SceneId } from '@/engine/config/entityCatalog'
 import type { GamePhase } from '@/shared/types'
@@ -69,6 +70,24 @@ interface EditorOverlayProps {
  */
 function cleanAngle(value: number): number | undefined {
   return Math.abs(value) < 1e-9 ? undefined : value
+}
+
+/**
+ * Wraps an angle to `(-PI, PI]` so quick turns keep clean JSON values.
+ * @param value - Angle in radians
+ * @returns Normalized angle
+ */
+function normalizeAngle(value: number): number {
+  return Math.atan2(Math.sin(value), Math.cos(value))
+}
+
+/**
+ * Snaps an angle to the nearest right angle, fixing manual drifts.
+ * @param value - Angle in radians
+ * @returns Nearest multiple of 90 degrees
+ */
+function snapRightAngle(value: number): number {
+  return normalizeAngle(Math.round(value / (Math.PI / 2)) * (Math.PI / 2))
 }
 
 /** Width of the editor panel; the crosshair sits at the center of the canvas area left of it. */
@@ -427,8 +446,50 @@ export const EditorOverlay = memo(function EditorOverlay({
               <NumberField label="Rot X" step={0.05} value={selected.rotationX ?? 0} onChange={(rotationX) => onUpdate(selected.id, { rotationX: cleanAngle(rotationX) })} />
               <NumberField label="Rot Y" step={0.05} value={selected.rotationY} onChange={(rotationY) => onUpdate(selected.id, { rotationY })} />
               <NumberField label="Rot Z" step={0.05} value={selected.rotationZ ?? 0} onChange={(rotationZ) => onUpdate(selected.id, { rotationZ: cleanAngle(rotationZ) })} />
-              <NumberField label="Scale" step={0.05} value={selected.scale} fallback={1} onChange={(scale) => onUpdate(selected.id, { scale })} />
             </div>
+            <FieldLabel label="Escala" className="mt-2">
+              <Vector3Fields
+                labels={['X', 'Y', 'Z']}
+                value={resolveEntityScale(selected.scale)}
+                onChange={(scale) => onUpdate(selected.id, { scale: packEntityScale(scale[0], scale[1], scale[2]) })}
+              />
+            </FieldLabel>
+            <FieldLabel label="Giro rápido" className="mt-2">
+              <div className="grid grid-cols-4 gap-1.5">
+                <button
+                  type="button"
+                  title="Girar -90°"
+                  onClick={() => onUpdate(selected.id, { rotationY: normalizeAngle(selected.rotationY - Math.PI / 2) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  -90°
+                </button>
+                <button
+                  type="button"
+                  title="Girar +90°"
+                  onClick={() => onUpdate(selected.id, { rotationY: normalizeAngle(selected.rotationY + Math.PI / 2) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  +90°
+                </button>
+                <button
+                  type="button"
+                  title="Media vuelta (180°)"
+                  onClick={() => onUpdate(selected.id, { rotationY: normalizeAngle(selected.rotationY + Math.PI) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  180°
+                </button>
+                <button
+                  type="button"
+                  title="Enderezar al múltiplo de 90° más cercano"
+                  onClick={() => onUpdate(selected.id, { rotationY: snapRightAngle(selected.rotationY) })}
+                  className="cursor-pointer rounded-md bg-white/10 px-1 py-1.5 text-[11px] hover:bg-white/15"
+                >
+                  Recto
+                </button>
+              </div>
+            </FieldLabel>
             <FieldLabel label="Variante" className="mt-2">
               <input
                 type="text"
@@ -563,7 +624,7 @@ export const EditorOverlay = memo(function EditorOverlay({
               <FiCopy className="h-3 w-3 shrink-0" />
               <span className="truncate">
                 {selected.position.map((n) => n.toFixed(2)).join(', ')} • r {(selected.rotationX ?? 0).toFixed(2)}/
-                {selected.rotationY.toFixed(2)}/{(selected.rotationZ ?? 0).toFixed(2)} • s {selected.scale.toFixed(2)}
+                {selected.rotationY.toFixed(2)}/{(selected.rotationZ ?? 0).toFixed(2)} • s {resolveEntityScale(selected.scale).map((n) => n.toFixed(2)).join('/')}
               </span>
             </div>
           </div>
