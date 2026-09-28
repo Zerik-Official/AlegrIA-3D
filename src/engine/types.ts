@@ -46,8 +46,8 @@ export interface EditableEntity {
   rotationX?: number
   /** Z rotation in radians, optional and `0` when omitted. */
   rotationZ?: number
-  /** Uniform scale. */
-  scale: number
+  /** Uniform scale, or per-axis `[x, y, z]` scale. */
+  scale: number | [number, number, number]
   /** Variant or color hint (e.g. `'short'|'medium'|'long'`, a hex color, a shelf width). */
   variant?: string
   /** Image URL carried by picture-like entities (e.g. sepia photo frames, posters). */
@@ -102,3 +102,27 @@ export interface EntityRendererProps {
 
 /** A component that renders one entity type. */
 export type EntityRenderer = (props: EntityRendererProps) => ReactNode
+
+/**
+ * Expands an entity scale into per-axis components.
+ * @param scale - Uniform number or `[x, y, z]` tuple
+ * @returns Per-axis scale, defaulting to `1`
+ */
+export function resolveEntityScale(scale: EditableEntity['scale'] | undefined): [number, number, number] {
+  if (Array.isArray(scale)) return scale
+  const uniform = scale ?? 1
+  return [uniform, uniform, uniform]
+}
+
+/**
+ * Packs per-axis components back into an entity scale, keeping a plain
+ * number when the three axes match so exports stay clean.
+ * @param x - X scale
+ * @param y - Y scale
+ * @param z - Z scale
+ * @returns Uniform number or `[x, y, z]` tuple
+ */
+export function packEntityScale(x: number, y: number, z: number): EditableEntity['scale'] {
+  if (Math.abs(x - y) < 1e-4 && Math.abs(x - z) < 1e-4) return x
+  return [x, y, z]
+}
