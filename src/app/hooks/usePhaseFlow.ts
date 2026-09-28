@@ -12,7 +12,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useFBX, useGLTF } from '@react-three/drei'
 import { appConfig } from '@/shared/config/appConfig'
 import { easeCubicInOut } from '@/shared/utils/perf'
 import { cityIntroModelUrls, cityIntroVideoUrls, phase2ModelUrls, phase2VideoUrls } from '@/shared/config/models'
@@ -219,7 +219,8 @@ export function usePhaseFlow(): PhaseFlow {
     const models = target === 'cityIntro' ? cityIntroModelUrls() : target === 'phase2' ? phase2ModelUrls() : []
     const media = target === 'cityIntro' ? cityIntroVideoUrls() : target === 'phase2' ? [...phase2VideoUrls(), audioTracks.dorade] : []
     models.forEach((url) => {
-      useGLTF.preload(url)
+      if (url.endsWith('.fbx')) useFBX.preload(url)
+      else useGLTF.preload(url)
       fetch(url, { method: 'HEAD' }).catch(() => {})
     })
     media.forEach((url) => {
